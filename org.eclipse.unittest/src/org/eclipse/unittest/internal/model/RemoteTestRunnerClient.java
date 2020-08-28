@@ -82,7 +82,7 @@ public abstract class RemoteTestRunnerClient extends TestRunnerClient {
 	/**
 	 * The failed test that is currently reported from the RemoteTestRunner
 	 */
-	protected String fFailedTest;
+//	protected String fFailedTest;
 	/**
 	 * The Id of the failed test
 	 */
@@ -90,7 +90,7 @@ public abstract class RemoteTestRunnerClient extends TestRunnerClient {
 	/**
 	 * The kind of failure of the test that is currently reported as failed
 	 */
-	protected int fFailureKind;
+//	protected int fFailureKind;
 
 	protected boolean fDebug= false;
 
