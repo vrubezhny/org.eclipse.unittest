@@ -102,7 +102,7 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 	        }
 	        if (message.startsWith(MessageIds.TEST_RUN_END)) {
 	            long elapsedTime = Long.parseLong(arg);
-	            testRunEnded(elapsedTime);
+	            notifyTestRunEnded(elapsedTime);
 	            return this;
 	        }
 	        if (message.startsWith(MessageIds.TEST_STOPPED)) {
