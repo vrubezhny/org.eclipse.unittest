@@ -52,19 +52,19 @@ public abstract class RemoteTestRunnerClient extends TestRunnerClient {
 	/**
 	 * The failed trace that is currently reported from the RemoteTestRunner
 	 */
-	protected final StringBuffer fFailedTrace = new StringBuffer();
+//	protected final StringBuffer fFailedTrace = new StringBuffer();
 	/**
 	 * The expected test result
 	 */
-	protected final StringBuffer fExpectedResult = new StringBuffer();
+//	protected final StringBuffer fExpectedResult = new StringBuffer();
 	/**
 	 * The actual test result
 	 */
-	protected final StringBuffer fActualResult = new StringBuffer();
+//	protected final StringBuffer fActualResult = new StringBuffer();
 	/**
 	 * The failed trace of a reran test
 	 */
-	protected final StringBuffer fFailedRerunTrace = new StringBuffer();
+//	protected final StringBuffer fFailedRerunTrace = new StringBuffer();
 
 	/**
 	 * The server socket

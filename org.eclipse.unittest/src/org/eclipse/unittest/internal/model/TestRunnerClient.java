@@ -193,8 +193,11 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 		notifyTestReran(testId, className, testName, statusCode, trace);
 	}
 
-	abstract protected void extractFailure(String arg, int status);
-
+	protected void extractFailure(String testId, String testName, int status) {
+		fFailedTestId= testId;
+		fFailedTest= testName;
+		fFailureKind= status;
+	}
 	/**
 	 * @param arg test name
 	 * @return an array with two elements. The first one is the testId, the second one the testName.

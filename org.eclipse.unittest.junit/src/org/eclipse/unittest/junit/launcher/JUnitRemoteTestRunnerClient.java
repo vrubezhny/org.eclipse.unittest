@@ -93,11 +93,13 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 	            return this;
 	        }
 	        if (message.startsWith(MessageIds.TEST_ERROR)) {
-	            extractFailure(arg, ITestRunListener2.STATUS_ERROR);
+	        	String s[] = extractTestId(arg);
+	            extractFailure(s[0], s[1], ITestRunListener2.STATUS_ERROR);
 	            return this;
 	        }
 	        if (message.startsWith(MessageIds.TEST_FAILED)) {
-	            extractFailure(arg, ITestRunListener2.STATUS_FAILURE);
+	        	String s[] = extractTestId(arg);
+	            extractFailure(s[0], s[1], ITestRunListener2.STATUS_FAILURE);
 	            return this;
 	        }
 	        if (message.startsWith(MessageIds.TEST_RUN_END)) {
@@ -310,15 +312,14 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 		// assumption a rerun trace was sent before
 		notifyTestReran(testId, className, testName, statusCode, trace);
 	}
-*/
+
 	@Override
-	protected void extractFailure(String arg, int status) {
-		String s[]= extractTestId(arg);
-		fFailedTestId= s[0];
-		fFailedTest= s[1];
+	protected void extractFailure(String testId, String testName, int status) {
+		fFailedTestId= testId;
+		fFailedTest= testName;
 		fFailureKind= status;
 	}
-
+*/
 	/**
 	 * @param arg test name
 	 * @return an array with two elements. The first one is the testId, the second one the testName.
