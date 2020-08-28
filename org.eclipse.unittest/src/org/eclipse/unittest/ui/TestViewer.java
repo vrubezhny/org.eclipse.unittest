@@ -48,6 +48,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.TableItem;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -269,7 +270,10 @@ public class TestViewer {
 			if (testElement instanceof TestSuiteElement) {
 				TestSuiteElement testSuiteElement= (TestSuiteElement) testElement;
 				ITestKind testKind = testElement.getTestRunSession().getTestRunnerKind();
-				manager.add(testKind.getTestViewSupport().getOpenTestAction(fTestRunnerPart, testSuiteElement));
+				IAction openTestAction = testKind.getTestViewSupport().getOpenTestAction(fTestRunnerPart, testSuiteElement);
+				if (openTestAction != null) {
+					manager.add(openTestAction);
+				}
 				manager.add(new Separator());
 				if (!fTestRunnerPart.lastLaunchIsKeptAlive()) {
 					addRerunActions(manager, testSuiteElement);
@@ -277,7 +281,10 @@ public class TestViewer {
 			} else {
 				TestCaseElement testCaseElement= (TestCaseElement) testElement;
 				ITestKind testKind = testElement.getTestRunSession().getTestRunnerKind();
-				manager.add(testKind.getTestViewSupport().getOpenTestAction(fTestRunnerPart, testCaseElement));
+				IAction openTestAction = testKind.getTestViewSupport().getOpenTestAction(fTestRunnerPart, testCaseElement);
+				if (openTestAction != null) {
+					manager.add(openTestAction);
+				}
 				manager.add(new Separator());
 				addRerunActions(manager, testCaseElement);
 			}
