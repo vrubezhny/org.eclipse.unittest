@@ -10,7 +10,8 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.unittest.cdt,
  org.eclipse.unittest.cdt.internal.launcher;x-internal:=true,
- org.eclipse.unittest.cdt.launcher
+ org.eclipse.unittest.cdt.launcher,
+ org.eclipse.unittest.cdt.ui
 Require-Bundle: 
  org.eclipse.unittest,
  org.eclipse.cdt.testsrunner,
