@@ -50,6 +50,7 @@ import org.eclipse.unittest.internal.model.TestRunSession;
 import org.eclipse.unittest.internal.model.UnitTestModel;
 import org.eclipse.unittest.launcher.ITestKind;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
+import org.eclipse.unittest.model.ITestRunSession;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -498,11 +499,11 @@ public class TestRunnerViewPart extends ViewPart {
 		}
 	}
 
-	private static class JUnitPasteAction extends Action {
+	private static class UnitTesttPasteAction extends Action {
 		private final Shell fShell;
 		private Clipboard fClipboard;
 
-		public JUnitPasteAction(Shell shell, Clipboard clipboard) {
+		public UnitTesttPasteAction(Shell shell, Clipboard clipboard) {
 			super(Messages.TestRunnerViewPart_JUnitPasteAction_label);
 			Assert.isNotNull(clipboard);
 			fShell= shell;
@@ -1805,12 +1806,12 @@ action enablement
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		IActionBars actionBars= getViewSite().getActionBars();
-/*
-		fCopyAction = new JUnitCopyAction(fFailureTrace, fClipboard);
+
+		fCopyAction = new UnitTestCopyAction(fFailureTrace, fClipboard);
 		fCopyAction.setActionDefinitionId(ActionFactory.COPY.getCommandId());
 		actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), fCopyAction);
-*/
-		fPasteAction= new JUnitPasteAction(parent.getShell(), fClipboard);
+
+		fPasteAction= new UnitTesttPasteAction(parent.getShell(), fClipboard);
 		fPasteAction.setActionDefinitionId(ActionFactory.PASTE.getCommandId());
 		actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(), fPasteAction);
 
@@ -2063,9 +2064,7 @@ action enablement
 
 	public void handleTestSelected(TestElement test) {
 		showFailure(test);
-/*
 		fCopyAction.handleTestSelected(test);
-*/
 	}
 
 	private void showFailure(final TestElement test) {
@@ -2073,6 +2072,13 @@ action enablement
 			if (!isDisposed())
 				fFailureTrace.showFailure(test);
 		});
+	}
+
+	/**
+	 * @return the Java project, or <code>null</code>
+	 */
+	public ITestRunSession getCurrentTestRunSession() {
+		return fTestRunSession;
 	}
 
 	/**
