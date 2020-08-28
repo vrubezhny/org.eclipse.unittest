@@ -27,16 +27,14 @@ import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 
 import org.eclipse.unittest.UnitTestPlugin;
-import org.eclipse.unittest.launcher.ITestRunnerClient;
 
 import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.SafeRunner;
 
 /**
  * The client side of the RemoteTestRunner. Handles the
  * marshaling of the different messages.
  */
-public abstract class RemoteTestRunnerClient implements ITestRunnerClient {
+public abstract class RemoteTestRunnerClient extends TestRunnerClient {
 
 	public abstract class ListenerSafeRunnable implements ISafeRunnable {
 		@Override
@@ -69,11 +67,6 @@ public abstract class RemoteTestRunnerClient implements ITestRunnerClient {
 	protected final StringBuffer fFailedRerunTrace = new StringBuffer();
 
 	/**
-	 * An array of listeners that are informed about test events.
-	 */
-	private ITestRunListener2[] fListeners;
-
-	/**
 	 * The server socket
 	 */
 	private ServerSocket fServerSocket;
@@ -93,7 +86,7 @@ public abstract class RemoteTestRunnerClient implements ITestRunnerClient {
 	/**
 	 * The Id of the failed test
 	 */
-	protected String fFailedTestId;
+//	protected String fFailedTestId;
 	/**
 	 * The kind of failure of the test that is currently reported as failed
 	 */
@@ -134,16 +127,8 @@ public abstract class RemoteTestRunnerClient implements ITestRunnerClient {
 		}
 	}
 
-	/**
-	 * Start listening to a test run. Start a server connection that
-	 * the RemoteTestRunner can connect to.
-	 *
-	 * @param listeners listeners to inform
-	 * @param port port on which the server socket will be opened
-	 */
 	@Override
-	public synchronized void startListening(ITestRunListener2[] listeners, int port) {
-		fListeners= listeners;
+	public void startListening( int port) {
 		fPort= port;
 		ServerConnection connection= new ServerConnection(port);
 		connection.start();
@@ -226,33 +211,34 @@ public abstract class RemoteTestRunnerClient implements ITestRunnerClient {
 			return null;
 		return buf.toString();
 	}
-
+/*
 	protected void notifyTestReran(String testId, String className, String testName, String status) {
-		int statusCode= ITestRunListener2.STATUS_OK;
+		int statusCode= ITestRunListener3.STATUS_OK;
 		if (status.equals("FAILURE")) //$NON-NLS-1$
-			statusCode= ITestRunListener2.STATUS_FAILURE;
+			statusCode= ITestRunListener3.STATUS_FAILURE;
 		else if (status.equals("ERROR")) //$NON-NLS-1$
-			statusCode= ITestRunListener2.STATUS_ERROR;
+			statusCode= ITestRunListener3.STATUS_ERROR;
 
 		String trace= ""; //$NON-NLS-1$
-		if (statusCode != ITestRunListener2.STATUS_OK)
+		if (statusCode != ITestRunListener3.STATUS_OK)
 			trace = fFailedRerunTrace.toString();
 		// assumption a rerun trace was sent before
 		notifyTestReran(testId, className, testName, statusCode, trace);
 	}
 
 	abstract protected void extractFailure(String arg, int status);
-
+*/
 	/**
 	 * @param arg test name
 	 * @return an array with two elements. The first one is the testId, the second one the testName.
 	 */
-	abstract protected String[] extractTestId(String arg);
+//	abstract protected String[] extractTestId(String arg);
 
-	abstract protected boolean hasTestId();
+//	abstract protected boolean hasTestId();
 
+	/*
 	protected void notifyTestReran(final String testId, final String className, final String testName, final int statusCode, final String trace) {
-		for (ITestRunListener2 listener : fListeners) {
+		for (ITestRunListener3 listener : fListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
 				@Override
 				public void run() {
@@ -263,9 +249,10 @@ public abstract class RemoteTestRunnerClient implements ITestRunnerClient {
 			});
 		}
 	}
-
+*/
+	/*
 	protected void notifyTestTreeEntry(final String treeEntry) {
-		for (ITestRunListener2 listener : fListeners) {
+		for (ITestRunListener3 listener : fListeners) {
 			if (!hasTestId())
 				listener.testTreeEntry(fakeTestId(treeEntry));
 			else
@@ -283,7 +270,7 @@ public abstract class RemoteTestRunnerClient implements ITestRunnerClient {
 	protected void notifyTestRunStopped(final long elapsedTime) {
 		if (UnitTestPlugin.isStopped())
 			return;
-		for (ITestRunListener2 listener : fListeners) {
+		for (ITestRunListener3 listener : fListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
 				@Override
 				public void run() {
@@ -296,7 +283,7 @@ public abstract class RemoteTestRunnerClient implements ITestRunnerClient {
 	protected void testRunEnded(final long elapsedTime) {
 		if (UnitTestPlugin.isStopped())
 			return;
-		for (ITestRunListener2 listener : fListeners) {
+		for (ITestRunListener3 listener : fListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
 				@Override
 				public void run() {
@@ -309,7 +296,7 @@ public abstract class RemoteTestRunnerClient implements ITestRunnerClient {
 	protected void notifyTestEnded(final String test) {
 		if (UnitTestPlugin.isStopped())
 			return;
-		for (ITestRunListener2 listener : fListeners) {
+		for (ITestRunListener3 listener : fListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
 				@Override
 				public void run() {
@@ -323,7 +310,7 @@ public abstract class RemoteTestRunnerClient implements ITestRunnerClient {
 	protected void notifyTestStarted(final String test) {
 		if (UnitTestPlugin.isStopped())
 			return;
-		for (ITestRunListener2 listener : fListeners) {
+		for (ITestRunListener3 listener : fListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
 				@Override
 				public void run() {
@@ -337,7 +324,7 @@ public abstract class RemoteTestRunnerClient implements ITestRunnerClient {
 	protected void notifyTestRunStarted(final int count) {
 		if (UnitTestPlugin.isStopped())
 			return;
-		for (ITestRunListener2 listener : fListeners) {
+		for (ITestRunListener3 listener : fListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
 				@Override
 				public void run() {
@@ -350,7 +337,7 @@ public abstract class RemoteTestRunnerClient implements ITestRunnerClient {
 	protected void notifyTestFailed() {
 		if (UnitTestPlugin.isStopped())
 			return;
-		for (ITestRunListener2 listener : fListeners) {
+		for (ITestRunListener3 listener : fListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
 				@Override
 				public void run() {
@@ -360,7 +347,7 @@ public abstract class RemoteTestRunnerClient implements ITestRunnerClient {
 			});
 		}
 	}
-
+*/
 	/**
 	 * Returns a comparison result from the given buffer.
 	 * Removes the terminating line delimiter.
@@ -369,6 +356,7 @@ public abstract class RemoteTestRunnerClient implements ITestRunnerClient {
 	 * @return the result or <code>null</code> if empty
 	 * @since 3.7
 	 */
+	/*
 	private static String nullifyEmpty(StringBuffer buf) {
 		int length= buf.length();
 		if (length == 0)
@@ -389,7 +377,7 @@ public abstract class RemoteTestRunnerClient implements ITestRunnerClient {
 	protected void notifyTestRunTerminated() {
 		if (UnitTestPlugin.isStopped())
 			return;
-		for (ITestRunListener2 listener : fListeners) {
+		for (ITestRunListener3 listener : fListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
 				@Override
 				public void run() {
@@ -401,4 +389,5 @@ public abstract class RemoteTestRunnerClient implements ITestRunnerClient {
 
 	@Override
 	abstract public void rerunTest(String testId, String className, String testName);
+*/
 }

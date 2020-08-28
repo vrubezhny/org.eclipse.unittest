@@ -42,6 +42,8 @@ import org.xml.sax.SAXException;
 
 import org.eclipse.unittest.TestRunListener;
 import org.eclipse.unittest.UnitTestPlugin;
+import org.eclipse.unittest.launcher.ITestKind;
+import org.eclipse.unittest.launcher.ITestRunnerClient;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.ui.BasicElementLabels;
 
@@ -110,21 +112,37 @@ public final class UnitTestModel {
 			if (javaProject == null)
 				return;
 
-			// test whether the launch defines the JUnit attributes
-			String portStr= launch.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_PORT);
-			if (portStr == null)
-				return;
-			try {
-				final int port= Integer.parseInt(portStr);
-				fTrackedLaunches.remove(launch);
-				connectTestRunner(launch, javaProject, port);
-			} catch (NumberFormatException e) {
-				e.printStackTrace();
-				return;
+			ITestKind testRunnerKind = config != null ?
+					UnitTestLaunchConfigurationConstants.getTestRunnerKind(config) :
+						ITestKind.NULL;
+
+			ITestRunnerClient testRunnerClient = testRunnerKind != ITestKind.NULL ?
+							testRunnerKind.getTestRunnerClient() :
+								ITestRunnerClient.NULL;
+
+			// If a Remote Test Runner Client exists try to create a new Test Run Session,
+			// connect  the Remote Test Runner and listen it
+			// Otherwize, it is expected that the Test Runner Process will be created through
+			// <pre><code>org.eclipse.debug.core.processFactories</code></pre> extension point
+			// and the factory will take care of creating the Test Run Session.
+			//
+			if (testRunnerClient != ITestRunnerClient.NULL) {
+				// test whether the launch defines the JUnit attributes
+				String portStr= launch.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_PORT);
+				if (portStr == null)
+					return;
+				try {
+					final int port= Integer.parseInt(portStr);
+					fTrackedLaunches.remove(launch);
+					connectTestRunner(launch, javaProject, port, testRunnerClient);
+				} catch (NumberFormatException e) {
+					e.printStackTrace();
+					return;
+				}
 			}
 		}
 
-		private void connectTestRunner(ILaunch launch, IProject project, int port) {
+		private void connectTestRunner(ILaunch launch, IProject project, int port, ITestRunnerClient testRunnerClient) {
 			TestRunSession testRunSession= new TestRunSession(launch, project, port);
 			addTestRunSession(testRunSession);
 

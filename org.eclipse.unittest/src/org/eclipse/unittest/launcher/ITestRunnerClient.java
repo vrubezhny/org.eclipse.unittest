@@ -1,6 +1,6 @@
 package org.eclipse.unittest.launcher;
 
-import org.eclipse.unittest.internal.model.ITestRunListener2;
+import org.eclipse.unittest.internal.model.ITestRunListener3;
 
 public interface ITestRunnerClient {
 	ITestRunnerClient NULL= new ITestRunnerClient() {
@@ -16,7 +16,12 @@ public interface ITestRunnerClient {
 		}
 
 		@Override
-		public void startListening(ITestRunListener2[] listeners, int port) {
+		public void startListening(int port) {
+			// do nothing
+		}
+
+		@Override
+		public void setListeners(ITestRunListener3[] listeners) {
 			// do nothing
 		}
 
@@ -43,14 +48,21 @@ public interface ITestRunnerClient {
 
 	boolean isRunning();
 	void rerunTest(String testId, String className, String testName);
+
+	/**
+	 * Setup listeners for a test run.
+	 *
+	 * @param listeners listeners to inform
+	 */
+	void setListeners(ITestRunListener3[] listeners);
+
 	/**
 	 * Start listening to a test run. Start a server connection that
 	 * the RemoteTestRunner can connect to.
 	 *
-	 * @param listeners listeners to inform
-	 * @param port port on which the server socket will be opened
+	 * @param port Port to setup a server connection.
 	 */
-	void startListening(ITestRunListener2[] listeners, int port);
+	void startListening(int port);
 
 	void receiveMessage(String message);
 

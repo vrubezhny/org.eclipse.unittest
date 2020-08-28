@@ -196,8 +196,14 @@ public class TestRunSession implements ITestRunSession {
 		fTestRoot= new TestRoot(this);
 		fIdToTest= new HashMap<>();
 
-		fTestRunnerClient= fTestRunnerKind.getTestRunnerClient();
-		fTestRunnerClient.startListening(new ITestRunListener2[] { new TestSessionNotifier() }, port);
+		if (fTestRunnerKind != ITestKind.NULL) {
+			fTestRunnerClient= fTestRunnerKind.getTestRunnerClient();
+			fTestRunnerClient.setListeners(new ITestRunListener3[] { new TestSessionNotifier() });
+
+			if (port != -1) {
+				fTestRunnerClient.startListening(port);
+			}
+		}
 
 		final ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		launchManager.addLaunchListener(new ILaunchesListener2() {
@@ -229,6 +235,10 @@ public class TestRunSession implements ITestRunSession {
 
 		fSessionListeners= new ListenerList<>();
 		addTestSessionListener(new TestRunListenerAdapter(this));
+	}
+
+	public ITestRunnerClient getTestRunnerClient() {
+		return this.fTestRunnerClient;
 	}
 
 	void reset() {
@@ -458,7 +468,7 @@ public class TestRunSession implements ITestRunSession {
 	}
 
 	/**
-	 * @return <code>true</code> iff this session has been started, but not ended nor stopped nor terminated
+	 * @return <code>true</code> if this session has been started, but not ended nor stopped nor terminated
 	 */
 	public boolean isRunning() {
 		return fIsRunning;
@@ -490,7 +500,9 @@ public class TestRunSession implements ITestRunSession {
 		return fIdToTest.get(id);
 	}
 
-	private TestElement addTreeEntry(String treeEntry) {
+	private TestElement addTreeEntry(String id, String testName, boolean isSuite, int testCount, boolean isDynamicTest,
+			String parentId, String displayName, String[] parameterTypes, String uniqueId) {
+/*
 		// format: testId","testName","isSuite","testcount","isDynamicTest","parentId","displayName","parameterTypes","uniqueId
 		int index0= treeEntry.indexOf(',');
 		String id= treeEntry.substring(0, index0);
@@ -552,7 +564,7 @@ public class TestRunSession implements ITestRunSession {
 				uniqueId= null;
 			}
 		}
-
+*/
 		if (isDynamicTest) {
 			if (parentId != null) {
 				for (IncompleteTestSuite suite : fFactoryTestSuites) {
@@ -605,6 +617,7 @@ public class TestRunSession implements ITestRunSession {
 	 *
 	 * @return the index of the next ','
 	 */
+/*
 	private int scanTestName(String s, int start, StringBuffer testName) {
 		boolean inQuote= false;
 		int i= start;
@@ -623,7 +636,7 @@ public class TestRunSession implements ITestRunSession {
 		}
 		return i;
 	}
-
+*/
 	private TestSuiteElement getUnrootedSuite() {
 		if (fUnrootedSuite == null) {
 			fUnrootedSuite= (TestSuiteElement) createTestElement(fTestRoot, "-2", UnitTestMessages.TestRunSession_unrootedTests, true, 0, false, UnitTestMessages.TestRunSession_unrootedTests, null, null); //$NON-NLS-1$
@@ -636,7 +649,7 @@ public class TestRunSession implements ITestRunSession {
 	 * {@link RemoteTestRunnerClient} and translates them into high-level model
 	 * events (broadcasted to {@link ITestSessionListener}s).
 	 */
-	private class TestSessionNotifier implements ITestRunListener2 {
+	private class TestSessionNotifier implements ITestRunListener3 {
 
 		@Override
 		public void testRunStarted(int testCount) {
@@ -688,8 +701,10 @@ public class TestRunSession implements ITestRunSession {
 		}
 
 		@Override
-		public void testTreeEntry(String description) {
-			TestElement testElement= addTreeEntry(description);
+		public void testTreeEntry(String testId, String testName, boolean isSuite, int testCount, boolean isDynamicTest,
+				String parentId, String displayName, String[] parameterTypes, String uniqueId) {
+			TestElement testElement= addTreeEntry(testId, testName, isSuite, testCount, isDynamicTest,
+					parentId, displayName, parameterTypes, uniqueId);
 
 			for (ITestSessionListener listener : fSessionListeners) {
 				listener.testAdded(testElement);

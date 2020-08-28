@@ -18,13 +18,18 @@ package org.eclipse.unittest.internal.model;
 import org.eclipse.osgi.util.NLS;
 
 public class ModelMessages extends NLS {
-	private static final String BUNDLE_NAME= "org.eclipse.jdt.internal.junit.model.ModelMessages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME= "org.eclipse.unittest.internal.model.ModelMessages"; //$NON-NLS-1$
 	public static String JUnitModel_could_not_import;
 	public static String JUnitModel_could_not_export;
 	public static String JUnitModel_could_not_read;
 	public static String JUnitModel_could_not_write;
 	public static String JUnitModel_importing_from_url;
 	public static String TestRunHandler_lines_read;
+
+	public static String TestingSession_finished_status;
+	public static String TestingSession_name_format;
+	public static String TestingSession_starting_status;
+	public static String TestingSession_stopped_status;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, ModelMessages.class);

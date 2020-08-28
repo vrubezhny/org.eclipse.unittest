@@ -15,6 +15,8 @@
  *******************************************************************************/
 package org.eclipse.unittest.junit.launcher;
 
+import java.util.Arrays;
+
 import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.internal.model.ITestRunListener2;
 import org.eclipse.unittest.internal.model.RemoteTestRunnerClient;
@@ -46,6 +48,7 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 	class DefaultProcessingState extends ProcessingState {
 	    @Override
 		ProcessingState readMessage(String message) {
+	    	System.out.println("JUnitRemoteTestRunnerClient.DefaultProcessingState.readMessage: " + message);
 	        if (message.startsWith(MessageIds.TRACE_START)) {
 	        	fFailedTrace.setLength(0);
 	            return fTraceState;
@@ -80,11 +83,13 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 	            return this;
 	        }
 	        if (message.startsWith(MessageIds.TEST_START)) {
-	            notifyTestStarted(arg);
+	        	String s[] = extractTestId(arg);
+	            notifyTestStarted(s[0], s[1]);
 	            return this;
 	        }
 	        if (message.startsWith(MessageIds.TEST_END)) {
-	            notifyTestEnded(arg);
+	        	String s[] = extractTestId(arg);
+	            notifyTestEnded(s[0], s[1]);
 	            return this;
 	        }
 	        if (message.startsWith(MessageIds.TEST_ERROR)) {
@@ -318,7 +323,6 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 	 * @param arg test name
 	 * @return an array with two elements. The first one is the testId, the second one the testName.
 	 */
-	@Override
 	protected String[] extractTestId(String arg) {
 		String[] result= new String[2];
 		if (!hasTestId()) {
@@ -350,15 +354,102 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 			});
 		}
 	}
-	private void notifyTestTreeEntry(final String treeEntry) {
-		for (ITestRunListener2 listener : fListeners) {
-			if (!hasTestId())
-				listener.testTreeEntry(fakeTestId(treeEntry));
-			else
-				listener.testTreeEntry(treeEntry);
-		}
-	}
 */
+	private void notifyTestTreeEntry(final String treeEntry) {
+		// format: testId","testName","isSuite","testcount","isDynamicTest","parentId","displayName","parameterTypes","uniqueId
+		String fixedTreeEntry = hasTestId() ? treeEntry : fakeTestId(treeEntry);
+
+		int index0= fixedTreeEntry.indexOf(',');
+		String id= fixedTreeEntry.substring(0, index0);
+
+		StringBuffer testNameBuffer= new StringBuffer(100);
+		int index1= scanTestName(fixedTreeEntry, index0 + 1, testNameBuffer);
+		String testName= testNameBuffer.toString().trim();
+
+		int index2= fixedTreeEntry.indexOf(',', index1 + 1);
+		boolean isSuite= fixedTreeEntry.substring(index1 + 1, index2).equals("true"); //$NON-NLS-1$
+
+		int testCount;
+		boolean isDynamicTest;
+		String parentId;
+		String displayName;
+		StringBuffer displayNameBuffer= new StringBuffer(100);
+		String[] parameterTypes;
+		StringBuffer parameterTypesBuffer= new StringBuffer(200);
+		String uniqueId;
+		StringBuffer uniqueIdBuffer= new StringBuffer(200);
+		int index3= fixedTreeEntry.indexOf(',', index2 + 1);
+		if (index3 == -1) {
+			testCount= Integer.parseInt(fixedTreeEntry.substring(index2 + 1));
+			isDynamicTest= false;
+			parentId= null;
+			displayName= null;
+			parameterTypes= null;
+			uniqueId= null;
+		} else {
+			testCount= Integer.parseInt(fixedTreeEntry.substring(index2 + 1, index3));
+
+			int index4= fixedTreeEntry.indexOf(',', index3 + 1);
+			isDynamicTest= fixedTreeEntry.substring(index3 + 1, index4).equals("true"); //$NON-NLS-1$
+
+			int index5= fixedTreeEntry.indexOf(',', index4 + 1);
+			parentId= fixedTreeEntry.substring(index4 + 1, index5);
+			if (parentId.equals("-1")) { //$NON-NLS-1$
+				parentId= null;
+			}
+
+			int index6= scanTestName(fixedTreeEntry, index5 + 1, displayNameBuffer);
+			displayName= displayNameBuffer.toString().trim();
+			if (displayName.equals(testName)) {
+				displayName= null;
+			}
+
+			int index7= scanTestName(fixedTreeEntry, index6 + 1, parameterTypesBuffer);
+			String parameterTypesString= parameterTypesBuffer.toString().trim();
+			if (parameterTypesString.isEmpty()) {
+				parameterTypes= null;
+			} else {
+				parameterTypes= parameterTypesString.split(","); //$NON-NLS-1$
+				Arrays.parallelSetAll(parameterTypes, i -> parameterTypes[i].trim());
+			}
+
+			scanTestName(fixedTreeEntry, index7 + 1, uniqueIdBuffer);
+			uniqueId= uniqueIdBuffer.toString().trim();
+			if (uniqueId.isEmpty()) {
+				uniqueId= null;
+			}
+		}
+
+		notifyTestTreeEntry(id, testName, isSuite, testCount, isDynamicTest, parentId, displayName, parameterTypes, uniqueId);
+	}
+
+	/**
+	 * Append the test name from <code>s</code> to <code>testName</code>.
+	 *
+	 * @param s the string to scan
+	 * @param start the offset of the first character in <code>s</code>
+	 * @param testName the result
+	 *
+	 * @return the index of the next ','
+	 */
+	private int scanTestName(String s, int start, StringBuffer testName) {
+		boolean inQuote= false;
+		int i= start;
+		for (; i < s.length(); i++) {
+			char c= s.charAt(i);
+			if (c == '\\' && !inQuote) {
+				inQuote= true;
+				continue;
+			} else if (inQuote) {
+				inQuote= false;
+				testName.append(c);
+			} else if (c == ',')
+				break;
+			else
+				testName.append(c);
+		}
+		return i;
+	}
 
 	private String fakeTestId(String treeEntry) {
 		// extract the test name and add it as the testId
@@ -497,4 +588,5 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 			fWriter.flush();
 		}
 	}
+
 }

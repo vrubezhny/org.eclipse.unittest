@@ -19,6 +19,8 @@ package org.eclipse.unittest.junit;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
+import org.eclipse.unittest.UnitTestPlugin;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
@@ -101,6 +103,7 @@ public class JUnitPlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		fBundleContext= context;
+		UnitTestPlugin.getDefault();
 	}
 
 	/**

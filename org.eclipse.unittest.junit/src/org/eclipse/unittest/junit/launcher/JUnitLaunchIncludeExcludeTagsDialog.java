@@ -13,9 +13,9 @@
  */
 package org.eclipse.unittest.junit.launcher;
 
+import org.eclipse.unittest.junit.launcher.util.LayoutUtil;
 import org.eclipse.unittest.junit.ui.JUnitMessages;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
-import org.eclipse.unittest.launcher.junit.util.LayoutUtil;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;

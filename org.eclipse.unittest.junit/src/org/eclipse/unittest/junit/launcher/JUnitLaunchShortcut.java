@@ -22,11 +22,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.unittest.UnitTestPlugin;
+import org.eclipse.unittest.junit.launcher.util.ExceptionHandler;
+import org.eclipse.unittest.junit.launcher.util.JUnitStubUtility;
+import org.eclipse.unittest.junit.launcher.util.TestSearchEngine;
 import org.eclipse.unittest.launcher.ITestKind;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
-import org.eclipse.unittest.launcher.junit.util.ExceptionHandler;
-import org.eclipse.unittest.launcher.junit.util.JUnitStubUtility;
-import org.eclipse.unittest.launcher.junit.util.TestSearchEngine;
 import org.eclipse.unittest.ui.Messages;
 
 import org.eclipse.swt.widgets.Display;

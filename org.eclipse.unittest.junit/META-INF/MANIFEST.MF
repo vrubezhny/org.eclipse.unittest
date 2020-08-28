@@ -11,9 +11,9 @@ Bundle-Localization: plugin
 Export-Package: org.eclipse.unittest.junit,
  org.eclipse.unittest.junit.internal.launcher;x-internal:=true,
  org.eclipse.unittest.junit.launcher,
- org.eclipse.unittest.junit.ui;x-internal:=true,
- org.eclipse.unittest.launcher.junit.util;x-internal:=true,
- org.eclipse.unittest.launcher.junit.wizards;x-internal:=true
+ org.eclipse.unittest.junit.launcher.util;x-internal:=true,
+ org.eclipse.unittest.junit.launcher.wizards;x-internal:=true,
+ org.eclipse.unittest.junit.ui;x-internal:=true
 Require-Bundle: 
  org.eclipse.unittest,
  org.eclipse.ui.ide;bundle-version="[3.5.0,4.0.0)",
