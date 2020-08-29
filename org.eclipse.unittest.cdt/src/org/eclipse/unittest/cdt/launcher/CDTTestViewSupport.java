@@ -5,7 +5,6 @@ import org.eclipse.unittest.internal.model.TestCaseElement;
 import org.eclipse.unittest.internal.model.TestElement;
 import org.eclipse.unittest.internal.model.TestSuiteElement;
 import org.eclipse.unittest.launcher.ITestViewSupport;
-import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.ui.FailureTrace;
 import org.eclipse.unittest.ui.IOpenEditorAction;
 import org.eclipse.unittest.ui.TestRunnerViewPart;
@@ -27,6 +26,8 @@ public class CDTTestViewSupport implements ITestViewSupport {
 
 	@Override
 	public IOpenEditorAction getOpenTestAction(TestRunnerViewPart testRunnerPart, TestSuiteElement testSuite) {
+		return null;
+/*
 		String testName= testSuite.getTestName();
 		ITestElement[] children= testSuite.getChildren();
 
@@ -45,7 +46,7 @@ public class CDTTestViewSupport implements ITestViewSupport {
 
 		// regular test class
 //		return new OpenTestAction(testRunnerPart, testName);
-		return null;
+ */
 	}
 
 	@Override
