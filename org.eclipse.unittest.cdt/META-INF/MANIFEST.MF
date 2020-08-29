@@ -9,7 +9,6 @@ Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.unittest.cdt,
- org.eclipse.unittest.cdt.internal.launcher;x-internal:=true,
  org.eclipse.unittest.cdt.launcher,
  org.eclipse.unittest.cdt.ui
 Require-Bundle: 
