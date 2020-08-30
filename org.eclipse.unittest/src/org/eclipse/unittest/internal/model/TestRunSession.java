@@ -33,6 +33,7 @@ import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElementContainer;
 import org.eclipse.unittest.model.ITestRunSession;
+import org.eclipse.unittest.model.ITestSuiteElement;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -950,5 +951,29 @@ public class TestRunSession implements ITestRunSession {
 	@Override
 	public String toString() {
 		return fTestRunName + " " + DateFormat.getDateTimeInstance().format(new Date(fStartTime)); //$NON-NLS-1$
+	}
+
+
+	@Override
+	public ITestSuiteElement getParent() {
+		return null;
+	}
+
+
+	@Override
+	public String[] getParameterTypes() {
+		return null;
+	}
+
+
+	@Override
+	public String getTestName() {
+		return getTestRunName();
+	}
+
+
+	@Override
+	public String getTrace() {
+		return null;
 	}
 }

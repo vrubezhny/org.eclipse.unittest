@@ -50,7 +50,7 @@
    <element name="kind">
       <complexType>
          <sequence>
-            <element ref="runtimeClasspathEntry" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="runtimeClasspathEntry" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -69,7 +69,7 @@
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="finderClass" type="string" use="required">
+         <attribute name="finderClass" type="string">
             <annotation>
                <documentation>
                   test finder class implementing org.eclipse.unittest.launcher.ITestFinder

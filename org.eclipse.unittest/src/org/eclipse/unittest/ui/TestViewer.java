@@ -305,7 +305,7 @@ public class TestViewer {
 	}
 
 	private void addRerunActions(IMenuManager manager, TestCaseElement testCaseElement) {
-		String className= testCaseElement.getClassName();
+		String className= testCaseElement.getTestClassName();
 		String testMethodName= testCaseElement.getTestMethodName();
 		String[] parameterTypes= testCaseElement.getParameterTypes();
 		if (parameterTypes != null) {
@@ -432,7 +432,7 @@ public class TestViewer {
 			throw new IllegalStateException(String.valueOf(testElement));
 		}
 
-		if (action.isEnabled())
+		if (action != null && action.isEnabled())
 			action.run();
 		return;
 	}

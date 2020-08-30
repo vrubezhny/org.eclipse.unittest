@@ -40,4 +40,8 @@ public interface ITestCaseElement extends ITestElement {
 	 */
 	public String getTestClassName();
 
+	public boolean isIgnored();
+
+	public boolean isDynamicTest();
+
 }

@@ -70,6 +70,17 @@ public class ActionsMessages extends NLS {
 	public static String ToggleOrientationAction_automatic_text;
 	public static String ToggleOrientationAction_horizontal_text;
 	public static String ToggleOrientationAction_vertical_text;
+
+	public static String OpenEditorAction_action_label;
+	public static String OpenEditorAction_error_cannotopen_message;
+	public static String OpenEditorAction_error_cannotopen_title;
+	public static String OpenEditorAction_errorOpenEditor;
+	public static String OpenEditorAction_error_dialog_message;
+	public static String OpenEditorAction_error_dialog_title;
+	public static String OpenEditorAction_message_cannotopen;
+	public static String OOpenEditorAction_UpdateElementsJob_name;
+	public static String OOpenEditorAction_UpdateElementsJob_inProgress;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, ActionsMessages.class);

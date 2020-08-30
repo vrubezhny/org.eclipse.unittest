@@ -63,12 +63,12 @@ import org.eclipse.debug.ui.sourcelookup.ISourceLookupResult;
 /**
  * Opens the editor in place where the currently selected message is pointed to.
  */
-public class OpenInEditorAction extends Action implements IOpenEditorAction {
+public class OpenEditorAtLineAction extends Action implements IOpenEditorAction {
 	private TestRunnerViewPart testRunner;
 	private String fileName;
 	private int line;
 
-	public OpenInEditorAction(TestRunnerViewPart testRunner, String fileName, int line) {
+	public OpenEditorAtLineAction(TestRunnerViewPart testRunner, String fileName, int line) {
 		super(ActionsMessages.OpenInEditorAction_text);
 		this.testRunner = testRunner;
 		this.fileName = fileName;

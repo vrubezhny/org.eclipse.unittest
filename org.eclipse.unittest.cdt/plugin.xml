@@ -518,7 +518,6 @@
       <kind
             id="org.eclipse.unittest.cdt.loader"
             displayName="%testKind.cdt"
-            finderClass="org.eclipse.unittest.launcher.junit.launcher.JUnit3TestFinder"
             loaderPluginId="org.eclipse.jdt.junit.runtime"
             loaderClass="org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestLoader"
             testRunnerClientClass="org.eclipse.unittest.cdt.launcher.CDTTestRunnerClient"

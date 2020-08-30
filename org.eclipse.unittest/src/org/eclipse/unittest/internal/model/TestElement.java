@@ -341,7 +341,7 @@ public abstract class TestElement implements ITestElement {
 	 * @see org.eclipse.unittest.runner.ITestIdentifier#getName()
 	 * @see org.eclipse.unittest.runner.MessageIds#TEST_IDENTIFIER_MESSAGE_FORMAT
 	 */
-	public String getClassName() {
+	String getClassName() {
 		return extractClassName(getTestName());
 	}
 

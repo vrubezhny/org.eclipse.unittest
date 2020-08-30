@@ -1,12 +1,12 @@
 package org.eclipse.unittest.junit.launcher;
 
 import org.eclipse.unittest.internal.model.TestCaseElement;
-import org.eclipse.unittest.internal.model.TestElement;
-import org.eclipse.unittest.internal.model.TestSuiteElement;
 import org.eclipse.unittest.junit.ui.OpenEditorAtLineAction;
 import org.eclipse.unittest.junit.ui.OpenTestAction;
 import org.eclipse.unittest.launcher.ITestViewSupport;
+import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
+import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.unittest.ui.FailureTrace;
 import org.eclipse.unittest.ui.IOpenEditorAction;
 import org.eclipse.unittest.ui.TestRunnerViewPart;
@@ -26,13 +26,13 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 	}
 
 	@Override
-	public IOpenEditorAction getOpenTestAction(TestRunnerViewPart testRunnerPart, TestCaseElement testCase) {
+	public IOpenEditorAction getOpenTestAction(TestRunnerViewPart testRunnerPart, ITestCaseElement testCase) {
 		return new OpenTestAction(testRunnerPart, testCase, testCase.getParameterTypes());
 	}
 
 	@Override
-	public IOpenEditorAction getOpenTestAction(TestRunnerViewPart testRunnerPart, TestSuiteElement testSuite) {
-		String testName= testSuite.getTestName();
+	public IOpenEditorAction getOpenTestAction(TestRunnerViewPart testRunnerPart, ITestSuiteElement testSuite) {
+		String testName= testSuite.getSuiteTypeName();
 		ITestElement[] children= testSuite.getChildren();
 
 		if (testName.startsWith("[") && testName.endsWith("]") && children.length > 0 && children[0] instanceof TestCaseElement) { //$NON-NLS-1$ //$NON-NLS-2$
@@ -52,7 +52,7 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 	}
 
 	@Override
-	public IOpenEditorAction createOpenEditorAction(TestRunnerViewPart testRunnerPart, TestElement failure, String traceLine) {
+	public IOpenEditorAction createOpenEditorAction(TestRunnerViewPart testRunnerPart, ITestElement failure, String traceLine) {
 		try {
 			String testName= traceLine;
 			int indexOfFramePrefix= testName.indexOf(FailureTrace.FRAME_PREFIX);

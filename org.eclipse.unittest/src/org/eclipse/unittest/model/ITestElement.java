@@ -191,4 +191,11 @@ public interface ITestElement {
 	 */
 	public double getElapsedTimeInSeconds();
 
+	public ITestSuiteElement getParent();
+
+	public String[] getParameterTypes();
+
+	public String getTestName();
+
+	public String getTrace();
 }
