@@ -78,8 +78,8 @@ public class ActionsMessages extends NLS {
 	public static String OpenEditorAction_error_dialog_message;
 	public static String OpenEditorAction_error_dialog_title;
 	public static String OpenEditorAction_message_cannotopen;
-	public static String OOpenEditorAction_UpdateElementsJob_name;
-	public static String OOpenEditorAction_UpdateElementsJob_inProgress;
+	public static String OpenEditorAction_UpdateElementsJob_name;
+	public static String OpenEditorAction_UpdateElementsJob_inProgress;
 
 	static {
 		// initialize resource bundle
