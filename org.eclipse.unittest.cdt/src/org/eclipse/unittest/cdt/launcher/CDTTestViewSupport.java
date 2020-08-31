@@ -11,6 +11,8 @@ import org.eclipse.unittest.ui.FailureTrace;
 import org.eclipse.unittest.ui.IOpenEditorAction;
 import org.eclipse.unittest.ui.TestRunnerViewPart;
 
+import org.eclipse.ui.IActionDelegate;
+
 public class CDTTestViewSupport implements ITestViewSupport {
 
 	@Override
@@ -51,6 +53,11 @@ public class CDTTestViewSupport implements ITestViewSupport {
 		catch(IndexOutOfBoundsException e) {
 			CDTPlugin.log(e);
 		}
+		return null;
+	}
+
+	@Override
+	public IActionDelegate createShowStackTraceInConsoleViewActionDelegate(FailureTrace view) {
 		return null;
 	}
 }

@@ -36,19 +36,16 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.OpenStrategy;
-import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
  * A pane that shows a stack trace of a failed test.
  */
 public class FailureTrace implements IMenuListener {
 
-	/**
+	/*
 	 * Internal property change listener for handling workbench font changes.
-	 */
+	 *
 	private class FontPropertyChangeListener implements IPropertyChangeListener {
 		@Override
 		public void propertyChange(PropertyChangeEvent event) {
@@ -61,9 +58,9 @@ public class FailureTrace implements IMenuListener {
 				fTable.setFont(JFaceResources.getFont(FAILURE_FONT));
 		}
 	}
-
+	*/
     private static final int MAX_LABEL_LENGTH = 256;
-    private static final String FAILURE_FONT = "org.eclipse.jdt.junit.failurePaneFont"; //$NON-NLS-1$
+//    private static final String FAILURE_FONT = "org.eclipse.jdt.junit.failurePaneFont"; //$NON-NLS-1$
 
     public static final String FRAME_PREFIX= "at "; //$NON-NLS-1$
 	private Table fTable;
@@ -73,7 +70,7 @@ public class FailureTrace implements IMenuListener {
     private TestElement fFailure;
     private CompareResultsAction fCompareAction;
 	private final FailureTableDisplay fFailureTableDisplay;
-	private IPropertyChangeListener fFontPropertyChangeListener;
+//	private IPropertyChangeListener fFontPropertyChangeListener;
 	private ShowStackTraceInConsoleViewAction fShowTraceInConsoleAction;
 
 	public FailureTrace(Composite parent, Clipboard clipboard, TestRunnerViewPart testRunner, ToolBar toolBar) {
@@ -81,7 +78,8 @@ public class FailureTrace implements IMenuListener {
 
 		// fill the failure trace viewer toolbar
 		ToolBarManager failureToolBarmanager= new ToolBarManager(toolBar);
-		fShowTraceInConsoleAction= new ShowStackTraceInConsoleViewAction(this);
+		fShowTraceInConsoleAction= new ShowStackTraceInConsoleViewAction();
+		fShowTraceInConsoleAction.setDelegate(null);
 		fShowTraceInConsoleAction.setEnabled(false);
 		failureToolBarmanager.add(fShowTraceInConsoleAction);
 		failureToolBarmanager.add(new EnableStackFilterAction(this));
@@ -90,7 +88,7 @@ public class FailureTrace implements IMenuListener {
         failureToolBarmanager.add(fCompareAction);
 		failureToolBarmanager.update(true);
 		fTable= new Table(parent, SWT.SINGLE | SWT.V_SCROLL | SWT.H_SCROLL);
-		fTable.setFont(JFaceResources.getFont(FAILURE_FONT));
+//		fTable.setFont(JFaceResources.getFont(FAILURE_FONT));
 		fTestRunner= testRunner;
 		fClipboard= clipboard;
 
@@ -106,8 +104,8 @@ public class FailureTrace implements IMenuListener {
 			}
 		});
 
-		fFontPropertyChangeListener = new FontPropertyChangeListener();
-		JFaceResources.getFontRegistry().addListener(fFontPropertyChangeListener);
+//		fFontPropertyChangeListener = new FontPropertyChangeListener();
+//		JFaceResources.getFontRegistry().addListener(fFontPropertyChangeListener);
 
 		initMenu();
 
@@ -170,6 +168,7 @@ public class FailureTrace implements IMenuListener {
 	public void showFailure(TestElement test) {
 	    fFailure= test;
 	    String trace= ""; //$NON-NLS-1$
+	    updateActions(test);
 	    updateEnablement(test);
 	    if (test != null)
 	        trace= test.getTrace();
@@ -179,7 +178,12 @@ public class FailureTrace implements IMenuListener {
 		updateTable(trace);
 	}
 
-	public void updateEnablement(TestElement test) {
+	private void updateActions(TestElement test) {
+		ITestKind testKind = test != null ? fFailure.getTestRunSession().getTestRunnerKind() : null;
+		fShowTraceInConsoleAction.setDelegate(testKind != null ? testKind.getTestViewSupport().createShowStackTraceInConsoleViewActionDelegate(this) : null);
+	}
+
+	private void updateEnablement(TestElement test) {
 		boolean enableCompare= test != null && test.isComparisonFailure();
 		fCompareAction.setEnabled(enableCompare);
 		if (enableCompare) {
@@ -240,6 +244,6 @@ public class FailureTrace implements IMenuListener {
 	}
 
 	public void dispose() {
-		JFaceResources.getFontRegistry().removeListener(fFontPropertyChangeListener);
+//		JFaceResources.getFontRegistry().removeListener(fFontPropertyChangeListener);
 	}
 }

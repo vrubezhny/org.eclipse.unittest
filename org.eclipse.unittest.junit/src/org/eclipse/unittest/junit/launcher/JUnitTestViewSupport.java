@@ -3,6 +3,7 @@ package org.eclipse.unittest.junit.launcher;
 import org.eclipse.unittest.internal.model.TestCaseElement;
 import org.eclipse.unittest.junit.ui.OpenEditorAtLineAction;
 import org.eclipse.unittest.junit.ui.OpenTestAction;
+import org.eclipse.unittest.junit.ui.ShowStackTraceInConsoleViewActionDelegate;
 import org.eclipse.unittest.launcher.ITestViewSupport;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
@@ -12,6 +13,8 @@ import org.eclipse.unittest.ui.IOpenEditorAction;
 import org.eclipse.unittest.ui.TestRunnerViewPart;
 
 import org.eclipse.core.runtime.Platform;
+
+import org.eclipse.ui.IActionDelegate;
 
 import org.eclipse.jdt.internal.junit.JUnitCorePlugin;
 import org.eclipse.jdt.internal.junit.JUnitPreferencesConstants;
@@ -79,6 +82,11 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 		catch(IndexOutOfBoundsException e) {
 		}
 		return null;
+	}
+
+	@Override
+	public IActionDelegate createShowStackTraceInConsoleViewActionDelegate(FailureTrace view) {
+		return new ShowStackTraceInConsoleViewActionDelegate(view);
 	}
 
 }
