@@ -2096,9 +2096,6 @@ action enablement
 		return getViewSite().getShell().getDisplay();
 	}
 
-	/*
-	 * @see IWorkbenchPart#getTitleImage()
-	 */
 	@Override
 	public Image getTitleImage() {
 		if (fOriginalViewImage == null)

@@ -50,9 +50,6 @@ public class FailureTrace implements IMenuListener {
 	 * Internal property change listener for handling workbench font changes.
 	 */
 	private class FontPropertyChangeListener implements IPropertyChangeListener {
-		/*
-		 * @see IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-		 */
 		@Override
 		public void propertyChange(PropertyChangeEvent event) {
 			if (fTable == null)

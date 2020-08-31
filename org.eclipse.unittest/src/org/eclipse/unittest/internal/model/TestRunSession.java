@@ -301,17 +301,11 @@ public class TestRunSession implements ITestRunSession {
 		return fTestRoot;
 	}
 
-	/*
-	 * @see org.eclipse.jdt.junit.model.ITestRunSession#getLaunchedProject()
-	 */
 	@Override
 	public IProject getLaunchedProject() {
 		return fProject;
 	}
 
-	/*
-	 * @see org.eclipse.jdt.junit.model.ITestRunSession#getTestRunnerKind()
-	 */
 	@Override
 	public ITestKind getTestRunnerKind() {
 		return fTestRunnerKind;
@@ -321,6 +315,7 @@ public class TestRunSession implements ITestRunSession {
 	/**
 	 * @return the launch, or <code>null</code> iff this session was run externally
 	 */
+	@Override
 	public ILaunch getLaunch() {
 		return fLaunch;
 	}

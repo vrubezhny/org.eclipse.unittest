@@ -39,9 +39,6 @@ public class CompareResultsAction extends Action {
 		fView= view;
 	}
 
-	/*
-	 * @see Action#actionPerformed
-	 */
 	@Override
 	public void run() {
 		TestElement failedTest= fView.getFailedTest();

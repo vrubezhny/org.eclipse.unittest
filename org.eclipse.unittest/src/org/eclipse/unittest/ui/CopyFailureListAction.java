@@ -30,7 +30,6 @@ import org.eclipse.ui.PlatformUI;
 /**
  * Copies the names of the methods that failed and their traces to the clipboard.
  */
-@SuppressWarnings("restriction")
 public class CopyFailureListAction extends Action {
 
 	private final Clipboard fClipboard;
@@ -43,9 +42,6 @@ public class CopyFailureListAction extends Action {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IUnitTestHelpContextIds.COPYFAILURELIST_ACTION);
 	}
 
-	/*
-	 * @see IAction#run()
-	 */
 	@Override
 	public void run() {
 		TextTransfer plainTextTransfer = TextTransfer.getInstance();

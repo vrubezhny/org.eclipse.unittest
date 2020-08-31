@@ -69,7 +69,6 @@ import org.eclipse.ui.part.PageBook;
 import org.eclipse.debug.core.ILaunchManager;
 
 
-@SuppressWarnings("restriction")
 public class TestViewer {
 	private final class TestSelectionListener implements ISelectionChangedListener {
 		@Override

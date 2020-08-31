@@ -42,9 +42,6 @@ public class EnableStackFilterAction extends Action {
 		setChecked(UnitTestPreferencesConstants.getFilterStack());
 	}
 
-	/*
-	 * @see Action#actionPerformed
-	 */
 	@Override
 	public void run() {
 		UnitTestPreferencesConstants.setFilterStack(isChecked());

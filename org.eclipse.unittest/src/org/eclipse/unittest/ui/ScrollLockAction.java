@@ -40,9 +40,6 @@ public class ScrollLockAction extends Action {
 		setChecked(false);
 	}
 
-	/**
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@Override
 	public void run() {
 		fRunnerViewPart.setAutoScroll(!isChecked());

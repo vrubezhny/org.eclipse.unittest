@@ -36,25 +36,16 @@ import org.eclipse.jface.viewers.StructuredViewer;
 public class SelectionProviderMediator implements IPostSelectionProvider {
 
 	private class InternalListener implements ISelectionChangedListener, FocusListener {
-		/*
-	 	 * @see ISelectionChangedListener#selectionChanged
-	 	 */
 		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			doSelectionChanged(event);
 		}
 
-	    /*
-	     * @see FocusListener#focusGained
-	     */
 	    @Override
 		public void focusGained(FocusEvent e) {
 	    	doFocusChanged(e.widget);
 	    }
 
-	    /*
-	     * @see FocusListener#focusLost
-	     */
 	    @Override
 		public void focusLost(FocusEvent e) {
 	    	// do not reset due to focus behavior on GTK
@@ -147,17 +138,11 @@ public class SelectionProviderMediator implements IPostSelectionProvider {
 		}
 	}
 
-	/*
-	 * @see ISelectionProvider#addSelectionChangedListener
-	 */
 	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		fSelectionChangedListeners.add(listener);
 	}
 
-	/*
-	 * @see ISelectionProvider#removeSelectionChangedListener
-	 */
 	@Override
 	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 		fSelectionChangedListeners.remove(listener);
@@ -174,9 +159,6 @@ public class SelectionProviderMediator implements IPostSelectionProvider {
 		fPostSelectionChangedListeners.remove(listener);
 	}
 
-	/*
-	 * @see ISelectionProvider#getSelection
-	 */
 	@Override
 	public ISelection getSelection() {
 		if (fViewerInFocus != null) {
@@ -185,9 +167,6 @@ public class SelectionProviderMediator implements IPostSelectionProvider {
 		return StructuredSelection.EMPTY;
 	}
 
-	/*
-	 * @see ISelectionProvider#setSelection
-	 */
 	@Override
 	public void setSelection(ISelection selection) {
 		if (fViewerInFocus != null) {

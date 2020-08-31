@@ -151,9 +151,6 @@ public class CheckedTableSelectionDialog extends SelectionStatusDialog {
 		updateStatus(fCurrStatus);
 	}
 
-	/*
-	 * @see Window#open()
-	 */
 	@Override
 	public int open() {
 		fIsEmpty= evaluateIfTableEmpty(fInput);
@@ -174,17 +171,11 @@ public class CheckedTableSelectionDialog extends SelectionStatusDialog {
 		super.cancelPressed();
 	}
 
-	/*
-	 * @see SelectionStatusDialog#computeResult()
-	 */
 	@Override
 	protected void computeResult() {
 		setResult(Arrays.asList(fViewer.getCheckedElements()));
 	}
 
-	/*
-	 * @see Window#create()
-	 */
 	@Override
 	public void create() {
 		super.create();
@@ -197,9 +188,6 @@ public class CheckedTableSelectionDialog extends SelectionStatusDialog {
 		updateOKStatus();
 	}
 
-	/*
-	 * @see Dialog#createDialogArea(Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite= (Composite) super.createDialogArea(parent);

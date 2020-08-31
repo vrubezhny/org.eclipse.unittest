@@ -52,9 +52,6 @@ public class UnitTestCopyAction extends SelectionListenerAction {
 		fClipboard= clipboard;
 	}
 
-	/*
-	 * @see IAction#run()
-	 */
 	@Override
 	public void run() {
 		String trace= fView.getTrace();

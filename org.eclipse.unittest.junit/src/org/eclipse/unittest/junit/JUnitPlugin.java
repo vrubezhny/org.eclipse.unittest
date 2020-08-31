@@ -22,7 +22,6 @@ import org.osgi.framework.ServiceReference;
 import org.eclipse.unittest.UnitTestPlugin;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 
@@ -40,10 +39,6 @@ public class JUnitPlugin extends AbstractUIPlugin {
 
 	public static final String CORE_PLUGIN_ID= "org.eclipse.unittest"; //$NON-NLS-1$
 
-	/**
-	 * Plug-in ID of the <b>UI</b> plug-in ("org.eclipse.jdt.junit").
-	 * @see #CORE_PLUGIN_ID
-	 */
 	public static final String PLUGIN_ID= "org.eclipse.unittest.junit"; //$NON-NLS-1$
 
 	public final static String TEST_SUPERCLASS_NAME= "junit.framework.TestCase"; //$NON-NLS-1$
@@ -96,9 +91,6 @@ public class JUnitPlugin extends AbstractUIPlugin {
 		getDefault().getLog().log(status);
 	}
 
-	/**
-	 * @see Plugin#start(BundleContext)
-	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
@@ -106,9 +98,6 @@ public class JUnitPlugin extends AbstractUIPlugin {
 		UnitTestPlugin.getDefault();
 	}
 
-	/**
-	 * @see Plugin#stop(BundleContext)
-	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		fIsStopped= true;

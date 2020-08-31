@@ -13,9 +13,6 @@
  *******************************************************************************/
 package org.eclipse.unittest.internal.model;
 
-import org.eclipse.jdt.internal.junit.runner.MessageIds;
-
-
 public interface ITestRunListener2 {
 
 	/**
@@ -93,7 +90,6 @@ public interface ITestRunListener2 {
 	 *
 	 * @param description a string describing a tree entry
 	 *
-	 * @see MessageIds#TEST_TREE
 	 */
 	public void testTreeEntry(String description);
 
