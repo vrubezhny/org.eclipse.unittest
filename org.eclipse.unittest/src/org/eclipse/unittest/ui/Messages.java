@@ -356,12 +356,8 @@ public final class Messages extends NLS {
 	}
 
 
-	public static String format(String message, Object object) {
+	public static String format(String message, Object... object) {
 		return MessageFormat.format(message, object);
-	}
-
-	public static String format(String message, Object[] objects) {
-		return MessageFormat.format(message, objects);
 	}
 
 	public static String TestSessionLabelProvider_testMethodName_className;

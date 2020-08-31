@@ -90,9 +90,6 @@ public class JUnitStatus implements IStatus {
 		return fSeverity == IStatus.ERROR;
 	}
 
-	/**
-	 * @see IStatus#getMessage()
-	 */
 	@Override
 	public String getMessage() {
 		return fStatusMessage;
@@ -136,9 +133,6 @@ public class JUnitStatus implements IStatus {
 		fSeverity= IStatus.OK;
 	}
 
-	/*
-	 * @see IStatus#matches(int)
-	 */
 	@Override
 	public boolean matches(int severityMask) {
 		return (fSeverity & severityMask) != 0;
@@ -153,17 +147,11 @@ public class JUnitStatus implements IStatus {
 		return false;
 	}
 
-	/*
-	 * @see IStatus#getSeverity()
-	 */
 	@Override
 	public int getSeverity() {
 		return fSeverity;
 	}
 
-	/*
-	 * @see IStatus#getPlugin()
-	 */
 	@Override
 	public String getPlugin() {
 		return UnitTestPlugin.PLUGIN_ID;

@@ -144,7 +144,7 @@ public abstract class BaseTestsLaunchDelegate extends LaunchConfigurationDelegat
 		configWC.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_PROJECT_NAME,
 				config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, "")); //$NON-NLS-1$
 		configWC.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_RUNNER_KIND,
-				getDefaultTestKindId()); //$NON-NLS-1$
+				getDefaultTestKindId());
 		setProgramArguments(configWC);
 		configWC.doSave();
 	}

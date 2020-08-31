@@ -80,25 +80,16 @@ public final class UnitTestModel {
 		 */
 		private HashSet<ILaunch> fTrackedLaunches= new HashSet<>(20);
 
-		/*
-		 * @see ILaunchListener#launchAdded(ILaunch)
-		 */
 		@Override
 		public void launchAdded(ILaunch launch) {
 			fTrackedLaunches.add(launch);
 		}
 
-		/*
-		 * @see ILaunchListener#launchRemoved(ILaunch)
-		 */
 		@Override
 		public void launchRemoved(final ILaunch launch) {
 			fTrackedLaunches.remove(launch);
 		}
 
-		/*
-		 * @see ILaunchListener#launchChanged(ILaunch)
-		 */
 		@Override
 		public void launchChanged(final ILaunch launch) {
 			if (!fTrackedLaunches.contains(launch))

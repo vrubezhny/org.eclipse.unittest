@@ -33,9 +33,6 @@ public class TestKind implements ITestKind {
 		fFinder= null;
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.junit.launcher.ITestKind#createFinder()
-	 */
 	@Override
 	public ITestFinder getFinder() {
 		if (fFinder == null) {
@@ -49,33 +46,21 @@ public class TestKind implements ITestKind {
 		return fFinder;
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.junit.launcher.ITestKind#getDisplayName()
-	 */
 	@Override
 	public String getDisplayName() {
 		return getAttribute(DISPLAY_NAME);
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.junit.launcher.ITestKind#getFinderClassName()
-	 */
 	@Override
 	public String getFinderClassName() {
 		return getAttribute(FINDER_CLASS_NAME);
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.junit.launcher.ITestKind#getId()
-	 */
 	@Override
 	public String getId() {
 		return getAttribute(ID);
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.junit.launcher.ITestKind#getLoaderClassName()
-	 */
 	@Override
 	public String getLoaderClassName() {
 		return getAttribute(LOADER_CLASS_NAME);
@@ -86,17 +71,11 @@ public class TestKind implements ITestKind {
 		return getAttribute(LOADER_PLUGIN_ID);
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.junit.launcher.ITestKind#getLoaderClassName()
-	 */
 	@Override
 	public String getTestRunnerClientClassName() {
 		return getAttribute(TEST_RUNNER_CLIENT_CLASS_NAME);
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.junit.launcher.ITestKind#createFinder()
-	 */
 	@Override
 	public ITestRunnerClient getTestRunnerClient() {
 		if (fTestRunnerClient == null) {
@@ -128,18 +107,12 @@ public class TestKind implements ITestKind {
 		return getAttribute(TEST_VIEW_SUPPORT_CLASS_NAME);
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.junit.launcher.ITestKind#getPrecededKindId()
-	 */
 	@Override
 	public String getPrecededKindId() {
 		String attribute= getAttribute(PRECEDES);
 		return attribute == null ? "" : attribute; //$NON-NLS-1$
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.junit.launcher.ITestKind#isNull()
-	 */
 	@Override
 	public boolean isNull() {
 		return false;
@@ -160,9 +133,6 @@ public class TestKind implements ITestKind {
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.junit.launcher.ITestKind#getClasspathEntries()
-	 */
 	@Override
 	public UnitTestRuntimeClasspathEntry[] getClasspathEntries() {
 		IConfigurationElement[] children= fElement.getChildren(ITestKind.RUNTIME_CLASSPATH_ENTRY);
@@ -176,9 +146,6 @@ public class TestKind implements ITestKind {
 		return returnThis;
 	}
 
-	/*
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return getDisplayName() + " (id: " + getId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$

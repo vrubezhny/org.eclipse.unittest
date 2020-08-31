@@ -71,9 +71,6 @@ public abstract class OpenEditorAction extends Action implements IOpenEditorActi
 		fActivate= activate;
 	}
 
-	/*
-	 * @see IAction#run()
-	 */
 	@Override
 	public void run() {
 		IEditorPart editor= null;

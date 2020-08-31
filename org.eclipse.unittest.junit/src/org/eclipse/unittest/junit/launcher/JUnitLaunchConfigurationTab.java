@@ -917,10 +917,6 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 		updateLaunchConfigurationDialog();
 	}
 
-	/*
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#setErrorMessage(java.lang.String)
-	 * @since 3.6
-	 */
 	@Override
 	protected void setErrorMessage(String errorMessage) {
 		fIsValid= errorMessage == null;

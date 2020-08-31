@@ -31,12 +31,6 @@ public class TestCaseElement extends TestElement implements ITestCaseElement {
 		fIsDynamicTest= isDynamicTest;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 * @see org.eclipse.unittest.model.ITestCaseElement#getTestMethodName()
-	 * @see org.eclipse.jdt.internal.junit.runner.MessageIds#TEST_IDENTIFIER_MESSAGE_FORMAT
-	 * @see org.eclipse.jdt.internal.junit.runner.MessageIds#IGNORED_TEST_PREFIX
-	 */
 	@Override
 	public String getTestMethodName() {
 		String testName= getTestName();
@@ -49,19 +43,11 @@ public class TestCaseElement extends TestElement implements ITestCaseElement {
 		return testName;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 * @see org.eclipse.unittest.model.ITestCaseElement#getTestClassName()
-	 */
 	@Override
 	public String getTestClassName() {
 		return getClassName();
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.junit.model.TestElement#getTestResult(boolean)
-	 * @since 3.6
-	 */
 	@Override
 	public Result getTestResult(boolean includeChildren) {
 		if (fIgnored)

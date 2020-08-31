@@ -38,10 +38,6 @@ public class CDTPlugin extends Plugin {
 
 	public static final String CORE_PLUGIN_ID= "org.eclipse.unittest"; //$NON-NLS-1$
 
-	/**
-	 * Plug-in ID of the <b>UI</b> plug-in ("org.eclipse.jdt.junit").
-	 * @see #CORE_PLUGIN_ID
-	 */
 	public static final String PLUGIN_ID= "org.eclipse.unittest.cdt"; //$NON-NLS-1$
 
 	/*
@@ -95,9 +91,6 @@ public class CDTPlugin extends Plugin {
 		getDefault().getLog().log(status);
 	}
 
-	/**
-	 * @see Plugin#start(BundleContext)
-	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
@@ -105,9 +98,6 @@ public class CDTPlugin extends Plugin {
 		UnitTestPlugin.getDefault();
 	}
 
-	/**
-	 * @see Plugin#stop(BundleContext)
-	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		fIsStopped= true;
