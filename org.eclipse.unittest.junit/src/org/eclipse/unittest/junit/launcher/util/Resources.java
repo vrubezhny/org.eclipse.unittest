@@ -14,13 +14,13 @@
  *******************************************************************************/
 package org.eclipse.unittest.junit.launcher.util;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.unittest.UnitTestPlugin;
-import org.eclipse.unittest.internal.Messages;
 import org.eclipse.unittest.junit.ui.JUnitMessages;
 import org.eclipse.unittest.ui.BasicElementLabels;
 
@@ -135,7 +135,7 @@ public class Resources {
 	}
 
 	private static IStatus addModified(IStatus status, IFile file) {
-		IStatus entry= JUnitStatus.createError(Messages.format(JUnitMessages.Resources_fileModified, BasicElementLabels.getPathLabel(file.getFullPath(), false)));
+		IStatus entry= JUnitStatus.createError(MessageFormat.format(JUnitMessages.Resources_fileModified, BasicElementLabels.getPathLabel(file.getFullPath(), false)));
 		if (status == null) {
 			return entry;
 		} else if (status.isMultiStatus()) {
@@ -156,7 +156,7 @@ public class Resources {
 			IStatus.ERROR,
 			ResourcesPlugin.PI_RESOURCES,
 			IResourceStatus.OUT_OF_SYNC_LOCAL,
-		Messages.format(JUnitMessages.Resources_outOfSync, BasicElementLabels.getPathLabel(resource.getFullPath(), false)),
+		MessageFormat.format(JUnitMessages.Resources_outOfSync, BasicElementLabels.getPathLabel(resource.getFullPath(), false)),
 			null);
 		if (status == null) {
 			return entry;
