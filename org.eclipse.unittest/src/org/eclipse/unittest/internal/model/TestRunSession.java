@@ -47,10 +47,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchesListener2;
 
-import org.eclipse.jdt.internal.junit.JUnitCorePlugin;
-import org.eclipse.jdt.internal.junit.launcher.JUnitLaunchConfigurationConstants;
-import org.eclipse.jdt.internal.junit.runner.MessageIds;
-
 
 /**
  * A test run session holds all information about a test run, i.e.
@@ -411,7 +407,7 @@ public class TestRunSession implements ITestRunSession {
 	}
 
 	private File getSwapFile() throws IllegalStateException {
-		File historyDir= JUnitCorePlugin.getHistoryDirectory();
+		File historyDir= UnitTestPlugin.getHistoryDirectory();
 		String isoTime= new SimpleDateFormat("yyyyMMdd-HHmmss.SSS").format(new Date(getStartTime())); //$NON-NLS-1$
 		String swapFileName= isoTime + ".xml"; //$NON-NLS-1$
 		return new File(historyDir, swapFileName);
@@ -747,9 +743,7 @@ public class TestRunSession implements ITestRunSession {
 		}
 
 		@Override
-		public void testEnded(String testId, String testName) {
-			boolean isIgnored= testName.startsWith(MessageIds.IGNORED_TEST_PREFIX);
-
+		public void testEnded(String testId, String testName, boolean isIgnored) {
 			TestElement testElement= getTestElement(testId);
 			if (testElement == null) {
 				testElement= createUnrootedTestElement(testId, testName);
@@ -779,14 +773,14 @@ public class TestRunSession implements ITestRunSession {
 
 
 		@Override
-		public void testFailed(int statusCode, String testId, String testName, String trace, String expected, String actual) {
+		public void testFailed(int statusCode, String testId, String testName, boolean isAssumptionFailed, String trace, String expected, String actual) {
 			TestElement testElement= getTestElement(testId);
 			if (testElement == null) {
 				testElement= createUnrootedTestElement(testId, testName);
 			}
 
 			Status status;
-			if (testName.startsWith(MessageIds.ASSUMPTION_FAILED_TEST_PREFIX)) {
+			if (isAssumptionFailed) {
 				testElement.setAssumptionFailed(true);
 				fAssumptionFailureCount++;
 				status = Status.OK;
@@ -822,7 +816,7 @@ public class TestRunSession implements ITestRunSession {
 		}
 
 		private void logUnexpectedTest(String testId, TestElement testElement) {
-			JUnitCorePlugin.log(new Exception("Unexpected TestElement type for testId '" + testId + "': " + testElement)); //$NON-NLS-1$ //$NON-NLS-2$
+			UnitTestPlugin.log(new Exception("Unexpected TestElement type for testId '" + testId + "': " + testElement)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -903,9 +897,9 @@ public class TestRunSession implements ITestRunSession {
 			try {
 				ILaunchConfiguration launchConfig= fLaunch.getLaunchConfiguration();
 				if (launchConfig != null) {
-					boolean hasIncludeTags= launchConfig.getAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_HAS_INCLUDE_TAGS, false);
+					boolean hasIncludeTags= launchConfig.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_HAS_INCLUDE_TAGS, false);
 					if (hasIncludeTags) {
-						return launchConfig.getAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_INCLUDE_TAGS, EMPTY_STRING);
+						return launchConfig.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_INCLUDE_TAGS, EMPTY_STRING);
 					}
 				}
 			} catch (CoreException e) {
@@ -921,9 +915,9 @@ public class TestRunSession implements ITestRunSession {
 			try {
 				ILaunchConfiguration launchConfig= fLaunch.getLaunchConfiguration();
 				if (launchConfig != null) {
-					boolean hasExcludeTags= launchConfig.getAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_HAS_EXCLUDE_TAGS, false);
+					boolean hasExcludeTags= launchConfig.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_HAS_EXCLUDE_TAGS, false);
 					if (hasExcludeTags) {
-						return launchConfig.getAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_EXCLUDE_TAGS, EMPTY_STRING);
+						return launchConfig.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_EXCLUDE_TAGS, EMPTY_STRING);
 					}
 				}
 			} catch (CoreException e) {

@@ -60,7 +60,7 @@ public interface ITestRunListener3 {
 	 * @param testId a unique Id identifying the test
 	 * @param testName the name of the test that ended
 	 */
-	public void testEnded(String testId, String testName);
+	public void testEnded(String testId, String testName, boolean isIgnored);
 
 
 	/**
@@ -104,7 +104,7 @@ public interface ITestRunListener3 {
 	 * @param expected the expected value
 	 * @param actual the actual value
 	 */
-	public void testFailed(int status, String testId, String testName, String trace, String expected, String actual);
+	public void testFailed(int status, String testId, String testName, boolean isAssumptionFailed, String trace, String expected, String actual);
 
 	/**
 	 * An individual test has been rerun.

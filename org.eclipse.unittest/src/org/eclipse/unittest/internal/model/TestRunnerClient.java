@@ -90,6 +90,11 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	 */
 	protected int fFailureKind;
 
+	/*
+	 * Is Assumption failed on failed test
+	 */
+	protected boolean fFailedAssumption;
+
 	protected boolean fDebug= false;
 
 
@@ -193,10 +198,11 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 		notifyTestReran(testId, className, testName, statusCode, trace);
 	}
 
-	protected void extractFailure(String testId, String testName, int status) {
+	protected void extractFailure(String testId, String testName, int status, boolean isAssumptionFailed) {
 		fFailedTestId= testId;
 		fFailedTest= testName;
 		fFailureKind= status;
+		fFailedAssumption= isAssumptionFailed;
 	}
 	/**
 	 * @param arg test name
@@ -267,14 +273,14 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 		}
 	}
 
-	protected void notifyTestEnded(final String testId, final String testName) {
+	protected void notifyTestEnded(final String testId, final String testName, boolean isIgnored) {
 		if (UnitTestPlugin.isStopped())
 			return;
 		for (ITestRunListener3 listener : fListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
 				@Override
 				public void run() {
-					listener.testEnded(testId, testName);
+					listener.testEnded(testId, testName, isIgnored);
 				}
 			});
 		}
@@ -342,7 +348,7 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 				@Override
 				public void run() {
 					listener.testFailed(fFailureKind, fFailedTestId,
-						fFailedTest, fFailedTrace.toString(), nullifyEmpty(fExpectedResult), nullifyEmpty(fActualResult));
+						fFailedTest, fFailedAssumption, fFailedTrace.toString(), nullifyEmpty(fExpectedResult), nullifyEmpty(fActualResult));
 				}
 			});
 		}

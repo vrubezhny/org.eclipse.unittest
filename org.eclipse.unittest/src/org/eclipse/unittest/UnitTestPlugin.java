@@ -61,8 +61,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-import org.eclipse.jdt.internal.junit.JUnitCorePlugin;
-
 /**
  * The plug-in runtime class for the JUnit plug-in.
  */
@@ -261,7 +259,7 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 		fIsStopped= true;
 		super.stop(context);
 		try {
-			InstanceScope.INSTANCE.getNode(JUnitCorePlugin.CORE_PLUGIN_ID).flush();
+			InstanceScope.INSTANCE.getNode(UnitTestPlugin.PLUGIN_ID).flush();
 			fUnitTestModel.stop();
 		} finally {
 			super.stop(context);

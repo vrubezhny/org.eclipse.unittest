@@ -127,7 +127,8 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 				if (cRef != null) {
 					extractFailure(cRef.id, cRef.name,
 							status == Status.Aborted ? TestElement.Status.FAILURE.getOldCode() :
-								TestElement.Status.ERROR.getOldCode());
+								TestElement.Status.ERROR.getOldCode(),
+								false);
 
 					notifyTestFailed();
 
@@ -157,7 +158,7 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 			if (cRef != null && !cRef.isSuite) {
 				testElementRefs.pop(); // Renove test case ref
 
-				notifyTestEnded(cRef.id, cRef.name);
+				notifyTestEnded(cRef.id, cRef.name, false);
 			} else {
 				logUnexpectedTest(cRef == null ? "null" : cRef.id, cRef);
 			}

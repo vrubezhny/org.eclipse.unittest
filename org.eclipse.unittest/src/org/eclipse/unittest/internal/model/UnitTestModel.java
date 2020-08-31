@@ -19,6 +19,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -42,6 +43,7 @@ import org.xml.sax.SAXException;
 
 import org.eclipse.unittest.TestRunListener;
 import org.eclipse.unittest.UnitTestPlugin;
+import org.eclipse.unittest.UnitTestPreferencesConstants;
 import org.eclipse.unittest.launcher.ITestKind;
 import org.eclipse.unittest.launcher.ITestRunnerClient;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
@@ -62,9 +64,6 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
-
-import org.eclipse.jdt.internal.junit.JUnitPreferencesConstants;
-import org.eclipse.jdt.internal.junit.Messages;
 
 /**
  * Central registry for JUnit test runs.
@@ -249,7 +248,7 @@ public final class UnitTestModel {
 			Assert.isLegal(! fTestRunSessions.contains(testRunSession));
 			fTestRunSessions.addFirst(testRunSession);
 
-			int maxCount = Platform.getPreferencesService().getInt(UnitTestPlugin.PLUGIN_ID, JUnitPreferencesConstants.MAX_TEST_RUNS, 10, null);
+			int maxCount = Platform.getPreferencesService().getInt(UnitTestPlugin.PLUGIN_ID, UnitTestPreferencesConstants.MAX_TEST_RUNS, 10, null);
 			int size= fTestRunSessions.size();
 			if (size > maxCount) {
 				List<TestRunSession> excess= fTestRunSessions.subList(maxCount, size);
@@ -443,14 +442,14 @@ public final class UnitTestModel {
 	private static void throwExportError(File file, Exception e) throws CoreException {
 		throw new CoreException(new org.eclipse.core.runtime.Status(IStatus.ERROR,
 				UnitTestPlugin.getPluginId(),
-				Messages.format(ModelMessages.JUnitModel_could_not_write, BasicElementLabels.getPathLabel(file)),
+				MessageFormat.format(ModelMessages.JUnitModel_could_not_write, BasicElementLabels.getPathLabel(file)),
 				e));
 	}
 
 	private static void throwImportError(File file, Exception e) throws CoreException {
 		throw new CoreException(new org.eclipse.core.runtime.Status(IStatus.ERROR,
 				UnitTestPlugin.getPluginId(),
-				Messages.format(ModelMessages.JUnitModel_could_not_read, BasicElementLabels.getPathLabel(file)),
+				MessageFormat.format(ModelMessages.JUnitModel_could_not_read, BasicElementLabels.getPathLabel(file)),
 				e));
 	}
 

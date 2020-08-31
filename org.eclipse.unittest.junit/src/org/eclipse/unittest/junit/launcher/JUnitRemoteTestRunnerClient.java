@@ -89,17 +89,20 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 	        }
 	        if (message.startsWith(MessageIds.TEST_END)) {
 	        	String s[] = extractTestId(arg);
-	            notifyTestEnded(s[0], s[1]);
+				boolean isIgnored= s[1].startsWith(MessageIds.IGNORED_TEST_PREFIX);
+	            notifyTestEnded(s[0], s[1], isIgnored);
 	            return this;
 	        }
 	        if (message.startsWith(MessageIds.TEST_ERROR)) {
 	        	String s[] = extractTestId(arg);
-	            extractFailure(s[0], s[1], ITestRunListener2.STATUS_ERROR);
+	        	boolean isAssumptionFailed = s[1].startsWith(MessageIds.ASSUMPTION_FAILED_TEST_PREFIX);
+	            extractFailure(s[0], s[1], ITestRunListener2.STATUS_ERROR, isAssumptionFailed);
 	            return this;
 	        }
 	        if (message.startsWith(MessageIds.TEST_FAILED)) {
 	        	String s[] = extractTestId(arg);
-	            extractFailure(s[0], s[1], ITestRunListener2.STATUS_FAILURE);
+	        	boolean isAssumptionFailed = s[1].startsWith(MessageIds.ASSUMPTION_FAILED_TEST_PREFIX);
+	            extractFailure(s[0], s[1], ITestRunListener2.STATUS_FAILURE, isAssumptionFailed);
 	            return this;
 	        }
 	        if (message.startsWith(MessageIds.TEST_RUN_END)) {
