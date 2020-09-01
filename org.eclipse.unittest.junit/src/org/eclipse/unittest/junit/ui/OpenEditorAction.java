@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.core.resources.IProject;
 
@@ -66,31 +66,32 @@ public abstract class OpenEditorAction extends Action implements IOpenEditorActi
 
 	public OpenEditorAction(TestRunnerViewPart testRunner, String className, boolean activate) {
 		super(JUnitMessages.OpenEditorAction_action_label);
-		fClassName= className;
-		fTestRunner= testRunner;
-		fActivate= activate;
+		fClassName = className;
+		fTestRunner = testRunner;
+		fActivate = activate;
 	}
 
 	@Override
 	public void run() {
-		IEditorPart editor= null;
+		IEditorPart editor = null;
 		try {
-			IJavaElement element= findElement(getLaunchedProject(), fClassName);
+			IJavaElement element = findElement(getLaunchedProject(), fClassName);
 			if (element == null) {
-				MessageDialog.openError(getShell(),
-					JUnitMessages.OpenEditorAction_error_cannotopen_title, JUnitMessages.OpenEditorAction_error_cannotopen_message);
+				MessageDialog.openError(getShell(), JUnitMessages.OpenEditorAction_error_cannotopen_title,
+						JUnitMessages.OpenEditorAction_error_cannotopen_message);
 				return;
 			}
-			editor= JavaUI.openInEditor(element, fActivate, false);
+			editor = JavaUI.openInEditor(element, fActivate, false);
 		} catch (CoreException e) {
-			ErrorDialog.openError(getShell(), JUnitMessages.OpenEditorAction_error_dialog_title, JUnitMessages.OpenEditorAction_error_dialog_message, e.getStatus());
+			ErrorDialog.openError(getShell(), JUnitMessages.OpenEditorAction_error_dialog_title,
+					JUnitMessages.OpenEditorAction_error_dialog_message, e.getStatus());
 			return;
 		}
 		if (!(editor instanceof ITextEditor)) {
 			fTestRunner.registerInfoMessage(JUnitMessages.OpenEditorAction_message_cannotopen);
 			return;
 		}
-		reveal((ITextEditor)editor);
+		reveal((ITextEditor) editor);
 	}
 
 	protected Shell getShell() {
@@ -120,32 +121,29 @@ public abstract class OpenEditorAction extends Action implements IOpenEditorActi
 	protected abstract void reveal(ITextEditor editor);
 
 	protected final IType findType(final IJavaProject project, String className) {
-		final IType[] result= { null };
-		final String dottedName= className.replace('$', '.'); // for nested classes...
+		final IType[] result = { null };
+		final String dottedName = className.replace('$', '.'); // for nested classes...
 		try {
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(monitor -> {
 				try {
 					if (project != null) {
-						result[0]= internalFindType(project, dottedName, new HashSet<IJavaProject>(), monitor);
+						result[0] = internalFindType(project, dottedName, new HashSet<IJavaProject>(), monitor);
 					}
 					if (result[0] == null) {
-						int lastDot= dottedName.lastIndexOf('.');
-						TypeNameMatchRequestor nameMatchRequestor= new TypeNameMatchRequestor() {
+						int lastDot = dottedName.lastIndexOf('.');
+						TypeNameMatchRequestor nameMatchRequestor = new TypeNameMatchRequestor() {
 							@Override
 							public void acceptTypeNameMatch(TypeNameMatch match) {
-								result[0]= match.getType();
+								result[0] = match.getType();
 							}
 						};
 						new SearchEngine().searchAllTypeNames(
 								lastDot >= 0 ? dottedName.substring(0, lastDot).toCharArray() : null,
 								SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE,
 								(lastDot >= 0 ? dottedName.substring(lastDot + 1) : dottedName).toCharArray(),
-								SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE,
-								IJavaSearchConstants.TYPE,
-								SearchEngine.createWorkspaceScope(),
-								nameMatchRequestor,
-								IJavaSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
-								monitor);
+								SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE, IJavaSearchConstants.TYPE,
+								SearchEngine.createWorkspaceScope(), nameMatchRequestor,
+								IJavaSearchConstants.WAIT_UNTIL_READY_TO_SEARCH, monitor);
 					}
 				} catch (JavaModelException e) {
 					throw new InvocationTargetException(e);
@@ -159,24 +157,27 @@ public abstract class OpenEditorAction extends Action implements IOpenEditorActi
 		return result[0];
 	}
 
-	private IType internalFindType(IJavaProject project, String className, Set<IJavaProject> visitedProjects, IProgressMonitor monitor) throws JavaModelException {
+	private IType internalFindType(IJavaProject project, String className, Set<IJavaProject> visitedProjects,
+			IProgressMonitor monitor) throws JavaModelException {
 		try {
 			if (visitedProjects.contains(project))
 				return null;
 			monitor.beginTask("", 2); //$NON-NLS-1$
-			IType type= project.findType(className, new SubProgressMonitor(monitor, 1));
+			IType type = project.findType(className, SubMonitor.convert(monitor, 1));
 			if (type != null)
 				return type;
-			//fix for bug 87492: visit required projects explicitly to also find not exported types
+			// fix for bug 87492: visit required projects explicitly to also find not
+			// exported types
 			visitedProjects.add(project);
-			IJavaModel javaModel= project.getJavaModel();
-			String[] requiredProjectNames= project.getRequiredProjectNames();
-			IProgressMonitor reqMonitor= new SubProgressMonitor(monitor, 1);
+			IJavaModel javaModel = project.getJavaModel();
+			String[] requiredProjectNames = project.getRequiredProjectNames();
+			IProgressMonitor reqMonitor = SubMonitor.convert(monitor, 1);
 			reqMonitor.beginTask("", requiredProjectNames.length); //$NON-NLS-1$
 			for (String requiredProjectName : requiredProjectNames) {
-				IJavaProject requiredProject= javaModel.getJavaProject(requiredProjectName);
+				IJavaProject requiredProject = javaModel.getJavaProject(requiredProjectName);
 				if (requiredProject.exists()) {
-					type= internalFindType(requiredProject, className, visitedProjects, new SubProgressMonitor(reqMonitor, 1));
+					type = internalFindType(requiredProject, className, visitedProjects,
+							SubMonitor.convert(reqMonitor, 1));
 					if (type != null)
 						return type;
 				}

@@ -53,7 +53,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.URIUtil;
 
 import org.eclipse.debug.core.DebugPlugin;
@@ -143,7 +143,7 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 			monitor.subTask(JUnitMessages.JUnitLaunchConfigurationDelegate_verifying_attriburtes_description);
 
 			try {
-				preLaunchCheck(configuration, launch, new SubProgressMonitor(monitor, 2));
+				preLaunchCheck(configuration, launch, SubMonitor.convert(monitor, 2));
 			} catch (CoreException e) {
 				if (e.getStatus().getSeverity() == IStatus.CANCEL) {
 					monitor.setCanceled(true);
@@ -165,14 +165,14 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 			IJavaProject javaProject = getJavaProject(configuration);
 			if (JUnitTestKindUtil.JUNIT3_TEST_KIND_ID.equals(testKind.getId())
 					|| JUnitTestKindUtil.JUNIT4_TEST_KIND_ID.equals(testKind.getId())) {
-				fTestElements = evaluateTests(configuration, new SubProgressMonitor(monitor, 1));
+				fTestElements = evaluateTests(configuration, SubMonitor.convert(monitor, 1));
 			} else {
 				IJavaElement testTarget = getTestTarget(configuration, javaProject);
 				if (testTarget instanceof IPackageFragment || testTarget instanceof IPackageFragmentRoot
 						|| testTarget instanceof IJavaProject) {
 					fTestElements = new IJavaElement[] { testTarget };
 				} else {
-					fTestElements = evaluateTests(configuration, new SubProgressMonitor(monitor, 1));
+					fTestElements = evaluateTests(configuration, SubMonitor.convert(monitor, 1));
 				}
 			}
 
