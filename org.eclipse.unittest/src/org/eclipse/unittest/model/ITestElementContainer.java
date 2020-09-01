@@ -20,11 +20,6 @@ package org.eclipse.unittest.model;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- *
- * @since 3.3
- *
- * @noimplement This interface is not intended to be implemented by clients.
- * @noextend This interface is not intended to be extended by clients.
  */
 public interface ITestElementContainer extends ITestElement {
 
