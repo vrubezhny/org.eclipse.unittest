@@ -42,7 +42,6 @@ import org.eclipse.unittest.launcher.ITestKind;
 import org.eclipse.unittest.launcher.TestKindRegistry;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.launcher.UnitTestRuntimeClasspathEntry;
-import org.eclipse.unittest.ui.Messages;
 
 import org.eclipse.core.variables.VariablesPlugin;
 
@@ -85,25 +84,26 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.SocketUtil;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 
-
 /**
  * Launch configuration delegate for a JUnit test as a Java application.
  *
  * <p>
  * Clients can instantiate and extend this class.
  * </p>
+ *
  * @since 3.3
  */
 public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigurationDelegate {
 
-	private boolean fKeepAlive= false;
+	private boolean fKeepAlive = false;
 	private int fPort;
 	private IJavaElement[] fTestElements;
 
-	private static final String DEFAULT= "<default>"; //$NON-NLS-1$
+	private static final String DEFAULT = "<default>"; //$NON-NLS-1$
 
 	@Override
-	public String showCommandLine(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
+	public String showCommandLine(ILaunchConfiguration configuration, String mode, ILaunch launch,
+			IProgressMonitor monitor) throws CoreException {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
@@ -125,9 +125,10 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 		}
 	}
 
-	private VMRunnerConfiguration getVMRunnerConfiguration(ILaunchConfiguration configuration, ILaunch launch, String mode, IProgressMonitor monitor) throws CoreException {
+	private VMRunnerConfiguration getVMRunnerConfiguration(ILaunchConfiguration configuration, ILaunch launch,
+			String mode, IProgressMonitor monitor) throws CoreException {
 		VMRunnerConfiguration runConfig = null;
-			monitor.beginTask(MessageFormat.format("{0}...", configuration.getName()), 5); //$NON-NLS-1$
+		monitor.beginTask(MessageFormat.format("{0}...", configuration.getName()), 5); //$NON-NLS-1$
 		// check for cancellation
 		if (monitor.isCanceled()) {
 			return null;
@@ -155,37 +156,39 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 				return null;
 			}
 
-			fKeepAlive= mode.equals(ILaunchManager.DEBUG_MODE) && configuration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_KEEPRUNNING, false);
-			fPort= evaluatePort();
+			fKeepAlive = mode.equals(ILaunchManager.DEBUG_MODE)
+					&& configuration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_KEEPRUNNING, false);
+			fPort = evaluatePort();
 			launch.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_PORT, String.valueOf(fPort));
 
-			ITestKind testKind= getTestRunnerKind(configuration);
-			IJavaProject javaProject= getJavaProject(configuration);
-			if (JUnitTestKindUtil.JUNIT3_TEST_KIND_ID.equals(testKind.getId()) || JUnitTestKindUtil.JUNIT4_TEST_KIND_ID.equals(testKind.getId())) {
-				fTestElements= evaluateTests(configuration, new SubProgressMonitor(monitor, 1));
+			ITestKind testKind = getTestRunnerKind(configuration);
+			IJavaProject javaProject = getJavaProject(configuration);
+			if (JUnitTestKindUtil.JUNIT3_TEST_KIND_ID.equals(testKind.getId())
+					|| JUnitTestKindUtil.JUNIT4_TEST_KIND_ID.equals(testKind.getId())) {
+				fTestElements = evaluateTests(configuration, new SubProgressMonitor(monitor, 1));
 			} else {
-				IJavaElement testTarget= getTestTarget(configuration, javaProject);
-				if (testTarget instanceof IPackageFragment || testTarget instanceof IPackageFragmentRoot || testTarget instanceof IJavaProject) {
-					fTestElements= new IJavaElement[] { testTarget };
+				IJavaElement testTarget = getTestTarget(configuration, javaProject);
+				if (testTarget instanceof IPackageFragment || testTarget instanceof IPackageFragmentRoot
+						|| testTarget instanceof IJavaProject) {
+					fTestElements = new IJavaElement[] { testTarget };
 				} else {
-					fTestElements= evaluateTests(configuration, new SubProgressMonitor(monitor, 1));
+					fTestElements = evaluateTests(configuration, new SubProgressMonitor(monitor, 1));
 				}
 			}
 
-			String mainTypeName= verifyMainTypeName(configuration);
-
+			String mainTypeName = verifyMainTypeName(configuration);
 
 			File workingDir = verifyWorkingDirectory(configuration);
 			String workingDirName = null;
 			if (workingDir != null) {
-				workingDirName= workingDir.getAbsolutePath();
+				workingDirName = workingDir.getAbsolutePath();
 			}
 
 			// Environment variables
-			String[] envp= getEnvironment(configuration);
+			String[] envp = getEnvironment(configuration);
 
-			ArrayList<String> vmArguments= new ArrayList<>();
-			ArrayList<String> programArguments= new ArrayList<>();
+			ArrayList<String> vmArguments = new ArrayList<>();
+			ArrayList<String> programArguments = new ArrayList<>();
 			collectExecutionArguments(configuration, vmArguments, programArguments);
 			vmArguments.addAll(Arrays.asList(DebugPlugin.parseArguments(getVMArguments(configuration, mode))));
 			if (JavaRuntime.isModularProject(javaProject)) {
@@ -194,32 +197,35 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 
 			// VM-specific attributes
 
-
-			Map<String, Object> vmAttributesMap= getVMSpecificAttributesMap(configuration);
+			Map<String, Object> vmAttributesMap = getVMSpecificAttributesMap(configuration);
 
 			// Classpath and modulepath
-			String[][] classpathAndModulepath= getClasspathAndModulepath(configuration);
-			String[] classpath= classpathAndModulepath[0];
-			String[] modulepath= classpathAndModulepath[1];
+			String[][] classpathAndModulepath = getClasspathAndModulepath(configuration);
+			String[] classpath = classpathAndModulepath[0];
+			String[] modulepath = classpathAndModulepath[1];
 
 			if (JUnitTestKindUtil.JUNIT5_TEST_KIND_ID.equals(getTestRunnerKind(configuration).getId())) {
-				if (!configuration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_DONT_ADD_MISSING_JUNIT5_DEPENDENCY, false)) {
-					if (!Arrays.stream(classpath).anyMatch(s -> s.contains("junit-platform-launcher") || s.contains("org.junit.platform.launcher"))) { //$NON-NLS-1$ //$NON-NLS-2$
+				if (!configuration.getAttribute(
+						UnitTestLaunchConfigurationConstants.ATTR_DONT_ADD_MISSING_JUNIT5_DEPENDENCY, false)) {
+					if (!Arrays.stream(classpath).anyMatch(
+							s -> s.contains("junit-platform-launcher") || s.contains("org.junit.platform.launcher"))) { //$NON-NLS-1$ //$NON-NLS-2$
 						try {
-							UnitTestRuntimeClasspathEntry x= new UnitTestRuntimeClasspathEntry("org.junit.platform.launcher", null); //$NON-NLS-1$
-							String entryString= new ClasspathLocalizer(Platform.inDevelopmentMode()).entryString(x);
-							int length= classpath.length;
-							System.arraycopy(classpath, 0, classpath= new String[length + 1], 0, length);
-							classpath[length]= entryString;
+							UnitTestRuntimeClasspathEntry x = new UnitTestRuntimeClasspathEntry(
+									"org.junit.platform.launcher", null); //$NON-NLS-1$
+							String entryString = new ClasspathLocalizer(Platform.inDevelopmentMode()).entryString(x);
+							int length = classpath.length;
+							System.arraycopy(classpath, 0, classpath = new String[length + 1], 0, length);
+							classpath[length] = entryString;
 						} catch (IOException | URISyntaxException e) {
-							throw new CoreException(new Status(IStatus.ERROR, UnitTestPlugin.PLUGIN_ID, IStatus.ERROR, "", e)); //$NON-NLS-1$
+							throw new CoreException(
+									new Status(IStatus.ERROR, UnitTestPlugin.PLUGIN_ID, IStatus.ERROR, "", e)); //$NON-NLS-1$
 						}
 					}
 				}
 			}
 
 			// Create VM config
-			runConfig= new VMRunnerConfiguration(mainTypeName, classpath);
+			runConfig = new VMRunnerConfiguration(mainTypeName, classpath);
 			runConfig.setVMArguments(vmArguments.toArray(new String[vmArguments.size()]));
 			runConfig.setProgramArguments(programArguments.toArray(new String[programArguments.size()]));
 			runConfig.setEnvironment(envp);
@@ -233,8 +239,10 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 			} else {
 				// module path
 				runConfig.setModulepath(modulepath);
-				if (!configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_MODULE_CLI_OPTIONS, true)) {
-					runConfig.setOverrideDependencies(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MODULE_CLI_OPTIONS, "")); //$NON-NLS-1$
+				if (!configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_MODULE_CLI_OPTIONS,
+						true)) {
+					runConfig.setOverrideDependencies(
+							configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MODULE_CLI_OPTIONS, "")); //$NON-NLS-1$
 				} else {
 					runConfig.setOverrideDependencies(getModuleCLIOptions(configuration));
 				}
@@ -244,7 +252,7 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 			if (monitor.isCanceled()) {
 				return null;
 			}
-		}finally {
+		} finally {
 			// done the verification phase
 			monitor.worked(1);
 		}
@@ -252,7 +260,8 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 	}
 
 	@Override
-	public synchronized void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
+	public synchronized void launch(ILaunchConfiguration configuration, String mode, ILaunch launch,
+			IProgressMonitor monitor) throws CoreException {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
@@ -260,10 +269,10 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 		try {
 
 			VMRunnerConfiguration runConfig = getVMRunnerConfiguration(configuration, launch, mode, monitor);
-			if ( monitor.isCanceled() || runConfig == null) {
+			if (monitor.isCanceled() || runConfig == null) {
 				return;
 			}
-			IVMRunner runner= getVMRunner(configuration, mode);
+			IVMRunner runner = getVMRunner(configuration, mode);
 			monitor.subTask(JUnitMessages.JUnitLaunchConfigurationDelegate_create_source_locator_description);
 			// set the default source locator if required
 			setDefaultSourceLocator(launch, configuration);
@@ -277,42 +286,47 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 				return;
 			}
 		} finally {
-			fTestElements= null;
+			fTestElements = null;
 			monitor.done();
 		}
 	}
 
 	private int evaluatePort() throws CoreException {
-		int port= SocketUtil.findFreePort();
+		int port = SocketUtil.findFreePort();
 		if (port == -1) {
-			abort(JUnitMessages.JUnitLaunchConfigurationDelegate_error_no_socket, null, IJavaLaunchConfigurationConstants.ERR_NO_SOCKET_AVAILABLE);
+			abort(JUnitMessages.JUnitLaunchConfigurationDelegate_error_no_socket, null,
+					IJavaLaunchConfigurationConstants.ERR_NO_SOCKET_AVAILABLE);
 		}
 		return port;
 	}
 
 	/**
-	 * Performs a check on the launch configuration's attributes. If an attribute contains an invalid value, a {@link CoreException}
-	 * with the error is thrown.
+	 * Performs a check on the launch configuration's attributes. If an attribute
+	 * contains an invalid value, a {@link CoreException} with the error is thrown.
 	 *
 	 * @param configuration the launch configuration to verify
-	 * @param launch the launch to verify
-	 * @param monitor the progress monitor to use
+	 * @param launch        the launch to verify
+	 * @param monitor       the progress monitor to use
 	 * @throws CoreException an exception is thrown when the verification fails
 	 */
-	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
+	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor)
+			throws CoreException {
 		try {
-			IJavaProject javaProject= getJavaProject(configuration);
+			IJavaProject javaProject = getJavaProject(configuration);
 			if ((javaProject == null) || !javaProject.exists()) {
-				abort(JUnitMessages.JUnitLaunchConfigurationDelegate_error_invalidproject, null, IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT);
+				abort(JUnitMessages.JUnitLaunchConfigurationDelegate_error_invalidproject, null,
+						IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT);
 			}
-			ITestKind testKind= getTestRunnerKind(configuration);
-			boolean isJUnit4Configuration= JUnitTestKindUtil.JUNIT4_TEST_KIND_ID.equals(testKind.getId());
-			boolean isJUnit5Configuration= JUnitTestKindUtil.JUNIT5_TEST_KIND_ID.equals(testKind.getId());
+			ITestKind testKind = getTestRunnerKind(configuration);
+			boolean isJUnit4Configuration = JUnitTestKindUtil.JUNIT4_TEST_KIND_ID.equals(testKind.getId());
+			boolean isJUnit5Configuration = JUnitTestKindUtil.JUNIT5_TEST_KIND_ID.equals(testKind.getId());
 			if (!isJUnit5Configuration && !CoreTestSearchEngine.hasTestCaseType(javaProject)) {
-				abort(JUnitMessages.JUnitLaunchConfigurationDelegate_error_junitnotonpath, null, IJUnitStatusConstants.ERR_JUNIT_NOT_ON_PATH);
+				abort(JUnitMessages.JUnitLaunchConfigurationDelegate_error_junitnotonpath, null,
+						IJUnitStatusConstants.ERR_JUNIT_NOT_ON_PATH);
 			}
 			if (isJUnit4Configuration && !CoreTestSearchEngine.hasJUnit4TestAnnotation(javaProject)) {
-				abort(JUnitMessages.JUnitLaunchConfigurationDelegate_error_junit4notonpath, null, IJUnitStatusConstants.ERR_JUNIT_NOT_ON_PATH);
+				abort(JUnitMessages.JUnitLaunchConfigurationDelegate_error_junit4notonpath, null,
+						IJUnitStatusConstants.ERR_JUNIT_NOT_ON_PATH);
 			}
 		} finally {
 			monitor.done();
@@ -320,30 +334,29 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 	}
 
 	@Override
-	public String getJavaProjectName(ILaunchConfiguration configuration)
-			throws CoreException {
-		return configuration.getAttribute(
-				UnitTestLaunchConfigurationConstants.ATTR_PROJECT_NAME,
-				(String) null);
+	public String getJavaProjectName(ILaunchConfiguration configuration) throws CoreException {
+		return configuration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String) null);
 	}
 
 	@Override
-	public String getMainTypeName(ILaunchConfiguration configuration)
-			throws CoreException {
-		String mainType = configuration.getAttribute(
-				UnitTestLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME,
+	public String getMainTypeName(ILaunchConfiguration configuration) throws CoreException {
+		String mainType = configuration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME,
 				(String) null);
 		if (mainType == null) {
 			return null;
 		}
-		return VariablesPlugin.getDefault().getStringVariableManager()
-				.performStringSubstitution(mainType);
+		return VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(mainType);
 	}
 
 	private ITestKind getTestRunnerKind(ILaunchConfiguration configuration) {
-		ITestKind testKind= UnitTestLaunchConfigurationConstants.getTestRunnerKind(configuration);
+		ITestKind testKind = UnitTestLaunchConfigurationConstants.getTestRunnerKind(configuration);
 		if (testKind.isNull()) {
-			testKind= TestKindRegistry.getDefault().getKind(JUnitTestKindUtil.JUNIT3_TEST_KIND_ID); // backward compatible for launch configurations with no runner
+			testKind = TestKindRegistry.getDefault().getKind(JUnitTestKindUtil.JUNIT3_TEST_KIND_ID); // backward
+																										// compatible
+																										// for launch
+																										// configurations
+																										// with no
+																										// runner
 		}
 		return testKind;
 	}
@@ -354,84 +367,97 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 	}
 
 	/**
-	 * Evaluates all test elements selected by the given launch configuration. The elements are of type
-	 * {@link IType} or {@link IMethod}. At the moment it is only possible to run a single method or a set of types, but not
-	 * mixed or more than one method at a time.
+	 * Evaluates all test elements selected by the given launch configuration. The
+	 * elements are of type {@link IType} or {@link IMethod}. At the moment it is
+	 * only possible to run a single method or a set of types, but not mixed or more
+	 * than one method at a time.
 	 *
 	 * @param configuration the launch configuration to inspect
-	 * @param monitor the progress monitor
+	 * @param monitor       the progress monitor
 	 * @return returns all types or methods that should be ran
 	 * @throws CoreException an exception is thrown when the search for tests failed
 	 */
-	protected IMember[] evaluateTests(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
-		IJavaProject javaProject= getJavaProject(configuration);
+	protected IMember[] evaluateTests(ILaunchConfiguration configuration, IProgressMonitor monitor)
+			throws CoreException {
+		IJavaProject javaProject = getJavaProject(configuration);
 
-		IJavaElement testTarget= getTestTarget(configuration, javaProject);
-		String testMethodName= configuration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_NAME, ""); //$NON-NLS-1$
+		IJavaElement testTarget = getTestTarget(configuration, javaProject);
+		String testMethodName = configuration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_NAME, ""); //$NON-NLS-1$
 		if (testMethodName.length() > 0) {
 			if (testTarget instanceof IType) {
-				// If parameters exist, testMethodName is followed by a comma-separated list of fully qualified parameter type names in parentheses.
-				// The testMethodName is required in this format by #collectExecutionArguments, hence it will be used as it is with the handle-only method IType#getMethod here.
+				// If parameters exist, testMethodName is followed by a comma-separated list of
+				// fully qualified parameter type names in parentheses.
+				// The testMethodName is required in this format by #collectExecutionArguments,
+				// hence it will be used as it is with the handle-only method IType#getMethod
+				// here.
 				return new IMember[] { ((IType) testTarget).getMethod(testMethodName, new String[0]) };
 			}
 		}
-		HashSet<IType> result= new HashSet<>();
-		ITestKind testKind= getTestRunnerKind(configuration);
+		HashSet<IType> result = new HashSet<>();
+		ITestKind testKind = getTestRunnerKind(configuration);
 		testKind.getFinder().findTestsInContainer(testTarget, result, monitor);
 		if (result.isEmpty()) {
-			String msg= Messages.format(JUnitMessages.JUnitLaunchConfigurationDelegate_error_notests_kind, testKind.getDisplayName());
+			String msg = MessageFormat.format(JUnitMessages.JUnitLaunchConfigurationDelegate_error_notests_kind,
+					testKind.getDisplayName());
 			abort(msg, null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE);
 		}
 		return result.toArray(new IMember[result.size()]);
 	}
 
 	/**
-	 * Collects all VM and program arguments. Implementors can modify and add arguments.
+	 * Collects all VM and program arguments. Implementors can modify and add
+	 * arguments.
 	 *
-	 * @param configuration the configuration to collect the arguments for
-	 * @param vmArguments a {@link List} of {@link String} representing the resulting VM arguments
-	 * @param programArguments a {@link List} of {@link String} representing the resulting program arguments
+	 * @param configuration    the configuration to collect the arguments for
+	 * @param vmArguments      a {@link List} of {@link String} representing the
+	 *                         resulting VM arguments
+	 * @param programArguments a {@link List} of {@link String} representing the
+	 *                         resulting program arguments
 	 * @exception CoreException if unable to collect the execution arguments
 	 */
-	protected void collectExecutionArguments(ILaunchConfiguration configuration, List<String> vmArguments, List<String> programArguments) throws CoreException {
+	protected void collectExecutionArguments(ILaunchConfiguration configuration, List<String> vmArguments,
+			List<String> programArguments) throws CoreException {
 
 		// add program & VM arguments provided by getProgramArguments and getVMArguments
-		String pgmArgs= getProgramArguments(configuration);
-		String vmArgs= getVMArguments(configuration);
-		ExecutionArguments execArgs= new ExecutionArguments(vmArgs, pgmArgs);
+		String pgmArgs = getProgramArguments(configuration);
+		String vmArgs = getVMArguments(configuration);
+		ExecutionArguments execArgs = new ExecutionArguments(vmArgs, pgmArgs);
 		vmArguments.addAll(Arrays.asList(execArgs.getVMArgumentsArray()));
 		programArguments.addAll(Arrays.asList(execArgs.getProgramArgumentsArray()));
 
-		boolean isJUnit5= JUnitTestKindUtil.JUNIT5_TEST_KIND_ID.equals(getTestRunnerKind(configuration).getId());
-		boolean isModularProject= JavaRuntime.isModularProject(getJavaProject(configuration));
+		boolean isJUnit5 = JUnitTestKindUtil.JUNIT5_TEST_KIND_ID.equals(getTestRunnerKind(configuration).getId());
+		boolean isModularProject = JavaRuntime.isModularProject(getJavaProject(configuration));
 		String addOpensTargets;
 		if (isModularProject) {
 			if (isJUnit5) {
 				if (isOnModulePath(getJavaProject(configuration), "org.junit.jupiter.api.Test")) { //$NON-NLS-1$
-					addOpensTargets= "org.junit.platform.commons,ALL-UNNAMED"; //$NON-NLS-1$
+					addOpensTargets = "org.junit.platform.commons,ALL-UNNAMED"; //$NON-NLS-1$
 				} else {
-					addOpensTargets= "ALL-UNNAMED"; //$NON-NLS-1$
+					addOpensTargets = "ALL-UNNAMED"; //$NON-NLS-1$
 				}
 			} else {
 				if (isOnModulePath(getJavaProject(configuration), "junit.framework.TestCase")) { //$NON-NLS-1$
-					addOpensTargets= "junit,ALL-UNNAMED"; //$NON-NLS-1$
+					addOpensTargets = "junit,ALL-UNNAMED"; //$NON-NLS-1$
 				} else {
-					addOpensTargets= "ALL-UNNAMED"; //$NON-NLS-1$
+					addOpensTargets = "ALL-UNNAMED"; //$NON-NLS-1$
 				}
 			}
 		} else {
-			addOpensTargets= null;
+			addOpensTargets = null;
 		}
-		List<String> addOpensVmArgs= new ArrayList<>();
+		List<String> addOpensVmArgs = new ArrayList<>();
 
 		/*
-		 * The "-version" "3" arguments don't make sense and should eventually be removed.
-		 * But we keep them for now, since users may want to run with older releases of
-		 * org.eclipse.jdt.junit[4].runtime, where this is still
-		 * read by org.eclipse.jdt.internal.junit.runner.RemoteTestRunner#defaultInit(String[])
-		 * and used in org.eclipse.jdt.internal.junit.runner.DefaultClassifier#isComparisonFailure(Throwable).
-		 * The JUnit4 equivalent of the latter method is already version-agnostic:
-		 * org.eclipse.jdt.internal.junit4.runner.JUnit4TestListener#testFailure(Failure, boolean)
+		 * The "-version" "3" arguments don't make sense and should eventually be
+		 * removed. But we keep them for now, since users may want to run with older
+		 * releases of org.eclipse.jdt.junit[4].runtime, where this is still read by
+		 * org.eclipse.jdt.internal.junit.runner.RemoteTestRunner#defaultInit(String[])
+		 * and used in
+		 * org.eclipse.jdt.internal.junit.runner.DefaultClassifier#isComparisonFailure(
+		 * Throwable). The JUnit4 equivalent of the latter method is already
+		 * version-agnostic:
+		 * org.eclipse.jdt.internal.junit4.runner.JUnit4TestListener#testFailure(
+		 * Failure, boolean)
 		 */
 		programArguments.add("-version"); //$NON-NLS-1$
 		programArguments.add("3"); //$NON-NLS-1$
@@ -442,7 +468,7 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 		if (fKeepAlive)
 			programArguments.add(0, "-keepalive"); //$NON-NLS-1$
 
-		ITestKind testRunnerKind= getTestRunnerKind(configuration);
+		ITestKind testRunnerKind = getTestRunnerKind(configuration);
 
 		programArguments.add("-testLoaderClass"); //$NON-NLS-1$
 		programArguments.add(testRunnerKind.getLoaderClassName());
@@ -452,23 +478,25 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 		// Enable Debugging mode:
 		// programArguments.add("-debugging"); //$NON-NLS-1$
 
-		IJavaElement[] testElements= fTestElements;
+		IJavaElement[] testElements = fTestElements;
 
-		if (testElements.length == 1) { // a test name was specified just run the single test, or a test container was specified
-			IJavaElement testElement= testElements[0];
+		if (testElements.length == 1) { // a test name was specified just run the single test, or a test container was
+										// specified
+			IJavaElement testElement = testElements[0];
 			if (testElement instanceof IMethod) {
-				IMethod method= (IMethod) testElement;
+				IMethod method = (IMethod) testElement;
 				programArguments.add("-test"); //$NON-NLS-1$
 				programArguments.add(method.getDeclaringType().getFullyQualifiedName() + ':' + method.getElementName());
 				collectAddOpensVmArgs(addOpensTargets, addOpensVmArgs, method, configuration);
 			} else if (testElement instanceof IType) {
-				IType type= (IType) testElement;
+				IType type = (IType) testElement;
 				programArguments.add("-classNames"); //$NON-NLS-1$
 				programArguments.add(type.getFullyQualifiedName());
 				collectAddOpensVmArgs(addOpensTargets, addOpensVmArgs, type, configuration);
-			} else if (testElement instanceof IPackageFragment || testElement instanceof IPackageFragmentRoot || testElement instanceof IJavaProject) {
-				Set<String> pkgNames= new HashSet<>();
-				String fileName= createPackageNamesFile(testElement, testRunnerKind, pkgNames);
+			} else if (testElement instanceof IPackageFragment || testElement instanceof IPackageFragmentRoot
+					|| testElement instanceof IJavaProject) {
+				Set<String> pkgNames = new HashSet<>();
+				String fileName = createPackageNamesFile(testElement, testRunnerKind, pkgNames);
 				programArguments.add("-packageNameFile"); //$NON-NLS-1$
 				programArguments.add(fileName);
 				for (String pkgName : pkgNames) {
@@ -477,10 +505,11 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 					}
 				}
 			} else {
-				abort(JUnitMessages.JUnitLaunchConfigurationDelegate_error_wrong_input, null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE);
+				abort(JUnitMessages.JUnitLaunchConfigurationDelegate_error_wrong_input, null,
+						IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE);
 			}
 		} else if (testElements.length > 1) {
-			String fileName= createTestNamesFile(testElements);
+			String fileName = createTestNamesFile(testElements);
 			programArguments.add("-testNameFile"); //$NON-NLS-1$
 			programArguments.add(fileName);
 			for (IJavaElement testElement : testElements) {
@@ -488,23 +517,26 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 			}
 		}
 
-		String testFailureNames= configuration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_FAILURES_NAMES, ""); //$NON-NLS-1$
+		String testFailureNames = configuration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_FAILURES_NAMES,
+				""); //$NON-NLS-1$
 		if (testFailureNames.length() > 0) {
 			programArguments.add("-testfailures"); //$NON-NLS-1$
 			programArguments.add(testFailureNames);
 		}
 
-		String uniqueId= configuration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_UNIQUE_ID, ""); //$NON-NLS-1$
+		String uniqueId = configuration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_UNIQUE_ID, ""); //$NON-NLS-1$
 		if (!uniqueId.trim().isEmpty()) {
 			programArguments.add("-uniqueId"); //$NON-NLS-1$
 			programArguments.add(uniqueId);
 		}
 
-		boolean hasIncludeTags= configuration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_HAS_INCLUDE_TAGS, false);
+		boolean hasIncludeTags = configuration
+				.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_HAS_INCLUDE_TAGS, false);
 		if (hasIncludeTags) {
-			String includeTags= configuration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_INCLUDE_TAGS, ""); //$NON-NLS-1$
+			String includeTags = configuration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_INCLUDE_TAGS,
+					""); //$NON-NLS-1$
 			if (includeTags != null && !includeTags.trim().isEmpty()) {
-				String[] tags= includeTags.split(","); //$NON-NLS-1$
+				String[] tags = includeTags.split(","); //$NON-NLS-1$
 				for (String tag : tags) {
 					programArguments.add("--include-tag"); //$NON-NLS-1$
 					programArguments.add(tag.trim());
@@ -512,11 +544,13 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 			}
 		}
 
-		boolean hasExcludeTags= configuration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_HAS_EXCLUDE_TAGS, false);
+		boolean hasExcludeTags = configuration
+				.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_HAS_EXCLUDE_TAGS, false);
 		if (hasExcludeTags) {
-			String excludeTags= configuration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_EXCLUDE_TAGS, ""); //$NON-NLS-1$
+			String excludeTags = configuration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_EXCLUDE_TAGS,
+					""); //$NON-NLS-1$
 			if (excludeTags != null && !excludeTags.trim().isEmpty()) {
-				String[] tags= excludeTags.split(","); //$NON-NLS-1$
+				String[] tags = excludeTags.split(","); //$NON-NLS-1$
 				for (String tag : tags) {
 					programArguments.add("--exclude-tag"); //$NON-NLS-1$
 					programArguments.add(tag.trim());
@@ -531,70 +565,78 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 
 	private static boolean isOnModulePath(IJavaProject javaProject, String typeToCheck) {
 		try {
-			IType type= javaProject.findType(typeToCheck);
+			IType type = javaProject.findType(typeToCheck);
 			if (type == null)
 				return false;
-			IPackageFragmentRoot packageFragmentRoot= (IPackageFragmentRoot) type.getPackageFragment().getParent();
-			IClasspathEntry resolvedClasspathEntry= packageFragmentRoot.getResolvedClasspathEntry();
+			IPackageFragmentRoot packageFragmentRoot = (IPackageFragmentRoot) type.getPackageFragment().getParent();
+			IClasspathEntry resolvedClasspathEntry = packageFragmentRoot.getResolvedClasspathEntry();
 			return Arrays.stream(resolvedClasspathEntry.getExtraAttributes())
 					.anyMatch(p -> p.getName().equals(IClasspathAttribute.MODULE) && p.getValue().equals("true")); //$NON-NLS-1$
 		} catch (JavaModelException e) {
-			// if anything goes wrong, assume true (in the worst case, user get a warning because of a redundant add-opens)
+			// if anything goes wrong, assume true (in the worst case, user get a warning
+			// because of a redundant add-opens)
 			return true;
 		}
 	}
 
-	private void collectAddOpensVmArgs(String addOpensTargets, List<String> addOpensVmArgs, IJavaElement javaElem, ILaunchConfiguration configuration) throws CoreException {
+	private void collectAddOpensVmArgs(String addOpensTargets, List<String> addOpensVmArgs, IJavaElement javaElem,
+			ILaunchConfiguration configuration) throws CoreException {
 		if (addOpensTargets != null) {
-			IPackageFragment pkg= getParentPackageFragment(javaElem);
+			IPackageFragment pkg = getParentPackageFragment(javaElem);
 			if (pkg != null) {
-				String pkgName= pkg.getElementName();
+				String pkgName = pkg.getElementName();
 				collectAddOpensVmArgs(addOpensTargets, addOpensVmArgs, pkgName, configuration);
 			}
 		}
 	}
 
-	private void collectAddOpensVmArgs(String addOpensTargets, List<String> addOpensVmArgs, String pkgName, ILaunchConfiguration configuration) throws CoreException {
+	private void collectAddOpensVmArgs(String addOpensTargets, List<String> addOpensVmArgs, String pkgName,
+			ILaunchConfiguration configuration) throws CoreException {
 		if (addOpensTargets != null) {
-			IJavaProject javaProject= getJavaProject(configuration);
-			String sourceModuleName= javaProject.getModuleDescription().getElementName();
+			IJavaProject javaProject = getJavaProject(configuration);
+			String sourceModuleName = javaProject.getModuleDescription().getElementName();
 			addOpensVmArgs.add("--add-opens"); //$NON-NLS-1$
 			addOpensVmArgs.add(sourceModuleName + "/" + pkgName + "=" + addOpensTargets); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
 	private IPackageFragment getParentPackageFragment(IJavaElement element) {
-		IJavaElement parent= element.getParent();
+		IJavaElement parent = element.getParent();
 		while (parent != null) {
 			if (parent instanceof IPackageFragment) {
 				return (IPackageFragment) parent;
 			}
-			parent= parent.getParent();
+			parent = parent.getParent();
 		}
 		return null;
 	}
 
-	private String createPackageNamesFile(IJavaElement testContainer, ITestKind testRunnerKind, Set<String> pkgNames) throws CoreException {
+	private String createPackageNamesFile(IJavaElement testContainer, ITestKind testRunnerKind, Set<String> pkgNames)
+			throws CoreException {
 		try {
-			File file= File.createTempFile("packageNames", ".txt"); //$NON-NLS-1$ //$NON-NLS-2$
+			File file = File.createTempFile("packageNames", ".txt"); //$NON-NLS-1$ //$NON-NLS-2$
 			file.deleteOnExit();
 
-			try (BufferedWriter bw= new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))) {
+			try (BufferedWriter bw = new BufferedWriter(
+					new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))) {
 				if (testContainer instanceof IPackageFragment) {
 					pkgNames.add(getPackageName(testContainer.getElementName()));
 				} else if (testContainer instanceof IPackageFragmentRoot) {
 					addAllPackageFragments((IPackageFragmentRoot) testContainer, pkgNames);
 				} else if (testContainer instanceof IJavaProject) {
-					for (IPackageFragmentRoot pkgFragmentRoot : ((IJavaProject) testContainer).getPackageFragmentRoots()) {
+					for (IPackageFragmentRoot pkgFragmentRoot : ((IJavaProject) testContainer)
+							.getPackageFragmentRoots()) {
 						if (!pkgFragmentRoot.isExternal() && !pkgFragmentRoot.isArchive()) {
 							addAllPackageFragments(pkgFragmentRoot, pkgNames);
 						}
 					}
 				} else {
-					abort(JUnitMessages.JUnitLaunchConfigurationDelegate_error_wrong_input, null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE);
+					abort(JUnitMessages.JUnitLaunchConfigurationDelegate_error_wrong_input, null,
+							IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE);
 				}
 				if (pkgNames.isEmpty()) {
-					String msg= Messages.format(JUnitMessages.JUnitLaunchConfigurationDelegate_error_notests_kind, testRunnerKind.getDisplayName());
+					String msg = MessageFormat.format(JUnitMessages.JUnitLaunchConfigurationDelegate_error_notests_kind,
+							testRunnerKind.getDisplayName());
 					abort(msg, null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE);
 				} else {
 					for (String pkgName : pkgNames) {
@@ -609,7 +651,8 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 		}
 	}
 
-	private Set<String> addAllPackageFragments(IPackageFragmentRoot pkgFragmentRoot, Set<String> pkgNames) throws JavaModelException {
+	private Set<String> addAllPackageFragments(IPackageFragmentRoot pkgFragmentRoot, Set<String> pkgNames)
+			throws JavaModelException {
 		for (IJavaElement child : pkgFragmentRoot.getChildren()) {
 			if (child instanceof IPackageFragment && ((IPackageFragment) child).hasChildren()) {
 				pkgNames.add(getPackageName(child.getElementName()));
@@ -627,17 +670,19 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 
 	private String createTestNamesFile(IJavaElement[] testElements) throws CoreException {
 		try {
-			File file= File.createTempFile("testNames", ".txt"); //$NON-NLS-1$ //$NON-NLS-2$
+			File file = File.createTempFile("testNames", ".txt"); //$NON-NLS-1$ //$NON-NLS-2$
 			file.deleteOnExit();
-			try (BufferedWriter bw= new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));) {
+			try (BufferedWriter bw = new BufferedWriter(
+					new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));) {
 				for (IJavaElement testElement : testElements) {
 					if (testElement instanceof IType) {
-						IType type= (IType) testElement;
-						String testName= type.getFullyQualifiedName();
+						IType type = (IType) testElement;
+						String testName = type.getFullyQualifiedName();
 						bw.write(testName);
 						bw.newLine();
 					} else {
-						abort(JUnitMessages.JUnitLaunchConfigurationDelegate_error_wrong_input, null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE);
+						abort(JUnitMessages.JUnitLaunchConfigurationDelegate_error_wrong_input, null,
+								IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE);
 					}
 				}
 			}
@@ -649,18 +694,18 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 
 	@Override
 	public String[][] getClasspathAndModulepath(ILaunchConfiguration configuration) throws CoreException {
-		String[][] cpmp= super.getClasspathAndModulepath(configuration);
-		String[] cp= cpmp[0];
+		String[][] cpmp = super.getClasspathAndModulepath(configuration);
+		String[] cp = cpmp[0];
 
-		ITestKind kind= getTestRunnerKind(configuration);
-		List<String> junitEntries= new ClasspathLocalizer(Platform.inDevelopmentMode()).localizeClasspath(kind);
+		ITestKind kind = getTestRunnerKind(configuration);
+		List<String> junitEntries = new ClasspathLocalizer(Platform.inDevelopmentMode()).localizeClasspath(kind);
 
-		String[] classPath= new String[cp.length + junitEntries.size()];
-		Object[] jea= junitEntries.toArray();
+		String[] classPath = new String[cp.length + junitEntries.size()];
+		Object[] jea = junitEntries.toArray();
 		System.arraycopy(cp, 0, classPath, 0, cp.length);
 		System.arraycopy(jea, 0, classPath, cp.length, jea.length);
 
-		cpmp[0]= classPath;
+		cpmp[0] = classPath;
 
 		return cpmp;
 	}
@@ -678,13 +723,13 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 	@Override
 	@Deprecated
 	public String[] getClasspath(ILaunchConfiguration configuration) throws CoreException {
-		String[] cp= super.getClasspath(configuration);
+		String[] cp = super.getClasspath(configuration);
 
-		ITestKind kind= getTestRunnerKind(configuration);
+		ITestKind kind = getTestRunnerKind(configuration);
 		List<String> junitEntries = new ClasspathLocalizer(Platform.inDevelopmentMode()).localizeClasspath(kind);
 
-		String[] classPath= new String[cp.length + junitEntries.size()];
-		Object[] jea= junitEntries.toArray();
+		String[] classPath = new String[cp.length + junitEntries.size()];
+		Object[] jea = junitEntries.toArray();
 		System.arraycopy(cp, 0, classPath, 0, cp.length);
 		System.arraycopy(jea, 0, classPath, cp.length, jea.length);
 		return classPath;
@@ -699,8 +744,8 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 		}
 
 		public List<String> localizeClasspath(ITestKind kind) {
-			UnitTestRuntimeClasspathEntry[] entries= kind.getClasspathEntries();
-			List<String> junitEntries= new ArrayList<>();
+			UnitTestRuntimeClasspathEntry[] entries = kind.getClasspathEntries();
+			List<String> junitEntries = new ArrayList<>();
 
 			for (UnitTestRuntimeClasspathEntry entrie : entries) {
 				try {
@@ -712,13 +757,15 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 			return junitEntries;
 		}
 
-		private void addEntry(List<String> junitEntries, final UnitTestRuntimeClasspathEntry entry) throws IOException, MalformedURLException, URISyntaxException {
-			String entryString= entryString(entry);
+		private void addEntry(List<String> junitEntries, final UnitTestRuntimeClasspathEntry entry)
+				throws IOException, MalformedURLException, URISyntaxException {
+			String entryString = entryString(entry);
 			if (entryString != null)
 				junitEntries.add(entryString);
 		}
 
-		private String entryString(final UnitTestRuntimeClasspathEntry entry) throws IOException, MalformedURLException, URISyntaxException {
+		private String entryString(final UnitTestRuntimeClasspathEntry entry)
+				throws IOException, MalformedURLException, URISyntaxException {
 			if (inDevelopmentMode()) {
 				try {
 					return localURL(entry.developmentModeEntry());
@@ -733,17 +780,18 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 			return fInDevelopmentMode;
 		}
 
-		private String localURL(UnitTestRuntimeClasspathEntry jar) throws IOException, MalformedURLException, URISyntaxException {
-			Bundle bundle= UnitTestPlugin.getDefault().getBundle(jar.getPluginId());
+		private String localURL(UnitTestRuntimeClasspathEntry jar)
+				throws IOException, MalformedURLException, URISyntaxException {
+			Bundle bundle = UnitTestPlugin.getDefault().getBundle(jar.getPluginId());
 			URL url;
 			if (jar.getPluginRelativePath() == null) {
-				String bundleClassPath= bundle.getHeaders().get(Constants.BUNDLE_CLASSPATH);
-				url= bundleClassPath != null ? bundle.getEntry(bundleClassPath) : null;
+				String bundleClassPath = bundle.getHeaders().get(Constants.BUNDLE_CLASSPATH);
+				url = bundleClassPath != null ? bundle.getEntry(bundleClassPath) : null;
 				if (url == null) {
-					url= bundle.getEntry("/"); //$NON-NLS-1$
+					url = bundle.getEntry("/"); //$NON-NLS-1$
 				}
 			} else {
-				url= bundle.getEntry(jar.getPluginRelativePath());
+				url = bundle.getEntry(jar.getPluginRelativePath());
 			}
 
 			if (url == null)
@@ -752,23 +800,27 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 		}
 	}
 
-	private final IJavaElement getTestTarget(ILaunchConfiguration configuration, IJavaProject javaProject) throws CoreException {
-		String containerHandle = configuration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_CONTAINER, ""); //$NON-NLS-1$
+	private final IJavaElement getTestTarget(ILaunchConfiguration configuration, IJavaProject javaProject)
+			throws CoreException {
+		String containerHandle = configuration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_CONTAINER,
+				""); //$NON-NLS-1$
 		if (containerHandle.length() != 0) {
-			 IJavaElement element= JavaCore.create(containerHandle);
-			 if (element == null || !element.exists()) {
-				 abort(JUnitMessages.JUnitLaunchConfigurationDelegate_error_input_element_deosn_not_exist, null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE);
-			 }
-			 return element;
+			IJavaElement element = JavaCore.create(containerHandle);
+			if (element == null || !element.exists()) {
+				abort(JUnitMessages.JUnitLaunchConfigurationDelegate_error_input_element_deosn_not_exist, null,
+						IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE);
+			}
+			return element;
 		}
-		String testTypeName= getMainTypeName(configuration);
+		String testTypeName = getMainTypeName(configuration);
 		if (testTypeName != null && testTypeName.length() != 0) {
-			IType type= javaProject.findType(testTypeName);
+			IType type = javaProject.findType(testTypeName);
 			if (type != null && type.exists()) {
 				return type;
 			}
 		}
-		abort(JUnitMessages.JUnitLaunchConfigurationDelegate_input_type_does_not_exist, null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE);
+		abort(JUnitMessages.JUnitLaunchConfigurationDelegate_input_type_does_not_exist, null,
+				IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE);
 		return null; // not reachable
 	}
 

@@ -657,7 +657,7 @@ public class TestRunnerViewPart extends ViewPart {
 						String testRunLabel= BasicElementLabels.getJavaElementName(testRunSession.getTestRunName());
 						String msg;
 						if (testRunSession.getLaunch() != null) {
-							msg= Messages.format(Messages.TestRunnerViewPart_Launching, new Object[]{ testRunLabel });
+							msg= MessageFormat.format(Messages.TestRunnerViewPart_Launching, new Object[]{ testRunLabel });
 						} else {
 							msg= testRunLabel;
 						}
@@ -706,8 +706,7 @@ public class TestRunnerViewPart extends ViewPart {
 
 			fTestViewer.registerAutoScrollTarget(null);
 
-			String[] keys= {elapsedTimeAsString(elapsedTime)};
-			String msg= Messages.format(Messages.TestRunnerViewPart_message_finish, keys);
+			String msg= MessageFormat.format(Messages.TestRunnerViewPart_message_finish, elapsedTimeAsString(elapsedTime));
 			registerInfoMessage(msg);
 
 			postSyncRunnable(() -> {
@@ -764,7 +763,7 @@ public class TestRunnerViewPart extends ViewPart {
 
 			String className= BasicElementLabels.getJavaElementName(testCaseElement.getTestClassName());
 			String method= BasicElementLabels.getJavaElementName(testCaseElement.getTestMethodName());
-			String status= Messages.format(Messages.TestRunnerViewPart_message_started, new String[] { className, method });
+			String status= MessageFormat.format(Messages.TestRunnerViewPart_message_started, className, method);
 			registerInfoMessage(status);
 		}
 
@@ -1312,7 +1311,7 @@ public class TestRunnerViewPart extends ViewPart {
 		try {
 			String attribute= configuration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_FAILURES_NAMES, ""); //$NON-NLS-1$
 			if (attribute.length() != 0) {
-				String configName= Messages.format(Messages.TestRunnerViewPart_configName, configuration.getName());
+				String configName= MessageFormat.format(Messages.TestRunnerViewPart_configName, configuration.getName());
 				ILaunchConfigurationWorkingCopy tmp= configuration.copy(configName);
 				tmp.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_FAILURES_NAMES, ""); //$NON-NLS-1$
 				return tmp;
@@ -1342,7 +1341,7 @@ public class TestRunnerViewPart extends ViewPart {
 						if (oldFailuresFilename != null) {
 							configName= oldName;
 						} else {
-							configName= Messages.format(Messages.TestRunnerViewPart_rerunFailedFirstLaunchConfigName, oldName);
+							configName= MessageFormat.format(Messages.TestRunnerViewPart_rerunFailedFirstLaunchConfigName, oldName);
 						}
 						ILaunchConfigurationWorkingCopy tmp= launchConfiguration.copy(configName);
 						tmp.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_FAILURES_NAMES, createFailureNamesFile());
@@ -1434,7 +1433,7 @@ public class TestRunnerViewPart extends ViewPart {
 //				&& TestKindRegistry.JUNIT5_TEST_KIND_ID.equals(fTestRunSession.getTestRunnerKind().getId())
 				&& fTestRunSession.getTotalCount() == 0) {
 			Display.getDefault().asyncExec(() -> {
-				String msg= Messages.format(Messages.TestRunnerViewPart_error_notests_kind, fTestRunSession.getTestRunnerKind().getDisplayName());
+				String msg= MessageFormat.format(Messages.TestRunnerViewPart_error_notests_kind, fTestRunSession.getTestRunnerKind().getDisplayName());
 				MessageDialog.openInformation(UnitTestPlugin.getActiveWorkbenchShell(), Messages.TestRunnerViewPart__error_cannotrun, msg);
 			});
 		}
@@ -2143,7 +2142,7 @@ action enablement
 							if (testName != null)
 								name+= "."+testName; //$NON-NLS-1$
 						}
-						String configName= Messages.format(Messages.TestRunnerViewPart_configName, name);
+						String configName= MessageFormat.format(Messages.TestRunnerViewPart_configName, name);
 						ILaunchConfigurationWorkingCopy tmp = launchConfiguration.copy(configName);
 						// fix for bug: 64838  junit view run single test does not use correct class [JUnit]
 						tmp.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, className);

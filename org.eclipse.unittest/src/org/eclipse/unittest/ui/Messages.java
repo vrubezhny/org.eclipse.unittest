@@ -17,8 +17,6 @@
  *******************************************************************************/
 package org.eclipse.unittest.ui;
 
-import java.text.MessageFormat;
-
 import org.eclipse.osgi.util.NLS;
 
 public final class Messages extends NLS {
@@ -353,11 +351,6 @@ public final class Messages extends NLS {
 
 	private Messages() {
 		// Do not instantiate
-	}
-
-
-	public static String format(String message, Object... object) {
-		return MessageFormat.format(message, object);
 	}
 
 	public static String TestSessionLabelProvider_testMethodName_className;
