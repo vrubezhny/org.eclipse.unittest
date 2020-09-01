@@ -88,7 +88,7 @@ public class OpenEditorAtLineAction extends Action implements IOpenEditorAction 
 	// NOTE: This method is copied from Linux Tools Project (http://www.eclipse.org/linuxtools).
 	// Valgrind Support Plugin is implementing similar functionality so it is just reused.
 	// See also org.eclipse.linuxtools.valgrind.ui/src/org/eclipse/linuxtools/internal/valgrind/ui/CoreMessagesViewer.java
-	private void lookupSource(String file, int line,ILaunch launch) {
+	private void lookupSource(String file, int lineNumber,ILaunch launch) {
 		ISourceLocator locator = launch.getSourceLocator();
 		if (locator instanceof AbstractSourceLookupDirector) {
 			AbstractSourceLookupDirector director = (AbstractSourceLookupDirector) locator;
@@ -125,10 +125,8 @@ public class OpenEditorAtLineAction extends Action implements IOpenEditorAction 
 		}
 		ISourceLookupResult result = DebugUITools.lookupSource(file, locator);
 		try {
-			openEditorAndSelect(result, line);
-		} catch (PartInitException e) {
-			CDTPlugin.log(e);
-		} catch (BadLocationException e) {
+			openEditorAndSelect(result, lineNumber);
+		} catch (PartInitException|BadLocationException e) {
 			CDTPlugin.log(e);
 		}
 	}
@@ -136,7 +134,7 @@ public class OpenEditorAtLineAction extends Action implements IOpenEditorAction 
 	// NOTE: This method is copied from Linux Tools Project (http://www.eclipse.org/linuxtools).
 	// Valgrind Support Plugin is implementing similar functionality so it is just reused.
 	// See also org.eclipse.linuxtools.valgrind.ui/src/org/eclipse/linuxtools/internal/valgrind/ui/CoreMessagesViewer.java
-	private void openEditorAndSelect(ISourceLookupResult result, int line)
+	private void openEditorAndSelect(ISourceLookupResult result, int lineNumber)
 			throws PartInitException, BadLocationException {
 		IEditorInput input = result.getEditorInput();
 		String editorID = result.getEditorId();
@@ -173,11 +171,11 @@ public class OpenEditorAtLineAction extends Action implements IOpenEditorAction 
 			if (editor instanceof ITextEditor) {
 				ITextEditor textEditor = (ITextEditor) editor;
 
-				if (line > 0) {
+				if (lineNumber > 0) {
 					IDocumentProvider provider = textEditor.getDocumentProvider();
 					IDocument document = provider.getDocument(textEditor.getEditorInput());
 
-					IRegion lineRegion = document.getLineInformation(line - 1); //zero-indexed
+					IRegion lineRegion = document.getLineInformation(lineNumber - 1); //zero-indexed
 					textEditor.selectAndReveal(lineRegion.getOffset(), lineRegion.getLength());
 				}
 			}

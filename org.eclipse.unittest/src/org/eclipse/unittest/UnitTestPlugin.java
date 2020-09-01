@@ -421,9 +421,7 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Initializes TestRun Listener extensions
-	 * @deprecated to avoid deprecation warning
 	 */
-	@Deprecated
 	private synchronized void loadTestRunListeners() {
 		if (!fNewTestRunListeners.isEmpty()) {
 			return;

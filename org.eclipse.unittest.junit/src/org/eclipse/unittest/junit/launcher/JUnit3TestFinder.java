@@ -24,7 +24,7 @@ import org.eclipse.unittest.launcher.ITestFinder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -46,7 +46,7 @@ public class JUnit3TestFinder implements ITestFinder {
 		}
 
 		if (pm == null)
-			pm= new NullProgressMonitor();
+			pm = new NullProgressMonitor();
 
 		pm.beginTask(JUnitMessages.TestSearchEngine_message_searching, 10);
 		try {
@@ -55,7 +55,7 @@ public class JUnit3TestFinder implements ITestFinder {
 					result.add(element);
 				}
 			} else if (element instanceof ICompilationUnit) {
-				IType[] types= ((ICompilationUnit) element).getAllTypes();
+				IType[] types = ((ICompilationUnit) element).getAllTypes();
 				for (IType type : types) {
 					if (isTest(type)) {
 						result.add(type);
@@ -63,12 +63,12 @@ public class JUnit3TestFinder implements ITestFinder {
 				}
 			} else {
 				if (element instanceof IJavaElement) {
-					IJavaElement javaElement = (IJavaElement)element;
-					findTestCases(javaElement, result, new SubProgressMonitor(pm, 7));
+					IJavaElement javaElement = (IJavaElement) element;
+					findTestCases(javaElement, result, SubMonitor.convert(pm, 7));
 					if (pm.isCanceled()) {
 						return;
 					}
-					CoreTestSearchEngine.findSuiteMethods(javaElement, result, new SubProgressMonitor(pm, 3));
+					CoreTestSearchEngine.findSuiteMethods(javaElement, result, SubMonitor.convert(pm, 3));
 				}
 			}
 			if (pm.isCanceled()) {
@@ -79,23 +79,23 @@ public class JUnit3TestFinder implements ITestFinder {
 		}
 	}
 
-	private static void findTestCases(IJavaElement element, Set<IType> result, IProgressMonitor pm) throws JavaModelException {
-		IJavaProject javaProject= element.getJavaProject();
+	private static void findTestCases(IJavaElement element, Set<IType> result, IProgressMonitor pm)
+			throws JavaModelException {
+		IJavaProject javaProject = element.getJavaProject();
 
-		IType testCaseType= javaProject.findType(JUnitPlugin.TEST_INTERFACE_NAME);
+		IType testCaseType = javaProject.findType(JUnitPlugin.TEST_INTERFACE_NAME);
 		if (testCaseType == null)
 			return;
 
-		IRegion region= CoreTestSearchEngine.getRegion(element);
-		ITypeHierarchy typeHierarchy= javaProject.newTypeHierarchy(testCaseType, region, pm);
+		IRegion region = CoreTestSearchEngine.getRegion(element);
+		ITypeHierarchy typeHierarchy = javaProject.newTypeHierarchy(testCaseType, region, pm);
 		CoreTestSearchEngine.findTestImplementorClasses(typeHierarchy, testCaseType, region, result);
 	}
 
 	@Override
 	public boolean isTest(Object type) throws JavaModelException {
-		return  type instanceof IType
-				&& CoreTestSearchEngine.isAccessibleClass((IType)type)
-				&& (CoreTestSearchEngine.hasSuiteMethod((IType)type) || isTestImplementor((IType)type));
+		return type instanceof IType && CoreTestSearchEngine.isAccessibleClass((IType) type)
+				&& (CoreTestSearchEngine.hasSuiteMethod((IType) type) || isTestImplementor((IType) type));
 	}
 
 	private static boolean isTestImplementor(IType type) throws JavaModelException {

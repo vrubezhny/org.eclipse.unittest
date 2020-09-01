@@ -16,6 +16,7 @@
 
 package org.eclipse.unittest.ui;
 
+import java.text.MessageFormat;
 import java.text.NumberFormat;
 
 import org.eclipse.unittest.internal.model.TestCaseElement;
@@ -66,7 +67,7 @@ public class TestSessionLabelProvider extends LabelProvider implements IStyledLa
 			if (testElement.getParentContainer() instanceof ITestRunSession) {
 				String testKindDisplayName= fTestRunnerPart.getTestKindDisplayName();
 				if (testKindDisplayName != null) {
-					String decorated= Messages.format(Messages.TestSessionLabelProvider_testName_JUnitVersion, new Object[] { label, testKindDisplayName });
+					String decorated= MessageFormat.format(Messages.TestSessionLabelProvider_testName_JUnitVersion, label, testKindDisplayName);
 					text= StyledCellLabelProvider.styleDecoratedString(decorated, StyledString.QUALIFIER_STYLER, text);
 				}
 			}
@@ -92,7 +93,7 @@ public class TestSessionLabelProvider extends LabelProvider implements IStyledLa
 				parentName= testCaseElement.getTestClassName();
 			}
 		}
-		return Messages.format(Messages.TestSessionLabelProvider_testMethodName_className, new Object[] { label, BasicElementLabels.getJavaElementName(parentName) });
+		return MessageFormat.format(Messages.TestSessionLabelProvider_testMethodName_className, new Object[] { label, BasicElementLabels.getJavaElementName(parentName) });
 	}
 
 	private StyledString addElapsedTime(StyledString styledString, double time) {
@@ -106,7 +107,7 @@ public class TestSessionLabelProvider extends LabelProvider implements IStyledLa
 			return string;
 		}
 		String formattedTime= timeFormat.format(time);
-		return Messages.format(Messages.TestSessionLabelProvider_testName_elapsedTimeInSeconds, new String[] { string, formattedTime});
+		return MessageFormat.format(Messages.TestSessionLabelProvider_testName_elapsedTimeInSeconds, string, formattedTime);
 	}
 
 	private String getSimpleLabel(Object element) {
@@ -133,7 +134,7 @@ public class TestSessionLabelProvider extends LabelProvider implements IStyledLa
 			if (testElement.getParentContainer() instanceof ITestRunSession) {
 				String testKindDisplayName= fTestRunnerPart.getTestKindDisplayName();
 				if (testKindDisplayName != null) {
-					label= Messages.format(Messages.TestSessionLabelProvider_testName_JUnitVersion, new Object[] { label, testKindDisplayName });
+					label= MessageFormat.format(Messages.TestSessionLabelProvider_testName_JUnitVersion, new Object[] { label, testKindDisplayName });
 				}
 			}
 		} else {
