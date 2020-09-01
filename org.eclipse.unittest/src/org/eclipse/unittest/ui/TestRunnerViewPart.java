@@ -61,7 +61,6 @@ import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.URLTransfer;
-import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -1894,15 +1893,9 @@ action enablement
 	}
 
 	private void addResizeListener(Composite parent) {
-		parent.addControlListener(new ControlListener() {
-			@Override
-			public void controlMoved(ControlEvent e) {
-			}
-			@Override
-			public void controlResized(ControlEvent e) {
-				computeOrientation();
-			}
-		});
+		parent.addControlListener(ControlListener.controlResizedAdapter(e -> {
+			computeOrientation();
+		}));
 	}
 
 	void computeOrientation() {

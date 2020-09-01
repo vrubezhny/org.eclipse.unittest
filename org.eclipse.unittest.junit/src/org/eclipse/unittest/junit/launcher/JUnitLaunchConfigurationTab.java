@@ -389,17 +389,10 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
 		fTestContainerRadioButton.setLayoutData(gd);
-		fTestContainerRadioButton.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (fTestContainerRadioButton.getSelection())
-					testModeChanged();
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
+		fTestContainerRadioButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			if (fTestContainerRadioButton.getSelection())
+				testModeChanged();
+		}));
 
 		fContainerText = new Text(comp, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
 		SWTUtil.fixReadonlyTextBackground(fContainerText);
@@ -436,16 +429,9 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 	private void createKeepAliveGroup(Composite comp) {
 		GridData gd;
 		fKeepRunning = new Button(comp, SWT.CHECK);
-		fKeepRunning.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateLaunchConfigurationDialog();
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
+		fKeepRunning.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			updateLaunchConfigurationDialog();
+		}));
 		fKeepRunning.setText(JUnitMessages.JUnitLaunchConfigurationTab_label_keeprunning);
 		gd = new GridData();
 		gd.horizontalAlignment = GridData.FILL;
@@ -1151,9 +1137,7 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 				name = types[0].getFullyQualifiedName('.');
 
 			}
-		} catch (InterruptedException ie) {
-
-		} catch (InvocationTargetException ite) {
+		} catch (InterruptedException | InvocationTargetException ie) {
 		}
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, name);
 		if (testKindId != null)

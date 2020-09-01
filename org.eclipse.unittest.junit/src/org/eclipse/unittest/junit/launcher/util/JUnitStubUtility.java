@@ -45,17 +45,16 @@ import org.eclipse.jdt.core.formatter.CodeFormatter;
 import org.eclipse.jdt.core.formatter.IndentManipulation;
 import org.eclipse.jdt.core.manipulation.CodeGeneration;
 
+import org.eclipse.jdt.internal.corext.dom.IASTSharedValues;
 import org.eclipse.jdt.internal.corext.util.JavaModelUtil;
 import org.eclipse.jdt.internal.junit.util.CoreTestSearchEngine;
 
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jdt.ui.wizards.NewTypeWizardPage.ImportsManager;
 
-import org.eclipse.jdt.internal.corext.dom.IASTSharedValues;
-
 /**
- * Utility methods for code generation.
- * TODO: some methods are duplicated from org.eclipse.jdt.ui
+ * Utility methods for code generation. TODO: some methods are duplicated from
+ * org.eclipse.jdt.ui
  */
 public class JUnitStubUtility {
 
@@ -74,9 +73,13 @@ public class JUnitStubUtility {
 		public final int tabWidth;
 
 		public GenStubSettings(IJavaProject project) {
-			this.createComments= Boolean.valueOf(PreferenceConstants.getPreference(PreferenceConstants.CODEGEN_ADD_COMMENTS, project)).booleanValue();
-			this.useKeywordThis= Boolean.valueOf(PreferenceConstants.getPreference(PreferenceConstants.CODEGEN_KEYWORD_THIS, project)).booleanValue();
-			this.tabWidth= IndentManipulation.getTabWidth(project.getOptions(true));
+			this.createComments = Boolean
+					.valueOf(PreferenceConstants.getPreference(PreferenceConstants.CODEGEN_ADD_COMMENTS, project))
+					.booleanValue();
+			this.useKeywordThis = Boolean
+					.valueOf(PreferenceConstants.getPreference(PreferenceConstants.CODEGEN_KEYWORD_THIS, project))
+					.booleanValue();
+			this.tabWidth = IndentManipulation.getTabWidth(project.getOptions(true));
 		}
 	}
 
@@ -84,17 +87,17 @@ public class JUnitStubUtility {
 		return codeFormat(project, sourceString, CodeFormatter.K_COMPILATION_UNIT, 0, lineDelim);
 	}
 
-
-	public static String codeFormat(IJavaProject project, String sourceString, int kind, int initialIndentationLevel, String lineDelim) {
-		CodeFormatter formatter= ToolFactory.createCodeFormatter(project.getOptions(true));
-		TextEdit edit= formatter.format(kind, sourceString, 0, sourceString.length(), initialIndentationLevel, lineDelim);
+	public static String codeFormat(IJavaProject project, String sourceString, int kind, int initialIndentationLevel,
+			String lineDelim) {
+		CodeFormatter formatter = ToolFactory.createCodeFormatter(project.getOptions(true));
+		TextEdit edit = formatter.format(kind, sourceString, 0, sourceString.length(), initialIndentationLevel,
+				lineDelim);
 		if (edit != null) {
-			Document doc= new Document(sourceString);
+			Document doc = new Document(sourceString);
 			try {
 				edit.apply(doc);
 				return doc.get();
-			} catch (MalformedTreeException e) {
-			} catch (BadLocationException e) {
+			} catch (MalformedTreeException | BadLocationException e) {
 			}
 		}
 		return sourceString;
@@ -103,34 +106,42 @@ public class JUnitStubUtility {
 	/**
 	 * Generates a stub. Given a template method, a stub with the same signature
 	 * will be constructed so it can be added to a type.
-	 * @param compilationUnit the compilation unit
-	 * @param destTypeName The name of the type to which the method will be added to (Used for the constructor)
-	 * @param method A method template (method belongs to different type than the parent)
-	 * @param settings Options as defined above (GENSTUB_*)
+	 *
+	 * @param compilationUnit  the compilation unit
+	 * @param destTypeName     The name of the type to which the method will be
+	 *                         added to (Used for the constructor)
+	 * @param method           A method template (method belongs to different type
+	 *                         than the parent)
+	 * @param settings         Options as defined above (GENSTUB_*)
 	 * @param extraAnnotations the annotations to add
-	 * @param imports Imports required by the sub are added to the imports structure
+	 * @param imports          Imports required by the sub are added to the imports
+	 *                         structure
 	 * @return The unformatted stub
 	 * @throws CoreException if an error occurs
 	 */
-	public static String genStub(ICompilationUnit compilationUnit, String destTypeName, IMethod method, GenStubSettings settings, String extraAnnotations, ImportsManager imports) throws CoreException {
-		IType declaringtype= method.getDeclaringType();
-		StringBuilder buf= new StringBuilder();
-		String[] paramTypes= method.getParameterTypes();
-		String[] paramNames= method.getParameterNames();
-		String[] excTypes= method.getExceptionTypes();
-		String retTypeSig= method.getReturnType();
+	public static String genStub(ICompilationUnit compilationUnit, String destTypeName, IMethod method,
+			GenStubSettings settings, String extraAnnotations, ImportsManager imports) throws CoreException {
+		IType declaringtype = method.getDeclaringType();
+		StringBuilder buf = new StringBuilder();
+		String[] paramTypes = method.getParameterTypes();
+		String[] paramNames = method.getParameterNames();
+		String[] excTypes = method.getExceptionTypes();
+		String retTypeSig = method.getReturnType();
 
-		int lastParam= paramTypes.length -1;
+		int lastParam = paramTypes.length - 1;
 
-		String comment= null;
+		String comment = null;
 		if (settings.createComments) {
 			if (method.isConstructor()) {
-				comment= CodeGeneration.getMethodComment(compilationUnit, destTypeName, method.getElementName(), paramNames, excTypes, null, null, "\n"); //$NON-NLS-1$
+				comment = CodeGeneration.getMethodComment(compilationUnit, destTypeName, method.getElementName(),
+						paramNames, excTypes, null, null, "\n"); //$NON-NLS-1$
 			} else {
 				if (settings.methodOverwrites) {
-					comment= CodeGeneration.getMethodComment(compilationUnit, destTypeName, method.getElementName(), paramNames, excTypes, retTypeSig, method, "\n"); //$NON-NLS-1$
+					comment = CodeGeneration.getMethodComment(compilationUnit, destTypeName, method.getElementName(),
+							paramNames, excTypes, retTypeSig, method, "\n"); //$NON-NLS-1$
 				} else {
-					comment= CodeGeneration.getMethodComment(compilationUnit, destTypeName, method.getElementName(), paramNames, excTypes, retTypeSig, null, "\n"); //$NON-NLS-1$
+					comment = CodeGeneration.getMethodComment(compilationUnit, destTypeName, method.getElementName(),
+							paramNames, excTypes, retTypeSig, null, "\n"); //$NON-NLS-1$
 				}
 			}
 		}
@@ -141,7 +152,7 @@ public class JUnitStubUtility {
 			buf.append(extraAnnotations).append('\n');
 		}
 
-		int flags= method.getFlags();
+		int flags = method.getFlags();
 		if (Flags.isPublic(flags) || (declaringtype.isInterface() && !settings.noBody)) {
 			buf.append("public "); //$NON-NLS-1$
 		} else if (Flags.isProtected(flags)) {
@@ -165,7 +176,7 @@ public class JUnitStubUtility {
 		if (method.isConstructor()) {
 			buf.append(destTypeName);
 		} else {
-			String retTypeFrm= Signature.toString(retTypeSig);
+			String retTypeFrm = Signature.toString(retTypeSig);
 			if (!isBuiltInType(retTypeSig)) {
 				resolveAndAdd(retTypeSig, declaringtype, imports);
 			}
@@ -174,9 +185,9 @@ public class JUnitStubUtility {
 			buf.append(method.getElementName());
 		}
 		buf.append('(');
-		for (int i= 0; i <= lastParam; i++) {
-			String paramTypeSig= paramTypes[i];
-			String paramTypeFrm= Signature.toString(paramTypeSig);
+		for (int i = 0; i <= lastParam; i++) {
+			String paramTypeSig = paramTypes[i];
+			String paramTypeFrm = Signature.toString(paramTypeSig);
 			if (!isBuiltInType(paramTypeSig)) {
 				resolveAndAdd(paramTypeSig, declaringtype, imports);
 			}
@@ -189,12 +200,12 @@ public class JUnitStubUtility {
 		}
 		buf.append(')');
 
-		int lastExc= excTypes.length - 1;
+		int lastExc = excTypes.length - 1;
 		if (lastExc >= 0) {
 			buf.append(" throws "); //$NON-NLS-1$
-			for (int i= 0; i <= lastExc; i++) {
-				String excTypeSig= excTypes[i];
-				String excTypeFrm= Signature.toString(excTypeSig);
+			for (int i = 0; i <= lastExc; i++) {
+				String excTypeSig = excTypes[i];
+				String excTypeFrm = Signature.toString(excTypeSig);
 				resolveAndAdd(excTypeSig, declaringtype, imports);
 				buf.append(Signature.getSimpleName(excTypeFrm));
 				if (i < lastExc) {
@@ -229,7 +240,7 @@ public class JUnitStubUtility {
 					buf.append("super"); //$NON-NLS-1$
 				}
 				buf.append('(');
-				for (int i= 0; i <= lastParam; i++) {
+				for (int i = 0; i <= lastParam; i++) {
 					buf.append(paramNames[i]);
 					if (i < lastParam) {
 						buf.append(", "); //$NON-NLS-1$
@@ -237,33 +248,34 @@ public class JUnitStubUtility {
 				}
 				buf.append(");\n\t"); //$NON-NLS-1$
 			}
-			buf.append("}\n\n");			 //$NON-NLS-1$
+			buf.append("}\n\n"); //$NON-NLS-1$
 		}
 		return buf.toString();
 	}
 
 	private static boolean isBuiltInType(String typeName) {
-		char first= Signature.getElementType(typeName).charAt(0);
+		char first = Signature.getElementType(typeName).charAt(0);
 		return (first != Signature.C_RESOLVED && first != Signature.C_UNRESOLVED);
 	}
 
-	private static void resolveAndAdd(String refTypeSig, IType declaringType, ImportsManager imports) throws JavaModelException {
-		String resolvedTypeName= JavaModelUtil.getResolvedTypeName(refTypeSig, declaringType);
+	private static void resolveAndAdd(String refTypeSig, IType declaringType, ImportsManager imports)
+			throws JavaModelException {
+		String resolvedTypeName = JavaModelUtil.getResolvedTypeName(refTypeSig, declaringType);
 		if (resolvedTypeName != null) {
 			imports.addImport(resolvedTypeName);
 		}
 	}
 
 	public static String getTodoTaskTag(IJavaProject project) {
-		String markers= null;
+		String markers = null;
 		if (project == null) {
-			markers= JavaCore.getOption(JavaCore.COMPILER_TASK_TAGS);
+			markers = JavaCore.getOption(JavaCore.COMPILER_TASK_TAGS);
 		} else {
-			markers= project.getOption(JavaCore.COMPILER_TASK_TAGS, true);
+			markers = project.getOption(JavaCore.COMPILER_TASK_TAGS, true);
 		}
 
 		if (markers != null && markers.length() > 0) {
-			int idx= markers.indexOf(',');
+			int idx = markers.indexOf(',');
 			if (idx == -1) {
 				return markers;
 			}
@@ -273,48 +285,49 @@ public class JUnitStubUtility {
 	}
 
 	/**
-	 * Returns a comma-separated list of method parameter type names in parentheses or "" if the method
-	 * has no parameters. If fully qualified type names are required, <code>$</code> is used as the
-	 * enclosing type separator in the qualified type name. Type erasure is performed on a parameterized
-	 * type, arrays use the square brackets and a type parameter is resolved while creating the return
-	 * value.
+	 * Returns a comma-separated list of method parameter type names in parentheses
+	 * or "" if the method has no parameters. If fully qualified type names are
+	 * required, <code>$</code> is used as the enclosing type separator in the
+	 * qualified type name. Type erasure is performed on a parameterized type,
+	 * arrays use the square brackets and a type parameter is resolved while
+	 * creating the return value.
 	 *
-	 * @param method the method whose parameter types are required
-	 * @param useSimpleNames <code>true</code> if the last segment of the type name should be used
-	 *            instead of the fully qualified type name
+	 * @param method         the method whose parameter types are required
+	 * @param useSimpleNames <code>true</code> if the last segment of the type name
+	 *                       should be used instead of the fully qualified type name
 	 * @return a comma-separated list of method parameter type names in parentheses
 	 */
 	public static String getParameterTypes(final IMethod method, final boolean useSimpleNames) {
-		String paramTypes= ""; //$NON-NLS-1$
+		String paramTypes = ""; //$NON-NLS-1$
 
-		int numOfParams= method.getNumberOfParameters();
+		int numOfParams = method.getNumberOfParameters();
 		if (numOfParams > 0) {
-			String[] parameterTypeSignatures= method.getParameterTypes();
-			ArrayList<String> parameterTypeNames= new ArrayList<>(numOfParams);
+			String[] parameterTypeSignatures = method.getParameterTypes();
+			ArrayList<String> parameterTypeNames = new ArrayList<>(numOfParams);
 
 			try {
-				String[] fullNames= null;
-				for (int i= 0; i < parameterTypeSignatures.length; i++) {
-					String paramTypeSign= parameterTypeSignatures[i];
-					StringBuilder buf= new StringBuilder();
+				String[] fullNames = null;
+				for (int i = 0; i < parameterTypeSignatures.length; i++) {
+					String paramTypeSign = parameterTypeSignatures[i];
+					StringBuilder buf = new StringBuilder();
 
-					String typeSign= Signature.getTypeErasure(paramTypeSign);
+					String typeSign = Signature.getTypeErasure(paramTypeSign);
 					String fullName;
 					if (useSimpleNames) {
-						fullName= JavaModelUtil.getResolvedTypeName(typeSign, method.getDeclaringType(), '.');
+						fullName = JavaModelUtil.getResolvedTypeName(typeSign, method.getDeclaringType(), '.');
 					} else {
-						fullName= JavaModelUtil.getResolvedTypeName(typeSign, method.getDeclaringType(), '$');
+						fullName = JavaModelUtil.getResolvedTypeName(typeSign, method.getDeclaringType(), '$');
 					}
 					if (fullName == null) { // e.g. a type parameter "QE;"
 						if (fullNames == null) {
-							fullNames= JUnitStubUtility.getParameterTypeNamesForSeeTag(method);
+							fullNames = JUnitStubUtility.getParameterTypeNamesForSeeTag(method);
 						}
-						fullName= fullNames[i];
+						fullName = fullNames[i];
 					}
 
 					if (fullName != null) {
 						buf.append(fullName);
-						int dim= Signature.getArrayCount(typeSign);
+						int dim = Signature.getArrayCount(typeSign);
 						while (dim > 0) {
 							buf.append("[]"); //$NON-NLS-1$
 							dim--;
@@ -327,11 +340,11 @@ public class JUnitStubUtility {
 				// ignore
 			}
 
-			Stream<String> stream= parameterTypeNames.stream();
+			Stream<String> stream = parameterTypeNames.stream();
 			if (useSimpleNames) {
-				stream= stream.map(paramTypeName -> paramTypeName.substring(paramTypeName.lastIndexOf('.') + 1));
+				stream = stream.map(paramTypeName -> paramTypeName.substring(paramTypeName.lastIndexOf('.') + 1));
 			}
-			paramTypes= stream.collect(Collectors.joining(", ", "(", ")")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			paramTypes = stream.collect(Collectors.joining(", ", "(", ")")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 
 		return paramTypes;
@@ -343,20 +356,21 @@ public class JUnitStubUtility {
 	 */
 	public static boolean isVisible(IMember member, IPackageFragment pack) throws JavaModelException {
 
-		int type= member.getElementType();
-		if  (type == IJavaElement.INITIALIZER ||  (type == IJavaElement.METHOD && member.getElementName().startsWith("<"))) { //$NON-NLS-1$
+		int type = member.getElementType();
+		if (type == IJavaElement.INITIALIZER
+				|| (type == IJavaElement.METHOD && member.getElementName().startsWith("<"))) { //$NON-NLS-1$
 			return false;
 		}
 
-		int otherflags= member.getFlags();
-		IType declaringType= member.getDeclaringType();
+		int otherflags = member.getFlags();
+		IType declaringType = member.getDeclaringType();
 		if (Flags.isPublic(otherflags) || (declaringType != null && declaringType.isInterface())) {
 			return true;
 		} else if (Flags.isPrivate(otherflags)) {
 			return false;
 		}
 
-		IPackageFragment otherpack= (IPackageFragment) member.getAncestor(IJavaElement.PACKAGE_FRAGMENT);
+		IPackageFragment otherpack = (IPackageFragment) member.getAncestor(IJavaElement.PACKAGE_FRAGMENT);
 		return (pack != null && otherpack != null && pack.getElementName().equals(otherpack.getElementName()));
 	}
 
@@ -378,9 +392,9 @@ public class JUnitStubUtility {
 
 	public static String[] getParameterTypeNamesForSeeTag(IMethod overridden) {
 		try {
-			ASTParser parser= ASTParser.newParser(IASTSharedValues.SHARED_AST_LEVEL);
+			ASTParser parser = ASTParser.newParser(IASTSharedValues.SHARED_AST_LEVEL);
 			parser.setProject(overridden.getJavaProject());
-			IBinding[] bindings= parser.createBindings(new IJavaElement[] { overridden }, null);
+			IBinding[] bindings = parser.createBindings(new IJavaElement[] { overridden }, null);
 			if (bindings.length == 1 && bindings[0] instanceof IMethodBinding) {
 				return getParameterTypeNamesForSeeTag((IMethodBinding) bindings[0]);
 			}
@@ -388,30 +402,29 @@ public class JUnitStubUtility {
 			// method does not exist
 		}
 		// fall back code. Not good for generic methods!
-		String[] paramTypes= overridden.getParameterTypes();
-		String[] paramTypeNames= new String[paramTypes.length];
-		for (int i= 0; i < paramTypes.length; i++) {
-			paramTypeNames[i]= Signature.toString(Signature.getTypeErasure(paramTypes[i]));
+		String[] paramTypes = overridden.getParameterTypes();
+		String[] paramTypeNames = new String[paramTypes.length];
+		for (int i = 0; i < paramTypes.length; i++) {
+			paramTypeNames[i] = Signature.toString(Signature.getTypeErasure(paramTypes[i]));
 		}
 		return paramTypeNames;
 	}
 
 	private static String[] getParameterTypeNamesForSeeTag(IMethodBinding binding) {
-		ITypeBinding[] typeBindings= binding.getParameterTypes();
-		String[] result= new String[typeBindings.length];
-		for (int i= 0; i < result.length; i++) {
-			ITypeBinding curr= typeBindings[i];
+		ITypeBinding[] typeBindings = binding.getParameterTypes();
+		String[] result = new String[typeBindings.length];
+		for (int i = 0; i < result.length; i++) {
+			ITypeBinding curr = typeBindings[i];
 			if (curr.isTypeVariable()) {
-				curr= curr.getErasure(); // in Javadoc only use type variable erasure
+				curr = curr.getErasure(); // in Javadoc only use type variable erasure
 			}
-			curr= curr.getTypeDeclaration(); // no parameterized types
-			result[i]= curr.getQualifiedName();
+			curr = curr.getTypeDeclaration(); // no parameterized types
+			result[i] = curr.getQualifiedName();
 		}
 		return result;
 	}
 
 	private JUnitStubUtility() {
 	}
-
 
 }
