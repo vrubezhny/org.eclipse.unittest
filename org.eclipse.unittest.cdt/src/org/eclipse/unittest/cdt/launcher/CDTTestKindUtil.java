@@ -22,6 +22,7 @@ import org.eclipse.unittest.launcher.TestKindRegistry;
 public class CDTTestKindUtil {
 
 	public static final String CDT_TEST_KIND_ID= "org.eclipse.unittest.cdt.loader"; //$NON-NLS-1$
+	public static final String CDT_DSF_DBG_TEST_KIND_ID= "org.eclipse.unittest.cdt.loader"; //$NON-NLS-1$
 
 	private CDTTestKindUtil() {
 	}

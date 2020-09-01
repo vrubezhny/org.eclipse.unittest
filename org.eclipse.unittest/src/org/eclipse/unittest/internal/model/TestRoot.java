@@ -13,9 +13,10 @@
  *******************************************************************************/
 package org.eclipse.unittest.internal.model;
 
+import org.eclipse.unittest.model.ITestRoot;
 import org.eclipse.unittest.model.ITestRunSession;
 
-public class TestRoot extends TestSuiteElement {
+public class TestRoot extends TestSuiteElement implements ITestRoot {
 
 	private final ITestRunSession fSession;
 

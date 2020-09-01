@@ -15,8 +15,9 @@ package org.eclipse.unittest.internal.model;
 
 import org.eclipse.unittest.TestRunListener;
 import org.eclipse.unittest.UnitTestPlugin;
-import org.eclipse.unittest.internal.model.TestElement.Status;
 import org.eclipse.unittest.model.ITestCaseElement;
+import org.eclipse.unittest.model.ITestElement;
+import org.eclipse.unittest.model.ITestElement.Status;
 
 import org.eclipse.core.runtime.ListenerList;
 
@@ -83,7 +84,7 @@ public class TestRunListenerAdapter implements ITestSessionListener {
 	}
 
 	@Override
-	public void testAdded(TestElement testElement) {
+	public void testAdded(ITestElement testElement) {
 		// do nothing
 	}
 
@@ -103,7 +104,7 @@ public class TestRunListenerAdapter implements ITestSessionListener {
 	}
 
 	@Override
-	public void testFailed(TestElement testElement, Status status, String trace, String expected, String actual) {
+	public void testFailed(ITestElement testElement, Status status, String trace, String expected, String actual) {
 		// ignore
 	}
 

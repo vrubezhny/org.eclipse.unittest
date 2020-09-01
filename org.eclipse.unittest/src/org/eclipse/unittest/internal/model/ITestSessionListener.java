@@ -14,7 +14,8 @@
 
 package org.eclipse.unittest.internal.model;
 
-import org.eclipse.unittest.internal.model.TestElement.Status;
+import org.eclipse.unittest.model.ITestElement;
+import org.eclipse.unittest.model.ITestElement.Status;
 
 /**
  * A listener interface for observing the execution of a test session (initial run and reruns).
@@ -46,7 +47,7 @@ public interface ITestSessionListener {
 	 *
 	 * @param testElement the test
 	 */
-	public void testAdded(TestElement testElement);
+	public void testAdded(ITestElement testElement);
 
 	/**
 	 * All test have been added and running begins
@@ -76,13 +77,13 @@ public interface ITestSessionListener {
 	 * @param expected expected value
 	 * @param actual actual value
 	 */
-	public void testFailed(TestElement testElement, Status status, String trace, String expected, String actual);
+	public void testFailed(ITestElement testElement, Status status, String trace, String expected, String actual);
 	/**
  	 * An individual test has been rerun.
 	 *
 	 * @param testCaseElement the test
 	 * @param status the outcome of the test that was rerun; one of
-	 * {@link TestElement.Status#OK}, {@link TestElement.Status#ERROR}, or {@link TestElement.Status#FAILURE}
+	 * {@link ITestElement.Status#OK}, {@link ITestElement.Status#ERROR}, or {@link ITestElement.Status#FAILURE}
 	 * @param trace the stack trace in the case of abnormal termination,
 	 * or the empty string if none
 	 * @param expectedResult expected value

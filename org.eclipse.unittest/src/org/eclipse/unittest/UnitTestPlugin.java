@@ -382,10 +382,6 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 	}
 
 	private static Display getDisplay() {
-//			Shell shell= getActiveWorkbenchShell();
-//			if (shell != null) {
-//				return shell.getDisplay();
-//			}
 		Display display= Display.getCurrent();
 		if (display == null) {
 			display= Display.getDefault();

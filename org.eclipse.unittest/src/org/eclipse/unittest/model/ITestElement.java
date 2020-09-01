@@ -31,6 +31,149 @@ package org.eclipse.unittest.model;
  */
 public interface ITestElement {
 
+	public final static class Status {
+		public static final Status RUNNING_ERROR= new Status("RUNNING_ERROR", 5); //$NON-NLS-1$
+		public static final Status RUNNING_FAILURE= new Status("RUNNING_FAILURE", 6); //$NON-NLS-1$
+		public static final Status RUNNING= new Status("RUNNING", 3); //$NON-NLS-1$
+
+		public static final Status ERROR=   new Status("ERROR",   /*1*/ITestRunListener3.STATUS_ERROR); //$NON-NLS-1$
+		public static final Status FAILURE= new Status("FAILURE", /*2*/ITestRunListener3.STATUS_FAILURE); //$NON-NLS-1$
+		public static final Status OK=      new Status("OK",      /*0*/ITestRunListener3.STATUS_OK); //$NON-NLS-1$
+		public static final Status NOT_RUN= new Status("NOT_RUN", 4); //$NON-NLS-1$
+
+		private static final Status[] OLD_CODE= { OK, ERROR, FAILURE};
+
+		private final String fName;
+		private final int fOldCode;
+
+		private Status(String name, int oldCode) {
+			fName= name;
+			fOldCode= oldCode;
+		}
+
+		public int getOldCode() {
+			return fOldCode;
+		}
+
+		@Override
+		public String toString() {
+			return fName;
+		}
+
+		/* error state predicates */
+
+		public boolean isOK() {
+			return this == OK || this == RUNNING || this == NOT_RUN;
+		}
+
+		public boolean isFailure() {
+			return this == FAILURE || this == RUNNING_FAILURE;
+		}
+
+		public boolean isError() {
+			return this == ERROR || this == RUNNING_ERROR;
+		}
+
+		public boolean isErrorOrFailure() {
+			return isError() || isFailure();
+		}
+
+		/* progress state predicates */
+
+		public boolean isNotRun() {
+			return this == NOT_RUN;
+		}
+
+		public boolean isRunning() {
+			return this == RUNNING || this == RUNNING_FAILURE || this == RUNNING_ERROR;
+		}
+
+		public boolean isDone() {
+			return this == OK || this == FAILURE || this == ERROR;
+		}
+
+		public static Status combineStatus(Status one, Status two) {
+			Status progress= combineProgress(one, two);
+			Status error= combineError(one, two);
+			return combineProgressAndErrorStatus(progress, error);
+		}
+
+		private static Status combineProgress(Status one, Status two) {
+			if (one.isNotRun() && two.isNotRun())
+				return NOT_RUN;
+			else if (one.isDone() && two.isDone())
+				return OK;
+			else if (!one.isRunning() && !two.isRunning())
+				return OK; // one done, one not-run -> a parent failed and its children are not run
+			else
+				return RUNNING;
+		}
+
+		private static Status combineError(Status one, Status two) {
+			if (one.isError() || two.isError())
+				return ERROR;
+			else if (one.isFailure() || two.isFailure())
+				return FAILURE;
+			else
+				return OK;
+		}
+
+		private static Status combineProgressAndErrorStatus(Status progress, Status error) {
+			if (progress.isDone()) {
+				if (error.isError())
+					return ERROR;
+				if (error.isFailure())
+					return FAILURE;
+				return OK;
+			}
+
+			if (progress.isNotRun()) {
+//				Assert.isTrue(!error.isErrorOrFailure());
+				return NOT_RUN;
+			}
+
+//			Assert.isTrue(progress.isRunning());
+			if (error.isError())
+				return RUNNING_ERROR;
+			if (error.isFailure())
+				return RUNNING_FAILURE;
+//			Assert.isTrue(error.isOK());
+			return RUNNING;
+		}
+
+		/**
+		 * @param oldStatus one of {@link ITestRunListener3}'s STATUS_* constants
+		 * @return the Status
+		 */
+		public static Status convert(int oldStatus) {
+			return OLD_CODE[oldStatus];
+		}
+
+		public Result convertToResult() {
+			if (isNotRun())
+				return Result.UNDEFINED;
+			if (isError())
+				return Result.ERROR;
+			if (isFailure())
+				return Result.FAILURE;
+			if (isRunning()) {
+				return Result.UNDEFINED;
+			}
+			return Result.OK;
+		}
+
+		public ProgressState convertToProgressState() {
+			if (isRunning()) {
+				return ProgressState.RUNNING;
+			}
+			if (isDone()) {
+				return ProgressState.COMPLETED;
+			}
+			return ProgressState.NOT_STARTED;
+		}
+
+	}
+
 	/**
 	 * Running states of a test.
 	 */
@@ -123,6 +266,10 @@ public interface ITestElement {
 		}
 	}
 
+	public String getId();
+
+	public String getUniqueId();
+
 	/**
 	 * Returns the progress state of this test element.
 	 * <ul>
@@ -193,9 +340,37 @@ public interface ITestElement {
 
 	public ITestSuiteElement getParent();
 
+	public ITestRoot getRoot();
+
 	public String[] getParameterTypes();
 
 	public String getTestName();
 
+	/**
+	 * Returns the display name of the test. Can be <code>null</code>. In that case, use
+	 * {@link ITestElement#getTestName() getTestName()}.
+	 *
+	 * @return the test display name, can be <code>null</code>
+	 */
+	public String getDisplayName();
+
+	public Status getStatus();
+
+	public void setStatus(Status status);
+
+	public void setStatus(Status status, String trace, String expected, String actual);
+
 	public String getTrace();
+
+	public String getExpected();
+
+	public String getActual();
+
+	public boolean isComparisonFailure();
+
+	public void setAssumptionFailed(boolean assumptionFailed);
+
+	public boolean isAssumptionFailure();
+
+	public void setElapsedTimeInSeconds(double time);
 }

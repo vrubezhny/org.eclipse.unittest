@@ -23,10 +23,10 @@ import org.eclipse.unittest.model.ITestSuiteElement;
 
 public class TestSuiteElement extends TestElement implements ITestSuiteElement {
 
-	private List<TestElement> fChildren;
+	private List<ITestElement> fChildren;
 	private Status fChildrenStatus;
 
-	public TestSuiteElement(TestSuiteElement parent, String id, String testName, int childrenCount, String displayName, String[] parameterTypes, String uniqueId) {
+	public TestSuiteElement(ITestSuiteElement parent, String id, String testName, int childrenCount, String displayName, String[] parameterTypes, String uniqueId) {
 		super(parent, id, testName, displayName, parameterTypes, uniqueId);
 		fChildren= new ArrayList<>(childrenCount);
 	}
@@ -50,7 +50,8 @@ public class TestSuiteElement extends TestElement implements ITestSuiteElement {
 		return fChildren.toArray(new ITestElement[fChildren.size()]);
 	}
 
-	public void addChild(TestElement child) {
+	@Override
+	public void addChild(ITestElement child) {
 		fChildren.add(child);
 	}
 
@@ -90,14 +91,15 @@ public class TestSuiteElement extends TestElement implements ITestSuiteElement {
 		return super.getStatus();
 	}
 
-	public void childChangedStatus(TestElement child, Status childStatus) {
+	@Override
+	public void childChangedStatus(ITestElement child, Status childStatus) {
 		int childCount= fChildren.size();
 		if (child == fChildren.get(0) && childStatus.isRunning()) {
 			// is first child, and is running -> copy status
 			internalSetChildrenStatus(childStatus);
 			return;
 		}
-		TestElement lastChild= fChildren.get(childCount - 1);
+		ITestElement lastChild= fChildren.get(childCount - 1);
 		if (child == lastChild) {
 			if (childStatus.isDone()) {
 				// all children done, collect cumulative status
@@ -144,7 +146,7 @@ public class TestSuiteElement extends TestElement implements ITestSuiteElement {
 		}
 
 		fChildrenStatus= status;
-		TestSuiteElement parent= getParent();
+		ITestSuiteElement parent= getParent();
 		if (parent != null)
 			parent.childChangedStatus(this, getStatus());
 	}

@@ -26,14 +26,16 @@ import java.util.List;
 
 import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.internal.UnitTestMessages;
-import org.eclipse.unittest.internal.model.TestElement.Status;
 import org.eclipse.unittest.launcher.ITestKind;
 import org.eclipse.unittest.launcher.ITestRunnerClient;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElementContainer;
+import org.eclipse.unittest.model.ITestRoot;
+import org.eclipse.unittest.model.ITestRunListener3;
 import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestSuiteElement;
+import org.eclipse.unittest.model.RemoteTestRunnerClient;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -52,7 +54,7 @@ import org.eclipse.debug.core.ILaunchesListener2;
  * A test run session holds all information about a test run, i.e.
  * launch configuration, launch, test tree (including results).
  */
-public class TestRunSession implements ITestRunSession {
+public class TestRunSession extends TestElement implements ITestRunSession {
 
 	/**
 	 * The launch, or <code>null</code> iff this session was run externally.
@@ -156,6 +158,7 @@ public class TestRunSession implements ITestRunSession {
 	 * @param project may be <code>null</code>
 	 */
 	public TestRunSession(String testRunName, IProject project) {
+		super(null, "-1", testRunName, null, null, null); //$NON-NLS-1$
 		//TODO: check assumptions about non-null fields
 
 		fLaunch= null;
@@ -176,6 +179,7 @@ public class TestRunSession implements ITestRunSession {
 
 
 	public TestRunSession(ILaunch launch, IProject project, int port) {
+		super(null, "-1", "<TestRunSession>", null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
 		Assert.isNotNull(launch);
 
 		fLaunch= launch;
@@ -292,7 +296,8 @@ public class TestRunSession implements ITestRunSession {
 	}
 
 
-	public synchronized TestRoot getTestRoot() {
+	@Override
+	public synchronized ITestRoot getTestRoot() {
 		swapIn(); //TODO: TestRoot should stay (e.g. for getTestRoot().getStatus())
 		return fTestRoot;
 	}
@@ -321,10 +326,12 @@ public class TestRunSession implements ITestRunSession {
 		return fTestRunName;
 	}
 
+	@Override
 	public int getErrorCount() {
 		return fErrorCount;
 	}
 
+	@Override
 	public int getFailureCount() {
 		return fFailureCount;
 	}
@@ -462,6 +469,7 @@ public class TestRunSession implements ITestRunSession {
 	/**
 	 * @return <code>true</code> if this session has been started, but not ended nor stopped nor terminated
 	 */
+	@Override
 	public boolean isRunning() {
 		return fIsRunning;
 	}
@@ -488,11 +496,12 @@ public class TestRunSession implements ITestRunSession {
 		return false;
 	}
 
-	public TestElement getTestElement(String id) {
+	@Override
+	public ITestElement getTestElement(String id) {
 		return fIdToTest.get(id);
 	}
 
-	private TestElement addTreeEntry(String id, String testName, boolean isSuite, int testCount, boolean isDynamicTest,
+	private ITestElement addTreeEntry(String id, String testName, boolean isSuite, int testCount, boolean isDynamicTest,
 			String parentId, String displayName, String[] parameterTypes, String uniqueId) {
 /*
 		// format: testId","testName","isSuite","testcount","isDynamicTest","parentId","displayName","parameterTypes","uniqueId
@@ -580,7 +589,8 @@ public class TestRunSession implements ITestRunSession {
 		}
 	}
 
-	public TestElement createTestElement(TestSuiteElement parent, String id, String testName, boolean isSuite, int testCount, boolean isDynamicTest, String displayName, String[] parameterTypes, String uniqueId) {
+	@Override
+	public ITestElement createTestElement(ITestSuiteElement parent, String id, String testName, boolean isSuite, int testCount, boolean isDynamicTest, String displayName, String[] parameterTypes, String uniqueId) {
 		TestElement testElement;
 		if (parameterTypes != null && parameterTypes.length > 1) {
 			parameterTypes= Arrays.stream(parameterTypes).map(t -> t.trim()).toArray(String[]::new);
@@ -608,8 +618,7 @@ public class TestRunSession implements ITestRunSession {
 	 * @param testName the result
 	 *
 	 * @return the index of the next ','
-	 */
-/*
+	 *
 	private int scanTestName(String s, int start, StringBuffer testName) {
 		boolean inQuote= false;
 		int i= start;
@@ -637,7 +646,7 @@ public class TestRunSession implements ITestRunSession {
 	}
 
 	/**
-	 * An {@link ITestRunListener2} that listens to events from the
+	 * An {@link ITestRunListener3} that listens to events from the
 	 * {@link RemoteTestRunnerClient} and translates them into high-level model
 	 * events (broadcasted to {@link ITestSessionListener}s).
 	 */
@@ -695,7 +704,7 @@ public class TestRunSession implements ITestRunSession {
 		@Override
 		public void testTreeEntry(String testId, String testName, boolean isSuite, int testCount, boolean isDynamicTest,
 				String parentId, String displayName, String[] parameterTypes, String uniqueId) {
-			TestElement testElement= addTreeEntry(testId, testName, isSuite, testCount, isDynamicTest,
+			ITestElement testElement= addTreeEntry(testId, testName, isSuite, testCount, isDynamicTest,
 					parentId, displayName, parameterTypes, uniqueId);
 
 			for (ITestSessionListener listener : fSessionListeners) {
@@ -703,9 +712,9 @@ public class TestRunSession implements ITestRunSession {
 			}
 		}
 
-		private TestElement createUnrootedTestElement(String testId, String testName) {
-			TestSuiteElement unrootedSuite= getUnrootedSuite();
-			TestElement testElement= createTestElement(unrootedSuite, testId, testName, false, 1, false, testName, null, null);
+		private ITestElement createUnrootedTestElement(String testId, String testName) {
+			ITestSuiteElement unrootedSuite= getUnrootedSuite();
+			ITestElement testElement= createTestElement(unrootedSuite, testId, testName, false, 1, false, testName, null, null);
 
 			for (ITestSessionListener listener : fSessionListeners) {
 				listener.testAdded(testElement);
@@ -721,7 +730,7 @@ public class TestRunSession implements ITestRunSession {
 					listener.runningBegins();
 				}
 			}
-			TestElement testElement= getTestElement(testId);
+			ITestElement testElement= getTestElement(testId);
 			if (testElement == null) {
 				testElement= createUnrootedTestElement(testId, testName);
 			} else if (! (testElement instanceof TestCaseElement)) {
@@ -744,7 +753,7 @@ public class TestRunSession implements ITestRunSession {
 
 		@Override
 		public void testEnded(String testId, String testName, boolean isIgnored) {
-			TestElement testElement= getTestElement(testId);
+			ITestElement testElement= getTestElement(testId);
 			if (testElement == null) {
 				testElement= createUnrootedTestElement(testId, testName);
 			} else if (! (testElement instanceof TestCaseElement)) {
@@ -774,7 +783,7 @@ public class TestRunSession implements ITestRunSession {
 
 		@Override
 		public void testFailed(int statusCode, String testId, String testName, boolean isAssumptionFailed, String trace, String expected, String actual) {
-			TestElement testElement= getTestElement(testId);
+			ITestElement testElement= getTestElement(testId);
 			if (testElement == null) {
 				testElement= createUnrootedTestElement(testId, testName);
 			}
@@ -797,7 +806,7 @@ public class TestRunSession implements ITestRunSession {
 
 		@Override
 		public void testReran(String testId, String className, String testName, int statusCode, String trace, String expectedResult, String actualResult) {
-			TestElement testElement= getTestElement(testId);
+			ITestElement testElement= getTestElement(testId);
 			if (testElement == null) {
 				testElement= createUnrootedTestElement(testId, testName);
 			} else if (! (testElement instanceof TestCaseElement)) {
@@ -815,7 +824,7 @@ public class TestRunSession implements ITestRunSession {
 			}
 		}
 
-		private void logUnexpectedTest(String testId, TestElement testElement) {
+		private void logUnexpectedTest(String testId, ITestElement testElement) {
 			UnitTestPlugin.log(new Exception("Unexpected TestElement type for testId '" + testId + "': " + testElement)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
@@ -830,7 +839,7 @@ public class TestRunSession implements ITestRunSession {
 		}
 	}
 
-	public void registerTestFailureStatus(TestElement testElement, Status status, String trace, String expected, String actual) {
+	public void registerTestFailureStatus(ITestElement testElement, Status status, String trace, String expected, String actual) {
 		testElement.setStatus(status, trace, expected, actual);
 		if (!testElement.isAssumptionFailure()) {
 			if (status.isError()) {
@@ -841,7 +850,7 @@ public class TestRunSession implements ITestRunSession {
 		}
 	}
 
-	public void registerTestEnded(TestElement testElement, boolean completed) {
+	public void registerTestEnded(ITestElement testElement, boolean completed) {
 		if (testElement instanceof TestCaseElement) {
 			fTotalCount++;
 			if (! completed) {
@@ -860,7 +869,7 @@ public class TestRunSession implements ITestRunSession {
 		}
 	}
 
-	private void setStatus(TestElement testElement, Status status) {
+	private void setStatus(ITestElement testElement, Status status) {
 		testElement.setStatus(status);
 	}
 
@@ -964,5 +973,29 @@ public class TestRunSession implements ITestRunSession {
 	@Override
 	public String getTrace() {
 		return null;
+	}
+
+
+	@Override
+	public String getExpected() {
+		return null;
+	}
+
+
+	@Override
+	public String getActual() {
+		return null;
+	}
+
+
+	@Override
+	public boolean isComparisonFailure() {
+		return false;
+	}
+
+
+	@Override
+	public void setElapsedTimeInSeconds(double time) {
+		// not used
 	}
 }

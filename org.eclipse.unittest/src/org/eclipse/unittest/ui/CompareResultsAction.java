@@ -15,7 +15,7 @@ package org.eclipse.unittest.ui;
 
 
 import org.eclipse.unittest.UnitTestPlugin;
-import org.eclipse.unittest.internal.model.TestElement;
+import org.eclipse.unittest.model.ITestElement;
 
 import org.eclipse.jface.action.Action;
 
@@ -41,7 +41,7 @@ public class CompareResultsAction extends Action {
 
 	@Override
 	public void run() {
-		TestElement failedTest= fView.getFailedTest();
+		ITestElement failedTest= fView.getFailedTest();
 		if (fOpenDialog != null) {
 			fOpenDialog.setInput(failedTest);
 			fOpenDialog.getShell().setActive();
@@ -55,7 +55,7 @@ public class CompareResultsAction extends Action {
 		}
 	}
 
-	public void updateOpenDialog(TestElement failedTest) {
+	public void updateOpenDialog(ITestElement failedTest) {
 		if (fOpenDialog != null) {
 			fOpenDialog.setInput(failedTest);
 		}

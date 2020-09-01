@@ -44,7 +44,7 @@ public interface ITestFinder {
 	 * @param pm the progress monitor
 	 * @throws CoreException thrown when tests can not be found
 	 */
-	public abstract void findTestsInContainer(Object element, Set result, IProgressMonitor pm) throws CoreException;
+	public abstract void findTestsInContainer(Object element, @SuppressWarnings("rawtypes") Set result, IProgressMonitor pm) throws CoreException;
 
 	public abstract boolean isTest(Object type) throws CoreException;
 }

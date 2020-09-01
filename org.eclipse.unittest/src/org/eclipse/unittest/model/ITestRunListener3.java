@@ -11,9 +11,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.unittest.internal.model;
+package org.eclipse.unittest.model;
 
-public interface ITestRunListener2 {
+public interface ITestRunListener3 {
 
 	/**
    	 * Status constant indicating that a test passed (constant value 0).
@@ -60,7 +60,7 @@ public interface ITestRunListener2 {
 	 * @param testId a unique Id identifying the test
 	 * @param testName the name of the test that ended
 	 */
-	public void testEnded(String testId, String testName);
+	public void testEnded(String testId, String testName, boolean isIgnored);
 
 
 	/**
@@ -75,23 +75,22 @@ public interface ITestRunListener2 {
 	 * <pre>
 	 *  testId,testName,isSuite,testcount,isDynamicTest,parentId,displayName,parameterTypes,uniqueId
 	 *
-	 *  testId: a unique id for the test
-	 *  testName: the name of the test
-	 *  isSuite: true or false depending on whether the test is a suite
-	 *  testCount: an integer indicating the number of tests
-	 *  isDynamicTest: true or false
-	 *  parentId: the unique testId of its parent if it is a dynamic test, otherwise can be "-1"
-	 *  displayName: the display name of the test
-	 *  parameterTypes: comma-separated list of method parameter types if applicable, otherwise an empty string
-	 *  uniqueId: the unique ID of the test provided by JUnit launcher, otherwise an empty string
+	 *  @param testId a unique id for the test
+	 *  @param testName the name of the test
+	 *  @param isSuite true or false depending on whether the test is a suite
+	 *  @param testCount an integer indicating the number of tests
+	 *  @param isDynamicTest true or false
+	 *  @param parentId the unique testId of its parent if it is a dynamic test, otherwise can be "-1"
+	 *  @param displayName the display name of the test
+	 *  @param parameterTypes comma-separated list of method parameter types if applicable, otherwise an empty string
+	 *  @param uniqueId the unique ID of the test provided by JUnit launcher, otherwise an empty string
 	 *
 	 *  Example: 324968,testPass(junit.tests.MyTest),false,1,false,-1,A simple test case,&quot;&quot;,&quot;&quot;
 	 * </pre>
-	 *
-	 * @param description a string describing a tree entry
-	 *
 	 */
-	public void testTreeEntry(String description);
+
+	public void testTreeEntry(String testId, String testName, boolean isSuite, int testCount, boolean isDynamicTest,
+			String parentId, String displayName, String[] parameterTypes, String uniqueId);
 
 	/**
 	 * An individual test has failed with a stack trace.
@@ -105,7 +104,7 @@ public interface ITestRunListener2 {
 	 * @param expected the expected value
 	 * @param actual the actual value
 	 */
-	public void testFailed(int status, String testId, String testName, String trace, String expected, String actual);
+	public void testFailed(int status, String testId, String testName, boolean isAssumptionFailed, String trace, String expected, String actual);
 
 	/**
 	 * An individual test has been rerun.

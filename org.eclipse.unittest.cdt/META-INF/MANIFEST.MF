@@ -16,6 +16,7 @@ Require-Bundle:
  org.eclipse.cdt.managedbuilder.core,
  org.eclipse.cdt.launch,
  org.eclipse.cdt.dsf.gdb,
+ org.eclipse.cdt.dsf.gdb.ui,
  org.eclipse.cdt.core,
  org.eclipse.cdt.ui,
  org.eclipse.search,

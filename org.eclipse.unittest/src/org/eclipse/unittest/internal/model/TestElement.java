@@ -19,155 +19,14 @@ package org.eclipse.unittest.internal.model;
 
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElementContainer;
+import org.eclipse.unittest.model.ITestRoot;
 import org.eclipse.unittest.model.ITestRunSession;
+import org.eclipse.unittest.model.ITestSuiteElement;
 
 import org.eclipse.core.runtime.Assert;
 
 public abstract class TestElement implements ITestElement {
-	public final static class Status {
-		public static final Status RUNNING_ERROR= new Status("RUNNING_ERROR", 5); //$NON-NLS-1$
-		public static final Status RUNNING_FAILURE= new Status("RUNNING_FAILURE", 6); //$NON-NLS-1$
-		public static final Status RUNNING= new Status("RUNNING", 3); //$NON-NLS-1$
-
-		public static final Status ERROR=   new Status("ERROR",   /*1*/ITestRunListener2.STATUS_ERROR); //$NON-NLS-1$
-		public static final Status FAILURE= new Status("FAILURE", /*2*/ITestRunListener2.STATUS_FAILURE); //$NON-NLS-1$
-		public static final Status OK=      new Status("OK",      /*0*/ITestRunListener2.STATUS_OK); //$NON-NLS-1$
-		public static final Status NOT_RUN= new Status("NOT_RUN", 4); //$NON-NLS-1$
-
-		private static final Status[] OLD_CODE= { OK, ERROR, FAILURE};
-
-		private final String fName;
-		private final int fOldCode;
-
-		private Status(String name, int oldCode) {
-			fName= name;
-			fOldCode= oldCode;
-		}
-
-		public int getOldCode() {
-			return fOldCode;
-		}
-
-		@Override
-		public String toString() {
-			return fName;
-		}
-
-		/* error state predicates */
-
-		public boolean isOK() {
-			return this == OK || this == RUNNING || this == NOT_RUN;
-		}
-
-		public boolean isFailure() {
-			return this == FAILURE || this == RUNNING_FAILURE;
-		}
-
-		public boolean isError() {
-			return this == ERROR || this == RUNNING_ERROR;
-		}
-
-		public boolean isErrorOrFailure() {
-			return isError() || isFailure();
-		}
-
-		/* progress state predicates */
-
-		public boolean isNotRun() {
-			return this == NOT_RUN;
-		}
-
-		public boolean isRunning() {
-			return this == RUNNING || this == RUNNING_FAILURE || this == RUNNING_ERROR;
-		}
-
-		public boolean isDone() {
-			return this == OK || this == FAILURE || this == ERROR;
-		}
-
-		public static Status combineStatus(Status one, Status two) {
-			Status progress= combineProgress(one, two);
-			Status error= combineError(one, two);
-			return combineProgressAndErrorStatus(progress, error);
-		}
-
-		private static Status combineProgress(Status one, Status two) {
-			if (one.isNotRun() && two.isNotRun())
-				return NOT_RUN;
-			else if (one.isDone() && two.isDone())
-				return OK;
-			else if (!one.isRunning() && !two.isRunning())
-				return OK; // one done, one not-run -> a parent failed and its children are not run
-			else
-				return RUNNING;
-		}
-
-		private static Status combineError(Status one, Status two) {
-			if (one.isError() || two.isError())
-				return ERROR;
-			else if (one.isFailure() || two.isFailure())
-				return FAILURE;
-			else
-				return OK;
-		}
-
-		private static Status combineProgressAndErrorStatus(Status progress, Status error) {
-			if (progress.isDone()) {
-				if (error.isError())
-					return ERROR;
-				if (error.isFailure())
-					return FAILURE;
-				return OK;
-			}
-
-			if (progress.isNotRun()) {
-//				Assert.isTrue(!error.isErrorOrFailure());
-				return NOT_RUN;
-			}
-
-//			Assert.isTrue(progress.isRunning());
-			if (error.isError())
-				return RUNNING_ERROR;
-			if (error.isFailure())
-				return RUNNING_FAILURE;
-//			Assert.isTrue(error.isOK());
-			return RUNNING;
-		}
-
-		/**
-		 * @param oldStatus one of {@link ITestRunListener2}'s STATUS_* constants
-		 * @return the Status
-		 */
-		public static Status convert(int oldStatus) {
-			return OLD_CODE[oldStatus];
-		}
-
-		public Result convertToResult() {
-			if (isNotRun())
-				return Result.UNDEFINED;
-			if (isError())
-				return Result.ERROR;
-			if (isFailure())
-				return Result.FAILURE;
-			if (isRunning()) {
-				return Result.UNDEFINED;
-			}
-			return Result.OK;
-		}
-
-		public ProgressState convertToProgressState() {
-			if (isRunning()) {
-				return ProgressState.RUNNING;
-			}
-			if (isDone()) {
-				return ProgressState.COMPLETED;
-			}
-			return ProgressState.NOT_STARTED;
-		}
-
-	}
-
-	private final TestSuiteElement fParent;
+	private final ITestSuiteElement fParent;
 	private final String fId;
 	private String fTestName;
 
@@ -219,7 +78,7 @@ public abstract class TestElement implements ITestElement {
 	 * @param uniqueId the unique ID of the test element, can be <code>null</code> as it is applicable
 	 *            to JUnit 5 and above
 	 */
-	public TestElement(TestSuiteElement parent, String id, String testName, String displayName, String[] parameterTypes, String uniqueId) {
+	public TestElement(ITestSuiteElement parent, String id, String testName, String displayName, String[] parameterTypes, String uniqueId) {
 		Assert.isNotNull(id);
 		Assert.isNotNull(testName);
 		fParent= parent;
@@ -272,14 +131,17 @@ public abstract class TestElement implements ITestElement {
 	/**
 	 * @return the parent suite, or <code>null</code> for the root
 	 */
-	public TestSuiteElement getParent() {
+	@Override
+	public ITestSuiteElement getParent() {
 		return fParent;
 	}
 
+	@Override
 	public String getId() {
 		return fId;
 	}
 
+	@Override
 	public String getTestName() {
 		return fTestName;
 	}
@@ -288,6 +150,7 @@ public abstract class TestElement implements ITestElement {
 		fTestName= name;
 	}
 
+	@Override
 	public void setStatus(Status status) {
 		if (status == Status.RUNNING) {
 			fTime= - System.currentTimeMillis() / 1000d ;
@@ -299,11 +162,12 @@ public abstract class TestElement implements ITestElement {
 		}
 
 		fStatus= status;
-		TestSuiteElement parent= getParent();
+		ITestSuiteElement parent= getParent();
 		if (parent != null)
 			parent.childChangedStatus(this, status);
 	}
 
+	@Override
 	public void setStatus(Status status, String trace, String expected, String actual) {
 		if (trace != null && fTrace != null) {
 			//don't overwrite first trace if same test run logs multiple errors
@@ -316,22 +180,27 @@ public abstract class TestElement implements ITestElement {
 		setStatus(status);
 	}
 
+	@Override
 	public Status getStatus() {
 		return fStatus;
 	}
 
+	@Override
 	public String getTrace() {
 		return fTrace;
 	}
 
+	@Override
 	public String getExpected() {
 		return fExpected;
 	}
 
+	@Override
 	public String getActual() {
 		return fActual;
 	}
 
+	@Override
 	public boolean isComparisonFailure() {
 		return fExpected != null && fActual != null;
 	}
@@ -362,10 +231,12 @@ public abstract class TestElement implements ITestElement {
 		return testNameString;
 	}
 
-	public TestRoot getRoot() {
+	@Override
+	public ITestRoot getRoot() {
 		return getParent().getRoot();
 	}
 
+	@Override
 	public void setElapsedTimeInSeconds(double time) {
 		fTime= time;
 	}
@@ -379,10 +250,12 @@ public abstract class TestElement implements ITestElement {
 		return fTime;
 	}
 
+	@Override
 	public void setAssumptionFailed(boolean assumptionFailed) {
 		fAssumptionFailed= assumptionFailed;
 	}
 
+	@Override
 	public boolean isAssumptionFailure() {
 		return fAssumptionFailed;
 	}
@@ -392,12 +265,7 @@ public abstract class TestElement implements ITestElement {
 		return getProgressState() + " - " + getTestResult(true); //$NON-NLS-1$
 	}
 
-	/**
-	 * Returns the display name of the test. Can be <code>null</code>. In that case, use
-	 * {@link TestElement#getTestName() getTestName()}.
-	 *
-	 * @return the test display name, can be <code>null</code>
-	 */
+	@Override
 	public String getDisplayName() {
 		return fDisplayName;
 	}
@@ -407,6 +275,7 @@ public abstract class TestElement implements ITestElement {
 	 *         org.junit.platform.engine.support.descriptor.MethodSource.getMethodParameterTypes()) if
 	 *         applicable, otherwise <code>null</code>
 	 */
+	@Override
 	public String[] getParameterTypes() {
 		return fParameterTypes;
 	}
@@ -417,6 +286,7 @@ public abstract class TestElement implements ITestElement {
 	 *
 	 * @return the unique ID of the test, can be <code>null</code>
 	 */
+	@Override
 	public String getUniqueId() {
 		return fUniqueId;
 	}

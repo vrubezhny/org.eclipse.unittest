@@ -17,8 +17,8 @@
 package org.eclipse.unittest.ui;
 
 import org.eclipse.unittest.UnitTestPreferencesConstants;
-import org.eclipse.unittest.internal.model.TestElement;
 import org.eclipse.unittest.launcher.ITestKind;
+import org.eclipse.unittest.model.ITestElement;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
@@ -67,7 +67,7 @@ public class FailureTrace implements IMenuListener {
 	private TestRunnerViewPart fTestRunner;
 	private String fInputTrace;
 	private final Clipboard fClipboard;
-    private TestElement fFailure;
+    private ITestElement fFailure;
     private CompareResultsAction fCompareAction;
 	private final FailureTableDisplay fFailureTableDisplay;
 //	private IPropertyChangeListener fFontPropertyChangeListener;
@@ -165,7 +165,7 @@ public class FailureTrace implements IMenuListener {
 	 * Shows a TestFailure
 	 * @param test the failed test
 	 */
-	public void showFailure(TestElement test) {
+	public void showFailure(ITestElement test) {
 	    fFailure= test;
 	    String trace= ""; //$NON-NLS-1$
 	    updateActions(test);
@@ -178,12 +178,12 @@ public class FailureTrace implements IMenuListener {
 		updateTable(trace);
 	}
 
-	private void updateActions(TestElement test) {
+	private void updateActions(ITestElement test) {
 		ITestKind testKind = test != null ? fFailure.getTestRunSession().getTestRunnerKind() : null;
 		fShowTraceInConsoleAction.setDelegate(testKind != null ? testKind.getTestViewSupport().createShowStackTraceInConsoleViewActionDelegate(this) : null);
 	}
 
-	private void updateEnablement(TestElement test) {
+	private void updateEnablement(ITestElement test) {
 		boolean enableCompare= test != null && test.isComparisonFailure();
 		fCompareAction.setEnabled(enableCompare);
 		if (enableCompare) {
@@ -231,7 +231,7 @@ public class FailureTrace implements IMenuListener {
 		fInputTrace= null;
 	}
 
-    public TestElement getFailedTest() {
+    public ITestElement getFailedTest() {
         return fFailure;
     }
 

@@ -107,6 +107,7 @@ public abstract class BaseTestsLaunchDelegate extends LaunchConfigurationDelegat
 	 * <code>updatedLaunchConfigurationAttribute()</code>.
 	 *
 	 * @param config launch configuration to revert
+	 * @throws CoreException
 	 */
 	private void revertChangedToLaunchConfiguration(ILaunchConfiguration config) throws CoreException {
 		ILaunchConfigurationWorkingCopy configWC = config.getWorkingCopy();

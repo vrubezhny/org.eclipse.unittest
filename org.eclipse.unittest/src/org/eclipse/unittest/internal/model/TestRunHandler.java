@@ -27,7 +27,9 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.unittest.internal.model.TestElement.Status;
+import org.eclipse.unittest.model.ITestElement;
+import org.eclipse.unittest.model.ITestElement.Status;
+import org.eclipse.unittest.model.ITestSuiteElement;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -44,7 +46,7 @@ public class TestRunHandler extends DefaultHandler {
 	private int fId;
 
 	private TestRunSession fTestRunSession;
-	private TestSuiteElement fTestSuite;
+	private ITestSuiteElement fTestSuite;
 	private TestCaseElement fTestCase;
 	private Stack<Boolean> fNotRun= new Stack<>();
 
@@ -214,7 +216,7 @@ public class TestRunHandler extends DefaultHandler {
 		}
 	}
 
-	private void readTime(TestElement testElement, Attributes attributes) {
+	private void readTime(ITestElement testElement, Attributes attributes) {
 		String timeString= attributes.getValue(IXMLTags.ATTR_TIME);
 		if (timeString != null) {
 			try {
@@ -262,7 +264,7 @@ public class TestRunHandler extends DefaultHandler {
 		case IXMLTags.NODE_FAILURE:
 		case IXMLTags.NODE_ERROR:
 			{
-				TestElement testElement= fTestCase;
+				ITestElement testElement= fTestCase;
 				if (testElement == null)
 					testElement= fTestSuite;
 				handleFailure(testElement);
@@ -288,7 +290,7 @@ public class TestRunHandler extends DefaultHandler {
 			break;
 		case IXMLTags.NODE_SKIPPED:
 			{
-				TestElement testElement= fTestCase;
+				ITestElement testElement= fTestCase;
 				if (testElement == null)
 					testElement= fTestSuite;
 				if (fFailureBuffer != null && fFailureBuffer.length() > 0) {
@@ -306,12 +308,12 @@ public class TestRunHandler extends DefaultHandler {
 		}
 	}
 
-	private void handleTestElementEnd(TestElement testElement) {
+	private void handleTestElementEnd(ITestElement testElement) {
 		boolean completed= fNotRun.pop() != Boolean.TRUE;
 		fTestRunSession.registerTestEnded(testElement, completed);
 	}
 
-	private void handleFailure(TestElement testElement) {
+	private void handleFailure(ITestElement testElement) {
 		if (fFailureBuffer != null) {
 			fTestRunSession.registerTestFailureStatus(testElement, fStatus, fFailureBuffer.toString(), toString(fExpectedBuffer), toString(fActualBuffer));
 			fFailureBuffer= null;

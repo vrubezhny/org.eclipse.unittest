@@ -61,4 +61,17 @@ public interface ITestRunSession extends ITestElementContainer {
 	 */
 	public ITestKind getTestRunnerKind();
 
+	public ITestElement createTestElement(ITestSuiteElement parent, String id, String testName, boolean isSuite, int testCount, boolean isDynamicTest, String displayName, String[] parameterTypes, String uniqueId);
+
+	public ITestSuiteElement getTestRoot();
+
+	public ITestElement getTestElement(String id);
+
+	public int getFailureCount();
+
+	public int getErrorCount();
+
+	public boolean isRunning();
+
+
 }

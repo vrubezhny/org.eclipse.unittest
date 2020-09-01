@@ -34,10 +34,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.unittest.UnitTestPlugin;
@@ -50,6 +47,7 @@ import org.eclipse.unittest.internal.model.TestRunSession;
 import org.eclipse.unittest.internal.model.UnitTestModel;
 import org.eclipse.unittest.launcher.ITestKind;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
+import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestRunSession;
 
 import org.eclipse.swt.SWT;
@@ -70,9 +68,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
@@ -102,12 +98,7 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.IInputValidator;
-import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 
@@ -464,7 +455,7 @@ public class TestRunnerViewPart extends ViewPart {
 			InstanceScope.INSTANCE.getNode(UnitTestPlugin.PLUGIN_ID).putInt(UnitTestPreferencesConstants.MAX_TEST_RUNS, maxEntries);
 		}
 	}
-*/
+
 	private static class ImportTestRunSessionAction extends Action {
 		private final Shell fShell;
 
@@ -498,7 +489,7 @@ public class TestRunnerViewPart extends ViewPart {
 			}
 		}
 	}
-
+*/
 	private static class UnitTesttPasteAction extends Action {
 		private final Shell fShell;
 		private Clipboard fClipboard;
@@ -538,7 +529,7 @@ public class TestRunnerViewPart extends ViewPart {
 			return true;
 		}
 	}
-
+/*
 	private static class ImportTestRunSessionFromURLAction extends Action {
 		private static class URLValidator implements IInputValidator {
 			@Override
@@ -655,7 +646,7 @@ public class TestRunnerViewPart extends ViewPart {
 			return testRunName + " " + isoTime + ".xml"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
-
+*/
 	private class TestRunSessionListener implements ITestRunSessionListener {
 		@Override
 		public void sessionAdded(final TestRunSession testRunSession) {
@@ -778,7 +769,7 @@ public class TestRunnerViewPart extends ViewPart {
 		}
 
 		@Override
-		public void testFailed(TestElement testElement, TestElement.Status status, String trace, String expected, String actual) {
+		public void testFailed(ITestElement testElement, TestElement.Status status, String trace, String expected, String actual) {
 			if (isAutoScroll()) {
 				fTestViewer.registerFailedForAutoScroll(testElement);
 			}
@@ -811,7 +802,7 @@ public class TestRunnerViewPart extends ViewPart {
 		}
 
 		@Override
-		public void testAdded(TestElement testElement) {
+		public void testAdded(ITestElement testElement) {
 			fTestViewer.registerTestAdded(testElement);
 		}
 
@@ -862,7 +853,7 @@ public class TestRunnerViewPart extends ViewPart {
 			return family == TestRunnerViewPart.FAMILY_JUNIT_RUN;
 		}
 	}
-
+/*
 	private class ClearAction extends Action {
 		public ClearAction() {
 			setText(Messages.TestRunnerViewPart_clear_history_label);
@@ -896,7 +887,7 @@ public class TestRunnerViewPart extends ViewPart {
 			return testRunSessions;
 		}
 	}
-
+*/
 	private class StopAction extends Action {
 		public StopAction() {
 			setText(Messages.TestRunnerViewPart_stopaction_text);
@@ -2062,12 +2053,12 @@ action enablement
 		return composite;
 	}
 
-	public void handleTestSelected(TestElement test) {
+	public void handleTestSelected(ITestElement test) {
 		showFailure(test);
 		fCopyAction.handleTestSelected(test);
 	}
 
-	private void showFailure(final TestElement test) {
+	private void showFailure(final ITestElement test) {
 		postSyncRunnable(() -> {
 			if (!isDisposed())
 				fFailureTrace.showFailure(test);

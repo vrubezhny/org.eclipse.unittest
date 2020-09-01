@@ -18,7 +18,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import org.eclipse.unittest.UnitTestPlugin;
-import org.eclipse.unittest.internal.model.TestElement;
+import org.eclipse.unittest.model.ITestElement;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
@@ -177,7 +177,7 @@ public class CompareResultDialog extends TrayDialog {
 
 	private CompareViewerPane fCompareViewerPane;
 
-	public CompareResultDialog(Shell parentShell, TestElement element) {
+	public CompareResultDialog(Shell parentShell, ITestElement element) {
 		super(parentShell);
 		setShellStyle((getShellStyle() & ~SWT.APPLICATION_MODAL) | SWT.TOOL);
 		setFailedTest(element);
@@ -188,7 +188,7 @@ public class CompareResultDialog extends TrayDialog {
 		return true;
 	}
 
-	private void setFailedTest(TestElement failedTest) {
+	private void setFailedTest(ITestElement failedTest) {
 		fTestName= failedTest.getTestName();
 		fExpected= failedTest.getExpected();
 		fActual= failedTest.getActual();
@@ -276,7 +276,7 @@ public class CompareResultDialog extends TrayDialog {
 		}
 	}
 
-	public void setInput(TestElement failedTest) {
+	public void setInput(ITestElement failedTest) {
 		setFailedTest(failedTest);
 		setCompareViewerInput();
 	}

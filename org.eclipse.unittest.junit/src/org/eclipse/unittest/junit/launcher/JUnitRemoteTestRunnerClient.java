@@ -18,8 +18,8 @@ package org.eclipse.unittest.junit.launcher;
 import java.util.Arrays;
 
 import org.eclipse.unittest.UnitTestPlugin;
-import org.eclipse.unittest.internal.model.ITestRunListener2;
-import org.eclipse.unittest.internal.model.RemoteTestRunnerClient;
+import org.eclipse.unittest.model.ITestRunListener3;
+import org.eclipse.unittest.model.RemoteTestRunnerClient;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 
@@ -96,13 +96,13 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 	        if (message.startsWith(MessageIds.TEST_ERROR)) {
 	        	String s[] = extractTestId(arg);
 	        	boolean isAssumptionFailed = s[1].startsWith(MessageIds.ASSUMPTION_FAILED_TEST_PREFIX);
-	            extractFailure(s[0], s[1], ITestRunListener2.STATUS_ERROR, isAssumptionFailed);
+	            extractFailure(s[0], s[1], ITestRunListener3.STATUS_ERROR, isAssumptionFailed);
 	            return this;
 	        }
 	        if (message.startsWith(MessageIds.TEST_FAILED)) {
 	        	String s[] = extractTestId(arg);
 	        	boolean isAssumptionFailed = s[1].startsWith(MessageIds.ASSUMPTION_FAILED_TEST_PREFIX);
-	            extractFailure(s[0], s[1], ITestRunListener2.STATUS_FAILURE, isAssumptionFailed);
+	            extractFailure(s[0], s[1], ITestRunListener3.STATUS_FAILURE, isAssumptionFailed);
 	            return this;
 	        }
 	        if (message.startsWith(MessageIds.TEST_RUN_END)) {

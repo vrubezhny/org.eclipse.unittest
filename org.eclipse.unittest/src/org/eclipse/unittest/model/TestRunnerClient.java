@@ -13,12 +13,9 @@
  *     Julien Ruaux: jruaux@octo.com
  * 	   Vincent Massol: vmassol@octo.com
  *******************************************************************************/
-package org.eclipse.unittest.internal.model;
+package org.eclipse.unittest.model;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.PushbackReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -68,15 +65,7 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	 */
 	private ServerSocket fServerSocket;
 	private Socket fSocket;
-	protected int fPort= -1;
-	protected InputStream fInputStream;
-	protected PrintWriter fWriter;
-	private PushbackReader fPushbackReader;
-	protected String fLastLineDelimiter;
-	/**
-	 * The protocol version
-	 */
-	protected String fVersion;
+
 	/**
 	 * The failed test that is currently reported from the RemoteTestRunner
 	 */
@@ -122,19 +111,8 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	@Override
 	public synchronized void shutDown() {
 		if (fDebug)
-			System.out.println("shutdown "+fPort); //$NON-NLS-1$
+			System.out.println("shutdown"); //$NON-NLS-1$
 
-		if (fWriter != null) {
-			fWriter.close();
-			fWriter= null;
-		}
-		try {
-			if (fPushbackReader != null) {
-				fPushbackReader.close();
-				fPushbackReader= null;
-			}
-		} catch(IOException e) {
-		}
 		try {
 			if (fSocket != null) {
 				fSocket.close();
@@ -154,34 +132,6 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	@Override
 	public boolean isRunning() {
 		return fSocket != null;
-	}
-
-	private String readMessage(PushbackReader in) throws IOException {
-		StringBuilder buf= new StringBuilder(128);
-		int ch;
-		while ((ch= in.read()) != -1) {
-			switch (ch) {
-			case '\n':
-				fLastLineDelimiter= "\n"; //$NON-NLS-1$
-				return buf.toString();
-			case '\r':
-				ch= in.read();
-				if (ch == '\n') {
-					fLastLineDelimiter= "\r\n"; //$NON-NLS-1$
-				} else {
-					in.unread(ch);
-					fLastLineDelimiter= "\r"; //$NON-NLS-1$
-				}
-				return buf.toString();
-			default:
-				buf.append((char) ch);
-				break;
-			}
-		}
-		fLastLineDelimiter= null;
-		if (buf.length() == 0)
-			return null;
-		return buf.toString();
 	}
 
 	protected void notifyTestReran(String testId, String className, String testName, String status) {

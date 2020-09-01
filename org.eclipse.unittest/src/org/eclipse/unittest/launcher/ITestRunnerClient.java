@@ -1,6 +1,6 @@
 package org.eclipse.unittest.launcher;
 
-import org.eclipse.unittest.internal.model.ITestRunListener3;
+import org.eclipse.unittest.model.ITestRunListener3;
 
 public interface ITestRunnerClient {
 	ITestRunnerClient NULL= new ITestRunnerClient() {

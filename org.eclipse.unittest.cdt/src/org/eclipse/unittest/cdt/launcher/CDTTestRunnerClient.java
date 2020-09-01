@@ -20,11 +20,11 @@ import org.eclipse.unittest.internal.model.ModelMessages;
 import org.eclipse.unittest.internal.model.TestCaseElement;
 import org.eclipse.unittest.internal.model.TestElement;
 import org.eclipse.unittest.internal.model.TestRunSession;
-import org.eclipse.unittest.internal.model.TestRunnerClient;
-import org.eclipse.unittest.internal.model.TestSuiteElement;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElement.FailureTrace;
+import org.eclipse.unittest.model.ITestSuiteElement;
+import org.eclipse.unittest.model.TestRunnerClient;
 
 public class CDTTestRunnerClient extends TestRunnerClient {
 	private static final String FRAME_PREFIX = org.eclipse.unittest.ui.FailureTrace.FRAME_PREFIX;
@@ -181,12 +181,10 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 			System.out.println("TestModelUpdaterAdapter.currentTestSuite");
 
 			ITestElement testElement = fTestRunSession.getTestElement(fCurrentTestSuite);
-			if (testElement instanceof TestSuiteElement) {
-				return convertFromTestSuiteElement((TestSuiteElement)testElement);
-			} else if (testElement instanceof TestElement) {
-				return convertFromTestSuiteElement(((TestElement)testElement).getParent());
+			if (testElement instanceof ITestSuiteElement) {
+				return convertFromTestSuiteElement((ITestSuiteElement)testElement);
 			} else {
-				return convertFromTestElement(testElement).getParent();
+				return convertFromTestSuiteElement(testElement.getParent());
 			}
 		}
 
@@ -337,7 +335,7 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 			return null;
 		}
 
-		ITestSuite convertFromTestSuiteElement(TestSuiteElement testSuiteElement) {
+		ITestSuite convertFromTestSuiteElement(ITestSuiteElement testSuiteElement) {
 			if (testSuiteElement == null) {
 				return null;
 			}

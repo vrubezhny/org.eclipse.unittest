@@ -13,10 +13,11 @@
  *     Julien Ruaux: jruaux@octo.com
  * 	   Vincent Massol: vmassol@octo.com
  *******************************************************************************/
-package org.eclipse.unittest.internal.model;
+package org.eclipse.unittest.model;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -72,9 +73,11 @@ public abstract class RemoteTestRunnerClient extends TestRunnerClient {
 	private ServerSocket fServerSocket;
 	private Socket fSocket;
 	private int fPort= -1;
-	protected PrintWriter fWriter;
-	private PushbackReader fPushbackReader;
 	protected String fLastLineDelimiter;
+	protected InputStream fInputStream;
+	protected PrintWriter fWriter;
+	protected PushbackReader fPushbackReader;
+
 	/**
 	 * The protocol version
 	 */
@@ -92,6 +95,7 @@ public abstract class RemoteTestRunnerClient extends TestRunnerClient {
 	 */
 //	protected int fFailureKind;
 
+	@SuppressWarnings("hiding")
 	protected boolean fDebug= false;
 
 	/**
@@ -162,21 +166,9 @@ public abstract class RemoteTestRunnerClient extends TestRunnerClient {
 				fPushbackReader= null;
 			}
 		} catch(IOException e) {
+			// Ignore
 		}
-		try {
-			if (fSocket != null) {
-				fSocket.close();
-				fSocket= null;
-			}
-		} catch(IOException e) {
-		}
-		try{
-			if (fServerSocket != null) {
-				fServerSocket.close();
-				fServerSocket= null;
-			}
-		} catch(IOException e) {
-		}
+		super.shutDown();
 	}
 
 	@Override

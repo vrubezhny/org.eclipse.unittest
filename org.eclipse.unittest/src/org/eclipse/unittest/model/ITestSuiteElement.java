@@ -34,4 +34,8 @@ public interface ITestSuiteElement extends ITestElementContainer {
 	 */
 	public String getSuiteTypeName();
 
+	public void addChild(ITestElement child);
+
+	public void childChangedStatus(ITestElement child, ITestElement.Status childStatus);
+
 }

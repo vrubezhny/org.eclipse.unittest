@@ -19,7 +19,7 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 
-import org.eclipse.unittest.internal.model.TestElement;
+import org.eclipse.unittest.model.ITestElement;
 
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.dnd.Clipboard;
@@ -42,7 +42,7 @@ public class UnitTestCopyAction extends SelectionListenerAction {
 
 	private final Clipboard fClipboard;
 
-	private TestElement fTestElement;
+	private ITestElement fTestElement;
 
 	public UnitTestCopyAction(FailureTrace view, Clipboard clipboard) {
 		super(Messages.CopyTrace_action_label);
@@ -78,7 +78,7 @@ public class UnitTestCopyAction extends SelectionListenerAction {
 	}
 
 
-	public void handleTestSelected(TestElement test) {
+	public void handleTestSelected(ITestElement test) {
 		fTestElement= test;
 	}
 

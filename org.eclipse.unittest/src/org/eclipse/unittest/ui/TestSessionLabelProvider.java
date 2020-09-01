@@ -20,9 +20,9 @@ import java.text.NumberFormat;
 
 import org.eclipse.unittest.internal.model.TestCaseElement;
 import org.eclipse.unittest.internal.model.TestElement;
-import org.eclipse.unittest.internal.model.TestElement.Status;
 import org.eclipse.unittest.internal.model.TestSuiteElement;
 import org.eclipse.unittest.model.ITestElement;
+import org.eclipse.unittest.model.ITestElement.Status;
 import org.eclipse.unittest.model.ITestRunSession;
 
 import org.eclipse.swt.graphics.Image;

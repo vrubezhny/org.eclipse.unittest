@@ -47,6 +47,7 @@ import org.eclipse.unittest.UnitTestPreferencesConstants;
 import org.eclipse.unittest.launcher.ITestKind;
 import org.eclipse.unittest.launcher.ITestRunnerClient;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
+import org.eclipse.unittest.model.RemoteTestRunnerClient;
 import org.eclipse.unittest.ui.BasicElementLabels;
 
 import org.eclipse.core.runtime.Assert;
@@ -102,10 +103,7 @@ public final class UnitTestModel {
 			if (javaProject == null)
 				return;
 
-			ITestKind testRunnerKind = config != null ?
-					UnitTestLaunchConfigurationConstants.getTestRunnerKind(config) :
-						ITestKind.NULL;
-
+			ITestKind testRunnerKind = UnitTestLaunchConfigurationConstants.getTestRunnerKind(config);
 			ITestRunnerClient testRunnerClient = testRunnerKind != ITestKind.NULL ?
 							testRunnerKind.getTestRunnerClient() :
 								ITestRunnerClient.NULL;
@@ -116,7 +114,8 @@ public final class UnitTestModel {
 			// <pre><code>org.eclipse.debug.core.processFactories</code></pre> extension point
 			// and the factory will take care of creating the Test Run Session.
 			//
-			if (testRunnerClient != ITestRunnerClient.NULL) {
+			if (testRunnerClient != ITestRunnerClient.NULL &&
+					testRunnerClient instanceof RemoteTestRunnerClient) {
 				// test whether the launch defines the JUnit attributes
 				String portStr= launch.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_PORT);
 				if (portStr == null)
@@ -124,7 +123,7 @@ public final class UnitTestModel {
 				try {
 					final int port= Integer.parseInt(portStr);
 					fTrackedLaunches.remove(launch);
-					connectTestRunner(launch, javaProject, port, testRunnerClient);
+					connectTestRunner(launch, javaProject, port);
 				} catch (NumberFormatException e) {
 					e.printStackTrace();
 					return;
@@ -132,7 +131,7 @@ public final class UnitTestModel {
 			}
 		}
 
-		private void connectTestRunner(ILaunch launch, IProject project, int port, ITestRunnerClient testRunnerClient) {
+		private void connectTestRunner(ILaunch launch, IProject project, int port) {
 			TestRunSession testRunSession= new TestRunSession(launch, project, port);
 			addTestRunSession(testRunSession);
 
@@ -393,25 +392,14 @@ public final class UnitTestModel {
 	 * @throws CoreException if an error occurred
 	 */
 	public static void exportTestRunSession(TestRunSession testRunSession, File file) throws CoreException {
-		FileOutputStream out= null;
-		try {
-			out= new FileOutputStream(file);
+		try (FileOutputStream out = new FileOutputStream(file)) {
             exportTestRunSession(testRunSession, out);
-
 		} catch (IOException e) {
 			throwExportError(file, e);
 		} catch (TransformerConfigurationException e) {
 			throwExportError(file, e);
 		} catch (TransformerException e) {
 			throwExportError(file, e);
-		} finally {
-			if (out != null) {
-				try {
-					out.close();
-				} catch (IOException e2) {
-					UnitTestPlugin.log(e2);
-				}
-			}
 		}
 	}
 
