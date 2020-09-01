@@ -14,7 +14,7 @@
 package org.eclipse.unittest.ui;
 
 import org.eclipse.unittest.UnitTestPlugin;
-import org.eclipse.unittest.internal.model.TestElement;
+import org.eclipse.unittest.model.ITestElement;
 
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.dnd.Clipboard;
@@ -28,7 +28,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * Copies the names of the methods that failed and their traces to the clipboard.
+ * Copies the names of the methods that failed and their traces to the
+ * clipboard.
  */
 public class CopyFailureListAction extends Action {
 
@@ -37,8 +38,8 @@ public class CopyFailureListAction extends Action {
 
 	public CopyFailureListAction(TestRunnerViewPart runner, Clipboard clipboard) {
 		super(Messages.CopyFailureList_action_label);
-		fRunner= runner;
-		fClipboard= clipboard;
+		fRunner = runner;
+		fClipboard = clipboard;
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IUnitTestHelpContextIds.COPYFAILURELIST_ACTION);
 	}
 
@@ -47,41 +48,39 @@ public class CopyFailureListAction extends Action {
 		TextTransfer plainTextTransfer = TextTransfer.getInstance();
 
 		try {
-			fClipboard.setContents(
-					new String[] { getAllFailureTraces() },
-					new Transfer[] { plainTextTransfer });
-		} catch (SWTError e){
+			fClipboard.setContents(new String[] { getAllFailureTraces() }, new Transfer[] { plainTextTransfer });
+		} catch (SWTError e) {
 			if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
 				throw e;
-			if (MessageDialog.openQuestion(UnitTestPlugin.getActiveWorkbenchShell(), Messages.CopyFailureList_problem, Messages.CopyFailureList_clipboard_busy))
+			if (MessageDialog.openQuestion(UnitTestPlugin.getActiveWorkbenchShell(), Messages.CopyFailureList_problem,
+					Messages.CopyFailureList_clipboard_busy))
 				run();
 		}
 	}
 
 	public String getAllFailureTraces() {
-		StringBuilder buf= new StringBuilder();
-		TestElement[] failures= fRunner.getAllFailures();
+		StringBuilder buf = new StringBuilder();
+		ITestElement[] failures = fRunner.getAllFailures();
 
-		String lineDelim= System.getProperty("line.separator", "\n");  //$NON-NLS-1$//$NON-NLS-2$
-		for (TestElement failure : failures) {
+		String lineDelim = System.getProperty("line.separator", "\n"); //$NON-NLS-1$//$NON-NLS-2$
+		for (ITestElement failure : failures) {
 			buf.append(failure.getTestName()).append(lineDelim);
-			String failureTrace= failure.getTrace();
+			String failureTrace = failure.getTrace();
 			if (failureTrace != null) {
-				int start= 0;
+				int start = 0;
 				while (start < failureTrace.length()) {
-					int idx= failureTrace.indexOf('\n', start);
+					int idx = failureTrace.indexOf('\n', start);
 					if (idx != -1) {
-						String line= failureTrace.substring(start, idx);
+						String line = failureTrace.substring(start, idx);
 						buf.append(line).append(lineDelim);
-						start= idx + 1;
+						start = idx + 1;
 					} else {
-						start= Integer.MAX_VALUE;
+						start = Integer.MAX_VALUE;
 					}
 				}
 			}
 		}
 		return buf.toString();
 	}
-
 
 }

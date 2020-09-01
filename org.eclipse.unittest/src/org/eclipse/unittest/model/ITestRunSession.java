@@ -14,6 +14,7 @@
 package org.eclipse.unittest.model;
 
 import org.eclipse.unittest.launcher.ITestKind;
+import org.eclipse.unittest.launcher.ITestRunnerClient;
 
 import org.eclipse.core.resources.IProject;
 
@@ -33,45 +34,91 @@ import org.eclipse.debug.core.ILaunch;
 public interface ITestRunSession extends ITestElementContainer {
 
 	/**
-	 * Returns the name of the test run. The name is the name of the launch configuration use to run this test.
+	 * Returns the name of the test run. The name is the name of the launch
+	 * configuration use to run this test.
 	 *
 	 * @return returns the test run name
 	 */
-	public String getTestRunName();
+	String getTestRunName();
 
 	/**
-	 * Returns the Java project from which this test run session has been launched, or <code>null</code> if not available.
+	 * Returns the Java project from which this test run session has been launched,
+	 * or <code>null</code> if not available.
 	 *
 	 * @return the launched project, or <code>null</code> is not available.
 	 * @since 3.6
 	 */
-	public abstract IProject getLaunchedProject();
+	IProject getLaunchedProject();
 
 	/**
-	 * Returns the Java project from which this test run session has been launched, or <code>null</code> if not available.
+	 * Returns the Java project from which this test run session has been launched,
+	 * or <code>null</code> if not available.
 	 *
 	 * @return the launched project, or <code>null</code> is not available.
 	 */
-	public abstract ILaunch getLaunch();
+	ILaunch getLaunch();
+
 	/**
-	 * Returns the Test Runner Kind for which this test run session has been launched, or <code>null</code> if not available.
+	 * Returns the Test Runner Kind for which this test run session has been
+	 * launched, or <code>null</code> if not available.
 	 *
 	 * @return the test runner kind, or <code>null</code> is not available.
 	 * @since 3.6
 	 */
-	public ITestKind getTestRunnerKind();
+	ITestKind getTestRunnerKind();
 
-	public ITestElement createTestElement(ITestSuiteElement parent, String id, String testName, boolean isSuite, int testCount, boolean isDynamicTest, String displayName, String[] parameterTypes, String uniqueId);
+	ITestRunnerClient getTestRunnerClient();
 
-	public ITestSuiteElement getTestRoot();
+	ITestElement createTestElement(ITestSuiteElement parent, String id, String testName, boolean isSuite, int testCount,
+			boolean isDynamicTest, String displayName, String[] parameterTypes, String uniqueId);
 
-	public ITestElement getTestElement(String id);
+	void addTestSessionListener(ITestSessionListener listener);
 
-	public int getFailureCount();
+	void removeTestSessionListener(ITestSessionListener listener);
 
-	public int getErrorCount();
+	ITestSuiteElement getTestRoot();
 
-	public boolean isRunning();
+	ITestElement getTestElement(String id);
 
+	ITestElement[] getAllFailedTestElements();
+
+	int getStartedCount();
+
+	int getFailureCount();
+
+	int getAssumptionFailureCount();
+
+	int getIgnoredCount();
+
+	int getTotalCount();
+
+	int getErrorCount();
+
+	boolean isStarting();
+
+	boolean isRunning();
+
+	boolean isKeptAlive();
+
+	/**
+	 * @return <code>true</code> iff the session has been stopped or terminated
+	 */
+	boolean isStopped();
+
+	void stopTestRun();
+
+	void swapIn();
+
+	void swapOut();
+
+	/**
+	 * Reruns the given test method if the session is kept alive.
+	 *
+	 * @param testId    test id
+	 * @param className test class name
+	 * @param testName  test method name
+	 * @return <code>false</code> iff the rerun could not be started
+	 */
+	boolean rerunTest(String testId, String className, String testName);
 
 }

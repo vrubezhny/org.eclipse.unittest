@@ -30,6 +30,7 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.packageadmin.PackageAdmin;
 
 import org.eclipse.unittest.internal.model.UnitTestModel;
+import org.eclipse.unittest.model.IUnitTestModel;
 import org.eclipse.unittest.ui.TestRunnerViewPart;
 import org.eclipse.unittest.ui.UnitTestUIPreferencesConstants;
 
@@ -64,17 +65,18 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 /**
  * The plug-in runtime class for the JUnit plug-in.
  */
+@SuppressWarnings("deprecation")
 public class UnitTestPlugin extends AbstractUIPlugin {
 
 	/**
 	 * The single instance of this plug-in runtime class.
 	 */
-	private static UnitTestPlugin fgPlugin= null;
+	private static UnitTestPlugin fgPlugin = null;
 
-	public static final String PLUGIN_ID= "org.eclipse.unittest"; //$NON-NLS-1$
-	public static final String ID_EXTENSION_POINT_JUNIT_LAUNCHCONFIGS= PLUGIN_ID + "." + "unittestLaunchConfigs"; //$NON-NLS-1$ //$NON-NLS-2$
+	public static final String PLUGIN_ID = "org.eclipse.unittest"; //$NON-NLS-1$
+	public static final String ID_EXTENSION_POINT_JUNIT_LAUNCHCONFIGS = PLUGIN_ID + "." + "unittestLaunchConfigs"; //$NON-NLS-1$ //$NON-NLS-2$
 
-	private static final IPath ICONS_PATH= new Path("$nl$/icons/full"); //$NON-NLS-1$
+	private static final IPath ICONS_PATH = new Path("$nl$/icons/full"); //$NON-NLS-1$
 
 	/**
 	 * List storing the registered JUnit launch configuration types
@@ -83,11 +85,10 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 
 	private BundleContext fBundleContext;
 
-	private static boolean fIsStopped= false;
-
+	private static boolean fIsStopped = false;
 
 	public UnitTestPlugin() {
-		fgPlugin= this;
+		fgPlugin = this;
 	}
 
 	public static UnitTestPlugin getDefault() {
@@ -95,7 +96,7 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 	}
 
 	public static Shell getActiveWorkbenchShell() {
-		IWorkbenchWindow workBenchWindow= getActiveWorkbenchWindow();
+		IWorkbenchWindow workBenchWindow = getActiveWorkbenchWindow();
 		if (workBenchWindow == null)
 			return null;
 		return workBenchWindow.getShell();
@@ -109,14 +110,14 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		if (fgPlugin == null)
 			return null;
-		IWorkbench workBench= PlatformUI.getWorkbench();
+		IWorkbench workBench = PlatformUI.getWorkbench();
 		if (workBench == null)
 			return null;
 		return workBench.getActiveWorkbenchWindow();
 	}
 
 	public static IWorkbenchPage getActivePage() {
-		IWorkbenchWindow activeWorkbenchWindow= getActiveWorkbenchWindow();
+		IWorkbenchWindow activeWorkbenchWindow = getActiveWorkbenchWindow();
 		if (activeWorkbenchWindow == null)
 			return null;
 		return activeWorkbenchWindow.getActivePage();
@@ -135,7 +136,7 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 	}
 
 	public static ImageDescriptor getImageDescriptor(String relativePath) {
-		IPath path= ICONS_PATH.append(relativePath);
+		IPath path = ICONS_PATH.append(relativePath);
 		return createImageDescriptor(getDefault().getBundle(), path, true);
 	}
 
@@ -144,10 +145,10 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Sets the three image descriptors for enabled, disabled, and hovered to an action. The actions
-	 * are retrieved from the *lcl16 folders.
+	 * Sets the three image descriptors for enabled, disabled, and hovered to an
+	 * action. The actions are retrieved from the *lcl16 folders.
 	 *
-	 * @param action the action
+	 * @param action   the action
 	 * @param iconName the icon name
 	 */
 	public static void setLocalImageDescriptors(IAction action, String iconName) {
@@ -155,44 +156,45 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 	}
 
 	private static void setImageDescriptors(IAction action, String type, String relPath) {
-		ImageDescriptor id= createImageDescriptor("d" + type, relPath, false); //$NON-NLS-1$
+		ImageDescriptor id = createImageDescriptor("d" + type, relPath, false); //$NON-NLS-1$
 		if (id != null)
 			action.setDisabledImageDescriptor(id);
 
-		ImageDescriptor descriptor= createImageDescriptor("e" + type, relPath, true); //$NON-NLS-1$
+		ImageDescriptor descriptor = createImageDescriptor("e" + type, relPath, true); //$NON-NLS-1$
 		action.setHoverImageDescriptor(descriptor);
 		action.setImageDescriptor(descriptor);
 	}
 
 	/*
-	 * Creates an image descriptor for the given prefix and name in the JDT UI bundle. The path can
-	 * contain variables like $NL$.
-	 * If no image could be found, <code>useMissingImageDescriptor</code> decides if either
-	 * the 'missing image descriptor' is returned or <code>null</code>.
-	 * or <code>null</code>.
+	 * Creates an image descriptor for the given prefix and name in the JDT UI
+	 * bundle. The path can contain variables like $NL$. If no image could be found,
+	 * <code>useMissingImageDescriptor</code> decides if either the 'missing image
+	 * descriptor' is returned or <code>null</code>. or <code>null</code>.
 	 */
-	private static ImageDescriptor createImageDescriptor(String pathPrefix, String imageName, boolean useMissingImageDescriptor) {
-		IPath path= ICONS_PATH.append(pathPrefix).append(imageName);
+	private static ImageDescriptor createImageDescriptor(String pathPrefix, String imageName,
+			boolean useMissingImageDescriptor) {
+		IPath path = ICONS_PATH.append(pathPrefix).append(imageName);
 		return createImageDescriptor(UnitTestPlugin.getDefault().getBundle(), path, useMissingImageDescriptor);
 	}
 
 	/**
 	 * Creates an image descriptor for the given path in a bundle. The path can
 	 * contain variables like $NL$. If no image could be found,
-	 * <code>useMissingImageDescriptor</code> decides if either the 'missing
-	 * image descriptor' is returned or <code>null</code>.
+	 * <code>useMissingImageDescriptor</code> decides if either the 'missing image
+	 * descriptor' is returned or <code>null</code>.
 	 *
-	 * @param bundle a bundle
-	 * @param path path in the bundle
-	 * @param useMissingImageDescriptor if <code>true</code>, returns the shared image descriptor
-	 *            for a missing image. Otherwise, returns <code>null</code> if the image could not
-	 *            be found
-	 * @return an {@link ImageDescriptor}, or <code>null</code> iff there's
-	 *         no image at the given location and
-	 *         <code>useMissingImageDescriptor</code> is <code>true</code>
+	 * @param bundle                    a bundle
+	 * @param path                      path in the bundle
+	 * @param useMissingImageDescriptor if <code>true</code>, returns the shared
+	 *                                  image descriptor for a missing image.
+	 *                                  Otherwise, returns <code>null</code> if the
+	 *                                  image could not be found
+	 * @return an {@link ImageDescriptor}, or <code>null</code> iff there's no image
+	 *         at the given location and <code>useMissingImageDescriptor</code> is
+	 *         <code>true</code>
 	 */
 	private static ImageDescriptor createImageDescriptor(Bundle bundle, IPath path, boolean useMissingImageDescriptor) {
-		URL url= FileLocator.find(bundle, path, null);
+		URL url = FileLocator.find(bundle, path, null);
 		if (url != null) {
 			return ImageDescriptor.createFromURL(url);
 		}
@@ -205,18 +207,18 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		fBundleContext= context;
+		fBundleContext = context;
 		fUnitTestModel.start();
 		setCodeassistFavoriteStaticMembers();
 	}
 
 	/**
-	 * Add the new default static import favorites in old workspaces that already have non-default
-	 * favorites. Only do this once, so that users have a way to opt-out if they don't want the new
-	 * favorites.
+	 * Add the new default static import favorites in old workspaces that already
+	 * have non-default favorites. Only do this once, so that users have a way to
+	 * opt-out if they don't want the new favorites.
 	 */
 	private void setCodeassistFavoriteStaticMembers() {
-		Set<String> favoritesToAdd= new LinkedHashSet<>();
+		Set<String> favoritesToAdd = new LinkedHashSet<>();
 		favoritesToAdd.add("org.junit.Assert.*"); //$NON-NLS-1$
 		favoritesToAdd.add("org.junit.Assume.*"); //$NON-NLS-1$
 		favoritesToAdd.add("org.junit.jupiter.api.Assertions.*"); //$NON-NLS-1$
@@ -224,39 +226,42 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 		favoritesToAdd.add("org.junit.jupiter.api.DynamicContainer.*"); //$NON-NLS-1$
 		favoritesToAdd.add("org.junit.jupiter.api.DynamicTest.*"); //$NON-NLS-1$
 
-/*
-		// default value
-		Set<String> defaultFavorites= new LinkedHashSet<>();
-		String defaultPreferenceValue= PreferenceConstants.getPreferenceStore().getDefaultString(PreferenceConstants.CODEASSIST_FAVORITE_STATIC_MEMBERS);
-		if (defaultPreferenceValue != null && defaultPreferenceValue.length() > 0) {
-			defaultFavorites.addAll(Arrays.asList(defaultPreferenceValue.split(";"))); //$NON-NLS-1$
-		}
-		defaultFavorites.addAll(favoritesToAdd);
-		String newDefaultPreferenceValue= defaultFavorites.stream().collect(Collectors.joining(";")); //$NON-NLS-1$
-		PreferenceConstants.getPreferenceStore().setDefault(PreferenceConstants.CODEASSIST_FAVORITE_STATIC_MEMBERS, newDefaultPreferenceValue);
-
-		// current value
-		if (UnitTestUIPreferencesConstants.isCodeassistFavoriteStaticMembersMigrated()) {
-			return;
-		}
-		Set<String> currentFavorites= new LinkedHashSet<>();
-		String currentPreferenceValue= PreferenceConstants.getPreferenceStore().getString(PreferenceConstants.CODEASSIST_FAVORITE_STATIC_MEMBERS);
-		if (currentPreferenceValue != null && currentPreferenceValue.length() > 0) {
-			currentFavorites.addAll(Arrays.asList(currentPreferenceValue.split(";"))); //$NON-NLS-1$
-		}
-		favoritesToAdd.removeAll(currentFavorites);
-		if (!favoritesToAdd.isEmpty()) {
-			String newPreferenceValue= currentPreferenceValue + ";" + favoritesToAdd.stream().collect(Collectors.joining(";")); //$NON-NLS-1$ //$NON-NLS-2$
-			PreferenceConstants.getPreferenceStore().setValue(PreferenceConstants.CODEASSIST_FAVORITE_STATIC_MEMBERS, newPreferenceValue);
-		}
-*/
+		/*
+		 * // default value Set<String> defaultFavorites= new LinkedHashSet<>(); String
+		 * defaultPreferenceValue=
+		 * PreferenceConstants.getPreferenceStore().getDefaultString(PreferenceConstants
+		 * .CODEASSIST_FAVORITE_STATIC_MEMBERS); if (defaultPreferenceValue != null &&
+		 * defaultPreferenceValue.length() > 0) {
+		 * defaultFavorites.addAll(Arrays.asList(defaultPreferenceValue.split(";")));
+		 * //$NON-NLS-1$ } defaultFavorites.addAll(favoritesToAdd); String
+		 * newDefaultPreferenceValue=
+		 * defaultFavorites.stream().collect(Collectors.joining(";")); //$NON-NLS-1$
+		 * PreferenceConstants.getPreferenceStore().setDefault(PreferenceConstants.
+		 * CODEASSIST_FAVORITE_STATIC_MEMBERS, newDefaultPreferenceValue);
+		 *
+		 * // current value if
+		 * (UnitTestUIPreferencesConstants.isCodeassistFavoriteStaticMembersMigrated())
+		 * { return; } Set<String> currentFavorites= new LinkedHashSet<>(); String
+		 * currentPreferenceValue=
+		 * PreferenceConstants.getPreferenceStore().getString(PreferenceConstants.
+		 * CODEASSIST_FAVORITE_STATIC_MEMBERS); if (currentPreferenceValue != null &&
+		 * currentPreferenceValue.length() > 0) {
+		 * currentFavorites.addAll(Arrays.asList(currentPreferenceValue.split(";")));
+		 * //$NON-NLS-1$ } favoritesToAdd.removeAll(currentFavorites); if
+		 * (!favoritesToAdd.isEmpty()) { String newPreferenceValue=
+		 * currentPreferenceValue + ";" +
+		 * favoritesToAdd.stream().collect(Collectors.joining(";")); //$NON-NLS-1$
+		 * //$NON-NLS-2$
+		 * PreferenceConstants.getPreferenceStore().setValue(PreferenceConstants.
+		 * CODEASSIST_FAVORITE_STATIC_MEMBERS, newPreferenceValue); }
+		 */
 		// set as migrated
 		UnitTestUIPreferencesConstants.setCodeassistFavoriteStaticMembersMigrated(true);
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		fIsStopped= true;
+		fIsStopped = true;
 		super.stop(context);
 		try {
 			InstanceScope.INSTANCE.getNode(UnitTestPlugin.PLUGIN_ID).flush();
@@ -264,7 +269,7 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 		} finally {
 			super.stop(context);
 		}
-		fBundleContext= null;
+		fBundleContext = null;
 	}
 
 	/**
@@ -275,7 +280,7 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 	 * @since 3.5
 	 */
 	public Object getService(String serviceName) {
-		ServiceReference<?> reference= fBundleContext.getServiceReference(serviceName);
+		ServiceReference<?> reference = fBundleContext.getServiceReference(serviceName);
 		if (reference == null)
 			return null;
 		return fBundleContext.getService(reference);
@@ -285,15 +290,16 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 	 * Loads the registered JUnit launch configurations
 	 */
 	private void loadLaunchConfigTypeIDs() {
-		fJUnitLaunchConfigTypeIDs= new ArrayList<>();
-		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(ID_EXTENSION_POINT_JUNIT_LAUNCHCONFIGS);
+		fJUnitLaunchConfigTypeIDs = new ArrayList<>();
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
+				.getExtensionPoint(ID_EXTENSION_POINT_JUNIT_LAUNCHCONFIGS);
 		if (extensionPoint == null) {
 			return;
 		}
-		IConfigurationElement[] configs= extensionPoint.getConfigurationElements();
+		IConfigurationElement[] configs = extensionPoint.getConfigurationElements();
 
 		for (IConfigurationElement config : configs) {
-			String configTypeID= config.getAttribute("configTypeID"); //$NON-NLS-1$
+			String configTypeID = config.getAttribute("configTypeID"); //$NON-NLS-1$
 			fJUnitLaunchConfigTypeIDs.add(configTypeID);
 		}
 	}
@@ -309,15 +315,15 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Returns the bundle for a given bundle name,
-	 * regardless whether the bundle is resolved or not.
+	 * Returns the bundle for a given bundle name, regardless whether the bundle is
+	 * resolved or not.
 	 *
 	 * @param bundleName the bundle name
 	 * @return the bundle
 	 * @since 3.2
 	 */
 	public Bundle getBundle(String bundleName) {
-		Bundle[] bundles= getBundles(bundleName, null);
+		Bundle[] bundles = getBundles(bundleName, null);
 		if (bundles != null && bundles.length > 0)
 			return bundles[0];
 		return null;
@@ -327,18 +333,18 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 	 * Returns the bundles for a given bundle name,
 	 *
 	 * @param bundleName the bundle name
-	 * @param version the version of the bundle
+	 * @param version    the version of the bundle
 	 * @return the bundles of the given name
 	 */
 	public Bundle[] getBundles(String bundleName, String version) {
-		Bundle[] bundles= Platform.getBundles(bundleName, version);
+		Bundle[] bundles = Platform.getBundles(bundleName, version);
 		if (bundles != null)
 			return bundles;
 
 		// Accessing unresolved bundle
-		ServiceReference<PackageAdmin> serviceRef= fBundleContext.getServiceReference(PackageAdmin.class);
-		PackageAdmin admin= fBundleContext.getService(serviceRef);
-		bundles= admin.getBundles(bundleName, version);
+		ServiceReference<PackageAdmin> serviceRef = fBundleContext.getServiceReference(PackageAdmin.class);
+		PackageAdmin admin = fBundleContext.getService(serviceRef);
+		bundles = admin.getBundles(bundleName, version);
 		if (bundles != null && bundles.length > 0)
 			return bundles;
 		return null;
@@ -349,28 +355,28 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 	}
 
 	public IDialogSettings getDialogSettingsSection(String name) {
-		IDialogSettings dialogSettings= getDialogSettings();
-		IDialogSettings section= dialogSettings.getSection(name);
+		IDialogSettings dialogSettings = getDialogSettings();
+		IDialogSettings section = dialogSettings.getSection(name);
 		if (section == null) {
-			section= dialogSettings.addNewSection(name);
+			section = dialogSettings.addNewSection(name);
 		}
 		return section;
 	}
 
 	public static void asyncShowTestRunnerViewPart() {
-		getDisplay().asyncExec(() -> showTestRunnerViewPartInActivePage());
+		getDisplay().asyncExec(UnitTestPlugin::showTestRunnerViewPartInActivePage);
 	}
 
 	public static TestRunnerViewPart showTestRunnerViewPartInActivePage() {
 		try {
 			// Have to force the creation of view part contents
 			// otherwise the UI will not be updated
-			IWorkbenchPage page= UnitTestPlugin.getActivePage();
+			IWorkbenchPage page = UnitTestPlugin.getActivePage();
 			if (page == null)
 				return null;
-			TestRunnerViewPart view= (TestRunnerViewPart) page.findView(TestRunnerViewPart.NAME);
+			TestRunnerViewPart view = (TestRunnerViewPart) page.findView(TestRunnerViewPart.NAME);
 			if (view == null) {
-				//	create and show the result view if it isn't created yet.
+				// create and show the result view if it isn't created yet.
 				return (TestRunnerViewPart) page.showView(TestRunnerViewPart.NAME, null, IWorkbenchPage.VIEW_VISIBLE);
 			} else {
 				return view;
@@ -382,31 +388,31 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 	}
 
 	private static Display getDisplay() {
-		Display display= Display.getCurrent();
+		Display display = Display.getCurrent();
 		if (display == null) {
-			display= Display.getDefault();
+			display = Display.getDefault();
 		}
 		return display;
 	}
 
 	/*
-	 * The following is copied here from JUnitCorePlugin
-	 * Most likely we need to place it into UnitTestCorePlugin
+	 * The following is copied here from JUnitCorePlugin Most likely we need to
+	 * place it into UnitTestCorePlugin
 	 */
 
-	public static final String ID_EXTENSION_POINT_TESTRUN_LISTENERS= PLUGIN_ID + "." + "testRunListeners"; //$NON-NLS-1$ //$NON-NLS-2$
-	public static final String ID_EXTENSION_POINT_TEST_KINDS= PLUGIN_ID + "." + "unittestKinds"; //$NON-NLS-1$ //$NON-NLS-2$
+	public static final String ID_EXTENSION_POINT_TESTRUN_LISTENERS = PLUGIN_ID + "." + "testRunListeners"; //$NON-NLS-1$ //$NON-NLS-2$
+	public static final String ID_EXTENSION_POINT_TEST_KINDS = PLUGIN_ID + "." + "unittestKinds"; //$NON-NLS-1$ //$NON-NLS-2$
 
-	private static final String HISTORY_DIR_NAME= "history"; //$NON-NLS-1$
+	private static final String HISTORY_DIR_NAME = "history"; //$NON-NLS-1$
 
-	private final UnitTestModel fUnitTestModel= new UnitTestModel();
+	private final UnitTestModel fUnitTestModel = new UnitTestModel();
 
 	/**
 	 * List storing the registered test run listeners
 	 */
 	private ListenerList<TestRunListener> fNewTestRunListeners = new ListenerList<>();
 
-	public static UnitTestModel getModel() {
+	public static IUnitTestModel getModel() {
 		return getDefault().fUnitTestModel;
 	}
 
@@ -427,19 +433,21 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 			return;
 		}
 
-		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(ID_EXTENSION_POINT_TESTRUN_LISTENERS);
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
+				.getExtensionPoint(ID_EXTENSION_POINT_TESTRUN_LISTENERS);
 		if (extensionPoint == null) {
 			return;
 		}
-		IConfigurationElement[] configs= extensionPoint.getConfigurationElements();
-		MultiStatus status= new MultiStatus(PLUGIN_ID, IStatus.OK, "Could not load some testRunner extension points", null); //$NON-NLS-1$
+		IConfigurationElement[] configs = extensionPoint.getConfigurationElements();
+		MultiStatus status = new MultiStatus(PLUGIN_ID, IStatus.OK, "Could not load some testRunner extension points", //$NON-NLS-1$
+				null);
 		for (IConfigurationElement config : configs) {
 			try {
-				Object testRunListener= config.createExecutableExtension("class"); //$NON-NLS-1$
+				Object testRunListener = config.createExecutableExtension("class"); //$NON-NLS-1$
 				if (testRunListener instanceof TestRunListener) {
 					fNewTestRunListeners.add((TestRunListener) testRunListener);
 				}
-			}catch (CoreException e) {
+			} catch (CoreException e) {
 				status.add(e.getStatus());
 			}
 		}
@@ -449,8 +457,8 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 	}
 
 	public static File getHistoryDirectory() throws IllegalStateException {
-		File historyDir= getDefault().getStateLocation().append(HISTORY_DIR_NAME).toFile();
-		if (! historyDir.isDirectory()) {
+		File historyDir = getDefault().getStateLocation().append(HISTORY_DIR_NAME).toFile();
+		if (!historyDir.isDirectory()) {
 			historyDir.mkdir();
 		}
 		return historyDir;

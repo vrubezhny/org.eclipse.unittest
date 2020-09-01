@@ -47,6 +47,9 @@ import org.eclipse.unittest.UnitTestPreferencesConstants;
 import org.eclipse.unittest.launcher.ITestKind;
 import org.eclipse.unittest.launcher.ITestRunnerClient;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
+import org.eclipse.unittest.model.ITestRunSession;
+import org.eclipse.unittest.model.ITestRunSessionListener;
+import org.eclipse.unittest.model.IUnitTestModel;
 import org.eclipse.unittest.model.RemoteTestRunnerClient;
 import org.eclipse.unittest.ui.BasicElementLabels;
 
@@ -69,16 +72,16 @@ import org.eclipse.debug.core.ILaunchManager;
 /**
  * Central registry for JUnit test runs.
  */
-public final class UnitTestModel {
+public final class UnitTestModel implements IUnitTestModel {
 
 	private final class UnitTestLaunchListener implements ILaunchListener {
 
 		/**
-		 * Used to track new launches. We need to do this
-		 * so that we only attach a TestRunner once to a launch.
-		 * Once a test runner is connected, it is removed from the set.
+		 * Used to track new launches. We need to do this so that we only attach a
+		 * TestRunner once to a launch. Once a test runner is connected, it is removed
+		 * from the set.
 		 */
-		private HashSet<ILaunch> fTrackedLaunches= new HashSet<>(20);
+		private HashSet<ILaunch> fTrackedLaunches = new HashSet<>(20);
 
 		@Override
 		public void launchAdded(ILaunch launch) {
@@ -95,33 +98,33 @@ public final class UnitTestModel {
 			if (!fTrackedLaunches.contains(launch))
 				return;
 
-			ILaunchConfiguration config= launch.getLaunchConfiguration();
+			ILaunchConfiguration config = launch.getLaunchConfiguration();
 			if (config == null)
 				return;
 
-			final IProject javaProject= UnitTestLaunchConfigurationConstants.getProject(config);
+			final IProject javaProject = UnitTestLaunchConfigurationConstants.getProject(config);
 			if (javaProject == null)
 				return;
 
 			ITestKind testRunnerKind = UnitTestLaunchConfigurationConstants.getTestRunnerKind(config);
-			ITestRunnerClient testRunnerClient = testRunnerKind != ITestKind.NULL ?
-							testRunnerKind.getTestRunnerClient() :
-								ITestRunnerClient.NULL;
+			ITestRunnerClient testRunnerClient = testRunnerKind != ITestKind.NULL ? testRunnerKind.getTestRunnerClient()
+					: ITestRunnerClient.NULL;
 
 			// If a Remote Test Runner Client exists try to create a new Test Run Session,
-			// connect  the Remote Test Runner and listen it
-			// Otherwize, it is expected that the Test Runner Process will be created through
-			// <pre><code>org.eclipse.debug.core.processFactories</code></pre> extension point
+			// connect the Remote Test Runner and listen it
+			// Otherwize, it is expected that the Test Runner Process will be created
+			// through
+			// <pre><code>org.eclipse.debug.core.processFactories</code></pre> extension
+			// point
 			// and the factory will take care of creating the Test Run Session.
 			//
-			if (testRunnerClient != ITestRunnerClient.NULL &&
-					testRunnerClient instanceof RemoteTestRunnerClient) {
+			if (testRunnerClient != ITestRunnerClient.NULL && testRunnerClient instanceof RemoteTestRunnerClient) {
 				// test whether the launch defines the JUnit attributes
-				String portStr= launch.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_PORT);
+				String portStr = launch.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_PORT);
 				if (portStr == null)
 					return;
 				try {
-					final int port= Integer.parseInt(portStr);
+					final int port = Integer.parseInt(portStr);
 					fTrackedLaunches.remove(launch);
 					connectTestRunner(launch, javaProject, port);
 				} catch (NumberFormatException e) {
@@ -132,7 +135,7 @@ public final class UnitTestModel {
 		}
 
 		private void connectTestRunner(ILaunch launch, IProject project, int port) {
-			TestRunSession testRunSession= new TestRunSession(launch, project, port);
+			TestRunSession testRunSession = new TestRunSession(launch, project, port);
 			addTestRunSession(testRunSession);
 
 			for (TestRunListener listener : UnitTestPlugin.getDefault().getNewTestRunListeners()) {
@@ -141,25 +144,24 @@ public final class UnitTestModel {
 		}
 	}
 
-	private final ListenerList<ITestRunSessionListener> fTestRunSessionListeners= new ListenerList<>();
+	private final ListenerList<ITestRunSessionListener> fTestRunSessionListeners = new ListenerList<>();
 	/**
 	 * Active test run sessions, youngest first.
 	 */
-	private final LinkedList<TestRunSession> fTestRunSessions= new LinkedList<>();
-	private final ILaunchListener fLaunchListener= new UnitTestLaunchListener();
+	private final LinkedList<ITestRunSession> fTestRunSessions = new LinkedList<>();
+	private final ILaunchListener fLaunchListener = new UnitTestLaunchListener();
 
 	/**
 	 * Starts the model (called by the {@link UnitTestPlugin} on startup).
 	 */
 	public void start() {
-		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
+		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		launchManager.addLaunchListener(fLaunchListener);
 
-/*
- * TODO: restore on restart:
- * - only import headers!
- * - only import last n sessions; remove all other files in historyDirectory
- */
+		/*
+		 * TODO: restore on restart: - only import headers! - only import last n
+		 * sessions; remove all other files in historyDirectory
+		 */
 //		File historyDirectory= JUnitPlugin.getHistoryDirectory();
 //		File[] swapFiles= historyDirectory.listFiles();
 //		if (swapFiles != null) {
@@ -190,11 +192,11 @@ public final class UnitTestModel {
 	 * Stops the model (called by the {@link UnitTestPlugin} on shutdown).
 	 */
 	public void stop() {
-		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
+		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		launchManager.removeLaunchListener(fLaunchListener);
 
-		File historyDirectory= UnitTestPlugin.getHistoryDirectory();
-		File[] swapFiles= historyDirectory.listFiles();
+		File historyDirectory = UnitTestPlugin.getHistoryDirectory();
+		File[] swapFiles = historyDirectory.listFiles();
 		if (swapFiles != null) {
 			for (File swapFile : swapFiles) {
 				swapFile.delete();
@@ -214,22 +216,18 @@ public final class UnitTestModel {
 //		}
 	}
 
-
+	@Override
 	public void addTestRunSessionListener(ITestRunSessionListener listener) {
 		fTestRunSessionListeners.add(listener);
 	}
 
+	@Override
 	public void removeTestRunSessionListener(ITestRunSessionListener listener) {
 		fTestRunSessionListeners.remove(listener);
 	}
 
-
-	/**
-	 * @return a list of active {@link TestRunSession}s. The list is a copy of
-	 *         the internal data structure and modifications do not affect the
-	 *         global list of active sessions. The list is sorted by age, youngest first.
-	 */
-	public synchronized List<TestRunSession> getTestRunSessions() {
+	@Override
+	public synchronized List<ITestRunSession> getTestRunSessions() {
 		return new ArrayList<>(fTestRunSessions);
 	}
 
@@ -239,20 +237,22 @@ public final class UnitTestModel {
 	 *
 	 * @param testRunSession the session to add
 	 */
-	public void addTestRunSession(TestRunSession testRunSession) {
+	@Override
+	public void addTestRunSession(ITestRunSession testRunSession) {
 		Assert.isNotNull(testRunSession);
-		ArrayList<TestRunSession> toRemove= new ArrayList<>();
+		ArrayList<ITestRunSession> toRemove = new ArrayList<>();
 
 		synchronized (this) {
-			Assert.isLegal(! fTestRunSessions.contains(testRunSession));
+			Assert.isLegal(!fTestRunSessions.contains(testRunSession));
 			fTestRunSessions.addFirst(testRunSession);
 
-			int maxCount = Platform.getPreferencesService().getInt(UnitTestPlugin.PLUGIN_ID, UnitTestPreferencesConstants.MAX_TEST_RUNS, 10, null);
-			int size= fTestRunSessions.size();
+			int maxCount = Platform.getPreferencesService().getInt(UnitTestPlugin.PLUGIN_ID,
+					UnitTestPreferencesConstants.MAX_TEST_RUNS, 10, null);
+			int size = fTestRunSessions.size();
 			if (size > maxCount) {
-				List<TestRunSession> excess= fTestRunSessions.subList(maxCount, size);
-				for (Iterator<TestRunSession> iter= excess.iterator(); iter.hasNext();) {
-					TestRunSession oldSession= iter.next();
+				List<ITestRunSession> excess = fTestRunSessions.subList(maxCount, size);
+				for (Iterator<ITestRunSession> iter = excess.iterator(); iter.hasNext();) {
+					ITestRunSession oldSession = iter.next();
 					if (!(oldSession.isStarting() || oldSession.isRunning() || oldSession.isKeptAlive())) {
 						toRemove.add(oldSession);
 						iter.remove();
@@ -261,7 +261,7 @@ public final class UnitTestModel {
 			}
 		}
 
-		for (TestRunSession oldSession : toRemove) {
+		for (ITestRunSession oldSession : toRemove) {
 			notifyTestRunSessionRemoved(oldSession);
 		}
 		notifyTestRunSessionAdded(testRunSession);
@@ -276,12 +276,12 @@ public final class UnitTestModel {
 	 */
 	public static TestRunSession importTestRunSession(File file) throws CoreException {
 		try {
-			SAXParserFactory parserFactory= SAXParserFactory.newInstance();
+			SAXParserFactory parserFactory = SAXParserFactory.newInstance();
 //			parserFactory.setValidating(true); // TODO: add DTD and debug flag
-			SAXParser parser= parserFactory.newSAXParser();
-			TestRunHandler handler= new TestRunHandler();
+			SAXParser parser = parserFactory.newSAXParser();
+			TestRunHandler handler = new TestRunHandler();
 			parser.parse(file, handler);
-			TestRunSession session= handler.getTestRunSession();
+			TestRunSession session = handler.getTestRunSession();
 			UnitTestPlugin.getModel().addTestRunSession(session);
 			return session;
 		} catch (ParserConfigurationException e) {
@@ -300,30 +300,33 @@ public final class UnitTestModel {
 	/**
 	 * Imports a test run session from the given URL.
 	 *
-	 * @param url an URL to a test run session transcript
+	 * @param url     an URL to a test run session transcript
 	 * @param monitor a progress monitor for cancellation
 	 * @return the imported test run session
-	 * @throws InvocationTargetException wrapping a CoreException if the import failed
-	 * @throws InterruptedException if the import was cancelled
+	 * @throws InvocationTargetException wrapping a CoreException if the import
+	 *                                   failed
+	 * @throws InterruptedException      if the import was cancelled
 	 * @since 3.6
 	 */
-	public static TestRunSession importTestRunSession(String url, IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+	@Override
+	public ITestRunSession importTestRunSession(String url, IProgressMonitor monitor)
+			throws InvocationTargetException, InterruptedException {
 		monitor.beginTask(ModelMessages.JUnitModel_importing_from_url, IProgressMonitor.UNKNOWN);
-		final String trimmedUrl= url.trim().replaceAll("\r\n?|\n", ""); //$NON-NLS-1$ //$NON-NLS-2$
-		final TestRunHandler handler= new TestRunHandler(monitor);
+		final String trimmedUrl = url.trim().replaceAll("\r\n?|\n", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		final TestRunHandler handler = new TestRunHandler(monitor);
 
-		final CoreException[] exception= { null };
-		final TestRunSession[] session= { null };
+		final CoreException[] exception = { null };
+		final TestRunSession[] session = { null };
 
-		Thread importThread= new Thread("JUnit URL importer") { //$NON-NLS-1$
+		Thread importThread = new Thread("JUnit URL importer") { //$NON-NLS-1$
 			@Override
 			public void run() {
 				try {
-					SAXParserFactory parserFactory= SAXParserFactory.newInstance();
+					SAXParserFactory parserFactory = SAXParserFactory.newInstance();
 //					parserFactory.setValidating(true); // TODO: add DTD and debug flag
-					SAXParser parser= parserFactory.newSAXParser();
+					SAXParser parser = parserFactory.newSAXParser();
 					parser.parse(trimmedUrl, handler);
-					session[0]= handler.getTestRunSession();
+					session[0] = handler.getTestRunSession();
 				} catch (OperationCanceledException e) {
 					// canceled
 				} catch (ParserConfigurationException e) {
@@ -337,8 +340,9 @@ public final class UnitTestModel {
 					storeImportError(e);
 				}
 			}
+
 			private void storeImportError(Exception e) {
-				exception[0]= new CoreException(new org.eclipse.core.runtime.Status(IStatus.ERROR,
+				exception[0] = new CoreException(new org.eclipse.core.runtime.Status(IStatus.ERROR,
 						UnitTestPlugin.getPluginId(), ModelMessages.JUnitModel_could_not_import, e));
 			}
 		};
@@ -355,7 +359,8 @@ public final class UnitTestModel {
 			if (exception[0] != null) {
 				throw new InvocationTargetException(exception[0]);
 			} else {
-				importThread.interrupt(); // have to kill the thread since we don't control URLConnection and XML parsing
+				importThread.interrupt(); // have to kill the thread since we don't control URLConnection and XML
+											// parsing
 				throw new InterruptedException();
 			}
 		}
@@ -367,10 +372,10 @@ public final class UnitTestModel {
 
 	public static void importIntoTestRunSession(File swapFile, TestRunSession testRunSession) throws CoreException {
 		try {
-			SAXParserFactory parserFactory= SAXParserFactory.newInstance();
+			SAXParserFactory parserFactory = SAXParserFactory.newInstance();
 //			parserFactory.setValidating(true); // TODO: add DTD and debug flag
-			SAXParser parser= parserFactory.newSAXParser();
-			TestRunHandler handler= new TestRunHandler(testRunSession);
+			SAXParser parser = parserFactory.newSAXParser();
+			TestRunHandler handler = new TestRunHandler(testRunSession);
 			parser.parse(swapFile, handler);
 		} catch (ParserConfigurationException e) {
 			throwImportError(swapFile, e);
@@ -388,12 +393,12 @@ public final class UnitTestModel {
 	 * Exports the given test run session.
 	 *
 	 * @param testRunSession the test run session
-	 * @param file the destination
+	 * @param file           the destination
 	 * @throws CoreException if an error occurred
 	 */
 	public static void exportTestRunSession(TestRunSession testRunSession, File file) throws CoreException {
 		try (FileOutputStream out = new FileOutputStream(file)) {
-            exportTestRunSession(testRunSession, out);
+			exportTestRunSession(testRunSession, out);
 		} catch (IOException e) {
 			throwExportError(file, e);
 		} catch (TransformerConfigurationException e) {
@@ -406,18 +411,18 @@ public final class UnitTestModel {
 	public static void exportTestRunSession(TestRunSession testRunSession, OutputStream out)
 			throws TransformerFactoryConfigurationError, TransformerException {
 
-		Transformer transformer= TransformerFactory.newInstance().newTransformer();
-		InputSource inputSource= new InputSource();
-		SAXSource source= new SAXSource(new TestRunSessionSerializer(testRunSession), inputSource);
-		StreamResult result= new StreamResult(out);
+		Transformer transformer = TransformerFactory.newInstance().newTransformer();
+		InputSource inputSource = new InputSource();
+		SAXSource source = new SAXSource(new TestRunSessionSerializer(testRunSession), inputSource);
+		StreamResult result = new StreamResult(out);
 		transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
 		transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
 		/*
 		 * Bug in Xalan: Only indents if proprietary property
 		 * org.apache.xalan.templates.OutputProperties.S_KEY_INDENT_AMOUNT is set.
 		 *
-		 * Bug in Xalan as shipped with J2SE 5.0:
-		 * Does not read the indent-amount property at all >:-(.
+		 * Bug in Xalan as shipped with J2SE 5.0: Does not read the indent-amount
+		 * property at all >:-(.
 		 */
 		try {
 			transformer.setOutputProperty("{http://xml.apache.org/xalan}indent-amount", "2"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -428,15 +433,13 @@ public final class UnitTestModel {
 	}
 
 	private static void throwExportError(File file, Exception e) throws CoreException {
-		throw new CoreException(new org.eclipse.core.runtime.Status(IStatus.ERROR,
-				UnitTestPlugin.getPluginId(),
+		throw new CoreException(new org.eclipse.core.runtime.Status(IStatus.ERROR, UnitTestPlugin.getPluginId(),
 				MessageFormat.format(ModelMessages.JUnitModel_could_not_write, BasicElementLabels.getPathLabel(file)),
 				e));
 	}
 
 	private static void throwImportError(File file, Exception e) throws CoreException {
-		throw new CoreException(new org.eclipse.core.runtime.Status(IStatus.ERROR,
-				UnitTestPlugin.getPluginId(),
+		throw new CoreException(new org.eclipse.core.runtime.Status(IStatus.ERROR, UnitTestPlugin.getPluginId(),
 				MessageFormat.format(ModelMessages.JUnitModel_could_not_read, BasicElementLabels.getPathLabel(file)),
 				e));
 	}
@@ -450,7 +453,7 @@ public final class UnitTestModel {
 	public void removeTestRunSession(TestRunSession testRunSession) {
 		boolean existed;
 		synchronized (this) {
-			existed= fTestRunSessions.remove(testRunSession);
+			existed = fTestRunSessions.remove(testRunSession);
 		}
 		if (existed) {
 			notifyTestRunSessionRemoved(testRunSession);
@@ -458,11 +461,11 @@ public final class UnitTestModel {
 		testRunSession.removeSwapFile();
 	}
 
-	private void notifyTestRunSessionRemoved(TestRunSession testRunSession) {
+	private void notifyTestRunSessionRemoved(ITestRunSession testRunSession) {
 		testRunSession.stopTestRun();
-		ILaunch launch= testRunSession.getLaunch();
+		ILaunch launch = testRunSession.getLaunch();
 		if (launch != null) {
-			ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
+			ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 			launchManager.removeLaunch(launch);
 		}
 
@@ -471,10 +474,15 @@ public final class UnitTestModel {
 		}
 	}
 
-	private void notifyTestRunSessionAdded(TestRunSession testRunSession) {
+	private void notifyTestRunSessionAdded(ITestRunSession testRunSession) {
 		for (ITestRunSessionListener listener : fTestRunSessionListeners) {
 			listener.sessionAdded(testRunSession);
 		}
+	}
+
+	@Override
+	public ITestRunSession createTestRunSession(ILaunch launch, IProject project, int port) {
+		return new TestRunSession(launch, project, port);
 	}
 
 }

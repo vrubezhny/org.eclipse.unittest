@@ -26,8 +26,8 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
 
 /**
- * The client side of the RemoteTestRunner. Handles the
- * marshaling of the different messages.
+ * The client side of the RemoteTestRunner. Handles the marshaling of the
+ * different messages.
  */
 public abstract class TestRunnerClient implements ITestRunnerClient {
 
@@ -84,8 +84,7 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	 */
 	protected boolean fFailedAssumption;
 
-	protected boolean fDebug= false;
-
+	protected boolean fDebug = false;
 
 	@Override
 	public void setListeners(ITestRunListener3[] listeners) {
@@ -103,7 +102,7 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 
 	@Override
 	public synchronized void stopWaiting() {
-		if (fServerSocket != null  && ! fServerSocket.isClosed() && fSocket == null) {
+		if (fServerSocket != null && !fServerSocket.isClosed() && fSocket == null) {
 			shutDown(); // will throw a SocketException in Threads that wait in ServerSocket#accept()
 		}
 	}
@@ -116,16 +115,16 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 		try {
 			if (fSocket != null) {
 				fSocket.close();
-				fSocket= null;
+				fSocket = null;
 			}
-		} catch(IOException e) {
+		} catch (IOException e) {
 		}
-		try{
+		try {
 			if (fServerSocket != null) {
 				fServerSocket.close();
-				fServerSocket= null;
+				fServerSocket = null;
 			}
-		} catch(IOException e) {
+		} catch (IOException e) {
 		}
 	}
 
@@ -135,13 +134,13 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	}
 
 	protected void notifyTestReran(String testId, String className, String testName, String status) {
-		int statusCode= ITestRunListener3.STATUS_OK;
+		int statusCode = ITestRunListener3.STATUS_OK;
 		if (status.equals("FAILURE")) //$NON-NLS-1$
-			statusCode= ITestRunListener3.STATUS_FAILURE;
+			statusCode = ITestRunListener3.STATUS_FAILURE;
 		else if (status.equals("ERROR")) //$NON-NLS-1$
-			statusCode= ITestRunListener3.STATUS_ERROR;
+			statusCode = ITestRunListener3.STATUS_ERROR;
 
-		String trace= ""; //$NON-NLS-1$
+		String trace = ""; //$NON-NLS-1$
 		if (statusCode != ITestRunListener3.STATUS_OK)
 			trace = fFailedRerunTrace.toString();
 		// assumption a rerun trace was sent before
@@ -149,54 +148,34 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	}
 
 	protected void extractFailure(String testId, String testName, int status, boolean isAssumptionFailed) {
-		fFailedTestId= testId;
-		fFailedTest= testName;
-		fFailureKind= status;
-		fFailedAssumption= isAssumptionFailed;
+		fFailedTestId = testId;
+		fFailedTest = testName;
+		fFailureKind = status;
+		fFailedAssumption = isAssumptionFailed;
 	}
-	/**
-	 * @param arg test name
-	 * @return an array with two elements. The first one is the testId, the second one the testName.
-	 */
-//	abstract protected String[] extractTestId(String arg);
 
-//	abstract protected boolean hasTestId();
-
-	protected void notifyTestReran(final String testId, final String className, final String testName, final int statusCode, final String trace) {
+	protected void notifyTestReran(final String testId, final String className, final String testName,
+			final int statusCode, final String trace) {
 		for (ITestRunListener3 listener : fListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
 				@Override
 				public void run() {
-					listener.testReran(testId,
-						className, testName, statusCode, trace,
-						nullifyEmpty(fExpectedResult), nullifyEmpty(fActualResult));
+					listener.testReran(testId, className, testName, statusCode, trace, nullifyEmpty(fExpectedResult),
+							nullifyEmpty(fActualResult));
 				}
 			});
 		}
 	}
 
-	protected void notifyTestTreeEntry(final String testId, final String testName, final boolean isSuite, final int testCount,
-			final boolean isDynamicTest, final String parentId, final String displayName, final String[] parameterTypes, final String uniqueId) {
+	protected void notifyTestTreeEntry(final String testId, final String testName, final boolean isSuite,
+			final int testCount, final boolean isDynamicTest, final String parentId, final String displayName,
+			final String[] parameterTypes, final String uniqueId) {
 		for (ITestRunListener3 listener : fListeners) {
-			listener.testTreeEntry(testId, testName, isSuite, testCount, isDynamicTest,
-					parentId, displayName, parameterTypes, uniqueId);
-
-/*
-			if (!hasTestId())
-				listener.testTreeEntry(fakeTestId(treeEntry));
-			else
-				listener.testTreeEntry(treeEntry);
-*/
+			listener.testTreeEntry(testId, testName, isSuite, testCount, isDynamicTest, parentId, displayName,
+					parameterTypes, uniqueId);
 		}
 	}
-/*
-	private String fakeTestId(String treeEntry) {
-		// extract the test name and add it as the testId
-		int index0= treeEntry.indexOf(',');
-		String testName= treeEntry.substring(0, index0).trim();
-		return testName+","+treeEntry; //$NON-NLS-1$
-	}
-*/
+
 	protected void notifyTestRunStopped(final long elapsedTime) {
 		if (UnitTestPlugin.isStopped())
 			return;
@@ -235,21 +214,7 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 			});
 		}
 	}
-	/*
-	protected void notifyTestEnded(final String test) {
-		if (UnitTestPlugin.isStopped())
-			return;
-		for (ITestRunListener3 listener : fListeners) {
-			SafeRunner.run(new ListenerSafeRunnable() {
-				@Override
-				public void run() {
-					String s[]= extractTestId(test);
-					listener.testEnded(s[0], s[1]);
-				}
-			});
-		}
-	}
-	*/
+
 	protected void notifyTestStarted(final String testId, final String testName) {
 		if (UnitTestPlugin.isStopped())
 			return;
@@ -262,21 +227,7 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 			});
 		}
 	}
-/*
-	protected void notifyTestStarted(final String test) {
-		if (UnitTestPlugin.isStopped())
-			return;
-		for (ITestRunListener3 listener : fListeners) {
-			SafeRunner.run(new ListenerSafeRunnable() {
-				@Override
-				public void run() {
-					String s[]= extractTestId(test);
-					listener.testStarted(s[0], s[1]);
-				}
-			});
-		}
-	}
-*/
+
 	protected void notifyTestRunStarted(final int count) {
 		if (UnitTestPlugin.isStopped())
 			return;
@@ -297,27 +248,27 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 			SafeRunner.run(new ListenerSafeRunnable() {
 				@Override
 				public void run() {
-					listener.testFailed(fFailureKind, fFailedTestId,
-						fFailedTest, fFailedAssumption, fFailedTrace.toString(), nullifyEmpty(fExpectedResult), nullifyEmpty(fActualResult));
+					listener.testFailed(fFailureKind, fFailedTestId, fFailedTest, fFailedAssumption,
+							fFailedTrace.toString(), nullifyEmpty(fExpectedResult), nullifyEmpty(fActualResult));
 				}
 			});
 		}
 	}
 
 	/**
-	 * Returns a comparison result from the given buffer.
-	 * Removes the terminating line delimiter.
+	 * Returns a comparison result from the given buffer. Removes the terminating
+	 * line delimiter.
 	 *
 	 * @param buf the comparison result
 	 * @return the result or <code>null</code> if empty
 	 * @since 3.7
 	 */
 	private static String nullifyEmpty(StringBuffer buf) {
-		int length= buf.length();
+		int length = buf.length();
 		if (length == 0)
 			return null;
 
-		char last= buf.charAt(length - 1);
+		char last = buf.charAt(length - 1);
 		if (last == '\n') {
 			if (length > 1 && buf.charAt(length - 2) == '\r')
 				return buf.substring(0, length - 2);

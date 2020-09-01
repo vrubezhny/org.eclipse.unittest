@@ -12,16 +12,13 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.unittest.internal.model;
-
+package org.eclipse.unittest.model;
 
 public interface ITestRunSessionListener {
-
 	/**
 	 * @param testRunSession the new session, or <code>null</code>
 	 */
-	void sessionAdded(TestRunSession testRunSession);
+	void sessionAdded(ITestRunSession testRunSession);
 
-	void sessionRemoved(TestRunSession testRunSession);
-
+	void sessionRemoved(ITestRunSession testRunSession);
 }

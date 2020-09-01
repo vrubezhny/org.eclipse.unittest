@@ -34,6 +34,7 @@ import org.eclipse.unittest.model.ITestElementContainer;
 import org.eclipse.unittest.model.ITestRoot;
 import org.eclipse.unittest.model.ITestRunListener3;
 import org.eclipse.unittest.model.ITestRunSession;
+import org.eclipse.unittest.model.ITestSessionListener;
 import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.unittest.model.RemoteTestRunnerClient;
 
@@ -49,10 +50,9 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchesListener2;
 
-
 /**
- * A test run session holds all information about a test run, i.e.
- * launch configuration, launch, test tree (including results).
+ * A test run session holds all information about a test run, i.e. launch
+ * configuration, launch, test tree (including results).
  */
 public class TestRunSession extends TestElement implements ITestRunSession {
 
@@ -81,7 +81,8 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 	private TestRoot fTestRoot;
 
 	/**
-	 * The test run session's cached result, or <code>null</code> if <code>fTestRoot != null</code>.
+	 * The test run session's cached result, or <code>null</code> if
+	 * <code>fTestRoot != null</code>.
 	 */
 	private Result fTestResult;
 
@@ -102,7 +103,7 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 	 */
 	private TestSuiteElement fUnrootedSuite;
 
-	private static final String EMPTY_STRING= ""; //$NON-NLS-1$
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	/**
 	 * Tags included in this test run.
@@ -115,8 +116,8 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 	private String fExcludeTags;
 
 	/**
- 	 * Number of tests started during this test run.
- 	 */
+	 * Number of tests started during this test run.
+	 */
 	volatile int fStartedCount;
 	/**
 	 * Number of tests ignored during this test run.
@@ -150,55 +151,53 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 
 	volatile boolean fIsStopped;
 
-
 	/**
 	 * Creates a test run session.
 	 *
 	 * @param testRunName name of the test run
-	 * @param project may be <code>null</code>
+	 * @param project     may be <code>null</code>
 	 */
 	public TestRunSession(String testRunName, IProject project) {
 		super(null, "-1", testRunName, null, null, null); //$NON-NLS-1$
-		//TODO: check assumptions about non-null fields
+		// TODO: check assumptions about non-null fields
 
-		fLaunch= null;
-		fProject= project;
-		fStartTime= -System.currentTimeMillis();
+		fLaunch = null;
+		fProject = project;
+		fStartTime = -System.currentTimeMillis();
 
 		Assert.isNotNull(testRunName);
-		fTestRunName= testRunName;
-		fTestRunnerKind= ITestKind.NULL; //TODO
+		fTestRunName = testRunName;
+		fTestRunnerKind = ITestKind.NULL; // TODO
 
-		fTestRoot= new TestRoot(this);
-		fIdToTest= new HashMap<>();
+		fTestRoot = new TestRoot(this);
+		fIdToTest = new HashMap<>();
 
-		fTestRunnerClient= null;
+		fTestRunnerClient = null;
 
-		fSessionListeners= new ListenerList<>();
+		fSessionListeners = new ListenerList<>();
 	}
-
 
 	public TestRunSession(ILaunch launch, IProject project, int port) {
 		super(null, "-1", "<TestRunSession>", null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
 		Assert.isNotNull(launch);
 
-		fLaunch= launch;
-		fProject= project;
+		fLaunch = launch;
+		fProject = project;
 
-		ILaunchConfiguration launchConfiguration= launch.getLaunchConfiguration();
+		ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
 		if (launchConfiguration != null) {
-			fTestRunName= launchConfiguration.getName();
-			fTestRunnerKind= UnitTestLaunchConfigurationConstants.getTestRunnerKind(launchConfiguration);
+			fTestRunName = launchConfiguration.getName();
+			fTestRunnerKind = UnitTestLaunchConfigurationConstants.getTestRunnerKind(launchConfiguration);
 		} else {
-			fTestRunName= project.getName();
-			fTestRunnerKind= ITestKind.NULL;
+			fTestRunName = project.getName();
+			fTestRunnerKind = ITestKind.NULL;
 		}
 
-		fTestRoot= new TestRoot(this);
-		fIdToTest= new HashMap<>();
+		fTestRoot = new TestRoot(this);
+		fIdToTest = new HashMap<>();
 
 		if (fTestRunnerKind != ITestKind.NULL) {
-			fTestRunnerClient= fTestRunnerKind.getTestRunnerClient();
+			fTestRunnerClient = fTestRunnerKind.getTestRunnerClient();
 			fTestRunnerClient.setListeners(new ITestRunListener3[] { new TestSessionNotifier() });
 
 			if (port != -1) {
@@ -206,7 +205,7 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 			}
 		}
 
-		final ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
+		final ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		launchManager.addLaunchListener(new ILaunchesListener2() {
 			@Override
 			public void launchesTerminated(ILaunch[] launches) {
@@ -217,6 +216,7 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 					launchManager.removeLaunchListener(this);
 				}
 			}
+
 			@Override
 			public void launchesRemoved(ILaunch[] launches) {
 				if (Arrays.asList(launches).contains(fLaunch)) {
@@ -226,33 +226,36 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 					launchManager.removeLaunchListener(this);
 				}
 			}
+
 			@Override
 			public void launchesChanged(ILaunch[] launches) {
 			}
+
 			@Override
 			public void launchesAdded(ILaunch[] launches) {
 			}
 		});
 
-		fSessionListeners= new ListenerList<>();
+		fSessionListeners = new ListenerList<>();
 		addTestSessionListener(new TestRunListenerAdapter(this));
 	}
 
+	@Override
 	public ITestRunnerClient getTestRunnerClient() {
 		return this.fTestRunnerClient;
 	}
 
 	void reset() {
-		fStartedCount= 0;
-		fFailureCount= 0;
+		fStartedCount = 0;
+		fFailureCount = 0;
 		fAssumptionFailureCount = 0;
-		fErrorCount= 0;
-		fIgnoredCount= 0;
-		fTotalCount= 0;
+		fErrorCount = 0;
+		fIgnoredCount = 0;
+		fTotalCount = 0;
 
-		fTestRoot= new TestRoot(this);
-		fTestResult= null;
-		fIdToTest= new HashMap<>();
+		fTestRoot = new TestRoot(this);
+		fTestResult = null;
+		fIdToTest = new HashMap<>();
 	}
 
 	@Override
@@ -295,10 +298,9 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 		return this;
 	}
 
-
 	@Override
 	public synchronized ITestRoot getTestRoot() {
-		swapIn(); //TODO: TestRoot should stay (e.g. for getTestRoot().getStatus())
+		swapIn(); // TODO: TestRoot should stay (e.g. for getTestRoot().getStatus())
 		return fTestRoot;
 	}
 
@@ -311,7 +313,6 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 	public ITestKind getTestRunnerKind() {
 		return fTestRunnerKind;
 	}
-
 
 	/**
 	 * @return the launch, or <code>null</code> iff this session was run externally
@@ -336,18 +337,22 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 		return fFailureCount;
 	}
 
+	@Override
 	public int getAssumptionFailureCount() {
 		return fAssumptionFailureCount;
 	}
 
+	@Override
 	public int getStartedCount() {
 		return fStartedCount;
 	}
 
+	@Override
 	public int getIgnoredCount() {
 		return fIgnoredCount;
 	}
 
+	@Override
 	public int getTotalCount() {
 		return fTotalCount;
 	}
@@ -356,22 +361,23 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 		return fStartTime;
 	}
 
-	/**
-	 * @return <code>true</code> iff the session has been stopped or terminated
-	 */
+	@Override
 	public boolean isStopped() {
 		return fIsStopped;
 	}
 
+	@Override
 	public synchronized void addTestSessionListener(ITestSessionListener listener) {
 		swapIn();
 		fSessionListeners.add(listener);
 	}
 
+	@Override
 	public void removeTestSessionListener(ITestSessionListener listener) {
 		fSessionListeners.remove(listener);
 	}
 
+	@Override
 	public synchronized void swapOut() {
 		if (fTestRoot == null)
 			return;
@@ -379,21 +385,21 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 			return;
 
 		for (ITestSessionListener registered : fSessionListeners) {
-			if (! registered.acceptsSwapToDisk())
+			if (!registered.acceptsSwapToDisk())
 				return;
 		}
 
 		try {
-			File swapFile= getSwapFile();
+			File swapFile = getSwapFile();
 
 			UnitTestModel.exportTestRunSession(this, swapFile);
-			fTestResult= fTestRoot.getTestResult(true);
-			fTestRoot= null;
-			fTestRunnerClient= null;
-			fIdToTest= new HashMap<>();
-			fIncompleteTestSuites= null;
-			fFactoryTestSuites= null;
-			fUnrootedSuite= null;
+			fTestResult = fTestRoot.getTestResult(true);
+			fTestRoot = null;
+			fTestRunnerClient = null;
+			fIdToTest = new HashMap<>();
+			fIncompleteTestSuites = null;
+			fFactoryTestSuites = null;
+			fUnrootedSuite = null;
 
 		} catch (IllegalStateException e) {
 			UnitTestPlugin.log(e);
@@ -402,25 +408,25 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 		}
 	}
 
+	@Override
 	public boolean isStarting() {
-		return getStartTime() == 0 && fLaunch != null && ! fLaunch.isTerminated();
+		return getStartTime() == 0 && fLaunch != null && !fLaunch.isTerminated();
 	}
 
-
 	public void removeSwapFile() {
-		File swapFile= getSwapFile();
+		File swapFile = getSwapFile();
 		if (swapFile.exists())
 			swapFile.delete();
 	}
 
 	private File getSwapFile() throws IllegalStateException {
-		File historyDir= UnitTestPlugin.getHistoryDirectory();
-		String isoTime= new SimpleDateFormat("yyyyMMdd-HHmmss.SSS").format(new Date(getStartTime())); //$NON-NLS-1$
-		String swapFileName= isoTime + ".xml"; //$NON-NLS-1$
+		File historyDir = UnitTestPlugin.getHistoryDirectory();
+		String isoTime = new SimpleDateFormat("yyyyMMdd-HHmmss.SSS").format(new Date(getStartTime())); //$NON-NLS-1$
+		String swapFileName = isoTime + ".xml"; //$NON-NLS-1$
 		return new File(historyDir, swapFileName);
 	}
 
-
+	@Override
 	public synchronized void swapIn() {
 		if (fTestRoot != null)
 			return;
@@ -429,34 +435,35 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 			UnitTestModel.importIntoTestRunSession(getSwapFile(), this);
 		} catch (IllegalStateException e) {
 			UnitTestPlugin.log(e);
-			fTestRoot= new TestRoot(this);
-			fTestResult= null;
+			fTestRoot = new TestRoot(this);
+			fTestResult = null;
 		} catch (CoreException e) {
 			UnitTestPlugin.log(e);
-			fTestRoot= new TestRoot(this);
-			fTestResult= null;
+			fTestRoot = new TestRoot(this);
+			fTestResult = null;
 		}
 	}
 
+	@Override
 	public void stopTestRun() {
-		if (isRunning() || ! isKeptAlive())
-			fIsStopped= true;
+		if (isRunning() || !isKeptAlive())
+			fIsStopped = true;
 		if (fTestRunnerClient != null)
 			fTestRunnerClient.stopTest();
 	}
 
 	/**
-	 * @return <code>true</code> iff the runtime VM of this test session is still alive
+	 * @return <code>true</code> iff the runtime VM of this test session is still
+	 *         alive
 	 */
+	@Override
 	public boolean isKeptAlive() {
-		if (fTestRunnerClient != null
-				&& fLaunch != null
-				&& fTestRunnerClient.isRunning()
+		if (fTestRunnerClient != null && fLaunch != null && fTestRunnerClient.isRunning()
 				&& ILaunchManager.DEBUG_MODE.equals(fLaunch.getLaunchMode())) {
-			ILaunchConfiguration config= fLaunch.getLaunchConfiguration();
+			ILaunchConfiguration config = fLaunch.getLaunchConfiguration();
 			try {
 				return config != null
-				&& config.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_KEEPRUNNING, false);
+						&& config.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_KEEPRUNNING, false);
 			} catch (CoreException e) {
 				return false;
 			}
@@ -467,24 +474,18 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 	}
 
 	/**
-	 * @return <code>true</code> if this session has been started, but not ended nor stopped nor terminated
+	 * @return <code>true</code> if this session has been started, but not ended nor
+	 *         stopped nor terminated
 	 */
 	@Override
 	public boolean isRunning() {
 		return fIsRunning;
 	}
 
-	/**
-	 * Reruns the given test method if the session is kept alive.
-	 *
-	 * @param testId test id
-	 * @param className test class name
-	 * @param testName test method name
-	 * @return <code>false</code> iff the rerun could not be started
-	 */
+	@Override
 	public boolean rerunTest(String testId, String className, String testName) {
 		if (isKeptAlive()) {
-			Status status= ((TestCaseElement) getTestElement(testId)).getStatus();
+			Status status = ((TestCaseElement) getTestElement(testId)).getStatus();
 			if (status == Status.ERROR) {
 				fErrorCount--;
 			} else if (status == Status.FAILURE) {
@@ -503,144 +504,105 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 
 	private ITestElement addTreeEntry(String id, String testName, boolean isSuite, int testCount, boolean isDynamicTest,
 			String parentId, String displayName, String[] parameterTypes, String uniqueId) {
-/*
-		// format: testId","testName","isSuite","testcount","isDynamicTest","parentId","displayName","parameterTypes","uniqueId
-		int index0= treeEntry.indexOf(',');
-		String id= treeEntry.substring(0, index0);
-
-		StringBuffer testNameBuffer= new StringBuffer(100);
-		int index1= scanTestName(treeEntry, index0 + 1, testNameBuffer);
-		String testName= testNameBuffer.toString().trim();
-
-		int index2= treeEntry.indexOf(',', index1 + 1);
-		boolean isSuite= treeEntry.substring(index1 + 1, index2).equals("true"); //$NON-NLS-1$
-
-		int testCount;
-		boolean isDynamicTest;
-		String parentId;
-		String displayName;
-		StringBuffer displayNameBuffer= new StringBuffer(100);
-		String[] parameterTypes;
-		StringBuffer parameterTypesBuffer= new StringBuffer(200);
-		String uniqueId;
-		StringBuffer uniqueIdBuffer= new StringBuffer(200);
-		int index3= treeEntry.indexOf(',', index2 + 1);
-		if (index3 == -1) {
-			testCount= Integer.parseInt(treeEntry.substring(index2 + 1));
-			isDynamicTest= false;
-			parentId= null;
-			displayName= null;
-			parameterTypes= null;
-			uniqueId= null;
-		} else {
-			testCount= Integer.parseInt(treeEntry.substring(index2 + 1, index3));
-
-			int index4= treeEntry.indexOf(',', index3 + 1);
-			isDynamicTest= treeEntry.substring(index3 + 1, index4).equals("true"); //$NON-NLS-1$
-
-			int index5= treeEntry.indexOf(',', index4 + 1);
-			parentId= treeEntry.substring(index4 + 1, index5);
-			if (parentId.equals("-1")) { //$NON-NLS-1$
-				parentId= null;
-			}
-
-			int index6= scanTestName(treeEntry, index5 + 1, displayNameBuffer);
-			displayName= displayNameBuffer.toString().trim();
-			if (displayName.equals(testName)) {
-				displayName= null;
-			}
-
-			int index7= scanTestName(treeEntry, index6 + 1, parameterTypesBuffer);
-			String parameterTypesString= parameterTypesBuffer.toString().trim();
-			if (parameterTypesString.isEmpty()) {
-				parameterTypes= null;
-			} else {
-				parameterTypes= parameterTypesString.split(","); //$NON-NLS-1$
-				Arrays.parallelSetAll(parameterTypes, i -> parameterTypes[i].trim());
-			}
-
-			scanTestName(treeEntry, index7 + 1, uniqueIdBuffer);
-			uniqueId= uniqueIdBuffer.toString().trim();
-			if (uniqueId.isEmpty()) {
-				uniqueId= null;
-			}
-		}
-*/
+		/*
+		 * // format:
+		 * testId","testName","isSuite","testcount","isDynamicTest","parentId","displayName","parameterTypes","uniqueId
+		 * int index0= treeEntry.indexOf(','); String id= treeEntry.substring(0,
+		 * index0);
+		 *
+		 * StringBuffer testNameBuffer= new StringBuffer(100); int index1=
+		 * scanTestName(treeEntry, index0 + 1, testNameBuffer); String testName=
+		 * testNameBuffer.toString().trim();
+		 *
+		 * int index2= treeEntry.indexOf(',', index1 + 1); boolean isSuite=
+		 * treeEntry.substring(index1 + 1, index2).equals("true"); //$NON-NLS-1$
+		 *
+		 * int testCount; boolean isDynamicTest; String parentId; String displayName;
+		 * StringBuffer displayNameBuffer= new StringBuffer(100); String[]
+		 * parameterTypes; StringBuffer parameterTypesBuffer= new StringBuffer(200);
+		 * String uniqueId; StringBuffer uniqueIdBuffer= new StringBuffer(200); int
+		 * index3= treeEntry.indexOf(',', index2 + 1); if (index3 == -1) { testCount=
+		 * Integer.parseInt(treeEntry.substring(index2 + 1)); isDynamicTest= false;
+		 * parentId= null; displayName= null; parameterTypes= null; uniqueId= null; }
+		 * else { testCount= Integer.parseInt(treeEntry.substring(index2 + 1, index3));
+		 *
+		 * int index4= treeEntry.indexOf(',', index3 + 1); isDynamicTest=
+		 * treeEntry.substring(index3 + 1, index4).equals("true"); //$NON-NLS-1$
+		 *
+		 * int index5= treeEntry.indexOf(',', index4 + 1); parentId=
+		 * treeEntry.substring(index4 + 1, index5); if (parentId.equals("-1")) {
+		 * //$NON-NLS-1$ parentId= null; }
+		 *
+		 * int index6= scanTestName(treeEntry, index5 + 1, displayNameBuffer);
+		 * displayName= displayNameBuffer.toString().trim(); if
+		 * (displayName.equals(testName)) { displayName= null; }
+		 *
+		 * int index7= scanTestName(treeEntry, index6 + 1, parameterTypesBuffer); String
+		 * parameterTypesString= parameterTypesBuffer.toString().trim(); if
+		 * (parameterTypesString.isEmpty()) { parameterTypes= null; } else {
+		 * parameterTypes= parameterTypesString.split(","); //$NON-NLS-1$
+		 * Arrays.parallelSetAll(parameterTypes, i -> parameterTypes[i].trim()); }
+		 *
+		 * scanTestName(treeEntry, index7 + 1, uniqueIdBuffer); uniqueId=
+		 * uniqueIdBuffer.toString().trim(); if (uniqueId.isEmpty()) { uniqueId= null; }
+		 * }
+		 */
 		if (isDynamicTest) {
 			if (parentId != null) {
 				for (IncompleteTestSuite suite : fFactoryTestSuites) {
 					if (parentId.equals(suite.fTestSuiteElement.getId())) {
-						return createTestElement(suite.fTestSuiteElement, id, testName, isSuite, testCount, isDynamicTest, displayName, parameterTypes, uniqueId);
+						return createTestElement(suite.fTestSuiteElement, id, testName, isSuite, testCount,
+								isDynamicTest, displayName, parameterTypes, uniqueId);
 					}
 				}
 			}
-			return createTestElement(getUnrootedSuite(), id, testName, isSuite, testCount, isDynamicTest, displayName, parameterTypes, uniqueId); // should not reach here
+			return createTestElement(getUnrootedSuite(), id, testName, isSuite, testCount, isDynamicTest, displayName,
+					parameterTypes, uniqueId); // should not reach here
 		} else {
 			if (fIncompleteTestSuites.isEmpty()) {
-				return createTestElement(fTestRoot, id, testName, isSuite, testCount, isDynamicTest, displayName, parameterTypes, uniqueId);
+				return createTestElement(fTestRoot, id, testName, isSuite, testCount, isDynamicTest, displayName,
+						parameterTypes, uniqueId);
 			} else {
-				int suiteIndex= fIncompleteTestSuites.size() - 1;
-				IncompleteTestSuite openSuite= fIncompleteTestSuites.get(suiteIndex);
+				int suiteIndex = fIncompleteTestSuites.size() - 1;
+				IncompleteTestSuite openSuite = fIncompleteTestSuites.get(suiteIndex);
 				openSuite.fOutstandingChildren--;
 				if (openSuite.fOutstandingChildren <= 0)
 					fIncompleteTestSuites.remove(suiteIndex);
-				return createTestElement(openSuite.fTestSuiteElement, id, testName, isSuite, testCount, isDynamicTest, displayName, parameterTypes, uniqueId);
+				return createTestElement(openSuite.fTestSuiteElement, id, testName, isSuite, testCount, isDynamicTest,
+						displayName, parameterTypes, uniqueId);
 			}
 		}
 	}
 
 	@Override
-	public ITestElement createTestElement(ITestSuiteElement parent, String id, String testName, boolean isSuite, int testCount, boolean isDynamicTest, String displayName, String[] parameterTypes, String uniqueId) {
+	public ITestElement createTestElement(ITestSuiteElement parent, String id, String testName, boolean isSuite,
+			int testCount, boolean isDynamicTest, String displayName, String[] parameterTypes, String uniqueId) {
 		TestElement testElement;
 		if (parameterTypes != null && parameterTypes.length > 1) {
-			parameterTypes= Arrays.stream(parameterTypes).map(t -> t.trim()).toArray(String[]::new);
+			parameterTypes = Arrays.stream(parameterTypes).map(String::trim).toArray(String[]::new);
 		}
 		if (isSuite) {
-			TestSuiteElement testSuiteElement= new TestSuiteElement(parent, id, testName, testCount, displayName, parameterTypes, uniqueId);
-			testElement= testSuiteElement;
+			TestSuiteElement testSuiteElement = new TestSuiteElement(parent, id, testName, testCount, displayName,
+					parameterTypes, uniqueId);
+			testElement = testSuiteElement;
 			if (testCount > 0) {
 				fIncompleteTestSuites.add(new IncompleteTestSuite(testSuiteElement, testCount));
 			} else if (fFactoryTestSuites != null) {
 				fFactoryTestSuites.add(new IncompleteTestSuite(testSuiteElement, testCount));
 			}
 		} else {
-			testElement= new TestCaseElement(parent, id, testName, displayName, isDynamicTest, parameterTypes, uniqueId);
+			testElement = new TestCaseElement(parent, id, testName, displayName, isDynamicTest, parameterTypes,
+					uniqueId);
 		}
 		fIdToTest.put(id, testElement);
 		return testElement;
 	}
 
-	/**
-	 * Append the test name from <code>s</code> to <code>testName</code>.
-	 *
-	 * @param s the string to scan
-	 * @param start the offset of the first character in <code>s</code>
-	 * @param testName the result
-	 *
-	 * @return the index of the next ','
-	 *
-	private int scanTestName(String s, int start, StringBuffer testName) {
-		boolean inQuote= false;
-		int i= start;
-		for (; i < s.length(); i++) {
-			char c= s.charAt(i);
-			if (c == '\\' && !inQuote) {
-				inQuote= true;
-				continue;
-			} else if (inQuote) {
-				inQuote= false;
-				testName.append(c);
-			} else if (c == ',')
-				break;
-			else
-				testName.append(c);
-		}
-		return i;
-	}
-*/
 	private TestSuiteElement getUnrootedSuite() {
 		if (fUnrootedSuite == null) {
-			fUnrootedSuite= (TestSuiteElement) createTestElement(fTestRoot, "-2", UnitTestMessages.TestRunSession_unrootedTests, true, 0, false, UnitTestMessages.TestRunSession_unrootedTests, null, null); //$NON-NLS-1$
+			fUnrootedSuite = (TestSuiteElement) createTestElement(fTestRoot, "-2", //$NON-NLS-1$
+					UnitTestMessages.TestRunSession_unrootedTests, true, 0, false,
+					UnitTestMessages.TestRunSession_unrootedTests, null, null);
 		}
 		return fUnrootedSuite;
 	}
@@ -654,18 +616,18 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 
 		@Override
 		public void testRunStarted(int testCount) {
-			fIncompleteTestSuites= new ArrayList<>();
-			fFactoryTestSuites= new ArrayList<>();
+			fIncompleteTestSuites = new ArrayList<>();
+			fFactoryTestSuites = new ArrayList<>();
 
-			fStartedCount= 0;
-			fIgnoredCount= 0;
-			fFailureCount= 0;
+			fStartedCount = 0;
+			fIgnoredCount = 0;
+			fFailureCount = 0;
 			fAssumptionFailureCount = 0;
-			fErrorCount= 0;
-			fTotalCount= testCount;
+			fErrorCount = 0;
+			fTotalCount = testCount;
 
-			fStartTime= System.currentTimeMillis();
-			fIsRunning= true;
+			fStartTime = System.currentTimeMillis();
+			fIsRunning = true;
 
 			for (ITestSessionListener listener : fSessionListeners) {
 				listener.sessionStarted();
@@ -674,7 +636,7 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 
 		@Override
 		public void testRunEnded(long elapsedTime) {
-			fIsRunning= false;
+			fIsRunning = false;
 
 			for (ITestSessionListener listener : fSessionListeners) {
 				listener.sessionEnded(elapsedTime);
@@ -683,8 +645,8 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 
 		@Override
 		public void testRunStopped(long elapsedTime) {
-			fIsRunning= false;
-			fIsStopped= true;
+			fIsRunning = false;
+			fIsStopped = true;
 
 			for (ITestSessionListener listener : fSessionListeners) {
 				listener.sessionStopped(elapsedTime);
@@ -693,8 +655,8 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 
 		@Override
 		public void testRunTerminated() {
-			fIsRunning= false;
-			fIsStopped= true;
+			fIsRunning = false;
+			fIsStopped = true;
 
 			for (ITestSessionListener listener : fSessionListeners) {
 				listener.sessionTerminated();
@@ -704,8 +666,8 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 		@Override
 		public void testTreeEntry(String testId, String testName, boolean isSuite, int testCount, boolean isDynamicTest,
 				String parentId, String displayName, String[] parameterTypes, String uniqueId) {
-			ITestElement testElement= addTreeEntry(testId, testName, isSuite, testCount, isDynamicTest,
-					parentId, displayName, parameterTypes, uniqueId);
+			ITestElement testElement = addTreeEntry(testId, testName, isSuite, testCount, isDynamicTest, parentId,
+					displayName, parameterTypes, uniqueId);
 
 			for (ITestSessionListener listener : fSessionListeners) {
 				listener.testAdded(testElement);
@@ -713,8 +675,9 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 		}
 
 		private ITestElement createUnrootedTestElement(String testId, String testName) {
-			ITestSuiteElement unrootedSuite= getUnrootedSuite();
-			ITestElement testElement= createTestElement(unrootedSuite, testId, testName, false, 1, false, testName, null, null);
+			ITestSuiteElement unrootedSuite = getUnrootedSuite();
+			ITestElement testElement = createTestElement(unrootedSuite, testId, testName, false, 1, false, testName,
+					null, null);
 
 			for (ITestSessionListener listener : fSessionListeners) {
 				listener.testAdded(testElement);
@@ -730,14 +693,14 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 					listener.runningBegins();
 				}
 			}
-			ITestElement testElement= getTestElement(testId);
+			ITestElement testElement = getTestElement(testId);
 			if (testElement == null) {
-				testElement= createUnrootedTestElement(testId, testName);
-			} else if (! (testElement instanceof TestCaseElement)) {
+				testElement = createUnrootedTestElement(testId, testName);
+			} else if (!(testElement instanceof TestCaseElement)) {
 				logUnexpectedTest(testId, testElement);
 				return;
 			}
-			TestCaseElement testCaseElement= (TestCaseElement) testElement;
+			TestCaseElement testCaseElement = (TestCaseElement) testElement;
 			setStatus(testCaseElement, Status.RUNNING);
 
 			if (testCaseElement.isDynamicTest()) {
@@ -753,10 +716,10 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 
 		@Override
 		public void testEnded(String testId, String testName, boolean isIgnored) {
-			ITestElement testElement= getTestElement(testId);
+			ITestElement testElement = getTestElement(testId);
 			if (testElement == null) {
-				testElement= createUnrootedTestElement(testId, testName);
-			} else if (! (testElement instanceof TestCaseElement)) {
+				testElement = createUnrootedTestElement(testId, testName);
+			} else if (!(testElement instanceof TestCaseElement)) {
 				if (isIgnored) {
 					testElement.setAssumptionFailed(true);
 					fAssumptionFailureCount++;
@@ -766,7 +729,7 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 				}
 				return;
 			}
-			TestCaseElement testCaseElement= (TestCaseElement) testElement;
+			TestCaseElement testCaseElement = (TestCaseElement) testElement;
 			if (isIgnored) {
 				testCaseElement.setIgnored(true);
 				fIgnoredCount++;
@@ -780,12 +743,12 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 			}
 		}
 
-
 		@Override
-		public void testFailed(int statusCode, String testId, String testName, boolean isAssumptionFailed, String trace, String expected, String actual) {
-			ITestElement testElement= getTestElement(testId);
+		public void testFailed(int statusCode, String testId, String testName, boolean isAssumptionFailed, String trace,
+				String expected, String actual) {
+			ITestElement testElement = getTestElement(testId);
 			if (testElement == null) {
-				testElement= createUnrootedTestElement(testId, testName);
+				testElement = createUnrootedTestElement(testId, testName);
 			}
 
 			Status status;
@@ -794,7 +757,7 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 				fAssumptionFailureCount++;
 				status = Status.OK;
 			} else {
-				status= Status.convert(statusCode);
+				status = Status.convert(statusCode);
 			}
 
 			registerTestFailureStatus(testElement, status, trace, expected, actual);
@@ -805,27 +768,29 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 		}
 
 		@Override
-		public void testReran(String testId, String className, String testName, int statusCode, String trace, String expectedResult, String actualResult) {
-			ITestElement testElement= getTestElement(testId);
+		public void testReran(String testId, String className, String testName, int statusCode, String trace,
+				String expectedResult, String actualResult) {
+			ITestElement testElement = getTestElement(testId);
 			if (testElement == null) {
-				testElement= createUnrootedTestElement(testId, testName);
-			} else if (! (testElement instanceof TestCaseElement)) {
+				testElement = createUnrootedTestElement(testId, testName);
+			} else if (!(testElement instanceof TestCaseElement)) {
 				logUnexpectedTest(testId, testElement);
 				return;
 			}
-			TestCaseElement testCaseElement= (TestCaseElement) testElement;
+			TestCaseElement testCaseElement = (TestCaseElement) testElement;
 
-			Status status= Status.convert(statusCode);
+			Status status = Status.convert(statusCode);
 			registerTestFailureStatus(testElement, status, trace, expectedResult, actualResult);
 
 			for (ITestSessionListener listener : fSessionListeners) {
-				//TODO: post old & new status?
+				// TODO: post old & new status?
 				listener.testReran(testCaseElement, status, trace, expectedResult, actualResult);
 			}
 		}
 
 		private void logUnexpectedTest(String testId, ITestElement testElement) {
-			UnitTestPlugin.log(new Exception("Unexpected TestElement type for testId '" + testId + "': " + testElement)); //$NON-NLS-1$ //$NON-NLS-2$
+			UnitTestPlugin
+					.log(new Exception("Unexpected TestElement type for testId '" + testId + "': " + testElement)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -834,12 +799,13 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 		public int fOutstandingChildren;
 
 		public IncompleteTestSuite(TestSuiteElement testSuiteElement, int outstandingChildren) {
-			fTestSuiteElement= testSuiteElement;
-			fOutstandingChildren= outstandingChildren;
+			fTestSuiteElement = testSuiteElement;
+			fOutstandingChildren = outstandingChildren;
 		}
 	}
 
-	public void registerTestFailureStatus(ITestElement testElement, Status status, String trace, String expected, String actual) {
+	public void registerTestFailureStatus(ITestElement testElement, Status status, String trace, String expected,
+			String actual) {
 		testElement.setStatus(status, trace, expected, actual);
 		if (!testElement.isAssumptionFailure()) {
 			if (status.isError()) {
@@ -853,14 +819,14 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 	public void registerTestEnded(ITestElement testElement, boolean completed) {
 		if (testElement instanceof TestCaseElement) {
 			fTotalCount++;
-			if (! completed) {
+			if (!completed) {
 				return;
 			}
 			fStartedCount++;
 			if (((TestCaseElement) testElement).isIgnored()) {
 				fIgnoredCount++;
 			}
-			if (! testElement.getStatus().isErrorOrFailure())
+			if (!testElement.getStatus().isErrorOrFailure())
 				setStatus(testElement, Status.OK);
 		}
 
@@ -873,20 +839,21 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 		testElement.setStatus(status);
 	}
 
-	public TestElement[] getAllFailedTestElements() {
-		ArrayList<ITestElement> failures= new ArrayList<>();
+	@Override
+	public ITestElement[] getAllFailedTestElements() {
+		ArrayList<ITestElement> failures = new ArrayList<>();
 		addFailures(failures, getTestRoot());
 		return failures.toArray(new TestElement[failures.size()]);
 	}
 
 	private void addFailures(ArrayList<ITestElement> failures, ITestElement testElement) {
-		Result testResult= testElement.getTestResult(true);
+		Result testResult = testElement.getTestResult(true);
 		if (testResult == Result.ERROR || testResult == Result.FAILURE) {
 			failures.add(testElement);
 		}
 		if (testElement instanceof TestSuiteElement) {
-			TestSuiteElement testSuiteElement= (TestSuiteElement) testElement;
-			ITestElement[] children= testSuiteElement.getChildren();
+			TestSuiteElement testSuiteElement = (TestSuiteElement) testElement;
+			ITestElement[] children = testSuiteElement.getChildren();
 			for (ITestElement child : children) {
 				addFailures(failures, child);
 			}
@@ -904,15 +871,17 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 	public String getIncludeTags() {
 		if (fLaunch != null) {
 			try {
-				ILaunchConfiguration launchConfig= fLaunch.getLaunchConfiguration();
+				ILaunchConfiguration launchConfig = fLaunch.getLaunchConfiguration();
 				if (launchConfig != null) {
-					boolean hasIncludeTags= launchConfig.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_HAS_INCLUDE_TAGS, false);
+					boolean hasIncludeTags = launchConfig
+							.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_HAS_INCLUDE_TAGS, false);
 					if (hasIncludeTags) {
-						return launchConfig.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_INCLUDE_TAGS, EMPTY_STRING);
+						return launchConfig.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_INCLUDE_TAGS,
+								EMPTY_STRING);
 					}
 				}
 			} catch (CoreException e) {
-				//ignore
+				// ignore
 			}
 			return EMPTY_STRING;
 		}
@@ -922,15 +891,17 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 	public String getExcludeTags() {
 		if (fLaunch != null) {
 			try {
-				ILaunchConfiguration launchConfig= fLaunch.getLaunchConfiguration();
+				ILaunchConfiguration launchConfig = fLaunch.getLaunchConfiguration();
 				if (launchConfig != null) {
-					boolean hasExcludeTags= launchConfig.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_HAS_EXCLUDE_TAGS, false);
+					boolean hasExcludeTags = launchConfig
+							.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_HAS_EXCLUDE_TAGS, false);
 					if (hasExcludeTags) {
-						return launchConfig.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_EXCLUDE_TAGS, EMPTY_STRING);
+						return launchConfig.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_EXCLUDE_TAGS,
+								EMPTY_STRING);
 					}
 				}
 			} catch (CoreException e) {
-				//ignore
+				// ignore
 			}
 			return EMPTY_STRING;
 		}
@@ -938,12 +909,11 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 	}
 
 	public void setIncludeTags(String includeTags) {
-		fIncludeTags= includeTags;
+		fIncludeTags = includeTags;
 	}
 
-
 	public void setExcludeTags(String excludeTags) {
-		fExcludeTags= excludeTags;
+		fExcludeTags = excludeTags;
 	}
 
 	@Override
@@ -951,48 +921,40 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 		return fTestRunName + " " + DateFormat.getDateTimeInstance().format(new Date(fStartTime)); //$NON-NLS-1$
 	}
 
-
 	@Override
 	public ITestSuiteElement getParent() {
 		return null;
 	}
-
 
 	@Override
 	public String[] getParameterTypes() {
 		return null;
 	}
 
-
 	@Override
 	public String getTestName() {
 		return getTestRunName();
 	}
-
 
 	@Override
 	public String getTrace() {
 		return null;
 	}
 
-
 	@Override
 	public String getExpected() {
 		return null;
 	}
-
 
 	@Override
 	public String getActual() {
 		return null;
 	}
 
-
 	@Override
 	public boolean isComparisonFailure() {
 		return false;
 	}
-
 
 	@Override
 	public void setElapsedTimeInSeconds(double time) {

@@ -9,7 +9,6 @@ Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.unittest,
- org.eclipse.unittest.internal.model;x-internal:=true,
  org.eclipse.unittest.launcher,
  org.eclipse.unittest.model,
  org.eclipse.unittest.ui

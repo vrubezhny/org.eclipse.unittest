@@ -18,6 +18,7 @@ import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElement.Status;
+import org.eclipse.unittest.model.ITestSessionListener;
 
 import org.eclipse.core.runtime.ListenerList;
 
@@ -29,7 +30,7 @@ public class TestRunListenerAdapter implements ITestSessionListener {
 	private final TestRunSession fSession;
 
 	public TestRunListenerAdapter(TestRunSession session) {
-		fSession= session;
+		fSession = session;
 	}
 
 	private ListenerList<TestRunListener> getListenerList() {
@@ -59,7 +60,6 @@ public class TestRunListenerAdapter implements ITestSessionListener {
 			listener.testCaseFinished(testCaseElement);
 		}
 	}
-
 
 	@Override
 	public void sessionStarted() {
@@ -94,12 +94,12 @@ public class TestRunListenerAdapter implements ITestSessionListener {
 	}
 
 	@Override
-	public void testStarted(TestCaseElement testCaseElement) {
+	public void testStarted(ITestCaseElement testCaseElement) {
 		fireTestCaseStarted(testCaseElement);
 	}
 
 	@Override
-	public void testEnded(TestCaseElement testCaseElement) {
+	public void testEnded(ITestCaseElement testCaseElement) {
 		fireTestCaseFinished(testCaseElement);
 	}
 
@@ -109,7 +109,8 @@ public class TestRunListenerAdapter implements ITestSessionListener {
 	}
 
 	@Override
-	public void testReran(TestCaseElement testCaseElement, Status status, String trace, String expectedResult, String actualResult) {
+	public void testReran(ITestCaseElement testCaseElement, Status status, String trace, String expectedResult,
+			String actualResult) {
 		// ignore
 	}
 

@@ -39,16 +39,13 @@ import java.util.List;
 
 import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.UnitTestPreferencesConstants;
-import org.eclipse.unittest.internal.model.ITestRunSessionListener;
-import org.eclipse.unittest.internal.model.ITestSessionListener;
-import org.eclipse.unittest.internal.model.TestCaseElement;
-import org.eclipse.unittest.internal.model.TestElement;
-import org.eclipse.unittest.internal.model.TestRunSession;
-import org.eclipse.unittest.internal.model.UnitTestModel;
 import org.eclipse.unittest.launcher.ITestKind;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
+import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestRunSession;
+import org.eclipse.unittest.model.ITestRunSessionListener;
+import org.eclipse.unittest.model.ITestSessionListener;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -134,15 +131,15 @@ import org.eclipse.debug.ui.DebugUITools;
  */
 public class TestRunnerViewPart extends ViewPart {
 
-	public static final String NAME= "org.eclipse.unittest.ResultView"; //$NON-NLS-1$
+	public static final String NAME = "org.eclipse.unittest.ResultView"; //$NON-NLS-1$
 
-	private static final String RERUN_LAST_COMMAND= "org.eclipse.jdt.junit.junitShortcut.rerunLast"; //$NON-NLS-1$
-	private static final String RERUN_FAILED_FIRST_COMMAND= "org.eclipse.jdt.junit.junitShortcut.rerunFailedFirst"; //$NON-NLS-1$
+	private static final String RERUN_LAST_COMMAND = "org.eclipse.jdt.junit.junitShortcut.rerunLast"; //$NON-NLS-1$
+	private static final String RERUN_FAILED_FIRST_COMMAND = "org.eclipse.jdt.junit.junitShortcut.rerunFailedFirst"; //$NON-NLS-1$
 
-	static final int REFRESH_INTERVAL= 200;
+	static final int REFRESH_INTERVAL = 200;
 
-	static final int LAYOUT_FLAT= 0;
-	static final int LAYOUT_HIERARCHICAL= 1;
+	static final int LAYOUT_FLAT = 0;
+	static final int LAYOUT_HIERARCHICAL = 1;
 
 	/**
 	 * Whether the output scrolls and reveals tests as they are executed.
@@ -150,9 +147,10 @@ public class TestRunnerViewPart extends ViewPart {
 	protected boolean fAutoScroll = true;
 	/**
 	 * The current orientation; either <code>VIEW_ORIENTATION_HORIZONTAL</code>
-	 * <code>VIEW_ORIENTATION_VERTICAL</code>, or <code>VIEW_ORIENTATION_AUTOMATIC</code>.
+	 * <code>VIEW_ORIENTATION_VERTICAL</code>, or
+	 * <code>VIEW_ORIENTATION_AUTOMATIC</code>.
 	 */
-	private int fOrientation= VIEW_ORIENTATION_AUTOMATIC;
+	private int fOrientation = VIEW_ORIENTATION_AUTOMATIC;
 	/**
 	 * The current orientation; either <code>VIEW_ORIENTATION_HORIZONTAL</code>
 	 * <code>VIEW_ORIENTATION_VERTICAL</code>.
@@ -161,7 +159,7 @@ public class TestRunnerViewPart extends ViewPart {
 	/**
 	 * The current layout mode (LAYOUT_FLAT or LAYOUT_HIERARCHICAL).
 	 */
-	private int fLayout= LAYOUT_HIERARCHICAL;
+	private int fLayout = LAYOUT_HIERARCHICAL;
 
 //	private boolean fTestIsRunning= false;
 
@@ -169,7 +167,7 @@ public class TestRunnerViewPart extends ViewPart {
 	protected ProgressImages fProgressImages;
 	protected Image fViewImage;
 	protected CounterPanel fCounterPanel;
-	protected boolean fShowOnErrorOnly= false;
+	protected boolean fShowOnErrorOnly = false;
 	protected Clipboard fClipboard;
 	protected volatile String fInfoMessage;
 
@@ -179,7 +177,7 @@ public class TestRunnerViewPart extends ViewPart {
 	/**
 	 * Is the UI disposed?
 	 */
-	private boolean fIsDisposed= false;
+	private boolean fIsDisposed = false;
 
 	/**
 	 * Actions
@@ -205,7 +203,7 @@ public class TestRunnerViewPart extends ViewPart {
 	private ActivateOnErrorAction fActivateOnErrorAction;
 	private IMenuListener fViewMenuListener;
 
-	private TestRunSession fTestRunSession;
+	private ITestRunSession fTestRunSession;
 	private TestSessionListener fTestSessionListener;
 
 //	private RunnerViewHistory fViewHistory;
@@ -225,11 +223,11 @@ public class TestRunnerViewPart extends ViewPart {
 	final Image fTestRunningIcon;
 	final Image fTestIgnoredIcon;
 
-	final ImageDescriptor fSuiteIconDescriptor= UnitTestPlugin.getImageDescriptor("obj16/tsuite.png"); //$NON-NLS-1$
-	final ImageDescriptor fSuiteOkIconDescriptor= UnitTestPlugin.getImageDescriptor("obj16/tsuiteok.png"); //$NON-NLS-1$
-	final ImageDescriptor fSuiteErrorIconDescriptor= UnitTestPlugin.getImageDescriptor("obj16/tsuiteerror.png"); //$NON-NLS-1$
-	final ImageDescriptor fSuiteFailIconDescriptor= UnitTestPlugin.getImageDescriptor("obj16/tsuitefail.png"); //$NON-NLS-1$
-	final ImageDescriptor fSuiteRunningIconDescriptor= UnitTestPlugin.getImageDescriptor("obj16/tsuiterun.png"); //$NON-NLS-1$
+	final ImageDescriptor fSuiteIconDescriptor = UnitTestPlugin.getImageDescriptor("obj16/tsuite.png"); //$NON-NLS-1$
+	final ImageDescriptor fSuiteOkIconDescriptor = UnitTestPlugin.getImageDescriptor("obj16/tsuiteok.png"); //$NON-NLS-1$
+	final ImageDescriptor fSuiteErrorIconDescriptor = UnitTestPlugin.getImageDescriptor("obj16/tsuiteerror.png"); //$NON-NLS-1$
+	final ImageDescriptor fSuiteFailIconDescriptor = UnitTestPlugin.getImageDescriptor("obj16/tsuitefail.png"); //$NON-NLS-1$
+	final ImageDescriptor fSuiteRunningIconDescriptor = UnitTestPlugin.getImageDescriptor("obj16/tsuiterun.png"); //$NON-NLS-1$
 
 	final Image fSuiteIcon;
 	final Image fSuiteOkIcon;
@@ -240,49 +238,48 @@ public class TestRunnerViewPart extends ViewPart {
 	final List<Image> fImagesToDispose;
 
 	// Persistence tags.
-	static final String TAG_PAGE= "page"; //$NON-NLS-1$
-	static final String TAG_RATIO= "ratio"; //$NON-NLS-1$
-	static final String TAG_TRACEFILTER= "tracefilter"; //$NON-NLS-1$
-	static final String TAG_ORIENTATION= "orientation"; //$NON-NLS-1$
-	static final String TAG_SCROLL= "scroll"; //$NON-NLS-1$
+	static final String TAG_PAGE = "page"; //$NON-NLS-1$
+	static final String TAG_RATIO = "ratio"; //$NON-NLS-1$
+	static final String TAG_TRACEFILTER = "tracefilter"; //$NON-NLS-1$
+	static final String TAG_ORIENTATION = "orientation"; //$NON-NLS-1$
+	static final String TAG_SCROLL = "scroll"; //$NON-NLS-1$
 	/**
 	 * @since 3.2
 	 */
-	static final String TAG_LAYOUT= "layout"; //$NON-NLS-1$
+	static final String TAG_LAYOUT = "layout"; //$NON-NLS-1$
 	/**
 	 * @since 3.2
 	 */
-	static final String TAG_FAILURES_ONLY= "failuresOnly"; //$NON-NLS-1$
+	static final String TAG_FAILURES_ONLY = "failuresOnly"; //$NON-NLS-1$
 
 	/**
 	 * @since 3.8
 	 */
-	static final String TAG_IGNORED_ONLY= "ignoredOnly"; //$NON-NLS-1$
+	static final String TAG_IGNORED_ONLY = "ignoredOnly"; //$NON-NLS-1$
 	/**
 	 * @since 3.4
 	 */
-	static final String TAG_SHOW_TIME= "time"; //$NON-NLS-1$
+	static final String TAG_SHOW_TIME = "time"; //$NON-NLS-1$
 
 	/**
 	 * @since 3.5
 	 */
-	static final String PREF_LAST_PATH= "lastImportExportPath"; //$NON-NLS-1$
+	static final String PREF_LAST_PATH = "lastImportExportPath"; //$NON-NLS-1$
 
 	/**
 	 * @since 3.6
 	 */
-	static final String PREF_LAST_URL= "lastImportURL"; //$NON-NLS-1$
+	static final String PREF_LAST_URL = "lastImportURL"; //$NON-NLS-1$
 
-	//orientations
-	static final int VIEW_ORIENTATION_VERTICAL= 0;
-	static final int VIEW_ORIENTATION_HORIZONTAL= 1;
-	static final int VIEW_ORIENTATION_AUTOMATIC= 2;
+	// orientations
+	static final int VIEW_ORIENTATION_VERTICAL = 0;
+	static final int VIEW_ORIENTATION_HORIZONTAL = 1;
+	static final int VIEW_ORIENTATION_AUTOMATIC = 2;
 
 	private IMemento fMemento;
 
 	Image fOriginalViewImage;
 //	IElementChangedListener fDirtyListener;
-
 
 //	private CTabFolder fTabFolder;
 	private SashForm fSashForm;
@@ -296,199 +293,160 @@ public class TestRunnerViewPart extends ViewPart {
 	private UpdateUIJob fUpdateJob;
 
 	/**
-	 * A Job that runs as long as a test run is running.
-	 * It is used to show busyness for running jobs in the view (title in italics).
+	 * A Job that runs as long as a test run is running. It is used to show busyness
+	 * for running jobs in the view (title in italics).
 	 */
 	private JUnitIsRunningJob fJUnitIsRunningJob;
 	private ILock fJUnitIsRunningLock;
 	public static final Object FAMILY_JUNIT_RUN = new Object();
 
-	private IPartListener2 fPartListener= new IPartListener2() {
+	private IPartListener2 fPartListener = new IPartListener2() {
 		@Override
-		public void partActivated(IWorkbenchPartReference ref) { }
+		public void partActivated(IWorkbenchPartReference ref) {
+		}
+
 		@Override
-		public void partBroughtToTop(IWorkbenchPartReference ref) { }
+		public void partBroughtToTop(IWorkbenchPartReference ref) {
+		}
+
 		@Override
-		public void partInputChanged(IWorkbenchPartReference ref) { }
+		public void partInputChanged(IWorkbenchPartReference ref) {
+		}
+
 		@Override
-		public void partClosed(IWorkbenchPartReference ref) { }
+		public void partClosed(IWorkbenchPartReference ref) {
+		}
+
 		@Override
-		public void partDeactivated(IWorkbenchPartReference ref) { }
+		public void partDeactivated(IWorkbenchPartReference ref) {
+		}
+
 		@Override
-		public void partOpened(IWorkbenchPartReference ref) { }
+		public void partOpened(IWorkbenchPartReference ref) {
+		}
 
 		@Override
 		public void partVisible(IWorkbenchPartReference ref) {
 			if (getSite().getId().equals(ref.getId())) {
-				fPartIsVisible= true;
+				fPartIsVisible = true;
 			}
 		}
 
 		@Override
 		public void partHidden(IWorkbenchPartReference ref) {
 			if (getSite().getId().equals(ref.getId())) {
-				fPartIsVisible= false;
+				fPartIsVisible = false;
 			}
 		}
 	};
 
-	protected boolean fPartIsVisible= false;
+	protected boolean fPartIsVisible = false;
 
-/*
-	private class RunnerViewHistory extends ViewHistory<TestRunSession> {
-
-		@Override
-		public void configureHistoryListAction(IAction action) {
-			action.setText(Messages.TestRunnerViewPart_history);
-		}
-
-		@Override
-		public void configureHistoryDropDownAction(IAction action) {
-			action.setToolTipText(Messages.TestRunnerViewPart_test_run_history);
-			UnitTestPlugin.setLocalImageDescriptors(action, "history_list.png"); //$NON-NLS-1$
-		}
-
-		@Override
-		public Action getClearAction() {
-			return new ClearAction();
-		}
-
-		@Override
-		public String getHistoryListDialogTitle() {
-			return Messages.TestRunnerViewPart_test_runs;
-		}
-
-		@Override
-		public String getHistoryListDialogMessage() {
-			return Messages.TestRunnerViewPart_select_test_run;
-		}
-
-		@Override
-		public Shell getShell() {
-			return fParent.getShell();
-		}
-
-		@Override
-		public List<TestRunSession> getHistoryEntries() {
-			return UnitTestPlugin.getModel().getTestRunSessions();
-		}
-
-		@Override
-		public TestRunSession getCurrentEntry() {
-			return fTestRunSession;
-		}
-
-		@Override
-		public void setActiveEntry(TestRunSession entry) {
-			TestRunSession deactivatedSession= setActiveTestRunSession(entry);
-			if (deactivatedSession != null)
-				deactivatedSession.swapOut();
-		}
-
-		@Override
-		public void setHistoryEntries(List<TestRunSession> remainingEntries, TestRunSession activeEntry) {
-			setActiveTestRunSession(activeEntry);
-
-			List<TestRunSession> testRunSessions= UnitTestPlugin.getModel().getTestRunSessions();
-			testRunSessions.removeAll(remainingEntries);
-			for (TestRunSession testRunSession : testRunSessions) {
-				UnitTestPlugin.getModel().removeTestRunSession(testRunSession);
-			}
-			for (TestRunSession remaining : remainingEntries) {
-				remaining.swapOut();
-			}
-		}
-
-		@Override
-		public ImageDescriptor getImageDescriptor(Object element) {
-			TestRunSession session= (TestRunSession) element;
-			if (session.isStopped())
-				return fSuiteIconDescriptor;
-
-			if (session.isRunning())
-				return fSuiteRunningIconDescriptor;
-
-			Result result= session.getTestResult(true);
-			if (result == Result.OK)
-				return fSuiteOkIconDescriptor;
-			else if (result == Result.ERROR)
-				return fSuiteErrorIconDescriptor;
-			else if (result == Result.FAILURE)
-				return fSuiteFailIconDescriptor;
-			else
-				return fSuiteIconDescriptor;
-		}
-
-		@Override
-		public String getText(TestRunSession session) {
-			String testRunLabel= BasicElementLabels.getJavaElementName(session.getTestRunName());
-			if (session.getStartTime() <= 0) {
-				return testRunLabel;
-			} else {
-				String startTime= DateFormat.getDateTimeInstance().format(new Date(session.getStartTime()));
-				return Messages.format(Messages.TestRunnerViewPart_testName_startTime, new Object[] { testRunLabel, startTime });
-			}
-		}
-
-		@Override
-		public void addMenuEntries(MenuManager manager) {
-			manager.appendToGroup(IWorkbenchActionConstants.MB_ADDITIONS, new ImportTestRunSessionAction(fParent.getShell()));
-			manager.appendToGroup(IWorkbenchActionConstants.MB_ADDITIONS, new ImportTestRunSessionFromURLAction(fParent.getShell()));
-			manager.appendToGroup(IWorkbenchActionConstants.MB_ADDITIONS, fPasteAction);
-			if (fTestRunSession != null)
-				manager.appendToGroup(IWorkbenchActionConstants.MB_ADDITIONS, new ExportTestRunSessionAction(fParent.getShell(), fTestRunSession));
-		}
-
-		@Override
-		public String getMaxEntriesMessage() {
-			return Messages.TestRunnerViewPart_max_remembered;
-		}
-
-		@Override
-		public int getMaxEntries() {
-			return Platform.getPreferencesService().getInt(UnitTestPlugin.PLUGIN_ID, UnitTestPreferencesConstants.MAX_TEST_RUNS, 10, null);
-		}
-
-		@Override
-		public void setMaxEntries(int maxEntries) {
-			InstanceScope.INSTANCE.getNode(UnitTestPlugin.PLUGIN_ID).putInt(UnitTestPreferencesConstants.MAX_TEST_RUNS, maxEntries);
-		}
-	}
-
-	private static class ImportTestRunSessionAction extends Action {
-		private final Shell fShell;
-
-		public ImportTestRunSessionAction(Shell shell) {
-			super(Messages.TestRunnerViewPart_ImportTestRunSessionAction_name);
-			fShell= shell;
-		}
-
-		@Override
-		public void run() {
-			FileDialog importDialog= new FileDialog(fShell, SWT.OPEN | SWT.SHEET);
-			importDialog.setText(Messages.TestRunnerViewPart_ImportTestRunSessionAction_title);
-			IDialogSettings dialogSettings= UnitTestPlugin.getDefault().getDialogSettings();
-			String lastPath= dialogSettings.get(PREF_LAST_PATH);
-			if (lastPath != null) {
-				importDialog.setFilterPath(lastPath);
-			}
-			importDialog.setFilterExtensions(new String[] {"*.xml", "*.*"}); //$NON-NLS-1$ //$NON-NLS-2$
-			String path= importDialog.open();
-			if (path == null)
-				return;
-
-			//TODO: MULTI: getFileNames()
-			File file= new File(path);
-
-			try {
-				UnitTestModel.importTestRunSession(file);
-			} catch (CoreException e) {
-				UnitTestPlugin.log(e);
-				ErrorDialog.openError(fShell, Messages.TestRunnerViewPart_ImportTestRunSessionAction_error_title, e.getStatus().getMessage(), e.getStatus());
-			}
-		}
-	}
-*/
+	/*
+	 * private class RunnerViewHistory extends ViewHistory<TestRunSession> {
+	 *
+	 * @Override public void configureHistoryListAction(IAction action) {
+	 * action.setText(Messages.TestRunnerViewPart_history); }
+	 *
+	 * @Override public void configureHistoryDropDownAction(IAction action) {
+	 * action.setToolTipText(Messages.TestRunnerViewPart_test_run_history);
+	 * UnitTestPlugin.setLocalImageDescriptors(action, "history_list.png");
+	 * //$NON-NLS-1$ }
+	 *
+	 * @Override public Action getClearAction() { return new ClearAction(); }
+	 *
+	 * @Override public String getHistoryListDialogTitle() { return
+	 * Messages.TestRunnerViewPart_test_runs; }
+	 *
+	 * @Override public String getHistoryListDialogMessage() { return
+	 * Messages.TestRunnerViewPart_select_test_run; }
+	 *
+	 * @Override public Shell getShell() { return fParent.getShell(); }
+	 *
+	 * @Override public List<TestRunSession> getHistoryEntries() { return
+	 * UnitTestPlugin.getModel().getTestRunSessions(); }
+	 *
+	 * @Override public TestRunSession getCurrentEntry() { return fTestRunSession; }
+	 *
+	 * @Override public void setActiveEntry(TestRunSession entry) { TestRunSession
+	 * deactivatedSession= setActiveTestRunSession(entry); if (deactivatedSession !=
+	 * null) deactivatedSession.swapOut(); }
+	 *
+	 * @Override public void setHistoryEntries(List<TestRunSession>
+	 * remainingEntries, TestRunSession activeEntry) {
+	 * setActiveTestRunSession(activeEntry);
+	 *
+	 * List<TestRunSession> testRunSessions=
+	 * UnitTestPlugin.getModel().getTestRunSessions();
+	 * testRunSessions.removeAll(remainingEntries); for (TestRunSession
+	 * testRunSession : testRunSessions) {
+	 * UnitTestPlugin.getModel().removeTestRunSession(testRunSession); } for
+	 * (TestRunSession remaining : remainingEntries) { remaining.swapOut(); } }
+	 *
+	 * @Override public ImageDescriptor getImageDescriptor(Object element) {
+	 * TestRunSession session= (TestRunSession) element; if (session.isStopped())
+	 * return fSuiteIconDescriptor;
+	 *
+	 * if (session.isRunning()) return fSuiteRunningIconDescriptor;
+	 *
+	 * Result result= session.getTestResult(true); if (result == Result.OK) return
+	 * fSuiteOkIconDescriptor; else if (result == Result.ERROR) return
+	 * fSuiteErrorIconDescriptor; else if (result == Result.FAILURE) return
+	 * fSuiteFailIconDescriptor; else return fSuiteIconDescriptor; }
+	 *
+	 * @Override public String getText(TestRunSession session) { String
+	 * testRunLabel=
+	 * BasicElementLabels.getJavaElementName(session.getTestRunName()); if
+	 * (session.getStartTime() <= 0) { return testRunLabel; } else { String
+	 * startTime= DateFormat.getDateTimeInstance().format(new
+	 * Date(session.getStartTime())); return
+	 * Messages.format(Messages.TestRunnerViewPart_testName_startTime, new Object[]
+	 * { testRunLabel, startTime }); } }
+	 *
+	 * @Override public void addMenuEntries(MenuManager manager) {
+	 * manager.appendToGroup(IWorkbenchActionConstants.MB_ADDITIONS, new
+	 * ImportTestRunSessionAction(fParent.getShell()));
+	 * manager.appendToGroup(IWorkbenchActionConstants.MB_ADDITIONS, new
+	 * ImportTestRunSessionFromURLAction(fParent.getShell()));
+	 * manager.appendToGroup(IWorkbenchActionConstants.MB_ADDITIONS, fPasteAction);
+	 * if (fTestRunSession != null)
+	 * manager.appendToGroup(IWorkbenchActionConstants.MB_ADDITIONS, new
+	 * ExportTestRunSessionAction(fParent.getShell(), fTestRunSession)); }
+	 *
+	 * @Override public String getMaxEntriesMessage() { return
+	 * Messages.TestRunnerViewPart_max_remembered; }
+	 *
+	 * @Override public int getMaxEntries() { return
+	 * Platform.getPreferencesService().getInt(UnitTestPlugin.PLUGIN_ID,
+	 * UnitTestPreferencesConstants.MAX_TEST_RUNS, 10, null); }
+	 *
+	 * @Override public void setMaxEntries(int maxEntries) {
+	 * InstanceScope.INSTANCE.getNode(UnitTestPlugin.PLUGIN_ID).putInt(
+	 * UnitTestPreferencesConstants.MAX_TEST_RUNS, maxEntries); } }
+	 *
+	 * private static class ImportTestRunSessionAction extends Action { private
+	 * final Shell fShell;
+	 *
+	 * public ImportTestRunSessionAction(Shell shell) {
+	 * super(Messages.TestRunnerViewPart_ImportTestRunSessionAction_name); fShell=
+	 * shell; }
+	 *
+	 * @Override public void run() { FileDialog importDialog= new FileDialog(fShell,
+	 * SWT.OPEN | SWT.SHEET); importDialog.setText(Messages.
+	 * TestRunnerViewPart_ImportTestRunSessionAction_title); IDialogSettings
+	 * dialogSettings= UnitTestPlugin.getDefault().getDialogSettings(); String
+	 * lastPath= dialogSettings.get(PREF_LAST_PATH); if (lastPath != null) {
+	 * importDialog.setFilterPath(lastPath); } importDialog.setFilterExtensions(new
+	 * String[] {"*.xml", "*.*"}); //$NON-NLS-1$ //$NON-NLS-2$ String path=
+	 * importDialog.open(); if (path == null) return;
+	 *
+	 * //TODO: MULTI: getFileNames() File file= new File(path);
+	 *
+	 * try { UnitTestModel.importTestRunSession(file); } catch (CoreException e) {
+	 * UnitTestPlugin.log(e); ErrorDialog.openError(fShell,
+	 * Messages.TestRunnerViewPart_ImportTestRunSessionAction_error_title,
+	 * e.getStatus().getMessage(), e.getStatus()); } } }
+	 */
 	private static class UnitTesttPasteAction extends Action {
 		private final Shell fShell;
 		private Clipboard fClipboard;
@@ -496,15 +454,15 @@ public class TestRunnerViewPart extends ViewPart {
 		public UnitTesttPasteAction(Shell shell, Clipboard clipboard) {
 			super(Messages.TestRunnerViewPart_JUnitPasteAction_label);
 			Assert.isNotNull(clipboard);
-			fShell= shell;
-			fClipboard= clipboard;
+			fShell = shell;
+			fClipboard = clipboard;
 		}
 
 		@Override
 		public void run() {
-			String urlData= (String) fClipboard.getContents(URLTransfer.getInstance());
+			String urlData = (String) fClipboard.getContents(URLTransfer.getInstance());
 			if (urlData == null) {
-				urlData= (String) fClipboard.getContents(TextTransfer.getInstance());
+				urlData = (String) fClipboard.getContents(TextTransfer.getInstance());
 			}
 			if (urlData != null && urlData.length() > 0) {
 				if (isValidUrl(urlData)) {
@@ -512,173 +470,139 @@ public class TestRunnerViewPart extends ViewPart {
 					return;
 				}
 			}
-			MessageDialog.openInformation(fShell,
-					Messages.TestRunnerViewPart_JUnitPasteAction_cannotpaste_title,
-					Messages.TestRunnerViewPart_JUnitPasteAction_cannotpaste_message
-			);
+			MessageDialog.openInformation(fShell, Messages.TestRunnerViewPart_JUnitPasteAction_cannotpaste_title,
+					Messages.TestRunnerViewPart_JUnitPasteAction_cannotpaste_message);
 		}
 
 		private boolean isValidUrl(String urlData) {
 			try {
 				@SuppressWarnings("unused")
-				URL url= new URL(urlData);
+				URL url = new URL(urlData);
 			} catch (MalformedURLException e) {
 				return false;
 			}
 			return true;
 		}
 	}
-/*
-	private static class ImportTestRunSessionFromURLAction extends Action {
-		private static class URLValidator implements IInputValidator {
-			@Override
-			public String isValid(String newText) {
-				if (newText.length() == 0)
-					return null;
-				try {
-					@SuppressWarnings("unused")
-					URL url= new URL(newText);
-					return null;
-				} catch (MalformedURLException e) {
-					return Messages.TestRunnerViewPart_ImportTestRunSessionFromURLAction_invalid_url + e.getLocalizedMessage();
-				}
-			}
-		}
 
-		private static final String DIALOG_SETTINGS= "ImportTestRunSessionFromURLAction"; //$NON-NLS-1$
-
-		private final Shell fShell;
-
-		public ImportTestRunSessionFromURLAction(Shell shell) {
-			super(Messages.TestRunnerViewPart_ImportTestRunSessionFromURLAction_import_from_url);
-			fShell= shell;
-		}
-
-		@Override
-		public void run() {
-			String title= Messages.TestRunnerViewPart_ImportTestRunSessionAction_title;
-			String message= Messages.TestRunnerViewPart_ImportTestRunSessionFromURLAction_url;
-
-			final IDialogSettings dialogSettings= UnitTestPlugin.getDefault().getDialogSettings();
-			String url= dialogSettings.get(PREF_LAST_URL);
-
-			IInputValidator validator= new URLValidator();
-
-			InputDialog inputDialog= new InputDialog(fShell, title, message, url, validator) {
-				@Override
-				protected Control createDialogArea(Composite parent) {
-					Control dialogArea2= super.createDialogArea(parent);
-					Object layoutData= getText().getLayoutData();
-					if (layoutData instanceof GridData) {
-						GridData gd= (GridData)layoutData;
-						gd.widthHint= convertWidthInCharsToPixels(150);
-					}
-					return dialogArea2;
-				}
-				@Override
-				protected IDialogSettings getDialogBoundsSettings() {
-					IDialogSettings settings= dialogSettings.getSection(DIALOG_SETTINGS);
-					if (settings == null) {
-						settings= dialogSettings.addNewSection(DIALOG_SETTINGS);
-					}
-					settings.put("DIALOG_HEIGHT", Dialog.DIALOG_DEFAULT_BOUNDS); //$NON-NLS-1$
-					return settings;
-				}
-				@Override
-				protected boolean isResizable() {
-					return true;
-				}
-			};
-
-			int res= inputDialog.open();
-			if (res == IDialogConstants.OK_ID) {
-				url= inputDialog.getValue();
-				dialogSettings.put(PREF_LAST_URL, url);
-				importTestRunSession(url);
-			}
-		}
-	}
-
-	private static class ExportTestRunSessionAction extends Action {
-		private final TestRunSession fTestRunSession;
-		private final Shell fShell;
-
-		public ExportTestRunSessionAction(Shell shell, TestRunSession testRunSession) {
-			super(Messages.TestRunnerViewPart_ExportTestRunSessionAction_name);
-			fShell= shell;
-			fTestRunSession= testRunSession;
-		}
-
-		@Override
-		public void run() {
-			FileDialog exportDialog= new FileDialog(fShell, SWT.SAVE | SWT.SHEET);
-			exportDialog.setText(Messages.TestRunnerViewPart_ExportTestRunSessionAction_title);
-			IDialogSettings dialogSettings= UnitTestPlugin.getDefault().getDialogSettings();
-			String lastPath= dialogSettings.get(PREF_LAST_PATH);
-			if (lastPath != null) {
-				exportDialog.setFilterPath(lastPath);
-			}
-			exportDialog.setFileName(getFileName());
-			exportDialog.setFilterExtensions(new String[] {"*.xml", "*.*"}); //$NON-NLS-1$ //$NON-NLS-2$
-			String path= exportDialog.open();
-			if (path == null)
-				return;
-
-			//TODO: MULTI: getFileNames()
-			File file= new File(path);
-
-			try {
-				UnitTestModel.exportTestRunSession(fTestRunSession, file);
-			} catch (CoreException e) {
-				UnitTestPlugin.log(e);
-				ErrorDialog.openError(fShell, Messages.TestRunnerViewPart_ExportTestRunSessionAction_error_title, e.getStatus().getMessage(), e.getStatus());
-			}
-		}
-
-		private String getFileName() {
-			String testRunName= fTestRunSession.getTestRunName();
-			long startTime= fTestRunSession.getStartTime();
-			if (startTime <= 0)
-				return testRunName;
-
-			String isoTime= new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date(startTime)); //$NON-NLS-1$
-			return testRunName + " " + isoTime + ".xml"; //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
-*/
+	/*
+	 * private static class ImportTestRunSessionFromURLAction extends Action {
+	 * private static class URLValidator implements IInputValidator {
+	 *
+	 * @Override public String isValid(String newText) { if (newText.length() == 0)
+	 * return null; try {
+	 *
+	 * @SuppressWarnings("unused") URL url= new URL(newText); return null; } catch
+	 * (MalformedURLException e) { return
+	 * Messages.TestRunnerViewPart_ImportTestRunSessionFromURLAction_invalid_url +
+	 * e.getLocalizedMessage(); } } }
+	 *
+	 * private static final String DIALOG_SETTINGS=
+	 * "ImportTestRunSessionFromURLAction"; //$NON-NLS-1$
+	 *
+	 * private final Shell fShell;
+	 *
+	 * public ImportTestRunSessionFromURLAction(Shell shell) { super(Messages.
+	 * TestRunnerViewPart_ImportTestRunSessionFromURLAction_import_from_url);
+	 * fShell= shell; }
+	 *
+	 * @Override public void run() { String title=
+	 * Messages.TestRunnerViewPart_ImportTestRunSessionAction_title; String message=
+	 * Messages.TestRunnerViewPart_ImportTestRunSessionFromURLAction_url;
+	 *
+	 * final IDialogSettings dialogSettings=
+	 * UnitTestPlugin.getDefault().getDialogSettings(); String url=
+	 * dialogSettings.get(PREF_LAST_URL);
+	 *
+	 * IInputValidator validator= new URLValidator();
+	 *
+	 * InputDialog inputDialog= new InputDialog(fShell, title, message, url,
+	 * validator) {
+	 *
+	 * @Override protected Control createDialogArea(Composite parent) { Control
+	 * dialogArea2= super.createDialogArea(parent); Object layoutData=
+	 * getText().getLayoutData(); if (layoutData instanceof GridData) { GridData gd=
+	 * (GridData)layoutData; gd.widthHint= convertWidthInCharsToPixels(150); }
+	 * return dialogArea2; }
+	 *
+	 * @Override protected IDialogSettings getDialogBoundsSettings() {
+	 * IDialogSettings settings= dialogSettings.getSection(DIALOG_SETTINGS); if
+	 * (settings == null) { settings= dialogSettings.addNewSection(DIALOG_SETTINGS);
+	 * } settings.put("DIALOG_HEIGHT", Dialog.DIALOG_DEFAULT_BOUNDS); //$NON-NLS-1$
+	 * return settings; }
+	 *
+	 * @Override protected boolean isResizable() { return true; } };
+	 *
+	 * int res= inputDialog.open(); if (res == IDialogConstants.OK_ID) { url=
+	 * inputDialog.getValue(); dialogSettings.put(PREF_LAST_URL, url);
+	 * importTestRunSession(url); } } }
+	 *
+	 * private static class ExportTestRunSessionAction extends Action { private
+	 * final TestRunSession fTestRunSession; private final Shell fShell;
+	 *
+	 * public ExportTestRunSessionAction(Shell shell, TestRunSession testRunSession)
+	 * { super(Messages.TestRunnerViewPart_ExportTestRunSessionAction_name); fShell=
+	 * shell; fTestRunSession= testRunSession; }
+	 *
+	 * @Override public void run() { FileDialog exportDialog= new FileDialog(fShell,
+	 * SWT.SAVE | SWT.SHEET); exportDialog.setText(Messages.
+	 * TestRunnerViewPart_ExportTestRunSessionAction_title); IDialogSettings
+	 * dialogSettings= UnitTestPlugin.getDefault().getDialogSettings(); String
+	 * lastPath= dialogSettings.get(PREF_LAST_PATH); if (lastPath != null) {
+	 * exportDialog.setFilterPath(lastPath); }
+	 * exportDialog.setFileName(getFileName()); exportDialog.setFilterExtensions(new
+	 * String[] {"*.xml", "*.*"}); //$NON-NLS-1$ //$NON-NLS-2$ String path=
+	 * exportDialog.open(); if (path == null) return;
+	 *
+	 * //TODO: MULTI: getFileNames() File file= new File(path);
+	 *
+	 * try { UnitTestModel.exportTestRunSession(fTestRunSession, file); } catch
+	 * (CoreException e) { UnitTestPlugin.log(e); ErrorDialog.openError(fShell,
+	 * Messages.TestRunnerViewPart_ExportTestRunSessionAction_error_title,
+	 * e.getStatus().getMessage(), e.getStatus()); } }
+	 *
+	 * private String getFileName() { String testRunName=
+	 * fTestRunSession.getTestRunName(); long startTime=
+	 * fTestRunSession.getStartTime(); if (startTime <= 0) return testRunName;
+	 *
+	 * String isoTime= new SimpleDateFormat("yyyyMMdd-HHmmss").format(new
+	 * Date(startTime)); //$NON-NLS-1$ return testRunName + " " + isoTime + ".xml";
+	 * //$NON-NLS-1$ //$NON-NLS-2$ } }
+	 */
 	private class TestRunSessionListener implements ITestRunSessionListener {
 		@Override
-		public void sessionAdded(final TestRunSession testRunSession) {
+		public void sessionAdded(final ITestRunSession testRunSession) {
 			getDisplay().asyncExec(() -> {
-				if (UnitTestUIPreferencesConstants.getShowInAllViews() ||
-						getSite().getWorkbenchWindow() == UnitTestPlugin.getActiveWorkbenchWindow()) {
+				if (UnitTestUIPreferencesConstants.getShowInAllViews()
+						|| getSite().getWorkbenchWindow() == UnitTestPlugin.getActiveWorkbenchWindow()) {
 					if (fInfoMessage == null) {
-						String testRunLabel= BasicElementLabels.getJavaElementName(testRunSession.getTestRunName());
+						String testRunLabel = BasicElementLabels.getJavaElementName(testRunSession.getTestRunName());
 						String msg;
 						if (testRunSession.getLaunch() != null) {
-							msg= MessageFormat.format(Messages.TestRunnerViewPart_Launching, new Object[]{ testRunLabel });
+							msg = MessageFormat.format(Messages.TestRunnerViewPart_Launching, testRunLabel);
 						} else {
-							msg= testRunLabel;
+							msg = testRunLabel;
 						}
 						registerInfoMessage(msg);
 					}
 
-					TestRunSession deactivatedSession= setActiveTestRunSession(testRunSession);
+					ITestRunSession deactivatedSession = setActiveTestRunSession(testRunSession);
 					if (deactivatedSession != null)
 						deactivatedSession.swapOut();
 				}
 			});
 		}
+
 		@Override
-		public void sessionRemoved(final TestRunSession testRunSession) {
+		public void sessionRemoved(final ITestRunSession testRunSession) {
 			getDisplay().asyncExec(() -> {
 				if (testRunSession.equals(fTestRunSession)) {
-					List<TestRunSession> testRunSessions= UnitTestPlugin.getModel().getTestRunSessions();
-					TestRunSession deactivatedSession;
-					if (! testRunSessions.isEmpty()) {
-						deactivatedSession= setActiveTestRunSession(testRunSessions.get(0));
+					List<ITestRunSession> testRunSessions = UnitTestPlugin.getModel().getTestRunSessions();
+					ITestRunSession deactivatedSession;
+					if (!testRunSessions.isEmpty()) {
+						deactivatedSession = setActiveTestRunSession(testRunSessions.get(0));
 					} else {
-						deactivatedSession= setActiveTestRunSession(null);
+						deactivatedSession = setActiveTestRunSession(null);
 					}
 					if (deactivatedSession != null)
 						deactivatedSession.swapOut();
@@ -689,9 +613,9 @@ public class TestRunnerViewPart extends ViewPart {
 
 	private class TestSessionListener implements ITestSessionListener {
 		@Override
-		public void sessionStarted(){
+		public void sessionStarted() {
 			fTestViewer.registerViewersRefresh();
-			fShowOnErrorOnly= getShowOnErrorOnly();
+			fShowOnErrorOnly = getShowOnErrorOnly();
 
 			startUpdateJobs();
 
@@ -700,12 +624,13 @@ public class TestRunnerViewPart extends ViewPart {
 		}
 
 		@Override
-		public void sessionEnded(long elapsedTime){
+		public void sessionEnded(long elapsedTime) {
 			deregisterTestSessionListener(false);
 
 			fTestViewer.registerAutoScrollTarget(null);
 
-			String msg= MessageFormat.format(Messages.TestRunnerViewPart_message_finish, elapsedTimeAsString(elapsedTime));
+			String msg = MessageFormat.format(Messages.TestRunnerViewPart_message_finish,
+					elapsedTimeAsString(elapsedTime));
 			registerInfoMessage(msg);
 
 			postSyncRunnable(() -> {
@@ -718,11 +643,9 @@ public class TestRunnerViewPart extends ViewPart {
 					selectFirstFailure();
 				}
 				/*
-				if (fDirtyListener == null) {
-					fDirtyListener= new DirtyListener();
-					JavaCore.addElementChangedListener(fDirtyListener);
-				}
-				*/
+				 * if (fDirtyListener == null) { fDirtyListener= new DirtyListener();
+				 * JavaCore.addElementChangedListener(fDirtyListener); }
+				 */
 				warnOfContentChange();
 			});
 			stopUpdateJobs();
@@ -756,31 +679,33 @@ public class TestRunnerViewPart extends ViewPart {
 		}
 
 		@Override
-		public void testStarted(TestCaseElement testCaseElement) {
+		public void testStarted(ITestCaseElement testCaseElement) {
 			fTestViewer.registerAutoScrollTarget(testCaseElement);
 			fTestViewer.registerViewerUpdate(testCaseElement);
 
-			String className= BasicElementLabels.getJavaElementName(testCaseElement.getTestClassName());
-			String method= BasicElementLabels.getJavaElementName(testCaseElement.getTestMethodName());
-			String status= MessageFormat.format(Messages.TestRunnerViewPart_message_started, className, method);
+			String className = BasicElementLabels.getJavaElementName(testCaseElement.getTestClassName());
+			String method = BasicElementLabels.getJavaElementName(testCaseElement.getTestMethodName());
+			String status = MessageFormat.format(Messages.TestRunnerViewPart_message_started, className, method);
 			registerInfoMessage(status);
 		}
 
 		@Override
-		public void testFailed(ITestElement testElement, TestElement.Status status, String trace, String expected, String actual) {
+		public void testFailed(ITestElement testElement, ITestElement.Status status, String trace, String expected,
+				String actual) {
 			if (isAutoScroll()) {
 				fTestViewer.registerFailedForAutoScroll(testElement);
 			}
 			fTestViewer.registerViewerUpdate(testElement);
 
-		    // show the view on the first error only
-		    if (fShowOnErrorOnly && (getErrorsPlusFailures() == 1))
-		        postShowTestResultsView();
+			// show the view on the first error only
+			if (fShowOnErrorOnly && (getErrorsPlusFailures() == 1))
+				postShowTestResultsView();
 
-		    //TODO:
-		    // [Bug 35590] JUnit window doesn't report errors from junit.extensions.TestSetup [JUnit]
-		    // when a failure occurs in test setup then no test is running
-		    // to update the views we artificially signal the end of a test run
+			// TODO:
+			// [Bug 35590] JUnit window doesn't report errors from
+			// junit.extensions.TestSetup [JUnit]
+			// when a failure occurs in test setup then no test is running
+			// to update the views we artificially signal the end of a test run
 //		    if (!fTestIsRunning) {
 //				fTestIsRunning= false;
 //				testEnded(testCaseElement);
@@ -788,13 +713,14 @@ public class TestRunnerViewPart extends ViewPart {
 		}
 
 		@Override
-		public void testEnded(TestCaseElement testCaseElement){
+		public void testEnded(ITestCaseElement testCaseElement) {
 			fTestViewer.registerViewerUpdate(testCaseElement);
 		}
 
 		@Override
-		public void testReran(TestCaseElement testCaseElement, TestElement.Status status, String trace, String expectedResult, String actualResult) {
-			fTestViewer.registerViewerUpdate(testCaseElement); //TODO: autoExpand?
+		public void testReran(ITestCaseElement testCaseElement, ITestElement.Status status, String trace,
+				String expectedResult, String actualResult) {
+			fTestViewer.registerViewerUpdate(testCaseElement); // TODO: autoExpand?
 			postSyncProcessChanges();
 			showFailure(testCaseElement);
 		}
@@ -811,12 +737,13 @@ public class TestRunnerViewPart extends ViewPart {
 	}
 
 	private class UpdateUIJob extends UIJob {
-		private boolean fRunning= true;
+		private boolean fRunning = true;
 
 		public UpdateUIJob(String name) {
 			super(name);
 			setSystem(true);
 		}
+
 		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			if (!isDisposed()) {
@@ -827,8 +754,9 @@ public class TestRunnerViewPart extends ViewPart {
 		}
 
 		public void stop() {
-			fRunning= false;
+			fRunning = false;
 		}
+
 		@Override
 		public boolean shouldSchedule() {
 			return fRunning;
@@ -840,52 +768,42 @@ public class TestRunnerViewPart extends ViewPart {
 			super(name);
 			setSystem(true);
 		}
+
 		@Override
 		public IStatus run(IProgressMonitor monitor) {
 			// wait until the test run terminates
 			fJUnitIsRunningLock.acquire();
 			return Status.OK_STATUS;
 		}
+
 		@Override
 		public boolean belongsTo(Object family) {
 			return family == TestRunnerViewPart.FAMILY_JUNIT_RUN;
 		}
 	}
-/*
-	private class ClearAction extends Action {
-		public ClearAction() {
-			setText(Messages.TestRunnerViewPart_clear_history_label);
 
-			boolean enabled= false;
-			List<TestRunSession> testRunSessions= UnitTestPlugin.getModel().getTestRunSessions();
-			for (TestRunSession testRunSession : testRunSessions) {
-				if (! testRunSession.isRunning() && ! testRunSession.isStarting()) {
-					enabled= true;
-					break;
-				}
-			}
-			setEnabled(enabled);
-		}
-
-		@Override
-		public void run() {
-			List<TestRunSession> testRunSessions= getRunningSessions();
-			TestRunSession first= testRunSessions.isEmpty() ? null : testRunSessions.get(0);
-//			fViewHistory.setHistoryEntries(testRunSessions, first);
-		}
-
-		private List<TestRunSession> getRunningSessions() {
-			List<TestRunSession> testRunSessions= UnitTestPlugin.getModel().getTestRunSessions();
-			for (Iterator<TestRunSession> iter= testRunSessions.iterator(); iter.hasNext();) {
-				TestRunSession testRunSession= iter.next();
-				if (! testRunSession.isRunning() && ! testRunSession.isStarting()) {
-					iter.remove();
-				}
-			}
-			return testRunSessions;
-		}
-	}
-*/
+	/*
+	 * private class ClearAction extends Action { public ClearAction() {
+	 * setText(Messages.TestRunnerViewPart_clear_history_label);
+	 *
+	 * boolean enabled= false; List<TestRunSession> testRunSessions=
+	 * UnitTestPlugin.getModel().getTestRunSessions(); for (TestRunSession
+	 * testRunSession : testRunSessions) { if (! testRunSession.isRunning() && !
+	 * testRunSession.isStarting()) { enabled= true; break; } } setEnabled(enabled);
+	 * }
+	 *
+	 * @Override public void run() { List<TestRunSession> testRunSessions=
+	 * getRunningSessions(); TestRunSession first= testRunSessions.isEmpty() ? null
+	 * : testRunSessions.get(0); // fViewHistory.setHistoryEntries(testRunSessions,
+	 * first); }
+	 *
+	 * private List<TestRunSession> getRunningSessions() { List<TestRunSession>
+	 * testRunSessions= UnitTestPlugin.getModel().getTestRunSessions(); for
+	 * (Iterator<TestRunSession> iter= testRunSessions.iterator(); iter.hasNext();)
+	 * { TestRunSession testRunSession= iter.next(); if (!
+	 * testRunSession.isRunning() && ! testRunSession.isStarting()) { iter.remove();
+	 * } } return testRunSessions; } }
+	 */
 	private class StopAction extends Action {
 		public StopAction() {
 			setText(Messages.TestRunnerViewPart_stopaction_text);
@@ -910,7 +828,7 @@ public class TestRunnerViewPart extends ViewPart {
 		}
 
 		@Override
-		public void run(){
+		public void run() {
 			rerunTestRun();
 		}
 	}
@@ -925,7 +843,7 @@ public class TestRunnerViewPart extends ViewPart {
 		}
 
 		@Override
-		public void run(){
+		public void run() {
 			rerunTestFailedFirst();
 		}
 	}
@@ -951,8 +869,9 @@ public class TestRunnerViewPart extends ViewPart {
 			default:
 				break;
 			}
-			fActionOrientation= orientation;
-			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IUnitTestHelpContextIds.RESULTS_VIEW_TOGGLE_ORIENTATION_ACTION);
+			fActionOrientation = orientation;
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+					IUnitTestHelpContextIds.RESULTS_VIEW_TOGGLE_ORIENTATION_ACTION);
 		}
 
 		public int getOrientation() {
@@ -962,7 +881,7 @@ public class TestRunnerViewPart extends ViewPart {
 		@Override
 		public void run() {
 			if (isChecked()) {
-				fOrientation= fActionOrientation;
+				fOrientation = fActionOrientation;
 				computeOrientation();
 			}
 		}
@@ -972,58 +891,36 @@ public class TestRunnerViewPart extends ViewPart {
 	 * Listen for for modifications to Java elements
 	 */
 	/*
-	private class DirtyListener implements IElementChangedListener {
-		@Override
-		public void elementChanged(ElementChangedEvent event) {
-			processDelta(event.getDelta());
-		}
-
-		private boolean processDelta(IJavaElementDelta delta) {
-			int kind= delta.getKind();
-			int details= delta.getFlags();
-			int type= delta.getElement().getElementType();
-
-			switch (type) {
-				// Consider containers for class files.
-				case IJavaElement.JAVA_MODEL:
-				case IJavaElement.JAVA_PROJECT:
-				case IJavaElement.PACKAGE_FRAGMENT_ROOT:
-				case IJavaElement.PACKAGE_FRAGMENT:
-					// If we did something different than changing a child we flush the undo / redo stack.
-					if (kind != IJavaElementDelta.CHANGED || details != IJavaElementDelta.F_CHILDREN) {
-						codeHasChanged();
-						return false;
-					}
-					break;
-				case IJavaElement.COMPILATION_UNIT:
-					// if we have changed a primary working copy (e.g created, removed, ...)
-					// then we do nothing.
-					if ((details & IJavaElementDelta.F_PRIMARY_WORKING_COPY) != 0)
-						return true;
-					codeHasChanged();
-					return false;
-
-				case IJavaElement.CLASS_FILE:
-					// Don't examine children of a class file but keep on examining siblings.
-					return true;
-				default:
-					codeHasChanged();
-					return false;
-			}
-
-			IJavaElementDelta[] affectedChildren= delta.getAffectedChildren();
-			if (affectedChildren == null)
-				return true;
-
-			for (IJavaElementDelta affectedChild : affectedChildren) {
-				if (!processDelta(affectedChild)) {
-					return false;
-				}
-			}
-			return true;
-		}
-	}
-*/
+	 * private class DirtyListener implements IElementChangedListener {
+	 *
+	 * @Override public void elementChanged(ElementChangedEvent event) {
+	 * processDelta(event.getDelta()); }
+	 *
+	 * private boolean processDelta(IJavaElementDelta delta) { int kind=
+	 * delta.getKind(); int details= delta.getFlags(); int type=
+	 * delta.getElement().getElementType();
+	 *
+	 * switch (type) { // Consider containers for class files. case
+	 * IJavaElement.JAVA_MODEL: case IJavaElement.JAVA_PROJECT: case
+	 * IJavaElement.PACKAGE_FRAGMENT_ROOT: case IJavaElement.PACKAGE_FRAGMENT: // If
+	 * we did something different than changing a child we flush the undo / redo
+	 * stack. if (kind != IJavaElementDelta.CHANGED || details !=
+	 * IJavaElementDelta.F_CHILDREN) { codeHasChanged(); return false; } break; case
+	 * IJavaElement.COMPILATION_UNIT: // if we have changed a primary working copy
+	 * (e.g created, removed, ...) // then we do nothing. if ((details &
+	 * IJavaElementDelta.F_PRIMARY_WORKING_COPY) != 0) return true;
+	 * codeHasChanged(); return false;
+	 *
+	 * case IJavaElement.CLASS_FILE: // Don't examine children of a class file but
+	 * keep on examining siblings. return true; default: codeHasChanged(); return
+	 * false; }
+	 *
+	 * IJavaElementDelta[] affectedChildren= delta.getAffectedChildren(); if
+	 * (affectedChildren == null) return true;
+	 *
+	 * for (IJavaElementDelta affectedChild : affectedChildren) { if
+	 * (!processDelta(affectedChild)) { return false; } } return true; } }
+	 */
 	private class FailuresOnlyFilterAction extends Action {
 		public FailuresOnlyFilterAction() {
 			super(Messages.TestRunnerViewPart_show_failures_only, AS_CHECK_BOX);
@@ -1071,7 +968,7 @@ public class TestRunnerViewPart extends ViewPart {
 
 		@Override
 		public void run() {
-			int mode= isChecked() ? LAYOUT_HIERARCHICAL : LAYOUT_FLAT;
+			int mode = isChecked() ? LAYOUT_HIERARCHICAL : LAYOUT_FLAT;
 			setLayoutMode(mode);
 		}
 	}
@@ -1079,42 +976,46 @@ public class TestRunnerViewPart extends ViewPart {
 	private class ActivateOnErrorAction extends Action {
 		public ActivateOnErrorAction() {
 			super(Messages.TestRunnerViewPart_activate_on_failure_only, IAction.AS_CHECK_BOX);
-			//setImageDescriptor(UnitTestPlugin.getImageDescriptor("obj16/failures.png")); //$NON-NLS-1$
+			// setImageDescriptor(UnitTestPlugin.getImageDescriptor("obj16/failures.png"));
+			// //$NON-NLS-1$
 			update();
 		}
+
 		public void update() {
 			setChecked(getShowOnErrorOnly());
 		}
+
 		@Override
 		public void run() {
-			boolean checked= isChecked();
-			fShowOnErrorOnly= checked;
-			InstanceScope.INSTANCE.getNode(UnitTestPlugin.PLUGIN_ID).putBoolean(UnitTestPreferencesConstants.SHOW_ON_ERROR_ONLY, checked);
+			boolean checked = isChecked();
+			fShowOnErrorOnly = checked;
+			InstanceScope.INSTANCE.getNode(UnitTestPlugin.PLUGIN_ID)
+					.putBoolean(UnitTestPreferencesConstants.SHOW_ON_ERROR_ONLY, checked);
 		}
 	}
 
 	public TestRunnerViewPart() {
-		fImagesToDispose= new ArrayList<>();
+		fImagesToDispose = new ArrayList<>();
 
-		fStackViewIcon= createManagedImage("eview16/stackframe.png");//$NON-NLS-1$
-		fTestRunOKIcon= createManagedImage("eview16/junitsucc.png"); //$NON-NLS-1$
-		fTestRunFailIcon= createManagedImage("eview16/juniterr.png"); //$NON-NLS-1$
-		fTestRunOKDirtyIcon= createManagedImage("eview16/junitsuccq.png"); //$NON-NLS-1$
-		fTestRunFailDirtyIcon= createManagedImage("eview16/juniterrq.png"); //$NON-NLS-1$
+		fStackViewIcon = createManagedImage("eview16/stackframe.png");//$NON-NLS-1$
+		fTestRunOKIcon = createManagedImage("eview16/junitsucc.png"); //$NON-NLS-1$
+		fTestRunFailIcon = createManagedImage("eview16/juniterr.png"); //$NON-NLS-1$
+		fTestRunOKDirtyIcon = createManagedImage("eview16/junitsuccq.png"); //$NON-NLS-1$
+		fTestRunFailDirtyIcon = createManagedImage("eview16/juniterrq.png"); //$NON-NLS-1$
 
-		fTestIcon= createManagedImage("obj16/test.png"); //$NON-NLS-1$
-		fTestOkIcon= createManagedImage("obj16/testok.png"); //$NON-NLS-1$
-		fTestErrorIcon= createManagedImage("obj16/testerr.png"); //$NON-NLS-1$
-		fTestFailIcon= createManagedImage("obj16/testfail.png"); //$NON-NLS-1$
-		fTestRunningIcon= createManagedImage("obj16/testrun.png"); //$NON-NLS-1$
-		fTestIgnoredIcon= createManagedImage("obj16/testignored.png"); //$NON-NLS-1$
+		fTestIcon = createManagedImage("obj16/test.png"); //$NON-NLS-1$
+		fTestOkIcon = createManagedImage("obj16/testok.png"); //$NON-NLS-1$
+		fTestErrorIcon = createManagedImage("obj16/testerr.png"); //$NON-NLS-1$
+		fTestFailIcon = createManagedImage("obj16/testfail.png"); //$NON-NLS-1$
+		fTestRunningIcon = createManagedImage("obj16/testrun.png"); //$NON-NLS-1$
+		fTestIgnoredIcon = createManagedImage("obj16/testignored.png"); //$NON-NLS-1$
 		fTestAssumptionFailureIcon = createManagedImage("obj16/testassumptionfailed.png"); //$NON-NLS-1$
 
-		fSuiteIcon= createManagedImage(fSuiteIconDescriptor);
-		fSuiteOkIcon= createManagedImage(fSuiteOkIconDescriptor);
-		fSuiteErrorIcon= createManagedImage(fSuiteErrorIconDescriptor);
-		fSuiteFailIcon= createManagedImage(fSuiteFailIconDescriptor);
-		fSuiteRunningIcon= createManagedImage(fSuiteRunningIconDescriptor);
+		fSuiteIcon = createManagedImage(fSuiteIconDescriptor);
+		fSuiteOkIcon = createManagedImage(fSuiteOkIconDescriptor);
+		fSuiteErrorIcon = createManagedImage(fSuiteErrorIconDescriptor);
+		fSuiteFailIcon = createManagedImage(fSuiteFailIconDescriptor);
+		fSuiteRunningIcon = createManagedImage(fSuiteRunningIconDescriptor);
 	}
 
 	private Image createManagedImage(String path) {
@@ -1122,37 +1023,35 @@ public class TestRunnerViewPart extends ViewPart {
 	}
 
 	private Image createManagedImage(ImageDescriptor descriptor) {
-		Image image= descriptor.createImage();
+		Image image = descriptor.createImage();
 		if (image == null) {
-			image= ImageDescriptor.getMissingImageDescriptor().createImage();
+			image = ImageDescriptor.getMissingImageDescriptor().createImage();
 		}
 		fImagesToDispose.add(image);
 		return image;
 	}
 
-
 	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
-		fMemento= memento;
-		IWorkbenchSiteProgressService progressService= getProgressService();
+		fMemento = memento;
+		IWorkbenchSiteProgressService progressService = getProgressService();
 		if (progressService != null)
 			progressService.showBusyForFamily(TestRunnerViewPart.FAMILY_JUNIT_RUN);
 	}
 
 	private IWorkbenchSiteProgressService getProgressService() {
-		Object siteService= getSite().getAdapter(IWorkbenchSiteProgressService.class);
+		Object siteService = getSite().getAdapter(IWorkbenchSiteProgressService.class);
 		if (siteService != null)
 			return (IWorkbenchSiteProgressService) siteService;
 		return null;
 	}
 
-
 	@Override
 	public void saveState(IMemento memento) {
 		if (fSashForm == null) {
 			// part has not been created
-			if (fMemento != null) //Keep the old state;
+			if (fMemento != null) // Keep the old state;
 				memento.putMemento(fMemento);
 			return;
 		}
@@ -1160,8 +1059,8 @@ public class TestRunnerViewPart extends ViewPart {
 //		int activePage= fTabFolder.getSelectionIndex();
 //		memento.putInteger(TAG_PAGE, activePage);
 		memento.putString(TAG_SCROLL, fScrollLockAction.isChecked() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
-		int weigths[]= fSashForm.getWeights();
-		int ratio= (weigths[0] * 1000) / (weigths[0] + weigths[1]);
+		int weigths[] = fSashForm.getWeights();
+		int ratio = (weigths[0] * 1000) / (weigths[0] + weigths[1]);
 		memento.putInteger(TAG_RATIO, ratio);
 		memento.putInteger(TAG_ORIENTATION, fOrientation);
 
@@ -1180,38 +1079,38 @@ public class TestRunnerViewPart extends ViewPart {
 //				fActiveRunTab= (TestRunTab)fTestRunTabs.get(p);
 //			}
 //		}
-		Integer ratio= memento.getInteger(TAG_RATIO);
+		Integer ratio = memento.getInteger(TAG_RATIO);
 		if (ratio != null)
-			fSashForm.setWeights(new int[] { ratio.intValue(), 1000 - ratio.intValue()} );
-		Integer orientation= memento.getInteger(TAG_ORIENTATION);
+			fSashForm.setWeights(new int[] { ratio.intValue(), 1000 - ratio.intValue() });
+		Integer orientation = memento.getInteger(TAG_ORIENTATION);
 		if (orientation != null)
-			fOrientation= orientation.intValue();
+			fOrientation = orientation.intValue();
 		computeOrientation();
-		String scrollLock= memento.getString(TAG_SCROLL);
+		String scrollLock = memento.getString(TAG_SCROLL);
 		if (scrollLock != null) {
 			fScrollLockAction.setChecked(scrollLock.equals("true")); //$NON-NLS-1$
 			setAutoScroll(!fScrollLockAction.isChecked());
 		}
 
-		Integer layout= memento.getInteger(TAG_LAYOUT);
-		int layoutValue= LAYOUT_HIERARCHICAL;
+		Integer layout = memento.getInteger(TAG_LAYOUT);
+		int layoutValue = LAYOUT_HIERARCHICAL;
 		if (layout != null)
-			layoutValue= layout.intValue();
+			layoutValue = layout.intValue();
 
-		String failuresOnly= memento.getString(TAG_FAILURES_ONLY);
-		boolean showFailuresOnly= false;
+		String failuresOnly = memento.getString(TAG_FAILURES_ONLY);
+		boolean showFailuresOnly = false;
 		if (failuresOnly != null)
-			showFailuresOnly= failuresOnly.equals("true"); //$NON-NLS-1$
+			showFailuresOnly = failuresOnly.equals("true"); //$NON-NLS-1$
 
-		String ignoredOnly= memento.getString(TAG_IGNORED_ONLY);
-		boolean showIgnoredOnly= false;
+		String ignoredOnly = memento.getString(TAG_IGNORED_ONLY);
+		boolean showIgnoredOnly = false;
 		if (ignoredOnly != null)
-			showIgnoredOnly= ignoredOnly.equals("true"); //$NON-NLS-1$
+			showIgnoredOnly = ignoredOnly.equals("true"); //$NON-NLS-1$
 
-		String time= memento.getString(TAG_SHOW_TIME);
-		boolean showTime= true;
+		String time = memento.getString(TAG_SHOW_TIME);
+		boolean showTime = true;
 		if (time != null)
-			showTime= time.equals("true"); //$NON-NLS-1$
+			showTime = time.equals("true"); //$NON-NLS-1$
 
 		setFilterAndLayout(showFailuresOnly, showIgnoredOnly, layoutValue);
 		setShowExecutionTime(showTime);
@@ -1235,26 +1134,26 @@ public class TestRunnerViewPart extends ViewPart {
 		if (fUpdateJob != null) {
 			return;
 		}
-		fJUnitIsRunningJob= new JUnitIsRunningJob(Messages.TestRunnerViewPart_wrapperJobName);
-		fJUnitIsRunningLock= Job.getJobManager().newLock();
+		fJUnitIsRunningJob = new JUnitIsRunningJob(Messages.TestRunnerViewPart_wrapperJobName);
+		fJUnitIsRunningLock = Job.getJobManager().newLock();
 		// acquire lock while a test run is running
 		// the lock is released when the test run terminates
 		// the wrapper job will wait on this lock.
 		fJUnitIsRunningLock.acquire();
 		getProgressService().schedule(fJUnitIsRunningJob);
 
-		fUpdateJob= new UpdateUIJob(Messages.TestRunnerViewPart_jobName);
+		fUpdateJob = new UpdateUIJob(Messages.TestRunnerViewPart_jobName);
 		fUpdateJob.schedule(REFRESH_INTERVAL);
 	}
 
 	private void stopUpdateJobs() {
 		if (fUpdateJob != null) {
 			fUpdateJob.stop();
-			fUpdateJob= null;
+			fUpdateJob = null;
 		}
 		if (fJUnitIsRunningJob != null && fJUnitIsRunningLock != null) {
 			fJUnitIsRunningLock.release();
-			fJUnitIsRunningJob= null;
+			fJUnitIsRunningJob = null;
 		}
 		postSyncProcessChanges();
 	}
@@ -1266,7 +1165,7 @@ public class TestRunnerViewPart extends ViewPart {
 		doShowInfoMessage();
 		refreshCounters();
 
-		if (! fPartIsVisible)
+		if (!fPartIsVisible)
 			updateViewTitleProgress();
 		else {
 			updateViewIcon();
@@ -1277,7 +1176,7 @@ public class TestRunnerViewPart extends ViewPart {
 	}
 
 	private void updateNextPreviousActions() {
-		boolean hasErrorsOrFailures= !fIgnoredOnlyFilterAction.isChecked() && hasErrorsOrFailures();
+		boolean hasErrorsOrFailures = !fIgnoredOnlyFilterAction.isChecked() && hasErrorsOrFailures();
 		fNextAction.setEnabled(hasErrorsOrFailures);
 		fPreviousAction.setEnabled(hasErrorsOrFailures);
 	}
@@ -1288,30 +1187,32 @@ public class TestRunnerViewPart extends ViewPart {
 	public void rerunTestRun() {
 		if (lastLaunchIsKeptAlive()) {
 			// prompt for terminating the existing run
-			if (MessageDialog.openQuestion(getSite().getShell(), Messages.TestRunnerViewPart_terminate_title, Messages.TestRunnerViewPart_terminate_message)) {
+			if (MessageDialog.openQuestion(getSite().getShell(), Messages.TestRunnerViewPart_terminate_title,
+					Messages.TestRunnerViewPart_terminate_message)) {
 				stopTest(); // TODO: wait for termination
 			}
 		}
 
 		if (fTestRunSession == null)
 			return;
-		ILaunch launch= fTestRunSession.getLaunch();
+		ILaunch launch = fTestRunSession.getLaunch();
 		if (launch == null)
 			return;
-		ILaunchConfiguration launchConfiguration= launch.getLaunchConfiguration();
+		ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
 		if (launchConfiguration == null)
 			return;
 
-		ILaunchConfiguration configuration= prepareLaunchConfigForRelaunch(launchConfiguration);
+		ILaunchConfiguration configuration = prepareLaunchConfigForRelaunch(launchConfiguration);
 		relaunch(configuration, launch.getLaunchMode());
 	}
 
 	private ILaunchConfiguration prepareLaunchConfigForRelaunch(ILaunchConfiguration configuration) {
 		try {
-			String attribute= configuration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_FAILURES_NAMES, ""); //$NON-NLS-1$
+			String attribute = configuration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_FAILURES_NAMES, ""); //$NON-NLS-1$
 			if (attribute.length() != 0) {
-				String configName= MessageFormat.format(Messages.TestRunnerViewPart_configName, configuration.getName());
-				ILaunchConfigurationWorkingCopy tmp= configuration.copy(configName);
+				String configName = MessageFormat.format(Messages.TestRunnerViewPart_configName,
+						configuration.getName());
+				ILaunchConfigurationWorkingCopy tmp = configuration.copy(configName);
 				tmp.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_FAILURES_NAMES, ""); //$NON-NLS-1$
 				return tmp;
 			}
@@ -1324,38 +1225,39 @@ public class TestRunnerViewPart extends ViewPart {
 	public void rerunTestFailedFirst() {
 		if (lastLaunchIsKeptAlive()) {
 			// prompt for terminating the existing run
-			if (MessageDialog.openQuestion(getSite().getShell(), Messages.TestRunnerViewPart_terminate_title, Messages.TestRunnerViewPart_terminate_message)) {
+			if (MessageDialog.openQuestion(getSite().getShell(), Messages.TestRunnerViewPart_terminate_title,
+					Messages.TestRunnerViewPart_terminate_message)) {
 				if (fTestRunSession != null)
 					fTestRunSession.stopTestRun();
 			}
 		}
-		ILaunch launch= fTestRunSession.getLaunch();
+		ILaunch launch = fTestRunSession.getLaunch();
 		if (launch != null && launch.getLaunchConfiguration() != null) {
-				ILaunchConfiguration launchConfiguration= launch.getLaunchConfiguration();
-				if (launchConfiguration != null) {
-					try {
-						String oldName= launchConfiguration.getName();
-						String oldFailuresFilename= launchConfiguration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_FAILURES_NAMES, (String) null);
-						String configName;
-						if (oldFailuresFilename != null) {
-							configName= oldName;
-						} else {
-							configName= MessageFormat.format(Messages.TestRunnerViewPart_rerunFailedFirstLaunchConfigName, oldName);
-						}
-						ILaunchConfigurationWorkingCopy tmp= launchConfiguration.copy(configName);
-						tmp.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_FAILURES_NAMES, createFailureNamesFile());
-						relaunch(tmp, launch.getLaunchMode());
-						return;
-					} catch (CoreException e) {
-						ErrorDialog.openError(getSite().getShell(),
-							Messages.TestRunnerViewPart_error_cannotrerun, e.getMessage(), e.getStatus()
-						);
+			ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
+			if (launchConfiguration != null) {
+				try {
+					String oldName = launchConfiguration.getName();
+					String oldFailuresFilename = launchConfiguration
+							.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_FAILURES_NAMES, (String) null);
+					String configName;
+					if (oldFailuresFilename != null) {
+						configName = oldName;
+					} else {
+						configName = MessageFormat.format(Messages.TestRunnerViewPart_rerunFailedFirstLaunchConfigName,
+								oldName);
 					}
+					ILaunchConfigurationWorkingCopy tmp = launchConfiguration.copy(configName);
+					tmp.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_FAILURES_NAMES,
+							createFailureNamesFile());
+					relaunch(tmp, launch.getLaunchMode());
+					return;
+				} catch (CoreException e) {
+					ErrorDialog.openError(getSite().getShell(), Messages.TestRunnerViewPart_error_cannotrerun,
+							e.getMessage(), e.getStatus());
 				}
-				MessageDialog.openInformation(getSite().getShell(),
-					Messages.TestRunnerViewPart_cannotrerun_title,
-					Messages.TestRunnerViewPart_cannotrerurn_message
-				);
+			}
+			MessageDialog.openInformation(getSite().getShell(), Messages.TestRunnerViewPart_cannotrerun_title,
+					Messages.TestRunnerViewPart_cannotrerurn_message);
 		}
 	}
 
@@ -1365,11 +1267,12 @@ public class TestRunnerViewPart extends ViewPart {
 
 	private String createFailureNamesFile() throws CoreException {
 		try {
-			File file= File.createTempFile("testFailures", ".txt"); //$NON-NLS-1$ //$NON-NLS-2$
+			File file = File.createTempFile("testFailures", ".txt"); //$NON-NLS-1$ //$NON-NLS-2$
 			file.deleteOnExit();
-			TestElement[] failures= fTestRunSession.getAllFailedTestElements();
-			try (BufferedWriter bw= new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))){
-				for (TestElement testElement : failures) {
+			ITestElement[] failures = fTestRunSession.getAllFailedTestElements();
+			try (BufferedWriter bw = new BufferedWriter(
+					new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))) {
+				for (ITestElement testElement : failures) {
 					bw.write(testElement.getTestName());
 					bw.newLine();
 				}
@@ -1412,7 +1315,7 @@ public class TestRunnerViewPart extends ViewPart {
 	}
 
 	private String elapsedTimeAsString(long runTime) {
-		return NumberFormat.getInstance().format((double)runTime/1000);
+		return NumberFormat.getInstance().format((double) runTime / 1000);
 	}
 
 	private void handleStopped() {
@@ -1432,37 +1335,38 @@ public class TestRunnerViewPart extends ViewPart {
 //				&& TestKindRegistry.JUNIT5_TEST_KIND_ID.equals(fTestRunSession.getTestRunnerKind().getId())
 				&& fTestRunSession.getTotalCount() == 0) {
 			Display.getDefault().asyncExec(() -> {
-				String msg= MessageFormat.format(Messages.TestRunnerViewPart_error_notests_kind, fTestRunSession.getTestRunnerKind().getDisplayName());
-				MessageDialog.openInformation(UnitTestPlugin.getActiveWorkbenchShell(), Messages.TestRunnerViewPart__error_cannotrun, msg);
+				String msg = MessageFormat.format(Messages.TestRunnerViewPart_error_notests_kind,
+						fTestRunSession.getTestRunnerKind().getDisplayName());
+				MessageDialog.openInformation(UnitTestPlugin.getActiveWorkbenchShell(),
+						Messages.TestRunnerViewPart__error_cannotrun, msg);
 			});
 		}
 	}
 
 	private void resetViewIcon() {
-		fViewImage= fOriginalViewImage;
+		fViewImage = fOriginalViewImage;
 		firePropertyChange(IWorkbenchPart.PROP_TITLE);
 	}
 
 	private void updateViewIcon() {
-		if (fTestRunSession == null || fTestRunSession.isStopped() || fTestRunSession.isRunning() || fTestRunSession.getStartedCount() == 0)
-			fViewImage= fOriginalViewImage;
+		if (fTestRunSession == null || fTestRunSession.isStopped() || fTestRunSession.isRunning()
+				|| fTestRunSession.getStartedCount() == 0)
+			fViewImage = fOriginalViewImage;
 		else if (hasErrorsOrFailures())
-			fViewImage= fTestRunFailIcon;
+			fViewImage = fTestRunFailIcon;
 		else
-			fViewImage= fTestRunOKIcon;
+			fViewImage = fTestRunOKIcon;
 		firePropertyChange(IWorkbenchPart.PROP_TITLE);
 	}
 
 	private void updateViewTitleProgress() {
 		if (fTestRunSession != null) {
 			if (fTestRunSession.isRunning()) {
-				Image progress= fProgressImages.getImage(
-						fTestRunSession.getStartedCount(),
-						fTestRunSession.getTotalCount(),
-						fTestRunSession.getErrorCount(),
+				Image progress = fProgressImages.getImage(fTestRunSession.getStartedCount(),
+						fTestRunSession.getTotalCount(), fTestRunSession.getErrorCount(),
 						fTestRunSession.getFailureCount());
 				if (progress != fViewImage) {
-					fViewImage= progress;
+					fViewImage = progress;
 					firePropertyChange(IWorkbenchPart.PROP_TITLE);
 				}
 			} else {
@@ -1475,34 +1379,26 @@ public class TestRunnerViewPart extends ViewPart {
 
 	/**
 	 * @param testRunSession new active test run session
-	 * @return deactivated session, or <code>null</code> iff no session got deactivated
+	 * @return deactivated session, or <code>null</code> iff no session got
+	 *         deactivated
 	 */
-	private TestRunSession setActiveTestRunSession(TestRunSession testRunSession) {
-/*
-- State:
-fTestRunSession
-fTestSessionListener
-Jobs
-fTestViewer.processChangesInUI();
-- UI:
-fCounterPanel
-fProgressBar
-setContentDescription / fInfoMessage
-setTitleToolTip
-view icons
-statusLine
-fFailureTrace
-
-action enablement
- */
+	private ITestRunSession setActiveTestRunSession(ITestRunSession testRunSession) {
+		/*
+		 * - State: fTestRunSession fTestSessionListener Jobs
+		 * fTestViewer.processChangesInUI(); - UI: fCounterPanel fProgressBar
+		 * setContentDescription / fInfoMessage setTitleToolTip view icons statusLine
+		 * fFailureTrace
+		 *
+		 * action enablement
+		 */
 		if (fTestRunSession == testRunSession)
 			return null;
 
 		deregisterTestSessionListener(true);
 
-		TestRunSession deactivatedSession= fTestRunSession;
+		ITestRunSession deactivatedSession = fTestRunSession;
 
-		fTestRunSession= testRunSession;
+		fTestRunSession = testRunSession;
 		fTestViewer.registerActiveSession(testRunSession);
 
 		if (fSashForm.isDisposed()) {
@@ -1525,7 +1421,7 @@ action enablement
 
 		} else {
 			if (fTestRunSession.isStarting() || fTestRunSession.isRunning() || fTestRunSession.isKeptAlive()) {
-				fTestSessionListener= new TestSessionListener();
+				fTestSessionListener = new TestSessionListener();
 				fTestRunSession.addTestSessionListener(fTestSessionListener);
 			}
 			if (!fTestRunSession.isStarting() && !fShowOnErrorOnly)
@@ -1558,12 +1454,12 @@ action enablement
 	private void deregisterTestSessionListener(boolean force) {
 		if (fTestRunSession != null && fTestSessionListener != null && (force || !fTestRunSession.isKeptAlive())) {
 			fTestRunSession.removeTestSessionListener(fTestSessionListener);
-			fTestSessionListener= null;
+			fTestSessionListener = null;
 		}
 	}
 
 	private void updateRerunFailedFirstAction() {
-		boolean state= !isJUnit5() && hasErrorsOrFailures() && fTestRunSession.getLaunch() != null;
+		boolean state = !isJUnit5() && hasErrorsOrFailures() && fTestRunSession.getLaunch() != null;
 		fRerunFailedFirstAction.setEnabled(state);
 	}
 
@@ -1575,34 +1471,36 @@ action enablement
 		return false;
 	}
 
-    /**
-     * @return the display name of the current test run sessions kind, or <code>null</code>
-     */
-    public String getTestKindDisplayName() {
-    	ITestKind kind= fTestRunSession.getTestRunnerKind();
+	/**
+	 * @return the display name of the current test run sessions kind, or
+	 *         <code>null</code>
+	 */
+	public String getTestKindDisplayName() {
+		ITestKind kind = fTestRunSession.getTestRunnerKind();
 		if (!kind.isNull()) {
-			return  kind.getDisplayName();
+			return kind.getDisplayName();
 		}
 		return null;
 	}
 
 	private void setTitleToolTip() {
-		String testKindDisplayStr= getTestKindDisplayName();
+		String testKindDisplayStr = getTestKindDisplayName();
 
-		String testRunLabel= BasicElementLabels.getJavaElementName(fTestRunSession.getTestRunName());
+		String testRunLabel = BasicElementLabels.getJavaElementName(fTestRunSession.getTestRunName());
 		if (testKindDisplayStr != null)
-			setTitleToolTip(MessageFormat.format(Messages.TestRunnerViewPart_titleToolTip, testRunLabel, testKindDisplayStr));
+			setTitleToolTip(
+					MessageFormat.format(Messages.TestRunnerViewPart_titleToolTip, testRunLabel, testKindDisplayStr));
 		else
 			setTitleToolTip(testRunLabel);
 	}
 
 	@Override
-	public synchronized void dispose(){
-		fIsDisposed= true;
+	public synchronized void dispose() {
+		fIsDisposed = true;
 		if (fTestRunSessionListener != null)
 			UnitTestPlugin.getModel().removeTestRunSessionListener(fTestRunSessionListener);
 
-		IHandlerService handlerService= getSite().getWorkbenchWindow().getService(IHandlerService.class);
+		IHandlerService handlerService = getSite().getWorkbenchWindow().getService(IHandlerService.class);
 		handlerService.deactivateHandler(fRerunLastActivation);
 		handlerService.deactivateHandler(fRerunFailedFirstActivation);
 		setActiveTestRunSession(null);
@@ -1618,11 +1516,10 @@ action enablement
 			getViewSite().getActionBars().getMenuManager().removeMenuListener(fViewMenuListener);
 		}
 		/*
-		if (fDirtyListener != null) {
-			JavaCore.removeElementChangedListener(fDirtyListener);
-			fDirtyListener= null;
-		}
-		*/
+		 * if (fDirtyListener != null) {
+		 * JavaCore.removeElementChangedListener(fDirtyListener); fDirtyListener= null;
+		 * }
+		 */
 		if (fFailureTrace != null) {
 			fFailureTrace.dispose();
 		}
@@ -1640,7 +1537,7 @@ action enablement
 	}
 
 	private void refreshCounters() {
-		 // TODO: Inefficient. Either
+		// TODO: Inefficient. Either
 		// - keep a boolean fHasTestRun and update only on changes, or
 		// - improve components to only redraw on changes (once!).
 
@@ -1654,23 +1551,23 @@ action enablement
 		boolean stopped;
 
 		if (fTestRunSession != null) {
-			startedCount= fTestRunSession.getStartedCount();
-			ignoredCount= fTestRunSession.getIgnoredCount();
-			totalCount= fTestRunSession.getTotalCount();
-			errorCount= fTestRunSession.getErrorCount();
-			failureCount= fTestRunSession.getFailureCount();
+			startedCount = fTestRunSession.getStartedCount();
+			ignoredCount = fTestRunSession.getIgnoredCount();
+			totalCount = fTestRunSession.getTotalCount();
+			errorCount = fTestRunSession.getErrorCount();
+			failureCount = fTestRunSession.getFailureCount();
 			assumptionFailureCount = fTestRunSession.getAssumptionFailureCount();
-			hasErrorsOrFailures= errorCount + failureCount > 0;
-			stopped= fTestRunSession.isStopped();
+			hasErrorsOrFailures = errorCount + failureCount > 0;
+			stopped = fTestRunSession.isStopped();
 		} else {
-			startedCount= 0;
-			ignoredCount= 0;
-			totalCount= 0;
-			errorCount= 0;
-			failureCount= 0;
+			startedCount = 0;
+			ignoredCount = 0;
+			totalCount = 0;
+			errorCount = 0;
+			failureCount = 0;
 			assumptionFailureCount = 0;
-			hasErrorsOrFailures= false;
-			stopped= false;
+			hasErrorsOrFailures = false;
+			stopped = false;
 		}
 
 		fCounterPanel.setTotal(totalCount);
@@ -1680,11 +1577,11 @@ action enablement
 
 		int ticksDone;
 		if (startedCount == 0)
-			ticksDone= 0;
-		else if (startedCount == totalCount && ! fTestRunSession.isRunning())
-			ticksDone= totalCount;
+			ticksDone = 0;
+		else if (startedCount == totalCount && !fTestRunSession.isRunning())
+			ticksDone = totalCount;
 		else
-			ticksDone= startedCount - 1;
+			ticksDone = startedCount - 1;
 
 		fProgressBar.reset(hasErrorsOrFailures, stopped, ticksDone, totalCount);
 	}
@@ -1698,17 +1595,18 @@ action enablement
 	}
 
 	public void showTestResultsView() {
-		IWorkbenchWindow window= getSite().getWorkbenchWindow();
-		IWorkbenchPage page= window.getActivePage();
-		TestRunnerViewPart testRunner= null;
+		IWorkbenchWindow window = getSite().getWorkbenchWindow();
+		IWorkbenchPage page = window.getActivePage();
+		TestRunnerViewPart testRunner = null;
 
 		if (page != null) {
 			try { // show the result view
-				testRunner= (TestRunnerViewPart)page.findView(TestRunnerViewPart.NAME);
-				if(testRunner == null) {
-					IWorkbenchPart activePart= page.getActivePart();
-					testRunner= (TestRunnerViewPart)page.showView(TestRunnerViewPart.NAME, null, IWorkbenchPage.VIEW_VISIBLE);
-					//restore focus
+				testRunner = (TestRunnerViewPart) page.findView(TestRunnerViewPart.NAME);
+				if (testRunner == null) {
+					IWorkbenchPart activePart = page.getActivePart();
+					testRunner = (TestRunnerViewPart) page.showView(TestRunnerViewPart.NAME, null,
+							IWorkbenchPage.VIEW_VISIBLE);
+					// restore focus
 					page.activate(activePart);
 				} else {
 					page.bringToTop(testRunner);
@@ -1722,45 +1620,46 @@ action enablement
 	protected void doShowInfoMessage() {
 		if (fInfoMessage != null) {
 			setContentDescription(fInfoMessage);
-			fInfoMessage= null;
+			fInfoMessage = null;
 		}
 	}
 
 	public void registerInfoMessage(String message) {
-		fInfoMessage= message;
+		fInfoMessage = message;
 	}
 
 	private SashForm createSashForm(Composite parent) {
-		fSashForm= new SashForm(parent, SWT.VERTICAL);
+		fSashForm = new SashForm(parent, SWT.VERTICAL);
 
-		ViewForm top= new ViewForm(fSashForm, SWT.NONE);
+		ViewForm top = new ViewForm(fSashForm, SWT.NONE);
 
-		Composite empty= new Composite(top, SWT.NONE);
+		Composite empty = new Composite(top, SWT.NONE);
 		empty.setLayout(new Layout() {
 			@Override
 			protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
 				return new Point(1, 1); // (0, 0) does not work with super-intelligent ViewForm
 			}
+
 			@Override
 			protected void layout(Composite composite, boolean flushCache) {
 			}
 		});
 		top.setTopLeft(empty); // makes ViewForm draw the horizontal separator line ...
-		fTestViewer= new TestViewer(top, fClipboard, this);
+		fTestViewer = new TestViewer(top, fClipboard, this);
 		top.setContent(fTestViewer.getTestViewerControl());
 
-		ViewForm bottom= new ViewForm(fSashForm, SWT.NONE);
+		ViewForm bottom = new ViewForm(fSashForm, SWT.NONE);
 
-		CLabel label= new CLabel(bottom, SWT.NONE);
+		CLabel label = new CLabel(bottom, SWT.NONE);
 		label.setText(Messages.TestRunnerViewPart_label_failure);
 		label.setImage(fStackViewIcon);
 		bottom.setTopLeft(label);
-		ToolBar failureToolBar= new ToolBar(bottom, SWT.FLAT | SWT.WRAP);
+		ToolBar failureToolBar = new ToolBar(bottom, SWT.FLAT | SWT.WRAP);
 		bottom.setTopCenter(failureToolBar);
-		fFailureTrace= new FailureTrace(bottom, fClipboard, this, failureToolBar);
+		fFailureTrace = new FailureTrace(bottom, fClipboard, this, failureToolBar);
 		bottom.setContent(fFailureTrace.getComposite());
 
-		fSashForm.setWeights(new int[]{50, 50});
+		fSashForm.setWeights(new int[] { 50, 50 });
 		return fSashForm;
 	}
 
@@ -1777,38 +1676,38 @@ action enablement
 
 	@Override
 	public void createPartControl(Composite parent) {
-		fParent= parent;
+		fParent = parent;
 		addResizeListener(parent);
-		fClipboard= new Clipboard(parent.getDisplay());
+		fClipboard = new Clipboard(parent.getDisplay());
 
-		GridLayout gridLayout= new GridLayout();
-		gridLayout.marginWidth= 0;
-		gridLayout.marginHeight= 0;
+		GridLayout gridLayout = new GridLayout();
+		gridLayout.marginWidth = 0;
+		gridLayout.marginHeight = 0;
 		parent.setLayout(gridLayout);
 
 //		fViewHistory= new RunnerViewHistory();
 		configureToolBar();
 
-		fCounterComposite= createProgressCountPanel(parent);
+		fCounterComposite = createProgressCountPanel(parent);
 		fCounterComposite.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
-		SashForm sashForm= createSashForm(parent);
+		SashForm sashForm = createSashForm(parent);
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		IActionBars actionBars= getViewSite().getActionBars();
+		IActionBars actionBars = getViewSite().getActionBars();
 
 		fCopyAction = new UnitTestCopyAction(fFailureTrace, fClipboard);
 		fCopyAction.setActionDefinitionId(ActionFactory.COPY.getCommandId());
 		actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), fCopyAction);
 
-		fPasteAction= new UnitTesttPasteAction(parent.getShell(), fClipboard);
+		fPasteAction = new UnitTesttPasteAction(parent.getShell(), fClipboard);
 		fPasteAction.setActionDefinitionId(ActionFactory.PASTE.getCommandId());
 		actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(), fPasteAction);
 
 		initPageSwitcher();
 		addDropAdapter(parent);
 
-		fOriginalViewImage= getTitleImage();
-		fProgressImages= new ProgressImages();
+		fOriginalViewImage = getTitleImage();
+		fProgressImages = new ProgressImages();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IUnitTestHelpContextIds.RESULTS_VIEW);
 
 		getViewSite().getPage().addPartListener(fPartListener);
@@ -1818,78 +1717,74 @@ action enablement
 		if (fMemento != null) {
 			restoreLayoutState(fMemento);
 		}
-		fMemento= null;
+		fMemento = null;
 
-		fTestRunSessionListener= new TestRunSessionListener();
+		fTestRunSessionListener = new TestRunSessionListener();
 		UnitTestPlugin.getModel().addTestRunSessionListener(fTestRunSessionListener);
 
-		// always show youngest test run in view. simulate "sessionAdded" event to do that
-		List<TestRunSession> testRunSessions= UnitTestPlugin.getModel().getTestRunSessions();
+		// always show youngest test run in view. simulate "sessionAdded" event to do
+		// that
+		List<ITestRunSession> testRunSessions = UnitTestPlugin.getModel().getTestRunSessions();
 		if (!testRunSessions.isEmpty()) {
 			fTestRunSessionListener.sessionAdded(testRunSessions.get(0));
 		}
 	}
 
 	private void addDropAdapter(Composite parent) {
-		DropTarget dropTarget = new DropTarget(parent, DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK | DND.DROP_DEFAULT);
+		DropTarget dropTarget = new DropTarget(parent,
+				DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK | DND.DROP_DEFAULT);
 		dropTarget.setTransfer(TextTransfer.getInstance());
 		class DropAdapter extends DropTargetAdapter {
-		    @Override
+			@Override
 			public void dragEnter(DropTargetEvent event) {
-		        event.detail = DND.DROP_COPY;
-		        event.feedback = DND.FEEDBACK_NONE;
-		    }
-		    @Override
+				event.detail = DND.DROP_COPY;
+				event.feedback = DND.FEEDBACK_NONE;
+			}
+
+			@Override
 			public void dragOver(DropTargetEvent event) {
-		        event.detail = DND.DROP_COPY;
-		        event.feedback = DND.FEEDBACK_NONE;
-		    }
-		    @Override
+				event.detail = DND.DROP_COPY;
+				event.feedback = DND.FEEDBACK_NONE;
+			}
+
+			@Override
 			public void dragOperationChanged(DropTargetEvent event) {
-		        event.detail = DND.DROP_COPY;
-		        event.feedback = DND.FEEDBACK_NONE;
-		    }
-		    @Override
+				event.detail = DND.DROP_COPY;
+				event.feedback = DND.FEEDBACK_NONE;
+			}
+
+			@Override
 			public void drop(final DropTargetEvent event) {
-		        if (TextTransfer.getInstance().isSupportedType(event.currentDataType)) {
-					String url= (String) event.data;
+				if (TextTransfer.getInstance().isSupportedType(event.currentDataType)) {
+					String url = (String) event.data;
 					importTestRunSession(url);
-		        }
-		    }
+				}
+			}
 		}
 		dropTarget.addDropListener(new DropAdapter());
 	}
 
 	private void initPageSwitcher() {
 		/*
-		@SuppressWarnings("unused")
-		PageSwitcher pageSwitcher= new PageSwitcher(this) {
-			@Override
-			public Object[] getPages() {
-				return fViewHistory.getHistoryEntries().toArray();
-			}
-
-			@Override
-			public String getName(Object page) {
-				return fViewHistory.getText((TestRunSession) page);
-			}
-
-			@Override
-			public ImageDescriptor getImageDescriptor(Object page) {
-				return fViewHistory.getImageDescriptor(page);
-			}
-
-			@Override
-			public void activatePage(Object page) {
-				fViewHistory.setActiveEntry((TestRunSession) page);
-			}
-
-			@Override
-			public int getCurrentPageIndex() {
-				return fViewHistory.getHistoryEntries().indexOf(fViewHistory.getCurrentEntry());
-			}
-		};
-		*/
+		 * @SuppressWarnings("unused") PageSwitcher pageSwitcher= new PageSwitcher(this)
+		 * {
+		 *
+		 * @Override public Object[] getPages() { return
+		 * fViewHistory.getHistoryEntries().toArray(); }
+		 *
+		 * @Override public String getName(Object page) { return
+		 * fViewHistory.getText((TestRunSession) page); }
+		 *
+		 * @Override public ImageDescriptor getImageDescriptor(Object page) { return
+		 * fViewHistory.getImageDescriptor(page); }
+		 *
+		 * @Override public void activatePage(Object page) {
+		 * fViewHistory.setActiveEntry((TestRunSession) page); }
+		 *
+		 * @Override public int getCurrentPageIndex() { return
+		 * fViewHistory.getHistoryEntries().indexOf(fViewHistory.getCurrentEntry()); }
+		 * };
+		 */
 	}
 
 	private void addResizeListener(Composite parent) {
@@ -1900,11 +1795,10 @@ action enablement
 
 	void computeOrientation() {
 		if (fOrientation != VIEW_ORIENTATION_AUTOMATIC) {
-			fCurrentOrientation= fOrientation;
+			fCurrentOrientation = fOrientation;
 			setOrientation(fCurrentOrientation);
-		}
-		else {
-			Point size= fParent.getSize();
+		} else {
+			Point size = fParent.getSize();
 			if (size.x != 0 && size.y != 0) {
 				if (size.x > size.y)
 					setOrientation(VIEW_ORIENTATION_HORIZONTAL);
@@ -1915,62 +1809,63 @@ action enablement
 	}
 
 	private void configureToolBar() {
-		IActionBars actionBars= getViewSite().getActionBars();
-		IToolBarManager toolBar= actionBars.getToolBarManager();
+		IActionBars actionBars = getViewSite().getActionBars();
+		IToolBarManager toolBar = actionBars.getToolBarManager();
 		IMenuManager viewMenu = actionBars.getMenuManager();
-		fNextAction= new ShowNextFailureAction(this);
+		fNextAction = new ShowNextFailureAction(this);
 		fNextAction.setEnabled(false);
 		actionBars.setGlobalActionHandler(ActionFactory.NEXT.getId(), fNextAction);
 
-		fPreviousAction= new ShowPreviousFailureAction(this);
+		fPreviousAction = new ShowPreviousFailureAction(this);
 		fPreviousAction.setEnabled(false);
 		actionBars.setGlobalActionHandler(ActionFactory.PREVIOUS.getId(), fPreviousAction);
-		fStopAction= new StopAction();
+		fStopAction = new StopAction();
 		fStopAction.setEnabled(false);
 
-		fRerunLastTestAction= new RerunLastAction();
-		IHandlerService handlerService= getSite().getWorkbenchWindow().getService(IHandlerService.class);
+		fRerunLastTestAction = new RerunLastAction();
+		IHandlerService handlerService = getSite().getWorkbenchWindow().getService(IHandlerService.class);
 		IHandler handler = new AbstractHandler() {
 			@Override
 			public Object execute(ExecutionEvent event) throws ExecutionException {
 				fRerunLastTestAction.run();
 				return null;
 			}
+
 			@Override
 			public boolean isEnabled() {
 				return fRerunLastTestAction.isEnabled();
 			}
 		};
-        fRerunLastActivation= handlerService.activateHandler(RERUN_LAST_COMMAND, handler);
+		fRerunLastActivation = handlerService.activateHandler(RERUN_LAST_COMMAND, handler);
 
-		fRerunFailedFirstAction= new RerunLastFailedFirstAction();
+		fRerunFailedFirstAction = new RerunLastFailedFirstAction();
 		handler = new AbstractHandler() {
 			@Override
 			public Object execute(ExecutionEvent event) throws ExecutionException {
 				fRerunFailedFirstAction.run();
 				return null;
 			}
+
 			@Override
 			public boolean isEnabled() {
 				return fRerunFailedFirstAction.isEnabled();
 			}
 		};
-		fRerunFailedFirstActivation= handlerService.activateHandler(RERUN_FAILED_FIRST_COMMAND, handler);
+		fRerunFailedFirstActivation = handlerService.activateHandler(RERUN_FAILED_FIRST_COMMAND, handler);
 
-		fFailuresOnlyFilterAction= new FailuresOnlyFilterAction();
-		fIgnoredOnlyFilterAction= new IgnoredOnlyFilterAction();
+		fFailuresOnlyFilterAction = new FailuresOnlyFilterAction();
+		fIgnoredOnlyFilterAction = new IgnoredOnlyFilterAction();
 
-		fScrollLockAction= new ScrollLockAction(this);
+		fScrollLockAction = new ScrollLockAction(this);
 		fScrollLockAction.setChecked(!fAutoScroll);
 
-		fToggleOrientationActions =
-			new ToggleOrientationAction[] {
+		fToggleOrientationActions = new ToggleOrientationAction[] {
 				new ToggleOrientationAction(VIEW_ORIENTATION_VERTICAL),
 				new ToggleOrientationAction(VIEW_ORIENTATION_HORIZONTAL),
-				new ToggleOrientationAction(VIEW_ORIENTATION_AUTOMATIC)};
+				new ToggleOrientationAction(VIEW_ORIENTATION_AUTOMATIC) };
 
-		fShowTestHierarchyAction= new ShowTestHierarchyAction();
-		fShowTimeAction= new ShowTimeAction();
+		fShowTestHierarchyAction = new ShowTestHierarchyAction();
+		fShowTimeAction = new ShowTimeAction();
 		toolBar.add(fNextAction);
 		toolBar.add(fPreviousAction);
 		toolBar.add(fFailuresOnlyFilterAction);
@@ -1982,12 +1877,11 @@ action enablement
 		toolBar.add(fStopAction);
 //		toolBar.add(fViewHistory.createHistoryDropDownAction());
 
-
 		viewMenu.add(fShowTestHierarchyAction);
 		viewMenu.add(fShowTimeAction);
 		viewMenu.add(new Separator());
 
-		MenuManager layoutSubMenu= new MenuManager(Messages.TestRunnerViewPart_layout_menu);
+		MenuManager layoutSubMenu = new MenuManager(Messages.TestRunnerViewPart_layout_menu);
 		for (ToggleOrientationAction toggleOrientationAction : fToggleOrientationActions) {
 			layoutSubMenu.add(toggleOrientationAction);
 		}
@@ -1997,10 +1891,9 @@ action enablement
 		viewMenu.add(fFailuresOnlyFilterAction);
 		viewMenu.add(fIgnoredOnlyFilterAction);
 
-
-		fActivateOnErrorAction= new ActivateOnErrorAction();
+		fActivateOnErrorAction = new ActivateOnErrorAction();
 		viewMenu.add(fActivateOnErrorAction);
-		fViewMenuListener= manager -> fActivateOnErrorAction.update();
+		fViewMenuListener = manager -> fActivateOnErrorAction.update();
 
 		viewMenu.addMenuListener(fViewMenuListener);
 
@@ -2010,19 +1903,19 @@ action enablement
 	private IStatusLineManager getStatusLine() {
 		// we want to show messages globally hence we
 		// have to go through the active part
-		IViewSite site= getViewSite();
-		IWorkbenchPage page= site.getPage();
-		IWorkbenchPart activePart= page.getActivePart();
+		IViewSite site = getViewSite();
+		IWorkbenchPage page = site.getPage();
+		IWorkbenchPart activePart = page.getActivePart();
 
 		if (activePart instanceof IViewPart) {
-			IViewPart activeViewPart= (IViewPart)activePart;
-			IViewSite activeViewSite= activeViewPart.getViewSite();
+			IViewPart activeViewPart = (IViewPart) activePart;
+			IViewSite activeViewSite = activeViewPart.getViewSite();
 			return activeViewSite.getActionBars().getStatusLineManager();
 		}
 
 		if (activePart instanceof IEditorPart) {
-			IEditorPart activeEditorPart= (IEditorPart)activePart;
-			IEditorActionBarContributor contributor= activeEditorPart.getEditorSite().getActionBarContributor();
+			IEditorPart activeEditorPart = (IEditorPart) activePart;
+			IEditorActionBarContributor contributor = activeEditorPart.getEditorSite().getActionBarContributor();
 			if (contributor instanceof EditorActionBarContributor)
 				return ((EditorActionBarContributor) contributor).getActionBars().getStatusLineManager();
 		}
@@ -2031,17 +1924,15 @@ action enablement
 	}
 
 	protected Composite createProgressCountPanel(Composite parent) {
-		Composite composite= new Composite(parent, SWT.NONE);
-		GridLayout layout= new GridLayout();
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
 		composite.setLayout(layout);
 		setCounterColumns(layout);
 
 		fCounterPanel = new CounterPanel(composite);
-		fCounterPanel.setLayoutData(
-			new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+		fCounterPanel.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
 		fProgressBar = new UnitTestProgressBar(composite);
-		fProgressBar.setLayoutData(
-				new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+		fProgressBar.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
 		return composite;
 	}
 
@@ -2082,7 +1973,7 @@ action enablement
 	@Override
 	public Image getTitleImage() {
 		if (fOriginalViewImage == null)
-			fOriginalViewImage= super.getTitleImage();
+			fOriginalViewImage = super.getTitleImage();
 
 		if (fViewImage == null)
 			return super.getTitleImage();
@@ -2091,17 +1982,16 @@ action enablement
 
 	void codeHasChanged() {
 		/*
-		if (fDirtyListener != null) {
-			JavaCore.removeElementChangedListener(fDirtyListener);
-			fDirtyListener= null;
-		}
-		*/
+		 * if (fDirtyListener != null) {
+		 * JavaCore.removeElementChangedListener(fDirtyListener); fDirtyListener= null;
+		 * }
+		 */
 		if (fViewImage == fTestRunOKIcon)
-			fViewImage= fTestRunOKDirtyIcon;
+			fViewImage = fTestRunOKDirtyIcon;
 		else if (fViewImage == fTestRunFailIcon)
-			fViewImage= fTestRunFailDirtyIcon;
+			fViewImage = fTestRunFailDirtyIcon;
 
-		Runnable r= () -> {
+		Runnable r = () -> {
 			if (isDisposed())
 				return;
 			firePropertyChange(IWorkbenchPart.PROP_TITLE);
@@ -2110,34 +2000,36 @@ action enablement
 			getDisplay().asyncExec(r);
 	}
 
-	public void rerunTest(String testId, String className, String testName, String testDisplayName, String uniqueId, String launchMode) {
+	public void rerunTest(String testId, String className, String testName, String testDisplayName, String uniqueId,
+			String launchMode) {
 		if (lastLaunchIsKeptAlive()) {
 			fTestRunSession.rerunTest(testId, className, testName);
-			TestCaseElement testCaseElement= (TestCaseElement) fTestRunSession.getTestElement(testId);
-			testCaseElement.setStatus(TestElement.Status.RUNNING, null, null, null);
+			ITestCaseElement testCaseElement = (ITestCaseElement) fTestRunSession.getTestElement(testId);
+			testCaseElement.setStatus(ITestElement.Status.RUNNING, null, null, null);
 			fTestViewer.registerViewerUpdate(testCaseElement);
 			postSyncProcessChanges();
 			return;
 		}
 
 		if (fTestRunSession != null) {
-			ILaunch launch= fTestRunSession.getLaunch();
+			ILaunch launch = fTestRunSession.getLaunch();
 			if (launch != null) {
 				// run the selected test using the previous launch configuration
-				ILaunchConfiguration launchConfiguration= launch.getLaunchConfiguration();
+				ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
 				if (launchConfiguration != null) {
 					try {
 						String name;
 						if (testDisplayName != null) {
-							name= testDisplayName;
+							name = testDisplayName;
 						} else {
-							name= className;
+							name = className;
 							if (testName != null)
-								name+= "."+testName; //$NON-NLS-1$
+								name += "." + testName; //$NON-NLS-1$
 						}
-						String configName= MessageFormat.format(Messages.TestRunnerViewPart_configName, name);
+						String configName = MessageFormat.format(Messages.TestRunnerViewPart_configName, name);
 						ILaunchConfigurationWorkingCopy tmp = launchConfiguration.copy(configName);
-						// fix for bug: 64838  junit view run single test does not use correct class [JUnit]
+						// fix for bug: 64838 junit view run single test does not use correct class
+						// [JUnit]
 						tmp.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, className);
 						// reset the container
 						tmp.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_CONTAINER, ""); //$NON-NLS-1$
@@ -2145,18 +2037,16 @@ action enablement
 						tmp.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_UNIQUE_ID, uniqueId);
 						relaunch(tmp, launchMode);
 						return;
-						} catch (CoreException e) {
-							ErrorDialog.openError(getSite().getShell(),
-									Messages.TestRunnerViewPart_error_cannotrerun, e.getMessage(), e.getStatus()
-								);
-							return;
-						}
+					} catch (CoreException e) {
+						ErrorDialog.openError(getSite().getShell(), Messages.TestRunnerViewPart_error_cannotrerun,
+								e.getMessage(), e.getStatus());
+						return;
+					}
 				}
 			}
 		}
 
-		MessageDialog.openInformation(getSite().getShell(),
-				Messages.TestRunnerViewPart_cannotrerun_title,
+		MessageDialog.openInformation(getSite().getShell(), Messages.TestRunnerViewPart_cannotrerun_title,
 				Messages.TestRunnerViewPart_cannotrerurn_message);
 	}
 
@@ -2165,7 +2055,7 @@ action enablement
 	}
 
 	public void warnOfContentChange() {
-		IWorkbenchSiteProgressService service= getProgressService();
+		IWorkbenchSiteProgressService service = getProgressService();
 		if (service != null)
 			service.warnOfContentChange();
 	}
@@ -2182,29 +2072,31 @@ action enablement
 		for (ToggleOrientationAction toggleOrientationAction : fToggleOrientationActions)
 			toggleOrientationAction.setChecked(fOrientation == toggleOrientationAction.getOrientation());
 		fCurrentOrientation = orientation;
-		GridLayout layout= (GridLayout) fCounterComposite.getLayout();
+		GridLayout layout = (GridLayout) fCounterComposite.getLayout();
 		setCounterColumns(layout);
 		fParent.layout();
 	}
 
 	private void setCounterColumns(GridLayout layout) {
 		if (fCurrentOrientation == VIEW_ORIENTATION_HORIZONTAL)
-			layout.numColumns= 2;
+			layout.numColumns = 2;
 		else
-			layout.numColumns= 1;
+			layout.numColumns = 1;
 	}
 
 	static boolean getShowOnErrorOnly() {
-		return Platform.getPreferencesService().getBoolean(UnitTestPlugin.PLUGIN_ID, UnitTestPreferencesConstants.SHOW_ON_ERROR_ONLY, false, null);
+		return Platform.getPreferencesService().getBoolean(UnitTestPlugin.PLUGIN_ID,
+				UnitTestPreferencesConstants.SHOW_ON_ERROR_ONLY, false, null);
 	}
 
 	static void importTestRunSession(final String url) {
 		try {
-			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(monitor -> UnitTestModel.importTestRunSession(url, monitor));
+			PlatformUI.getWorkbench().getProgressService()
+					.busyCursorWhile(monitor -> UnitTestPlugin.getModel().importTestRunSession(url, monitor));
 		} catch (InterruptedException e) {
 			// cancelled
 		} catch (InvocationTargetException e) {
-			CoreException ce= (CoreException) e.getCause();
+			CoreException ce = (CoreException) e.getCause();
 			StatusManager.getManager().handle(ce.getStatus(), StatusManager.SHOW | StatusManager.LOG);
 		}
 	}
@@ -2213,22 +2105,21 @@ action enablement
 		return fFailureTrace;
 	}
 
-
 	void setShowFailuresOnly(boolean failuresOnly) {
-		setFilterAndLayout(failuresOnly, false /*ignoredOnly must be off*/, fLayout);
+		setFilterAndLayout(failuresOnly, false /* ignoredOnly must be off */, fLayout);
 	}
 
 	void setShowIgnoredOnly(boolean ignoredOnly) {
-		setFilterAndLayout( false /*failuresOnly must be off*/, ignoredOnly, fLayout);
+		setFilterAndLayout(false /* failuresOnly must be off */, ignoredOnly, fLayout);
 	}
 
 	private void setLayoutMode(int mode) {
 		setFilterAndLayout(fFailuresOnlyFilterAction.isChecked(), fIgnoredOnlyFilterAction.isChecked(), mode);
 	}
 
-	private void setFilterAndLayout(boolean failuresOnly, boolean ignoredOnly,  int layoutMode) {
+	private void setFilterAndLayout(boolean failuresOnly, boolean ignoredOnly, int layoutMode) {
 		fShowTestHierarchyAction.setChecked(layoutMode == LAYOUT_HIERARCHICAL);
-		fLayout= layoutMode;
+		fLayout = layoutMode;
 		fFailuresOnlyFilterAction.setChecked(failuresOnly);
 		fIgnoredOnlyFilterAction.setChecked(ignoredOnly);
 		fTestViewer.setShowFailuresOrIgnoredOnly(failuresOnly, ignoredOnly, layoutMode);
@@ -2241,7 +2132,7 @@ action enablement
 
 	}
 
-	TestElement[] getAllFailures() {
+	ITestElement[] getAllFailures() {
 		return fTestRunSession.getAllFailedTestElements();
 	}
 }

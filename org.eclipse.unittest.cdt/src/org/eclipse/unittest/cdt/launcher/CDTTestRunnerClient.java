@@ -16,13 +16,10 @@ import org.eclipse.cdt.testsrunner.model.ITestModelUpdater;
 import org.eclipse.cdt.testsrunner.model.ITestSuite;
 import org.eclipse.cdt.testsrunner.model.TestingException;
 import org.eclipse.unittest.cdt.CDTPlugin;
-import org.eclipse.unittest.internal.model.ModelMessages;
-import org.eclipse.unittest.internal.model.TestCaseElement;
-import org.eclipse.unittest.internal.model.TestElement;
-import org.eclipse.unittest.internal.model.TestRunSession;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElement.FailureTrace;
+import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.unittest.model.TestRunnerClient;
 
@@ -126,8 +123,8 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 				TestElementReference cRef = testElementRefs.isEmpty() ? null : testElementRefs.peek();
 				if (cRef != null) {
 					extractFailure(cRef.id, cRef.name,
-							status == Status.Aborted ? TestElement.Status.FAILURE.getOldCode() :
-								TestElement.Status.ERROR.getOldCode(),
+							status == Status.Aborted ? ITestElement.Status.FAILURE.getOldCode() :
+								ITestElement.Status.ERROR.getOldCode(),
 								false);
 
 					notifyTestFailed();
@@ -193,13 +190,13 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 			System.out.println("TestModelUpdaterAdapter.currentTestCase");
 
 			ITestElement testElement = fTestRunSession.getTestElement(fCurrentTestCase);
-			if (testElement instanceof TestCaseElement) {
-				return convertFromTestCaseElement((TestCaseElement)testElement);
+			if (testElement instanceof ITestCaseElement) {
+				return convertFromTestCaseElement((ITestCaseElement)testElement);
 			}
 			return null;
 		}
 
-		private Status convertFromStatus(org.eclipse.unittest.internal.model.TestElement.Status status) {
+		private Status convertFromStatus(ITestElement.Status status) {
 			//NotRun, Skipped, Passed, Failed, Aborted;
 			if (status.isNotRun()) {
 				return Status.NotRun;
@@ -214,125 +211,115 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 			return Status.Aborted;
 		}
 
-		ITestCase convertFromTestCaseElement(ITestCaseElement element) {
-			if (element instanceof TestCaseElement) {
-				TestCaseElement testCaseElement = (TestCaseElement)element;
+		ITestCase convertFromTestCaseElement(final ITestCaseElement element) {
+			return new ITestCase() {
+				@Override
+				public void visit(IModelVisitor visitor) {
+					// TODO Auto-generated method stub
+				}
 
-				return new ITestCase() {
-					@Override
-					public void visit(IModelVisitor visitor) {
-						// TODO Auto-generated method stub
+				@Override
+				public boolean hasChildren() {
+					return false;
+				}
+
+				@Override
+				public int getTestingTime() {
+					return (int)(element.getElapsedTimeInSeconds() * 1000);
+				}
+
+				@Override
+				public Status getStatus() {
+					return convertFromStatus(element.getStatus());
+				}
+
+				@Override
+				public ITestSuite getParent() {
+					return convertFromTestSuiteElement(element.getParent());
+				}
+
+				@Override
+				public String getName() {
+					return element.getTestName();
+				}
+
+				@Override
+				public ITestItem[] getChildren() {
+					return new ITestItem[0];
+				}
+
+
+				@Override
+				public ITestMessage[] getTestMessages() {
+					FailureTrace trace = element.getFailureTrace();
+					if (trace == null) {
+						return new ITestMessage[0];
 					}
+					return new ITestMessage[] {
+							new ITestMessage() {
 
-					@Override
-					public boolean hasChildren() {
-						return false;
-					}
-
-					@Override
-					public int getTestingTime() {
-						return (int)(testCaseElement.getElapsedTimeInSeconds() * 1000);
-					}
-
-					@Override
-					public Status getStatus() {
-						return convertFromStatus(testCaseElement.getStatus());
-					}
-
-					@Override
-					public ITestSuite getParent() {
-						return convertFromTestSuiteElement(testCaseElement.getParent());
-					}
-
-					@Override
-					public String getName() {
-						return testCaseElement.getTestName();
-					}
-
-					@Override
-					public ITestItem[] getChildren() {
-						return new ITestItem[0];
-					}
-
-
-					@Override
-					public ITestMessage[] getTestMessages() {
-						FailureTrace trace = testCaseElement.getFailureTrace();
-						if (trace == null) {
-							return new ITestMessage[0];
-						}
-						return new ITestMessage[] {
-								new ITestMessage() {
-
-									@Override
-									public ITestLocation getLocation() {
-										return null;
-									}
-
-									@Override
-									public Level getLevel() {
-										return Level.Info;
-									}
-
-									@Override
-									public String getText() {
-										return trace.toString();
-									}
-
-									@Override
-									public void visit(IModelVisitor visitor) {
-									}
-
+								@Override
+								public ITestLocation getLocation() {
+									return null;
 								}
-						};
-					}
-				};
-			}
-			return null;
+
+								@Override
+								public Level getLevel() {
+									return Level.Info;
+								}
+
+								@Override
+								public String getText() {
+									return trace.toString();
+								}
+
+								@Override
+								public void visit(IModelVisitor visitor) {
+								}
+
+							}
+					};
+				}
+			};
 		}
 
-		ITestItem convertFromTestElement(ITestElement element) {
-			if (element instanceof TestElement) {
-				TestElement testElement = (TestElement)element;
+		ITestItem convertFromTestElement(final ITestElement element) {
+			return new ITestItem() {
+				@Override
+				public void visit(IModelVisitor visitor) {
+					// TODO Auto-generated method stub
+				}
 
-				return new ITestItem() {
-					@Override
-					public void visit(IModelVisitor visitor) {
-						// TODO Auto-generated method stub
-					}
+				@Override
+				public boolean hasChildren() {
+					return false;
+				}
 
-					@Override
-					public boolean hasChildren() {
-						return false;
-					}
+				@Override
+				public int getTestingTime() {
+					return (int)element.getElapsedTimeInSeconds() * 1000;
+				}
 
-					@Override
-					public int getTestingTime() {
-						return (int)testElement.getElapsedTimeInSeconds() * 1000;
-					}
+				@Override
+				public Status getStatus() {
+					return convertFromStatus(element.getStatus());
+				}
 
-					@Override
-					public Status getStatus() {
-						return convertFromStatus(testElement.getStatus());
-					}
+				@Override
+				public ITestSuite getParent() {
+					return convertFromTestSuiteElement(element.getParent());
+				}
 
-					@Override
-					public ITestSuite getParent() {
-						return convertFromTestSuiteElement(testElement.getParent());
-					}
+				@Override
+				public String getName() {
+					return element.getTestName();
+				}
 
-					@Override
-					public String getName() {
-						return testElement.getTestName();
-					}
-
-					@Override
-					public ITestItem[] getChildren() {
-						return new ITestItem[0];
-					}
-				};
-			}
-			return null;
+				@Override
+				public ITestItem[] getChildren() {
+					return new ITestItem[0];
+				}
+			};
 		}
 
 		ITestSuite convertFromTestSuiteElement(ITestSuiteElement testSuiteElement) {
@@ -390,7 +377,7 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 		}
 	}
 
-	private TestRunSession fTestRunSession;
+	private ITestRunSession fTestRunSession;
 	private ITestsRunnerProvider fTestsRunnerProvider;
 	private String fStatusMessage = "";
 	private boolean fHasErrors = false;
@@ -402,7 +389,7 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 	}
 	*/
 
-	public void setTestRunSession(TestRunSession testRunSession) {
+	public void setTestRunSession(ITestRunSession testRunSession) {
 		this.fTestRunSession = testRunSession;
 	}
 
@@ -422,7 +409,7 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 			// If testing session was stopped, the status is set in stop()
 			if (isRunning()) {
 				double testingTime = fTestRunSession.getElapsedTimeInSeconds();
-				fStatusMessage = MessageFormat.format(ModelMessages.TestingSession_finished_status,
+				fStatusMessage = MessageFormat.format(CDTMessages.TestingSession_finished_status,
 						testingTime);
 			}
 			notifyTestRunEnded((long)(fTestRunSession.getElapsedTimeInSeconds() * 1000));
@@ -440,20 +427,17 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 
 	@Override
 	public void receiveMessage(String message) {
-		// TODO Auto-generated method stub
-
+		// Does nothing
 	}
 
 	@Override
 	public void stopTest() {
-		// TODO Auto-generated method stub
-
+		// Does nothing
 	}
 
 	@Override
 	public void rerunTest(String testId, String className, String testName) {
-		// TODO Auto-generated method stub
-
+		// Does nothing
 	}
 
 }

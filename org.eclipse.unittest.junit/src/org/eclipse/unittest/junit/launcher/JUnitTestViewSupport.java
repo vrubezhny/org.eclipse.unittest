@@ -1,6 +1,5 @@
 package org.eclipse.unittest.junit.launcher;
 
-import org.eclipse.unittest.internal.model.TestCaseElement;
 import org.eclipse.unittest.junit.ui.OpenEditorAtLineAction;
 import org.eclipse.unittest.junit.ui.OpenTestAction;
 import org.eclipse.unittest.junit.ui.ShowStackTraceInConsoleViewActionDelegate;
@@ -39,9 +38,9 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 		ITestElement[] children = testSuite.getChildren();
 
 		if (testName.startsWith("[") && testName.endsWith("]") && children.length > 0 //$NON-NLS-1$ //$NON-NLS-2$
-				&& children[0] instanceof TestCaseElement) {
+				&& children[0] instanceof ITestCaseElement) {
 			// a group of parameterized tests
-			return new OpenTestAction(testRunnerPart, (TestCaseElement) children[0], null);
+			return new OpenTestAction(testRunnerPart, (ITestCaseElement) children[0], null);
 		}
 
 		int index = testName.indexOf('(');

@@ -16,8 +16,9 @@
 package org.eclipse.unittest.model;
 
 /**
- * Common protocol for test elements.
- * This set consists of {@link ITestCaseElement} , {@link ITestSuiteElement} and {@link ITestRunSession}
+ * Common protocol for test elements. This set consists of
+ * {@link ITestCaseElement} , {@link ITestSuiteElement} and
+ * {@link ITestRunSession}
  *
  * <p>
  * This interface is not intended to be implemented by clients.
@@ -27,23 +28,23 @@ package org.eclipse.unittest.model;
 public interface ITestElement {
 
 	public final static class Status {
-		public static final Status RUNNING_ERROR= new Status("RUNNING_ERROR", 5); //$NON-NLS-1$
-		public static final Status RUNNING_FAILURE= new Status("RUNNING_FAILURE", 6); //$NON-NLS-1$
-		public static final Status RUNNING= new Status("RUNNING", 3); //$NON-NLS-1$
+		public static final Status RUNNING_ERROR = new Status("RUNNING_ERROR", 5); //$NON-NLS-1$
+		public static final Status RUNNING_FAILURE = new Status("RUNNING_FAILURE", 6); //$NON-NLS-1$
+		public static final Status RUNNING = new Status("RUNNING", 3); //$NON-NLS-1$
 
-		public static final Status ERROR=   new Status("ERROR",   /*1*/ITestRunListener3.STATUS_ERROR); //$NON-NLS-1$
-		public static final Status FAILURE= new Status("FAILURE", /*2*/ITestRunListener3.STATUS_FAILURE); //$NON-NLS-1$
-		public static final Status OK=      new Status("OK",      /*0*/ITestRunListener3.STATUS_OK); //$NON-NLS-1$
-		public static final Status NOT_RUN= new Status("NOT_RUN", 4); //$NON-NLS-1$
+		public static final Status ERROR = new Status("ERROR", /* 1 */ITestRunListener3.STATUS_ERROR); //$NON-NLS-1$
+		public static final Status FAILURE = new Status("FAILURE", /* 2 */ITestRunListener3.STATUS_FAILURE); //$NON-NLS-1$
+		public static final Status OK = new Status("OK", /* 0 */ITestRunListener3.STATUS_OK); //$NON-NLS-1$
+		public static final Status NOT_RUN = new Status("NOT_RUN", 4); //$NON-NLS-1$
 
-		private static final Status[] OLD_CODE= { OK, ERROR, FAILURE};
+		private static final Status[] OLD_CODE = { OK, ERROR, FAILURE };
 
 		private final String fName;
 		private final int fOldCode;
 
 		private Status(String name, int oldCode) {
-			fName= name;
-			fOldCode= oldCode;
+			fName = name;
+			fOldCode = oldCode;
 		}
 
 		public int getOldCode() {
@@ -88,8 +89,8 @@ public interface ITestElement {
 		}
 
 		public static Status combineStatus(Status one, Status two) {
-			Status progress= combineProgress(one, two);
-			Status error= combineError(one, two);
+			Status progress = combineProgress(one, two);
+			Status error = combineError(one, two);
 			return combineProgressAndErrorStatus(progress, error);
 		}
 
@@ -174,18 +175,23 @@ public interface ITestElement {
 	 */
 	public static final class ProgressState {
 		/** state that describes that the test element has not started */
-		public static final ProgressState NOT_STARTED= new ProgressState("Not Started"); //$NON-NLS-1$
+		public static final ProgressState NOT_STARTED = new ProgressState("Not Started"); //$NON-NLS-1$
 		/** state that describes that the test element has is running */
-		public static final ProgressState RUNNING= new ProgressState("Running"); //$NON-NLS-1$
-		/** state that describes that the test element has been stopped before being completed */
-		public static final ProgressState STOPPED= new ProgressState("Stopped"); //$NON-NLS-1$
+		public static final ProgressState RUNNING = new ProgressState("Running"); //$NON-NLS-1$
+		/**
+		 * state that describes that the test element has been stopped before being
+		 * completed
+		 */
+		public static final ProgressState STOPPED = new ProgressState("Stopped"); //$NON-NLS-1$
 		/** state that describes that the test element has completed */
-		public static final ProgressState COMPLETED= new ProgressState("Completed"); //$NON-NLS-1$
+		public static final ProgressState COMPLETED = new ProgressState("Completed"); //$NON-NLS-1$
 
 		private String fName;
+
 		private ProgressState(String name) {
-			fName= name;
+			fName = name;
 		}
+
 		@Override
 		public String toString() {
 			return fName;
@@ -197,20 +203,22 @@ public interface ITestElement {
 	 */
 	public static final class Result {
 		/** state that describes that the test result is undefined */
-		public static final Result UNDEFINED= new Result("Undefined"); //$NON-NLS-1$
+		public static final Result UNDEFINED = new Result("Undefined"); //$NON-NLS-1$
 		/** state that describes that the test result is 'OK' */
-		public static final Result OK= new Result("OK"); //$NON-NLS-1$
+		public static final Result OK = new Result("OK"); //$NON-NLS-1$
 		/** state that describes that the test result is 'Error' */
-		public static final Result ERROR= new Result("Error"); //$NON-NLS-1$
+		public static final Result ERROR = new Result("Error"); //$NON-NLS-1$
 		/** state that describes that the test result is 'Failure' */
-		public static final Result FAILURE= new Result("Failure"); //$NON-NLS-1$
+		public static final Result FAILURE = new Result("Failure"); //$NON-NLS-1$
 		/** state that describes that the test result is 'Ignored' */
-		public static final Result IGNORED= new Result("Ignored"); //$NON-NLS-1$
+		public static final Result IGNORED = new Result("Ignored"); //$NON-NLS-1$
 
 		private String fName;
+
 		private Result(String name) {
-			fName= name;
+			fName = name;
 		}
+
 		@Override
 		public String toString() {
 			return fName;
@@ -228,9 +236,9 @@ public interface ITestElement {
 		private final String fTrace;
 
 		public FailureTrace(String trace, String expected, String actual) {
-			fActual= actual;
-			fExpected= expected;
-			fTrace= trace;
+			fActual = actual;
+			fExpected = expected;
+			fTrace = trace;
 		}
 
 		/**
@@ -243,129 +251,155 @@ public interface ITestElement {
 		}
 
 		/**
-		 * Returns the expected result or <code>null</code> if the trace is not a comparison failure.
+		 * Returns the expected result or <code>null</code> if the trace is not a
+		 * comparison failure.
 		 *
-		 * @return the expected result or <code>null</code> if the trace is not a comparison failure.
+		 * @return the expected result or <code>null</code> if the trace is not a
+		 *         comparison failure.
 		 */
 		public String getExpected() {
 			return fExpected;
 		}
 
 		/**
-		 * Returns the actual result or <code>null</code> if the trace is not a comparison failure.
+		 * Returns the actual result or <code>null</code> if the trace is not a
+		 * comparison failure.
 		 *
-		 * @return the actual result or <code>null</code> if the trace is not a comparison failure.
+		 * @return the actual result or <code>null</code> if the trace is not a
+		 *         comparison failure.
 		 */
 		public String getActual() {
 			return fActual;
 		}
 	}
 
-	public String getId();
+	String getId();
 
-	public String getUniqueId();
+	String getUniqueId();
 
 	/**
 	 * Returns the progress state of this test element.
 	 * <ul>
-	 * <li>{@link ITestElement.ProgressState#NOT_STARTED}: the test has not yet started</li>
-	 * <li>{@link ITestElement.ProgressState#RUNNING}: the test is currently running</li>
-	 * <li>{@link ITestElement.ProgressState#STOPPED}: the test has stopped before being completed</li>
-	 * <li>{@link ITestElement.ProgressState#COMPLETED}: the test (and all its children) has completed</li>
+	 * <li>{@link ITestElement.ProgressState#NOT_STARTED}: the test has not yet
+	 * started</li>
+	 * <li>{@link ITestElement.ProgressState#RUNNING}: the test is currently
+	 * running</li>
+	 * <li>{@link ITestElement.ProgressState#STOPPED}: the test has stopped before
+	 * being completed</li>
+	 * <li>{@link ITestElement.ProgressState#COMPLETED}: the test (and all its
+	 * children) has completed</li>
 	 * </ul>
-	 * @return returns one of {@link ITestElement.ProgressState#NOT_STARTED}, {@link ITestElement.ProgressState#RUNNING},
-	 * {@link ITestElement.ProgressState#STOPPED} or {@link ITestElement.ProgressState#COMPLETED}.
+	 *
+	 * @return returns one of {@link ITestElement.ProgressState#NOT_STARTED},
+	 *         {@link ITestElement.ProgressState#RUNNING},
+	 *         {@link ITestElement.ProgressState#STOPPED} or
+	 *         {@link ITestElement.ProgressState#COMPLETED}.
 	 */
-	public ProgressState getProgressState();
+	ProgressState getProgressState();
 
 	/**
 	 * Returns the result of the test element.
 	 * <ul>
-	 * <li>{@link ITestElement.Result#UNDEFINED}: the result is not yet evaluated</li>
+	 * <li>{@link ITestElement.Result#UNDEFINED}: the result is not yet
+	 * evaluated</li>
 	 * <li>{@link ITestElement.Result#OK}: the test has succeeded</li>
 	 * <li>{@link ITestElement.Result#ERROR}: the test has returned an error</li>
-	 * <li>{@link ITestElement.Result#FAILURE}: the test has returned an failure</li>
-	 * <li>{@link ITestElement.Result#IGNORED}: the test has been ignored (skipped)</li>
+	 * <li>{@link ITestElement.Result#FAILURE}: the test has returned an
+	 * failure</li>
+	 * <li>{@link ITestElement.Result#IGNORED}: the test has been ignored
+	 * (skipped)</li>
 	 * </ul>
-	 * @param includeChildren if <code>true</code>, the returned result is the combined
-	 * result of the test and its children (if it has any). If <code>false</code>,
-	 * only the test's result is returned.
 	 *
-	 * @return returns one of {@link ITestElement.Result#UNDEFINED}, {@link ITestElement.Result#OK}, {@link ITestElement.Result#ERROR},
-	 * {@link ITestElement.Result#FAILURE} or {@link ITestElement.Result#IGNORED}. Clients should also prepare for other, new values.
+	 * @param includeChildren if <code>true</code>, the returned result is the
+	 *                        combined result of the test and its children (if it
+	 *                        has any). If <code>false</code>, only the test's
+	 *                        result is returned.
+	 *
+	 * @return returns one of {@link ITestElement.Result#UNDEFINED},
+	 *         {@link ITestElement.Result#OK}, {@link ITestElement.Result#ERROR},
+	 *         {@link ITestElement.Result#FAILURE} or
+	 *         {@link ITestElement.Result#IGNORED}. Clients should also prepare for
+	 *         other, new values.
 	 */
-	public Result getTestResult(boolean includeChildren);
+	Result getTestResult(boolean includeChildren);
 
 	/**
-	 * Returns the failure trace of this test element or <code>null</code> if the test has not resulted in an error or failure.
+	 * Returns the failure trace of this test element or <code>null</code> if the
+	 * test has not resulted in an error or failure.
 	 *
 	 * @return the failure trace of this test or <code>null</code>.
 	 */
-	public FailureTrace getFailureTrace();
+	FailureTrace getFailureTrace();
 
 	/**
-	 * Returns the parent test element container or <code>null</code> if the test element is the test run session.
+	 * Returns the parent test element container or <code>null</code> if the test
+	 * element is the test run session.
 	 *
 	 * @return the parent test suite
 	 */
-	public ITestElementContainer getParentContainer();
+	ITestElementContainer getParentContainer();
 
 	/**
 	 * Returns the test run session.
 	 *
 	 * @return the parent test run session.
 	 */
-	public ITestRunSession getTestRunSession();
+	ITestRunSession getTestRunSession();
 
 	/**
-	 * Returns the estimated total time elapsed in seconds while executing this test element. The
-	 * total time for a test suite includes the time used for all tests in that suite. The total
-	 * time for a test session includes the time used for all tests in that session.
+	 * Returns the estimated total time elapsed in seconds while executing this test
+	 * element. The total time for a test suite includes the time used for all tests
+	 * in that suite. The total time for a test session includes the time used for
+	 * all tests in that session.
 	 * <p>
 	 * <strong>Note:</strong> The elapsed time is only valid for
 	 * {@link ITestElement.ProgressState#COMPLETED} test elements.
 	 * </p>
 	 *
-	 * @return total execution time for the test element in seconds, or {@link Double#NaN} if
-	 *         the state of the element is not {@link ITestElement.ProgressState#COMPLETED}
+	 * @return total execution time for the test element in seconds, or
+	 *         {@link Double#NaN} if the state of the element is not
+	 *         {@link ITestElement.ProgressState#COMPLETED}
 	 *
 	 * @since 3.4
 	 */
-	public double getElapsedTimeInSeconds();
+	double getElapsedTimeInSeconds();
 
-	public ITestSuiteElement getParent();
+	ITestSuiteElement getParent();
 
-	public ITestRoot getRoot();
+	ITestRoot getRoot();
 
-	public String[] getParameterTypes();
+	String[] getParameterTypes();
 
-	public String getTestName();
+	String getTestName();
 
 	/**
-	 * Returns the display name of the test. Can be <code>null</code>. In that case, use
-	 * {@link ITestElement#getTestName() getTestName()}.
+	 * Returns the display name of the test. Can be <code>null</code>. In that case,
+	 * use {@link ITestElement#getTestName() getTestName()}.
 	 *
 	 * @return the test display name, can be <code>null</code>
 	 */
-	public String getDisplayName();
+	String getDisplayName();
 
-	public Status getStatus();
+	Status getStatus();
 
-	public void setStatus(Status status);
+	void setStatus(Status status);
 
-	public void setStatus(Status status, String trace, String expected, String actual);
+	void setStatus(Status status, String trace, String expected, String actual);
 
-	public String getTrace();
+	String getTrace();
 
-	public String getExpected();
+	String getExpected();
 
-	public String getActual();
+	String getActual();
 
-	public boolean isComparisonFailure();
+	boolean isComparisonFailure();
 
-	public void setAssumptionFailed(boolean assumptionFailed);
+	void setAssumptionFailed(boolean assumptionFailed);
 
-	public boolean isAssumptionFailure();
+	boolean isAssumptionFailure();
 
-	public void setElapsedTimeInSeconds(double time);
+	void setElapsedTimeInSeconds(double time);
+
+	String extractRawClassName(String testNameString);
+
 }
