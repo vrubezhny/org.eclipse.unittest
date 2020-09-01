@@ -69,7 +69,6 @@ import org.eclipse.ui.part.PageBook;
 
 import org.eclipse.debug.core.ILaunchManager;
 
-
 public class TestViewer {
 	private final class TestSelectionListener implements ISelectionChangedListener {
 		@Override
@@ -92,11 +91,11 @@ public class TestViewer {
 		}
 
 		public boolean select(ITestElement testElement) {
-			Status status= testElement.getStatus();
+			Status status = testElement.getStatus();
 			if (status.isErrorOrFailure())
 				return true;
 			else
-				return ! fTestRunSession.isRunning() && status == Status.RUNNING;  // rerunning
+				return !fTestRunSession.isRunning() && status == Status.RUNNING; // rerunning
 		}
 	}
 
@@ -114,8 +113,8 @@ public class TestViewer {
 		}
 
 		/**
-		 * Checks whether a test was skipped i.e. it was ignored (<code>@Ignored</code>) or had any
-		 * assumption failure.
+		 * Checks whether a test was skipped i.e. it was ignored (<code>@Ignored</code>)
+		 * or had any assumption failure.
 		 *
 		 * @param testElement the test element (a test suite or a single test case)
 		 *
@@ -124,9 +123,9 @@ public class TestViewer {
 		 */
 		private boolean hasIgnoredInTestResult(ITestElement testElement) {
 			if (testElement instanceof ITestSuiteElement) {
-				ITestElement[] children= ((ITestSuiteElement) testElement).getChildren();
+				ITestElement[] children = ((ITestSuiteElement) testElement).getChildren();
 				for (ITestElement child : children) {
-					boolean hasIgnoredTestResult= hasIgnoredInTestResult(child);
+					boolean hasIgnoredTestResult = hasIgnoredInTestResult(child);
 					if (hasIgnoredTestResult) {
 						return true;
 					}
@@ -138,16 +137,18 @@ public class TestViewer {
 		}
 	}
 
-
 	private static class ReverseList<E> extends AbstractList<E> {
 		private final List<E> fList;
+
 		public ReverseList(List<E> list) {
-			fList= list;
+			fList = list;
 		}
+
 		@Override
 		public E get(int index) {
 			return fList.get(fList.size() - index - 1);
 		}
+
 		@Override
 		public int size() {
 			return fList.size();
@@ -161,7 +162,7 @@ public class TestViewer {
 		}
 
 		@Override
-		public void run(){
+		public void run() {
 			fTreeViewer.expandAll();
 		}
 	}
@@ -173,13 +174,13 @@ public class TestViewer {
 		}
 
 		@Override
-		public void run(){
+		public void run() {
 			fTreeViewer.collapseAll();
 		}
 	}
 
-	private final FailuresOnlyFilter fFailuresOnlyFilter= new FailuresOnlyFilter();
-	private final IgnoredOnlyFilter fIgnoredOnlyFilter= new IgnoredOnlyFilter();
+	private final FailuresOnlyFilter fFailuresOnlyFilter = new FailuresOnlyFilter();
+	private final IgnoredOnlyFilter fIgnoredOnlyFilter = new IgnoredOnlyFilter();
 
 	private final TestRunnerViewPart fTestRunnerPart;
 	private final Clipboard fClipboard;
@@ -207,12 +208,11 @@ public class TestViewer {
 	private LinkedList<ITestSuiteElement> fAutoClose;
 	private HashSet<ITestSuiteElement> fAutoExpand;
 
-
 	public TestViewer(Composite parent, Clipboard clipboard, TestRunnerViewPart runner) {
-		fTestRunnerPart= runner;
-		fClipboard= clipboard;
+		fTestRunnerPart = runner;
+		fClipboard = clipboard;
 
-		fLayoutMode= TestRunnerViewPart.LAYOUT_HIERARCHICAL;
+		fLayoutMode = TestRunnerViewPart.LAYOUT_HIERARCHICAL;
 
 		createTestViewers(parent);
 
@@ -222,27 +222,28 @@ public class TestViewer {
 	}
 
 	private void createTestViewers(Composite parent) {
-		fViewerbook= new PageBook(parent, SWT.NULL);
+		fViewerbook = new PageBook(parent, SWT.NULL);
 
-		fTreeViewer= new TreeViewer(fViewerbook, SWT.V_SCROLL | SWT.SINGLE);
+		fTreeViewer = new TreeViewer(fViewerbook, SWT.V_SCROLL | SWT.SINGLE);
 		fTreeViewer.setUseHashlookup(true);
-		fTreeContentProvider= new TestSessionTreeContentProvider();
+		fTreeContentProvider = new TestSessionTreeContentProvider();
 		fTreeViewer.setContentProvider(fTreeContentProvider);
-		fTreeLabelProvider= new TestSessionLabelProvider(fTestRunnerPart, TestRunnerViewPart.LAYOUT_HIERARCHICAL);
+		fTreeLabelProvider = new TestSessionLabelProvider(fTestRunnerPart, TestRunnerViewPart.LAYOUT_HIERARCHICAL);
 //		fTreeViewer.setLabelProvider(new ColoringLabelProvider(fTreeLabelProvider));
 		fTreeViewer.setLabelProvider(fTreeLabelProvider);
 
-		fTableViewer= new TableViewer(fViewerbook, SWT.V_SCROLL | SWT.H_SCROLL | SWT.SINGLE);
+		fTableViewer = new TableViewer(fViewerbook, SWT.V_SCROLL | SWT.H_SCROLL | SWT.SINGLE);
 		fTableViewer.setUseHashlookup(true);
-		fTableContentProvider= new TestSessionTableContentProvider();
+		fTableContentProvider = new TestSessionTableContentProvider();
 		fTableViewer.setContentProvider(fTableContentProvider);
-		fTableLabelProvider= new TestSessionLabelProvider(fTestRunnerPart, TestRunnerViewPart.LAYOUT_FLAT);
+		fTableLabelProvider = new TestSessionLabelProvider(fTestRunnerPart, TestRunnerViewPart.LAYOUT_FLAT);
 //		fTableViewer.setLabelProvider(new ColoringLabelProvider(fTableLabelProvider));
 		fTableViewer.setLabelProvider(fTableLabelProvider);
 
-		fSelectionProvider= new SelectionProviderMediator(new StructuredViewer[] { fTreeViewer, fTableViewer }, fTreeViewer);
+		fSelectionProvider = new SelectionProviderMediator(new StructuredViewer[] { fTreeViewer, fTableViewer },
+				fTreeViewer);
 		fSelectionProvider.addSelectionChangedListener(new TestSelectionListener());
-		TestOpenListener testOpenListener= new TestOpenListener();
+		TestOpenListener testOpenListener = new TestOpenListener();
 		fTreeViewer.getTree().addSelectionListener(testOpenListener);
 		fTableViewer.getTable().addSelectionListener(testOpenListener);
 
@@ -252,25 +253,25 @@ public class TestViewer {
 	}
 
 	private void initContextMenu() {
-		MenuManager menuMgr= new MenuManager("#PopupMenu"); //$NON-NLS-1$
+		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(manager -> handleMenuAboutToShow(manager));
+		menuMgr.addMenuListener(this::handleMenuAboutToShow);
 		fTestRunnerPart.getSite().registerContextMenu(menuMgr, fSelectionProvider);
-		Menu menu= menuMgr.createContextMenu(fViewerbook);
+		Menu menu = menuMgr.createContextMenu(fViewerbook);
 		fTreeViewer.getTree().setMenu(menu);
 		fTableViewer.getTable().setMenu(menu);
 	}
 
-
 	void handleMenuAboutToShow(IMenuManager manager) {
-		IStructuredSelection selection= (IStructuredSelection) fSelectionProvider.getSelection();
-		if (! selection.isEmpty()) {
-			ITestElement testElement= (ITestElement) selection.getFirstElement();
+		IStructuredSelection selection = (IStructuredSelection) fSelectionProvider.getSelection();
+		if (!selection.isEmpty()) {
+			ITestElement testElement = (ITestElement) selection.getFirstElement();
 
 			if (testElement instanceof ITestSuiteElement) {
-				ITestSuiteElement testSuiteElement= (ITestSuiteElement) testElement;
+				ITestSuiteElement testSuiteElement = (ITestSuiteElement) testElement;
 				ITestKind testKind = testElement.getTestRunSession().getTestRunnerKind();
-				IAction openTestAction = testKind.getTestViewSupport().getOpenTestAction(fTestRunnerPart, testSuiteElement);
+				IAction openTestAction = testKind.getTestViewSupport().getOpenTestAction(fTestRunnerPart,
+						testSuiteElement);
 				if (openTestAction != null) {
 					manager.add(openTestAction);
 				}
@@ -279,9 +280,10 @@ public class TestViewer {
 					addRerunActions(manager, testSuiteElement);
 				}
 			} else {
-				ITestCaseElement testCaseElement= (ITestCaseElement) testElement;
+				ITestCaseElement testCaseElement = (ITestCaseElement) testElement;
 				ITestKind testKind = testElement.getTestRunSession().getTestRunnerKind();
-				IAction openTestAction = testKind.getTestViewSupport().getOpenTestAction(fTestRunnerPart, testCaseElement);
+				IAction openTestAction = testKind.getTestViewSupport().getOpenTestAction(fTestRunnerPart,
+						testCaseElement);
 				if (openTestAction != null) {
 					manager.add(openTestAction);
 				}
@@ -305,129 +307,62 @@ public class TestViewer {
 	}
 
 	private void addRerunActions(IMenuManager manager, ITestCaseElement testCaseElement) {
-		String className= testCaseElement.getTestClassName();
-		String testMethodName= testCaseElement.getTestMethodName();
-		String[] parameterTypes= testCaseElement.getParameterTypes();
+		String className = testCaseElement.getTestClassName();
+		String testMethodName = testCaseElement.getTestMethodName();
+		String[] parameterTypes = testCaseElement.getParameterTypes();
 		if (parameterTypes != null) {
-			String paramTypesStr= Arrays.stream(parameterTypes).collect(Collectors.joining(",")); //$NON-NLS-1$
-			testMethodName= testMethodName + "(" + paramTypesStr + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+			String paramTypesStr = Arrays.stream(parameterTypes).collect(Collectors.joining(",")); //$NON-NLS-1$
+			testMethodName = testMethodName + "(" + paramTypesStr + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (fTestRunnerPart.lastLaunchIsKeptAlive()) {
-			manager.add(new RerunAction(Messages.RerunAction_label_rerun, fTestRunnerPart, testCaseElement.getId(), className, testMethodName, testCaseElement.getDisplayName(), testCaseElement.getUniqueId(), ILaunchManager.RUN_MODE));
+			manager.add(new RerunAction(Messages.RerunAction_label_rerun, fTestRunnerPart, testCaseElement.getId(),
+					className, testMethodName, testCaseElement.getDisplayName(), testCaseElement.getUniqueId(),
+					ILaunchManager.RUN_MODE));
 		} else {
-			manager.add(new RerunAction(Messages.RerunAction_label_run, fTestRunnerPart, testCaseElement.getId(), className, testMethodName, testCaseElement.getDisplayName(), testCaseElement.getUniqueId(), ILaunchManager.RUN_MODE));
-			manager.add(new RerunAction(Messages.RerunAction_label_debug, fTestRunnerPart, testCaseElement.getId(), className, testMethodName, testCaseElement.getDisplayName(), testCaseElement.getUniqueId(), ILaunchManager.DEBUG_MODE));
+			manager.add(new RerunAction(Messages.RerunAction_label_run, fTestRunnerPart, testCaseElement.getId(),
+					className, testMethodName, testCaseElement.getDisplayName(), testCaseElement.getUniqueId(),
+					ILaunchManager.RUN_MODE));
+			manager.add(new RerunAction(Messages.RerunAction_label_debug, fTestRunnerPart, testCaseElement.getId(),
+					className, testMethodName, testCaseElement.getDisplayName(), testCaseElement.getUniqueId(),
+					ILaunchManager.DEBUG_MODE));
 		}
 	}
 
 	private void addRerunActions(IMenuManager manager, ITestSuiteElement testSuiteElement) {
-		String qualifiedName= null;
-		String testMethodName= null; // test method name is null when re-running a regular test class
-
-		String testName= testSuiteElement.getTestName();
-/*
-		IType testType= findTestClass(testSuiteElement, true);
-		if (testType != null) {
-			qualifiedName= testType.getFullyQualifiedName();
-
-			if (!qualifiedName.equals(testName)) {
-				int index= testName.indexOf('(');
-				if (index > 0) { // test factory method
-					testMethodName= testName.substring(0, index);
-				}
-			}
-			String[] parameterTypes= testSuiteElement.getParameterTypes();
-			if (testMethodName != null && parameterTypes != null) {
-				String paramTypesStr= Arrays.stream(parameterTypes).collect(Collectors.joining(",")); //$NON-NLS-1$
-				testMethodName= testMethodName + "(" + paramTypesStr + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-			}
-		} else {
-			// see bug 443498
-			testType= findTestClass(testSuiteElement.getParent(), false);
-			if (testType != null) {
-				qualifiedName= testType.getFullyQualifiedName();
-
-				String className= testSuiteElement.getSuiteTypeName();
-				if (!qualifiedName.equals(className)) {
-					testMethodName= testName;
+		ITestKind testKind = testSuiteElement.getTestRunSession().getTestRunnerKind();
+		RerunAction[] rerunActions = testKind.getTestViewSupport().getRerunActions(fTestRunnerPart, testSuiteElement);
+		if (rerunActions != null) {
+			for (RerunAction action : rerunActions) {
+				if (action != null) {
+					manager.add(action);
 				}
 			}
 		}
-		if (qualifiedName != null) {
-			manager.add(new RerunAction(Messages.RerunAction_label_run, fTestRunnerPart, testSuiteElement.getId(), qualifiedName, testMethodName, testSuiteElement.getDisplayName(), testSuiteElement.getUniqueId(), ILaunchManager.RUN_MODE));
-			manager.add(new RerunAction(Messages.RerunAction_label_debug, fTestRunnerPart, testSuiteElement.getId(), qualifiedName, testMethodName, testSuiteElement.getDisplayName(), testSuiteElement.getUniqueId(), ILaunchManager.DEBUG_MODE));
-		}
-*/
 	}
 
-	/*
-	 * Returns the element's test class or the next container's test class, which exists, and for which ITestFinder.isTest() is true.
-	 */
-	/*
-	private IType findTestClass(ITestElement element, boolean checkOnlyCurrentElement) {
-		ITestFinder finder= ((TestRunSession)element.getTestRunSession()).getTestRunnerKind().getFinder();
-		if (ITestFinder.NULL.equals(finder)) {
-			return null;
-		}
-		IProject project= fTestRunnerPart.getLaunchedProject();
-		if (project == null)
-			return null;
-		ITestElement current= element;
-		while (current != null) {
-			try {
-				String className= null;
-				if (current instanceof TestRoot) {
-					ILaunch launch= ((TestRunSession) element.getTestRunSession()).getLaunch();
-					if (launch != null) {
-						ILaunchConfiguration configuration= launch.getLaunchConfiguration();
-						if (configuration != null) {
-							className= configuration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String) null);
-						}
-					}
-				} else if (current instanceof TestElement) {
-					className= ((TestElement)current).getClassName();
-				}
-				if (className != null) {
-					IType type= project.findType(className);
-					if (type != null && finder.isTest(type)) {
-						return type;
-					} else if (checkOnlyCurrentElement) {
-						return null;
-					}
-				}
-			} catch (JavaModelException e) {
-				// fall through
-			} catch (CoreException e) {
-				// fall through
-			}
-			current= current instanceof TestElement ? ((TestElement)current).getParent() : null;
-		}
-		return null;
-	}
-*/
 	public Control getTestViewerControl() {
 		return fViewerbook;
 	}
 
 	public synchronized void registerActiveSession(ITestRunSession testRunSession) {
-		fTestRunSession= testRunSession;
+		fTestRunSession = testRunSession;
 		registerAutoScrollTarget(null);
 		registerViewersRefresh();
 	}
 
 	void handleDefaultSelected() {
-		IStructuredSelection selection= (IStructuredSelection) fSelectionProvider.getSelection();
+		IStructuredSelection selection = (IStructuredSelection) fSelectionProvider.getSelection();
 		if (selection.size() != 1)
 			return;
 
-		ITestElement testElement= (ITestElement) selection.getFirstElement();
+		ITestElement testElement = (ITestElement) selection.getFirstElement();
 		IOpenEditorAction action;
 		if (testElement instanceof ITestSuiteElement) {
 			ITestKind testKind = testElement.getTestRunSession().getTestRunnerKind();
-			action= testKind.getTestViewSupport().getOpenTestAction(fTestRunnerPart, (ITestSuiteElement) testElement);
+			action = testKind.getTestViewSupport().getOpenTestAction(fTestRunnerPart, (ITestSuiteElement) testElement);
 		} else if (testElement instanceof ITestCaseElement) {
 			ITestKind testKind = testElement.getTestRunSession().getTestRunnerKind();
-			action= testKind.getTestViewSupport().getOpenTestAction(fTestRunnerPart, (ITestCaseElement) testElement);
+			action = testKind.getTestViewSupport().getOpenTestAction(fTestRunnerPart, (ITestCaseElement) testElement);
 		} else {
 			throw new IllegalStateException(String.valueOf(testElement));
 		}
@@ -438,10 +373,10 @@ public class TestViewer {
 	}
 
 	private void handleSelected() {
-		IStructuredSelection selection= (IStructuredSelection) fSelectionProvider.getSelection();
-		ITestElement testElement= null;
+		IStructuredSelection selection = (IStructuredSelection) fSelectionProvider.getSelection();
+		ITestElement testElement = null;
 		if (selection.size() == 1) {
-			testElement= (ITestElement) selection.getFirstElement();
+			testElement = (ITestElement) selection.getFirstElement();
 		}
 		fTestRunnerPart.handleTestSelected(testElement);
 	}
@@ -460,25 +395,24 @@ public class TestViewer {
 	 * It makes sense to display either failed or ignored tests, not both together.
 	 *
 	 * @param failuresOnly whether to show only failed tests
-	 * @param ignoredOnly whether to show only skipped tests
-	 * @param layoutMode the layout mode
+	 * @param ignoredOnly  whether to show only skipped tests
+	 * @param layoutMode   the layout mode
 	 */
 	public synchronized void setShowFailuresOrIgnoredOnly(boolean failuresOnly, boolean ignoredOnly, int layoutMode) {
 		/*
 		 * Management of fTreeViewer and fTableViewer
-		 * ******************************************
-		 * - invisible viewer is updated on registerViewerUpdate unless its f*NeedsRefresh is true
-		 * - invisible viewer is not refreshed upfront
-		 * - on layout change, new viewer is refreshed if necessary
-		 * - filter only applies to "current" layout mode / viewer
+		 * ****************************************** - invisible viewer is updated on
+		 * registerViewerUpdate unless its f*NeedsRefresh is true - invisible viewer is
+		 * not refreshed upfront - on layout change, new viewer is refreshed if
+		 * necessary - filter only applies to "current" layout mode / viewer
 		 */
 		try {
 			fViewerbook.setRedraw(false);
 
-			IStructuredSelection selection= null;
-			boolean switchLayout= layoutMode != fLayoutMode;
+			IStructuredSelection selection = null;
+			boolean switchLayout = layoutMode != fLayoutMode;
 			if (switchLayout) {
-				selection= (IStructuredSelection) fSelectionProvider.getSelection();
+				selection = (IStructuredSelection) fSelectionProvider.getSelection();
 				if (layoutMode == TestRunnerViewPart.LAYOUT_HIERARCHICAL) {
 					if (fTreeNeedsRefresh) {
 						clearUpdateAndExpansion();
@@ -488,23 +422,23 @@ public class TestViewer {
 						clearUpdateAndExpansion();
 					}
 				}
-				fLayoutMode= layoutMode;
+				fLayoutMode = layoutMode;
 				fViewerbook.showPage(getActiveViewer().getControl());
 			}
-			//avoid realizing all TableItems, especially in flat mode!
-			StructuredViewer viewer= getActiveViewer();
+			// avoid realizing all TableItems, especially in flat mode!
+			StructuredViewer viewer = getActiveViewer();
 			if (failuresOnly || ignoredOnly) {
 				if (getActiveViewerHasFilter()) {
-					//For simplicity clear both filters (only one of them is used)
+					// For simplicity clear both filters (only one of them is used)
 					viewer.removeFilter(fFailuresOnlyFilter);
 					viewer.removeFilter(fIgnoredOnlyFilter);
 				}
 				setActiveViewerHasFilter(true);
 				viewer.setInput(null);
-				//Set either the failures or the skipped tests filter
-				ViewerFilter filter= fFailuresOnlyFilter;
+				// Set either the failures or the skipped tests filter
+				ViewerFilter filter = fFailuresOnlyFilter;
 				if (ignoredOnly == true) {
-					filter= fIgnoredOnlyFilter;
+					filter = fIgnoredOnlyFilter;
 				}
 				viewer.addFilter(filter);
 				setActiveViewerNeedsRefresh(true);
@@ -523,7 +457,7 @@ public class TestViewer {
 			if (selection != null) {
 				// workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=125708
 				// (ITreeSelection not adapted if TreePaths changed):
-				StructuredSelection flatSelection= new StructuredSelection(selection.toList());
+				StructuredSelection flatSelection = new StructuredSelection(selection.toList());
 				fSelectionProvider.setSelection(flatSelection, true);
 			}
 
@@ -541,9 +475,9 @@ public class TestViewer {
 
 	private void setActiveViewerHasFilter(boolean filter) {
 		if (fLayoutMode == TestRunnerViewPart.LAYOUT_HIERARCHICAL)
-			fTreeHasFilter= filter;
+			fTreeHasFilter = filter;
 		else
-			fTableHasFilter= filter;
+			fTableHasFilter = filter;
 	}
 
 	private StructuredViewer getActiveViewer() {
@@ -562,9 +496,9 @@ public class TestViewer {
 
 	private void setActiveViewerNeedsRefresh(boolean needsRefresh) {
 		if (fLayoutMode == TestRunnerViewPart.LAYOUT_HIERARCHICAL)
-			fTreeNeedsRefresh= needsRefresh;
+			fTreeNeedsRefresh = needsRefresh;
 		else
-			fTableNeedsRefresh= needsRefresh;
+			fTableNeedsRefresh = needsRefresh;
 	}
 
 	/**
@@ -573,16 +507,16 @@ public class TestViewer {
 	public void processChangesInUI() {
 		if (fTestRunSession == null) {
 			registerViewersRefresh();
-			fTreeNeedsRefresh= false;
-			fTableNeedsRefresh= false;
+			fTreeNeedsRefresh = false;
+			fTableNeedsRefresh = false;
 			fTreeViewer.setInput(null);
 			fTableViewer.setInput(null);
 			return;
 		}
 
-		ITestSuiteElement testRoot= fTestRunSession.getTestRoot();
+		ITestSuiteElement testRoot = fTestRunSession.getTestRoot();
 
-		StructuredViewer viewer= getActiveViewer();
+		StructuredViewer viewer = getActiveViewer();
 		if (getActiveViewerNeedsRefresh()) {
 			clearUpdateAndExpansion();
 			setActiveViewerNeedsRefresh(false);
@@ -591,27 +525,27 @@ public class TestViewer {
 		} else {
 			Object[] toUpdate;
 			synchronized (this) {
-				toUpdate= fNeedUpdate.toArray();
+				toUpdate = fNeedUpdate.toArray();
 				fNeedUpdate.clear();
 			}
-			if (! fTreeNeedsRefresh && toUpdate.length > 0) {
+			if (!fTreeNeedsRefresh && toUpdate.length > 0) {
 				if (fTreeHasFilter)
 					for (Object element : toUpdate)
 						updateElementInTree((ITestElement) element);
 				else {
-					HashSet<Object> toUpdateWithParents= new HashSet<>();
+					HashSet<Object> toUpdateWithParents = new HashSet<>();
 					toUpdateWithParents.addAll(Arrays.asList(toUpdate));
 					for (Object element : toUpdate) {
-						ITestElement parent= ((ITestElement) element).getParent();
+						ITestElement parent = ((ITestElement) element).getParent();
 						while (parent != null) {
 							toUpdateWithParents.add(parent);
-							parent= parent.getParent();
+							parent = parent.getParent();
 						}
 					}
 					fTreeViewer.update(toUpdateWithParents.toArray(), null);
 				}
 			}
-			if (! fTableNeedsRefresh && toUpdate.length > 0) {
+			if (!fTableNeedsRefresh && toUpdate.length > 0) {
 				if (fTableHasFilter)
 					for (Object element : toUpdate)
 						updateElementInTable((ITestElement) element);
@@ -626,16 +560,16 @@ public class TestViewer {
 		if (isShown(testElement)) {
 			updateShownElementInTree(testElement);
 		} else {
-			ITestElement current= testElement;
+			ITestElement current = testElement;
 			do {
 				if (fTreeViewer.testFindItem(current) != null)
 					fTreeViewer.remove(current);
-				current= current.getParent();
-			} while (! (current instanceof ITestRoot) && ! isShown(current));
+				current = current.getParent();
+			} while (!(current instanceof ITestRoot) && !isShown(current));
 
-			while (current != null && ! (current instanceof ITestRoot)) {
+			while (current != null && !(current instanceof ITestRoot)) {
 				fTreeViewer.update(current, null);
-				current= current.getParent();
+				current = current.getParent();
 			}
 		}
 	}
@@ -644,7 +578,7 @@ public class TestViewer {
 		if (testElement == null || testElement instanceof ITestRoot) // paranoia null check
 			return;
 
-		ITestSuiteElement parent= testElement.getParent();
+		ITestSuiteElement parent = testElement.getParent();
 		updateShownElementInTree(parent); // make sure parent is shown and up-to-date
 
 		if (fTreeViewer.testFindItem(testElement) == null) {
@@ -657,15 +591,15 @@ public class TestViewer {
 	private void updateElementInTable(ITestElement element) {
 		if (isShown(element)) {
 			if (fTableViewer.testFindItem(element) == null) {
-				ITestElement previous= getNextFailure(element, false);
-				int insertionIndex= -1;
+				ITestElement previous = getNextFailure(element, false);
+				int insertionIndex = -1;
 				if (previous != null) {
-					TableItem item= (TableItem) fTableViewer.testFindItem(previous);
+					TableItem item = (TableItem) fTableViewer.testFindItem(previous);
 					if (item != null)
-						insertionIndex= fTableViewer.getTable().indexOf(item);
+						insertionIndex = fTableViewer.getTable().indexOf(item);
 				}
 				fTableViewer.insert(element, insertionIndex);
-			} else  {
+			} else {
 				fTableViewer.update(element, null);
 			}
 		} else {
@@ -678,7 +612,7 @@ public class TestViewer {
 	}
 
 	private void autoScrollInUI() {
-		if (! fTestRunnerPart.isAutoScroll()) {
+		if (!fTestRunnerPart.isAutoScroll()) {
 			clearAutoExpand();
 			fAutoClose.clear();
 			return;
@@ -697,14 +631,15 @@ public class TestViewer {
 			clearAutoExpand();
 		}
 
-		ITestCaseElement current= fAutoScrollTarget;
-		fAutoScrollTarget= null;
+		ITestCaseElement current = fAutoScrollTarget;
+		fAutoScrollTarget = null;
 
-		ITestSuiteElement parent= current == null ? null : (ITestSuiteElement) fTreeContentProvider.getParent(current);
-		if (fAutoClose.isEmpty() || ! fAutoClose.getLast().equals(parent)) {
+		ITestSuiteElement parent = current == null ? null : (ITestSuiteElement) fTreeContentProvider.getParent(current);
+		if (fAutoClose.isEmpty() || !fAutoClose.getLast().equals(parent)) {
 			// we're in a new branch, so let's close old OK branches:
-			for (ListIterator<ITestSuiteElement> iter= fAutoClose.listIterator(fAutoClose.size()); iter.hasPrevious();) {
-				ITestSuiteElement previousAutoOpened= iter.previous();
+			for (ListIterator<ITestSuiteElement> iter = fAutoClose.listIterator(fAutoClose.size()); iter
+					.hasPrevious();) {
+				ITestSuiteElement previousAutoOpened = iter.previous();
 				if (previousAutoOpened.equals(parent))
 					break;
 
@@ -715,9 +650,10 @@ public class TestViewer {
 				}
 			}
 
-			while (parent != null && ! fTestRunSession.getTestRoot().equals(parent) && fTreeViewer.getExpandedState(parent) == false) {
+			while (parent != null && !fTestRunSession.getTestRoot().equals(parent)
+					&& fTreeViewer.getExpandedState(parent) == false) {
 				fAutoClose.add(parent); // add to auto-opened elements -> close later if STATUS_OK
-				parent= (ITestSuiteElement) fTreeContentProvider.getParent(parent);
+				parent = (ITestSuiteElement) fTreeContentProvider.getParent(parent);
 			}
 		}
 		if (current != null)
@@ -725,20 +661,20 @@ public class TestViewer {
 	}
 
 	public void selectFirstFailure() {
-		ITestElement firstFailure= getNextChildFailure(fTestRunSession.getTestRoot(), true);
+		ITestElement firstFailure = getNextChildFailure(fTestRunSession.getTestRoot(), true);
 		if (firstFailure != null)
 			getActiveViewer().setSelection(new StructuredSelection(firstFailure), true);
 	}
 
 	public void selectFailure(boolean showNext) {
-		IStructuredSelection selection= (IStructuredSelection) getActiveViewer().getSelection();
-		ITestElement selected= (ITestElement) selection.getFirstElement();
+		IStructuredSelection selection = (IStructuredSelection) getActiveViewer().getSelection();
+		ITestElement selected = (ITestElement) selection.getFirstElement();
 		ITestElement next;
 
 		if (selected == null) {
-			next= getNextChildFailure(fTestRunSession.getTestRoot(), showNext);
+			next = getNextChildFailure(fTestRunSession.getTestRoot(), showNext);
 		} else {
-			next= getNextFailure(selected, showNext);
+			next = getNextFailure(selected, showNext);
 		}
 
 		if (next != null)
@@ -747,7 +683,7 @@ public class TestViewer {
 
 	private ITestElement getNextFailure(ITestElement selected, boolean showNext) {
 		if (selected instanceof ITestSuiteElement) {
-			ITestElement nextChild= getNextChildFailure((ITestSuiteElement) selected, showNext);
+			ITestElement nextChild = getNextChildFailure((ITestSuiteElement) selected, showNext);
 			if (nextChild != null)
 				return nextChild;
 		}
@@ -755,22 +691,22 @@ public class TestViewer {
 	}
 
 	private ITestElement getNextFailureSibling(ITestElement current, boolean showNext) {
-		ITestSuiteElement parent= current.getParent();
+		ITestSuiteElement parent = current.getParent();
 		if (parent == null)
 			return null;
 
-		List<ITestElement> siblings= Arrays.asList(parent.getChildren());
-		if (! showNext)
-			siblings= new ReverseList<>(siblings);
+		List<ITestElement> siblings = Arrays.asList(parent.getChildren());
+		if (!showNext)
+			siblings = new ReverseList<>(siblings);
 
-		int nextIndex= siblings.indexOf(current) + 1;
-		for (int i= nextIndex; i < siblings.size(); i++) {
-			ITestElement sibling= siblings.get(i);
+		int nextIndex = siblings.indexOf(current) + 1;
+		for (int i = nextIndex; i < siblings.size(); i++) {
+			ITestElement sibling = siblings.get(i);
 			if (sibling.getStatus().isErrorOrFailure()) {
 				if (sibling instanceof ITestCaseElement) {
 					return sibling;
 				} else {
-					ITestSuiteElement testSuiteElement= (ITestSuiteElement) sibling;
+					ITestSuiteElement testSuiteElement = (ITestSuiteElement) sibling;
 					if (testSuiteElement.getChildren().length == 0) {
 						return testSuiteElement;
 					}
@@ -782,16 +718,16 @@ public class TestViewer {
 	}
 
 	private ITestElement getNextChildFailure(ITestSuiteElement root, boolean showNext) {
-		List<ITestElement> children= Arrays.asList(root.getChildren());
-		if (! showNext)
-			children= new ReverseList<>(children);
+		List<ITestElement> children = Arrays.asList(root.getChildren());
+		if (!showNext)
+			children = new ReverseList<>(children);
 		for (ITestElement element : children) {
-			ITestElement child= element;
+			ITestElement child = element;
 			if (child.getStatus().isErrorOrFailure()) {
 				if (child instanceof ITestCaseElement) {
 					return child;
 				} else {
-					ITestSuiteElement testSuiteElement= (ITestSuiteElement) child;
+					ITestSuiteElement testSuiteElement = (ITestSuiteElement) child;
 					if (testSuiteElement.getChildren().length == 0) {
 						return testSuiteElement;
 					}
@@ -803,24 +739,24 @@ public class TestViewer {
 	}
 
 	public synchronized void registerViewersRefresh() {
-		fTreeNeedsRefresh= true;
-		fTableNeedsRefresh= true;
+		fTreeNeedsRefresh = true;
+		fTableNeedsRefresh = true;
 		clearUpdateAndExpansion();
 	}
 
 	private void clearUpdateAndExpansion() {
-		fNeedUpdate= new LinkedHashSet<>();
-		fAutoClose= new LinkedList<>();
-		fAutoExpand= new HashSet<>();
+		fNeedUpdate = new LinkedHashSet<>();
+		fAutoClose = new LinkedList<>();
+		fAutoExpand = new HashSet<>();
 	}
 
 	/**
 	 * @param testElement the added test
 	 */
 	public synchronized void registerTestAdded(ITestElement testElement) {
-		//TODO: performance: would only need to refresh parent of added element
-		fTreeNeedsRefresh= true;
-		fTableNeedsRefresh= true;
+		// TODO: performance: would only need to refresh parent of added element
+		fTreeNeedsRefresh = true;
+		fTableNeedsRefresh = true;
 	}
 
 	public synchronized void registerViewerUpdate(final ITestElement testElement) {
@@ -832,11 +768,11 @@ public class TestViewer {
 	}
 
 	public void registerAutoScrollTarget(ITestCaseElement testCaseElement) {
-		fAutoScrollTarget= testCaseElement;
+		fAutoScrollTarget = testCaseElement;
 	}
 
 	public synchronized void registerFailedForAutoScroll(ITestElement testElement) {
-		ITestSuiteElement parent= (TestSuiteElement) fTreeContentProvider.getParent(testElement);
+		ITestSuiteElement parent = (TestSuiteElement) fTreeContentProvider.getParent(testElement);
 		if (parent != null)
 			fAutoExpand.add(parent);
 	}
@@ -846,4 +782,3 @@ public class TestViewer {
 	}
 
 }
-

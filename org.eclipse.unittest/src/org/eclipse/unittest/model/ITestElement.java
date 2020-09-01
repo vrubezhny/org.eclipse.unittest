@@ -373,6 +373,11 @@ public interface ITestElement {
 	String getTestName();
 
 	/**
+	 * @return return the class name
+	 */
+	String getClassName();
+
+	/**
 	 * Returns the display name of the test. Can be <code>null</code>. In that case,
 	 * use {@link ITestElement#getTestName() getTestName()}.
 	 *

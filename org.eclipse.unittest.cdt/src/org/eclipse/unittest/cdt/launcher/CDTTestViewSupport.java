@@ -9,6 +9,7 @@ import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.unittest.ui.FailureTrace;
 import org.eclipse.unittest.ui.IOpenEditorAction;
+import org.eclipse.unittest.ui.RerunAction;
 import org.eclipse.unittest.ui.TestRunnerViewPart;
 
 import org.eclipse.ui.IActionDelegate;
@@ -58,6 +59,11 @@ public class CDTTestViewSupport implements ITestViewSupport {
 
 	@Override
 	public IActionDelegate createShowStackTraceInConsoleViewActionDelegate(FailureTrace view) {
+		return null;
+	}
+
+	@Override
+	public RerunAction[] getRerunActions(TestRunnerViewPart testRunnerPart, ITestSuiteElement testSuite) {
 		return null;
 	}
 }

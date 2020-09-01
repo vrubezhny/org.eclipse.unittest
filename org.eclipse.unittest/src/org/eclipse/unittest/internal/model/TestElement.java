@@ -212,10 +212,8 @@ public abstract class TestElement implements ITestElement {
 		return fExpected != null && fActual != null;
 	}
 
-	/**
-	 * @return return the class name
-	 */
-	String getClassName() {
+	@Override
+	public String getClassName() {
 		return extractClassName(getTestName());
 	}
 
@@ -225,6 +223,7 @@ public abstract class TestElement implements ITestElement {
 		return testNameString;
 	}
 
+	@Override
 	public String extractRawClassName(String testNameString) {
 		if (testNameString.startsWith("[") && testNameString.endsWith("]")) { //$NON-NLS-1$ //$NON-NLS-2$
 			// a group of parameterized tests, see
