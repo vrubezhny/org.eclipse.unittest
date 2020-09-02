@@ -15,7 +15,6 @@ import org.eclipse.unittest.model.ITestRoot;
 import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.unittest.ui.FailureTrace;
 import org.eclipse.unittest.ui.IOpenEditorAction;
-import org.eclipse.unittest.ui.Messages;
 import org.eclipse.unittest.ui.RerunAction;
 import org.eclipse.unittest.ui.TestRunnerViewPart;
 

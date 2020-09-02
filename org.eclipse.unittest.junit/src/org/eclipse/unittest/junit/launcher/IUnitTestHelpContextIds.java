@@ -11,7 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.unittest.ui;
+package org.eclipse.unittest.junit.launcher;
 
 import org.eclipse.unittest.UnitTestPlugin;
 
@@ -34,6 +34,12 @@ public interface IUnitTestHelpContextIds {
 	// view parts
 	String RESULTS_VIEW = PREFIX + "results_view_context"; //$NON-NLS-1$
 	String RESULTS_VIEW_TOGGLE_ORIENTATION_ACTION = PREFIX + "results_view_toggle_call_mode_action_context"; //$NON-NLS-1$
+
+	// Wizard pages
+	String NEW_TESTCASE_WIZARD_PAGE = PREFIX + "new_testcase_wizard_page_context"; //$NON-NLS-1$
+	String NEW_TESTCASE_WIZARD_PAGE2 = PREFIX + "new_testcase_wizard_page2_context"; //$NON-NLS-1$
+	String NEW_TESTSUITE_WIZARD_PAGE = PREFIX + "new_testsuite_wizard_page2_context"; //$NON-NLS-1$
+	String LAUNCH_CONFIGURATION_DIALOG_JUNIT_MAIN_TAB = PREFIX + "launch_configuration_dialog_junit_main_tab"; //$NON-NLS-1$
 
 	// Dialogs
 	String TEST_SELECTION_DIALOG = PREFIX + "test_selection_context"; //$NON-NLS-1$

@@ -23,10 +23,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Interface to be implemented by for extension point
- * org.eclipse.jdt.junit.internal_testKinds.
+ * org.org.eclipse.unittest.unittestKinds.
  */
 public interface ITestFinder {
-	ITestFinder NULL= new ITestFinder() {
+	ITestFinder NULL = new ITestFinder() {
 		@Override
 		public void findTestsInContainer(Object element, Set result, IProgressMonitor pm) {
 			// do nothing
@@ -40,11 +40,12 @@ public interface ITestFinder {
 
 	/**
 	 * @param element element to search for tests
-	 * @param result a Set to add ITypes
-	 * @param pm the progress monitor
+	 * @param result  a Set to add ITypes
+	 * @param pm      the progress monitor
 	 * @throws CoreException thrown when tests can not be found
 	 */
-	public abstract void findTestsInContainer(Object element, @SuppressWarnings("rawtypes") Set result, IProgressMonitor pm) throws CoreException;
+	void findTestsInContainer(Object element, @SuppressWarnings("rawtypes") Set result, IProgressMonitor pm)
+			throws CoreException;
 
-	public abstract boolean isTest(Object type) throws CoreException;
+	boolean isTest(Object type) throws CoreException;
 }

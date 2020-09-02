@@ -37,9 +37,8 @@ public abstract class TestElement implements ITestElement {
 	private String fDisplayName;
 
 	/**
-	 * The array of method parameter types (as given by
-	 * org.junit.platform.engine.support.descriptor.MethodSource.getMethodParameterTypes())
-	 * if applicable, otherwise <code>null</code>.
+	 * The array of method parameter types if applicable, otherwise
+	 * <code>null</code>.
 	 */
 	private String[] fParameterTypes;
 
@@ -77,9 +76,8 @@ public abstract class TestElement implements ITestElement {
 	 * @param id             the test id
 	 * @param testName       the test name
 	 * @param displayName    the test display name, can be <code>null</code>
-	 * @param parameterTypes the array of method parameter types (as given by
-	 *                       org.junit.platform.engine.support.descriptor.MethodSource.getMethodParameterTypes())
-	 *                       if applicable, otherwise <code>null</code>
+	 * @param parameterTypes the array of method parameter types if applicable,
+	 *                       otherwise <code>null</code>
 	 * @param uniqueId       the unique ID of the test element, can be
 	 *                       <code>null</code> as it is applicable to JUnit 5 and
 	 *                       above
@@ -278,9 +276,8 @@ public abstract class TestElement implements ITestElement {
 	}
 
 	/**
-	 * @return the array of method parameter types (as given by
-	 *         org.junit.platform.engine.support.descriptor.MethodSource.getMethodParameterTypes())
-	 *         if applicable, otherwise <code>null</code>
+	 * @return the array of method parameter types if applicable, otherwise
+	 *         <code>null</code>
 	 */
 	@Override
 	public String[] getParameterTypes() {

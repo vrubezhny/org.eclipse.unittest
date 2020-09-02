@@ -35,7 +35,6 @@ import org.eclipse.unittest.launcher.TestKind;
 import org.eclipse.unittest.launcher.TestKindRegistry;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.ui.BasicElementLabels;
-import org.eclipse.unittest.ui.IUnitTestHelpContextIds;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;

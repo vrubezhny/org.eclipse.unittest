@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.unittest.UnitTestPlugin;
-import org.eclipse.unittest.internal.UnitTestMessages;
 import org.eclipse.unittest.launcher.ITestKind;
 import org.eclipse.unittest.launcher.ITestRunnerClient;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
@@ -601,8 +600,8 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 	private TestSuiteElement getUnrootedSuite() {
 		if (fUnrootedSuite == null) {
 			fUnrootedSuite = (TestSuiteElement) createTestElement(fTestRoot, "-2", //$NON-NLS-1$
-					UnitTestMessages.TestRunSession_unrootedTests, true, 0, false,
-					UnitTestMessages.TestRunSession_unrootedTests, null, null);
+					ModelMessages.TestRunSession_unrootedTests, true, 0, false,
+					ModelMessages.TestRunSession_unrootedTests, null, null);
 		}
 		return fUnrootedSuite;
 	}

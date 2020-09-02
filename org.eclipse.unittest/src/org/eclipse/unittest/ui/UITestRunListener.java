@@ -18,8 +18,9 @@ import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.model.ITestRunSession;
 
 /**
- * This test run listener is the entry point that makes sure the org.eclipse.jdt.junit
- * plug-in gets loaded when a JUnit launch configuration is launched.
+ * This test run listener is the entry point that makes sure the
+ * org.eclipse.unittest plug-in gets loaded when a UnitTest launch configuration
+ * is launched.
  *
  * @since 3.6
  */

@@ -43,11 +43,11 @@ public class TestSessionLabelProvider extends LabelProvider implements IStyledLa
 	private boolean fShowTime;
 
 	public TestSessionLabelProvider(TestRunnerViewPart testRunnerPart, int layoutMode) {
-		fTestRunnerPart= testRunnerPart;
-		fLayoutMode= layoutMode;
-		fShowTime= true;
+		fTestRunnerPart = testRunnerPart;
+		fLayoutMode = layoutMode;
+		fShowTime = true;
 
-		timeFormat= NumberFormat.getNumberInstance();
+		timeFormat = NumberFormat.getNumberInstance();
 		timeFormat.setGroupingUsed(true);
 		timeFormat.setMinimumFractionDigits(3);
 		timeFormat.setMaximumFractionDigits(3);
@@ -56,26 +56,27 @@ public class TestSessionLabelProvider extends LabelProvider implements IStyledLa
 
 	@Override
 	public StyledString getStyledText(Object element) {
-		String label= getSimpleLabel(element);
+		String label = getSimpleLabel(element);
 		if (label == null) {
 			return new StyledString(element.toString());
 		}
-		StyledString text= new StyledString(label);
+		StyledString text = new StyledString(label);
 
-		ITestElement testElement= (ITestElement) element;
+		ITestElement testElement = (ITestElement) element;
 		if (fLayoutMode == TestRunnerViewPart.LAYOUT_HIERARCHICAL) {
 			if (testElement.getParentContainer() instanceof ITestRunSession) {
-				String testKindDisplayName= fTestRunnerPart.getTestKindDisplayName();
+				String testKindDisplayName = fTestRunnerPart.getTestKindDisplayName();
 				if (testKindDisplayName != null) {
-					String decorated= MessageFormat.format(Messages.TestSessionLabelProvider_testName_JUnitVersion, label, testKindDisplayName);
-					text= StyledCellLabelProvider.styleDecoratedString(decorated, StyledString.QUALIFIER_STYLER, text);
+					String decorated = MessageFormat.format(Messages.TestSessionLabelProvider_testName_RunnerVersion,
+							label, testKindDisplayName);
+					text = StyledCellLabelProvider.styleDecoratedString(decorated, StyledString.QUALIFIER_STYLER, text);
 				}
 			}
 
 		} else {
 			if (element instanceof TestCaseElement) {
-				String decorated= getTextForFlatLayout((TestCaseElement) testElement, label);
-				text= StyledCellLabelProvider.styleDecoratedString(decorated, StyledString.QUALIFIER_STYLER, text);
+				String decorated = getTextForFlatLayout((TestCaseElement) testElement, label);
+				text = StyledCellLabelProvider.styleDecoratedString(decorated, StyledString.QUALIFIER_STYLER, text);
 			}
 		}
 		return addElapsedTime(text, testElement.getElapsedTimeInSeconds());
@@ -83,22 +84,23 @@ public class TestSessionLabelProvider extends LabelProvider implements IStyledLa
 
 	private String getTextForFlatLayout(TestCaseElement testCaseElement, String label) {
 		String parentName;
-		String parentDisplayName= testCaseElement.getParent().getDisplayName();
+		String parentDisplayName = testCaseElement.getParent().getDisplayName();
 		if (parentDisplayName != null) {
-			parentName= parentDisplayName;
+			parentName = parentDisplayName;
 		} else {
 			if (testCaseElement.isDynamicTest()) {
-				parentName= testCaseElement.getTestMethodName();
+				parentName = testCaseElement.getTestMethodName();
 			} else {
-				parentName= testCaseElement.getTestClassName();
+				parentName = testCaseElement.getTestClassName();
 			}
 		}
-		return MessageFormat.format(Messages.TestSessionLabelProvider_testMethodName_className, new Object[] { label, BasicElementLabels.getJavaElementName(parentName) });
+		return MessageFormat.format(Messages.TestSessionLabelProvider_testMethodName_className, label,
+				BasicElementLabels.getJavaElementName(parentName));
 	}
 
 	private StyledString addElapsedTime(StyledString styledString, double time) {
-		String string= styledString.getString();
-		String decorated= addElapsedTime(string, time);
+		String string = styledString.getString();
+		String decorated = addElapsedTime(string, time);
 		return StyledCellLabelProvider.styleDecoratedString(decorated, StyledString.COUNTER_STYLER, styledString);
 	}
 
@@ -106,40 +108,44 @@ public class TestSessionLabelProvider extends LabelProvider implements IStyledLa
 		if (!fShowTime || Double.isNaN(time)) {
 			return string;
 		}
-		String formattedTime= timeFormat.format(time);
-		return MessageFormat.format(Messages.TestSessionLabelProvider_testName_elapsedTimeInSeconds, string, formattedTime);
+		String formattedTime = timeFormat.format(time);
+		return MessageFormat.format(Messages.TestSessionLabelProvider_testName_elapsedTimeInSeconds, string,
+				formattedTime);
 	}
 
 	private String getSimpleLabel(Object element) {
 		if (element instanceof TestCaseElement) {
-			TestCaseElement testCaseElement= (TestCaseElement) element;
-			String displayName= testCaseElement.getDisplayName();
-			return BasicElementLabels.getJavaElementName(displayName != null ? displayName : testCaseElement.getTestMethodName());
+			TestCaseElement testCaseElement = (TestCaseElement) element;
+			String displayName = testCaseElement.getDisplayName();
+			return BasicElementLabels
+					.getJavaElementName(displayName != null ? displayName : testCaseElement.getTestMethodName());
 		} else if (element instanceof TestSuiteElement) {
-			TestSuiteElement testSuiteElement= (TestSuiteElement) element;
-			String displayName= testSuiteElement.getDisplayName();
-			return BasicElementLabels.getJavaElementName(displayName != null ? displayName : testSuiteElement.getSuiteTypeName());
+			TestSuiteElement testSuiteElement = (TestSuiteElement) element;
+			String displayName = testSuiteElement.getDisplayName();
+			return BasicElementLabels
+					.getJavaElementName(displayName != null ? displayName : testSuiteElement.getSuiteTypeName());
 		}
 		return null;
 	}
 
 	@Override
 	public String getText(Object element) {
-		String label= getSimpleLabel(element);
+		String label = getSimpleLabel(element);
 		if (label == null) {
 			return element.toString();
 		}
-		ITestElement testElement= (ITestElement) element;
+		ITestElement testElement = (ITestElement) element;
 		if (fLayoutMode == TestRunnerViewPart.LAYOUT_HIERARCHICAL) {
 			if (testElement.getParentContainer() instanceof ITestRunSession) {
-				String testKindDisplayName= fTestRunnerPart.getTestKindDisplayName();
+				String testKindDisplayName = fTestRunnerPart.getTestKindDisplayName();
 				if (testKindDisplayName != null) {
-					label= MessageFormat.format(Messages.TestSessionLabelProvider_testName_JUnitVersion, new Object[] { label, testKindDisplayName });
+					label = MessageFormat.format(Messages.TestSessionLabelProvider_testName_RunnerVersion, label,
+							testKindDisplayName);
 				}
 			}
 		} else {
 			if (element instanceof TestCaseElement) {
-				label= getTextForFlatLayout((TestCaseElement) testElement, label);
+				label = getTextForFlatLayout((TestCaseElement) testElement, label);
 			}
 		}
 		return addElapsedTime(label, testElement.getElapsedTimeInSeconds());
@@ -151,11 +157,11 @@ public class TestSessionLabelProvider extends LabelProvider implements IStyledLa
 			return fTestRunnerPart.fTestAssumptionFailureIcon;
 
 		if (element instanceof TestCaseElement) {
-			TestCaseElement testCaseElement= ((TestCaseElement) element);
+			TestCaseElement testCaseElement = ((TestCaseElement) element);
 			if (testCaseElement.isIgnored())
 				return fTestRunnerPart.fTestIgnoredIcon;
 
-			Status status=testCaseElement.getStatus();
+			Status status = testCaseElement.getStatus();
 			if (status.isNotRun())
 				return fTestRunnerPart.fTestIcon;
 			else if (status.isRunning())
@@ -170,7 +176,7 @@ public class TestSessionLabelProvider extends LabelProvider implements IStyledLa
 				throw new IllegalStateException(element.toString());
 
 		} else if (element instanceof TestSuiteElement) {
-			Status status= ((TestSuiteElement) element).getStatus();
+			Status status = ((TestSuiteElement) element).getStatus();
 			if (status.isNotRun())
 				return fTestRunnerPart.fSuiteIcon;
 			else if (status.isRunning())
@@ -190,7 +196,7 @@ public class TestSessionLabelProvider extends LabelProvider implements IStyledLa
 	}
 
 	public void setShowTime(boolean showTime) {
-		fShowTime= showTime;
+		fShowTime = showTime;
 		fireLabelProviderChanged(new LabelProviderChangedEvent(this));
 	}
 

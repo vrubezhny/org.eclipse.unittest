@@ -133,8 +133,8 @@ public class TestRunnerViewPart extends ViewPart {
 
 	public static final String NAME = "org.eclipse.unittest.ResultView"; //$NON-NLS-1$
 
-	private static final String RERUN_LAST_COMMAND = "org.eclipse.jdt.junit.junitShortcut.rerunLast"; //$NON-NLS-1$
-	private static final String RERUN_FAILED_FIRST_COMMAND = "org.eclipse.jdt.junit.junitShortcut.rerunFailedFirst"; //$NON-NLS-1$
+	private static final String RERUN_LAST_COMMAND = "org.eclipse.unittest.UnitTestShortcut.rerunLast"; //$NON-NLS-1$
+	private static final String RERUN_FAILED_FIRST_COMMAND = "org.eclipse.unittest.UnitTestShortcut.rerunFailedFirst"; //$NON-NLS-1$
 
 	static final int REFRESH_INTERVAL = 200;
 
@@ -452,7 +452,7 @@ public class TestRunnerViewPart extends ViewPart {
 		private Clipboard fClipboard;
 
 		public UnitTesttPasteAction(Shell shell, Clipboard clipboard) {
-			super(Messages.TestRunnerViewPart_JUnitPasteAction_label);
+			super(Messages.TestRunnerViewPart_PasteAction_label);
 			Assert.isNotNull(clipboard);
 			fShell = shell;
 			fClipboard = clipboard;
@@ -470,8 +470,8 @@ public class TestRunnerViewPart extends ViewPart {
 					return;
 				}
 			}
-			MessageDialog.openInformation(fShell, Messages.TestRunnerViewPart_JUnitPasteAction_cannotpaste_title,
-					Messages.TestRunnerViewPart_JUnitPasteAction_cannotpaste_message);
+			MessageDialog.openInformation(fShell, Messages.TestRunnerViewPart_PasteAction_cannotpaste_title,
+					Messages.TestRunnerViewPart_PasteAction_cannotpaste_message);
 		}
 
 		private boolean isValidUrl(String urlData) {
@@ -700,16 +700,6 @@ public class TestRunnerViewPart extends ViewPart {
 			// show the view on the first error only
 			if (fShowOnErrorOnly && (getErrorsPlusFailures() == 1))
 				postShowTestResultsView();
-
-			// TODO:
-			// [Bug 35590] JUnit window doesn't report errors from
-			// junit.extensions.TestSetup [JUnit]
-			// when a failure occurs in test setup then no test is running
-			// to update the views we artificially signal the end of a test run
-//		    if (!fTestIsRunning) {
-//				fTestIsRunning= false;
-//				testEnded(testCaseElement);
-//			}
 		}
 
 		@Override
@@ -998,10 +988,10 @@ public class TestRunnerViewPart extends ViewPart {
 		fImagesToDispose = new ArrayList<>();
 
 		fStackViewIcon = createManagedImage("eview16/stackframe.png");//$NON-NLS-1$
-		fTestRunOKIcon = createManagedImage("eview16/junitsucc.png"); //$NON-NLS-1$
-		fTestRunFailIcon = createManagedImage("eview16/juniterr.png"); //$NON-NLS-1$
-		fTestRunOKDirtyIcon = createManagedImage("eview16/junitsuccq.png"); //$NON-NLS-1$
-		fTestRunFailDirtyIcon = createManagedImage("eview16/juniterrq.png"); //$NON-NLS-1$
+		fTestRunOKIcon = createManagedImage("eview16/unitsucc.png"); //$NON-NLS-1$
+		fTestRunFailIcon = createManagedImage("eview16/uniterr.png"); //$NON-NLS-1$
+		fTestRunOKDirtyIcon = createManagedImage("eview16/unitsuccq.png"); //$NON-NLS-1$
+		fTestRunFailDirtyIcon = createManagedImage("eview16/uniterrq.png"); //$NON-NLS-1$
 
 		fTestIcon = createManagedImage("obj16/test.png"); //$NON-NLS-1$
 		fTestOkIcon = createManagedImage("obj16/testok.png"); //$NON-NLS-1$

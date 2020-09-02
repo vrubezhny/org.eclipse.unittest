@@ -20,9 +20,7 @@ package org.eclipse.unittest;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -32,7 +30,6 @@ import org.osgi.service.packageadmin.PackageAdmin;
 import org.eclipse.unittest.internal.model.UnitTestModel;
 import org.eclipse.unittest.model.IUnitTestModel;
 import org.eclipse.unittest.ui.TestRunnerViewPart;
-import org.eclipse.unittest.ui.UnitTestUIPreferencesConstants;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
@@ -209,54 +206,6 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 		super.start(context);
 		fBundleContext = context;
 		fUnitTestModel.start();
-		setCodeassistFavoriteStaticMembers();
-	}
-
-	/**
-	 * Add the new default static import favorites in old workspaces that already
-	 * have non-default favorites. Only do this once, so that users have a way to
-	 * opt-out if they don't want the new favorites.
-	 */
-	private void setCodeassistFavoriteStaticMembers() {
-		Set<String> favoritesToAdd = new LinkedHashSet<>();
-		favoritesToAdd.add("org.junit.Assert.*"); //$NON-NLS-1$
-		favoritesToAdd.add("org.junit.Assume.*"); //$NON-NLS-1$
-		favoritesToAdd.add("org.junit.jupiter.api.Assertions.*"); //$NON-NLS-1$
-		favoritesToAdd.add("org.junit.jupiter.api.Assumptions.*"); //$NON-NLS-1$
-		favoritesToAdd.add("org.junit.jupiter.api.DynamicContainer.*"); //$NON-NLS-1$
-		favoritesToAdd.add("org.junit.jupiter.api.DynamicTest.*"); //$NON-NLS-1$
-
-		/*
-		 * // default value Set<String> defaultFavorites= new LinkedHashSet<>(); String
-		 * defaultPreferenceValue=
-		 * PreferenceConstants.getPreferenceStore().getDefaultString(PreferenceConstants
-		 * .CODEASSIST_FAVORITE_STATIC_MEMBERS); if (defaultPreferenceValue != null &&
-		 * defaultPreferenceValue.length() > 0) {
-		 * defaultFavorites.addAll(Arrays.asList(defaultPreferenceValue.split(";")));
-		 * //$NON-NLS-1$ } defaultFavorites.addAll(favoritesToAdd); String
-		 * newDefaultPreferenceValue=
-		 * defaultFavorites.stream().collect(Collectors.joining(";")); //$NON-NLS-1$
-		 * PreferenceConstants.getPreferenceStore().setDefault(PreferenceConstants.
-		 * CODEASSIST_FAVORITE_STATIC_MEMBERS, newDefaultPreferenceValue);
-		 *
-		 * // current value if
-		 * (UnitTestUIPreferencesConstants.isCodeassistFavoriteStaticMembersMigrated())
-		 * { return; } Set<String> currentFavorites= new LinkedHashSet<>(); String
-		 * currentPreferenceValue=
-		 * PreferenceConstants.getPreferenceStore().getString(PreferenceConstants.
-		 * CODEASSIST_FAVORITE_STATIC_MEMBERS); if (currentPreferenceValue != null &&
-		 * currentPreferenceValue.length() > 0) {
-		 * currentFavorites.addAll(Arrays.asList(currentPreferenceValue.split(";")));
-		 * //$NON-NLS-1$ } favoritesToAdd.removeAll(currentFavorites); if
-		 * (!favoritesToAdd.isEmpty()) { String newPreferenceValue=
-		 * currentPreferenceValue + ";" +
-		 * favoritesToAdd.stream().collect(Collectors.joining(";")); //$NON-NLS-1$
-		 * //$NON-NLS-2$
-		 * PreferenceConstants.getPreferenceStore().setValue(PreferenceConstants.
-		 * CODEASSIST_FAVORITE_STATIC_MEMBERS, newPreferenceValue); }
-		 */
-		// set as migrated
-		UnitTestUIPreferencesConstants.setCodeassistFavoriteStaticMembersMigrated(true);
 	}
 
 	@Override

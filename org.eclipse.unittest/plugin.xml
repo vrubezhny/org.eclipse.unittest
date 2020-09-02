@@ -9,7 +9,7 @@
          point="org.eclipse.ui.views">
       <view
             name="%View.label"
-            icon="$nl$/icons/full/eview16/junit.png"
+            icon="$nl$/icons/full/eview16/unit.png"
             category="org.eclipse.debug.ui"
             fastViewWidthRatio="0.40"
             class="org.eclipse.unittest.ui.TestRunnerViewPart"
@@ -23,31 +23,31 @@
          name="%GotoTestCommand.name"
          description="%GotoTestCommand.description"
          categoryId="org.eclipse.search.ui.category.search"
-         id="org.eclipse.jdt.junit.gotoTest">
+         id="org.eclipse.unittest.gotoTest">
       </command>
       <command
-            name="%JUnitShortcut.description.run"
-            description="%JUnitShortcut.description.run"
+            name="%UnitTestShortcut.description.run"
+            description="%UnitTestShortcut.description.run"
             categoryId="org.eclipse.debug.ui.category.run"
-            id="org.eclipse.jdt.junit.junitShortcut.run">
+            id="org.eclipse.unittest.UnitTestShortcut.run">
       </command>
       <command
-            name="%JUnitShortcut.description.debug"
-            description="%JUnitShortcut.description.debug"
+            name="%UnitTestShortcut.description.debug"
+            description="%UnitTestShortcut.description.debug"
             categoryId="org.eclipse.debug.ui.category.run"
-            id="org.eclipse.jdt.junit.junitShortcut.debug">
+            id="org.eclipse.unittest.UnitTestShortcut.debug">
       </command>
       <command
-            name="%JUnitShortcut.description.rerunLast"
-            description="%JUnitShortcut.description.rerunLast"
+            name="%UnitTestShortcut.description.rerunLast"
+            description="%UnitTestShortcut.description.rerunLast"
             categoryId="org.eclipse.debug.ui.category.run"
-            id="org.eclipse.jdt.junit.junitShortcut.rerunLast">
+            id="org.eclipse.unittest.UnitTestShortcut.rerunLast">
       </command>
       <command
-            name="%JUnitShortcut.description.rerunFailedFirst"
-            description="%JUnitShortcut.description.rerunFailedFirst"
+            name="%UnitTestShortcut.description.rerunFailedFirst"
+            description="%UnitTestShortcut.description.rerunFailedFirst"
             categoryId="org.eclipse.debug.ui.category.run"
-            id="org.eclipse.jdt.junit.junitShortcut.rerunFailedFirst">
+            id="org.eclipse.unittest.UnitTestShortcut.rerunFailedFirst">
       </command>
    </extension>
 

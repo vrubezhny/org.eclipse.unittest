@@ -48,7 +48,7 @@ public class TestRunHandler extends DefaultHandler {
 	private TestRunSession fTestRunSession;
 	private ITestSuiteElement fTestSuite;
 	private TestCaseElement fTestCase;
-	private Stack<Boolean> fNotRun= new Stack<>();
+	private Stack<Boolean> fNotRun = new Stack<>();
 
 	private StringBuffer fFailureBuffer;
 	private boolean fInExpected;
@@ -68,16 +68,16 @@ public class TestRunHandler extends DefaultHandler {
 	}
 
 	public TestRunHandler(IProgressMonitor monitor) {
-		fMonitor= monitor;
+		fMonitor = monitor;
 	}
 
 	public TestRunHandler(TestRunSession testRunSession) {
-		fTestRunSession= testRunSession;
+		fTestRunSession = testRunSession;
 	}
 
 	@Override
 	public void setDocumentLocator(Locator locator) {
-		fLocator= locator;
+		fLocator = locator;
 	}
 
 	@Override
@@ -87,10 +87,10 @@ public class TestRunHandler extends DefaultHandler {
 	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		if (fLocator != null && fMonitor != null) {
-			int line= fLocator.getLineNumber();
+			int line = fLocator.getLineNumber();
 			if (line - 20 >= fLastReportedLine) {
 				line -= line % 20;
-				fLastReportedLine= line;
+				fLastReportedLine = line;
 				fMonitor.subTask(NLS.bind(ModelMessages.TestRunHandler_lines_read, Integer.valueOf(line)));
 			}
 		}
@@ -100,124 +100,129 @@ public class TestRunHandler extends DefaultHandler {
 		switch (qName) {
 		case IXMLTags.NODE_TESTRUN:
 			if (fTestRunSession == null) {
-				String name= attributes.getValue(IXMLTags.ATTR_NAME);
-				String projectName= attributes.getValue(IXMLTags.ATTR_PROJECT);
-				IProject project= null;
+				String name = attributes.getValue(IXMLTags.ATTR_NAME);
+				String projectName = attributes.getValue(IXMLTags.ATTR_PROJECT);
+				IProject project = null;
 				if (projectName != null) {
-					project= ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+					project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 					if (!project.exists())
-						project= null;
+						project = null;
 				}
-				fTestRunSession= new TestRunSession(name, project);
-				String includeTags= attributes.getValue(IXMLTags.ATTR_INCLUDE_TAGS);
+				fTestRunSession = new TestRunSession(name, project);
+				String includeTags = attributes.getValue(IXMLTags.ATTR_INCLUDE_TAGS);
 				if (includeTags != null && includeTags.trim().length() > 0) {
 					fTestRunSession.setIncludeTags(includeTags);
 				}
-				String excludeTags= attributes.getValue(IXMLTags.ATTR_EXCLUDE_TAGS);
+				String excludeTags = attributes.getValue(IXMLTags.ATTR_EXCLUDE_TAGS);
 				if (excludeTags != null && excludeTags.trim().length() > 0) {
 					fTestRunSession.setExcludeTags(excludeTags);
 				}
-				//TODO: read counts?
+				// TODO: read counts?
 
 			} else {
 				fTestRunSession.reset();
 			}
-			fTestSuite= fTestRunSession.getTestRoot();
+			fTestSuite = fTestRunSession.getTestRoot();
 			break;
-		// support Ant's 'junitreport' task; create suite from NODE_TESTSUITE
 		case IXMLTags.NODE_TESTSUITES:
 			break;
-		case IXMLTags.NODE_TESTSUITE:
-			{
-				String name= attributes.getValue(IXMLTags.ATTR_NAME);
-				if (fTestRunSession == null) {
-					// support standalone suites and Ant's 'junitreport' task:
-					fTestRunSession= new TestRunSession(name, null);
-					fTestSuite= fTestRunSession.getTestRoot();
-				}	String pack= attributes.getValue(IXMLTags.ATTR_PACKAGE);
-				String suiteName= pack == null ? name : pack + "." + name; //$NON-NLS-1$
-				String displayName= attributes.getValue(IXMLTags.ATTR_DISPLAY_NAME);
-				String paramTypesStr= attributes.getValue(IXMLTags.ATTR_PARAMETER_TYPES);
-				String[] paramTypes;
-				if (paramTypesStr != null && !paramTypesStr.trim().isEmpty()) {
-					paramTypes= paramTypesStr.split(","); //$NON-NLS-1$
-					Arrays.parallelSetAll(paramTypes, i -> paramTypes[i].trim());
-				} else {
-					paramTypes= null;
-				}	String uniqueId= attributes.getValue(IXMLTags.ATTR_UNIQUE_ID);
-				if (uniqueId != null && uniqueId.trim().isEmpty()) {
-					uniqueId= null;
-				}	fTestSuite= (TestSuiteElement) fTestRunSession.createTestElement(fTestSuite, getNextId(), suiteName, true, 0, false, displayName, paramTypes, uniqueId);
-				readTime(fTestSuite, attributes);
-				fNotRun.push(Boolean.valueOf(attributes.getValue(IXMLTags.ATTR_INCOMPLETE)));
-				break;
+		case IXMLTags.NODE_TESTSUITE: {
+			String name = attributes.getValue(IXMLTags.ATTR_NAME);
+			if (fTestRunSession == null) {
+				fTestRunSession = new TestRunSession(name, null);
+				fTestSuite = fTestRunSession.getTestRoot();
 			}
+			String pack = attributes.getValue(IXMLTags.ATTR_PACKAGE);
+			String suiteName = pack == null ? name : pack + "." + name; //$NON-NLS-1$
+			String displayName = attributes.getValue(IXMLTags.ATTR_DISPLAY_NAME);
+			String paramTypesStr = attributes.getValue(IXMLTags.ATTR_PARAMETER_TYPES);
+			String[] paramTypes;
+			if (paramTypesStr != null && !paramTypesStr.trim().isEmpty()) {
+				paramTypes = paramTypesStr.split(","); //$NON-NLS-1$
+				Arrays.parallelSetAll(paramTypes, i -> paramTypes[i].trim());
+			} else {
+				paramTypes = null;
+			}
+			String uniqueId = attributes.getValue(IXMLTags.ATTR_UNIQUE_ID);
+			if (uniqueId != null && uniqueId.trim().isEmpty()) {
+				uniqueId = null;
+			}
+			fTestSuite = (TestSuiteElement) fTestRunSession.createTestElement(fTestSuite, getNextId(), suiteName, true,
+					0, false, displayName, paramTypes, uniqueId);
+			readTime(fTestSuite, attributes);
+			fNotRun.push(Boolean.valueOf(attributes.getValue(IXMLTags.ATTR_INCOMPLETE)));
+			break;
+		}
 		// not interested
 		case IXMLTags.NODE_PROPERTIES:
 		case IXMLTags.NODE_PROPERTY:
 			break;
-		case IXMLTags.NODE_TESTCASE:
-			{
-				String name= attributes.getValue(IXMLTags.ATTR_NAME);
-				String classname= attributes.getValue(IXMLTags.ATTR_CLASSNAME);
-				String testName= name + '(' + classname + ')';
-				boolean isDynamicTest= Boolean.valueOf(attributes.getValue(IXMLTags.ATTR_DYNAMIC_TEST)).booleanValue();
-				String displayName= attributes.getValue(IXMLTags.ATTR_DISPLAY_NAME);
-				String paramTypesStr= attributes.getValue(IXMLTags.ATTR_PARAMETER_TYPES);
-				String[] paramTypes;
-				if (paramTypesStr != null && !paramTypesStr.trim().isEmpty()) {
-					paramTypes= paramTypesStr.split(","); //$NON-NLS-1$
-					Arrays.parallelSetAll(paramTypes, i -> paramTypes[i].trim());
-				} else {
-					paramTypes= null;
-				}	String uniqueId= attributes.getValue(IXMLTags.ATTR_UNIQUE_ID);
-				if (uniqueId != null && uniqueId.trim().isEmpty()) {
-					uniqueId= null;
-				}	fTestCase= (TestCaseElement) fTestRunSession.createTestElement(fTestSuite, getNextId(), testName, false, 0, isDynamicTest, displayName, paramTypes, uniqueId);
-				fNotRun.push(Boolean.valueOf(attributes.getValue(IXMLTags.ATTR_INCOMPLETE)));
-				fTestCase.setIgnored(Boolean.valueOf(attributes.getValue(IXMLTags.ATTR_IGNORED)).booleanValue());
-				readTime(fTestCase, attributes);
-				break;
+		case IXMLTags.NODE_TESTCASE: {
+			String name = attributes.getValue(IXMLTags.ATTR_NAME);
+			String classname = attributes.getValue(IXMLTags.ATTR_CLASSNAME);
+			String testName = name + '(' + classname + ')';
+			boolean isDynamicTest = Boolean.valueOf(attributes.getValue(IXMLTags.ATTR_DYNAMIC_TEST)).booleanValue();
+			String displayName = attributes.getValue(IXMLTags.ATTR_DISPLAY_NAME);
+			String paramTypesStr = attributes.getValue(IXMLTags.ATTR_PARAMETER_TYPES);
+			String[] paramTypes;
+			if (paramTypesStr != null && !paramTypesStr.trim().isEmpty()) {
+				paramTypes = paramTypesStr.split(","); //$NON-NLS-1$
+				Arrays.parallelSetAll(paramTypes, i -> paramTypes[i].trim());
+			} else {
+				paramTypes = null;
 			}
+			String uniqueId = attributes.getValue(IXMLTags.ATTR_UNIQUE_ID);
+			if (uniqueId != null && uniqueId.trim().isEmpty()) {
+				uniqueId = null;
+			}
+			fTestCase = (TestCaseElement) fTestRunSession.createTestElement(fTestSuite, getNextId(), testName, false, 0,
+					isDynamicTest, displayName, paramTypes, uniqueId);
+			fNotRun.push(Boolean.valueOf(attributes.getValue(IXMLTags.ATTR_INCOMPLETE)));
+			fTestCase.setIgnored(Boolean.valueOf(attributes.getValue(IXMLTags.ATTR_IGNORED)).booleanValue());
+			readTime(fTestCase, attributes);
+			break;
+		}
 		case IXMLTags.NODE_ERROR:
-			//TODO: multiple failures: https://bugs.eclipse.org/bugs/show_bug.cgi?id=125296
-			fStatus= Status.ERROR;
-			fFailureBuffer= new StringBuffer();
+			// TODO: multiple failures: https://bugs.eclipse.org/bugs/show_bug.cgi?id=125296
+			fStatus = Status.ERROR;
+			fFailureBuffer = new StringBuffer();
 			break;
 		case IXMLTags.NODE_FAILURE:
-			//TODO: multiple failures: https://bugs.eclipse.org/bugs/show_bug.cgi?id=125296
-			fStatus= Status.FAILURE;
-			fFailureBuffer= new StringBuffer();
+			// TODO: multiple failures: https://bugs.eclipse.org/bugs/show_bug.cgi?id=125296
+			fStatus = Status.FAILURE;
+			fFailureBuffer = new StringBuffer();
 			break;
 		case IXMLTags.NODE_EXPECTED:
-			fInExpected= true;
-			fExpectedBuffer= new StringBuffer();
+			fInExpected = true;
+			fExpectedBuffer = new StringBuffer();
 			break;
 		case IXMLTags.NODE_ACTUAL:
-			fInActual= true;
-			fActualBuffer= new StringBuffer();
+			fInActual = true;
+			fActualBuffer = new StringBuffer();
 			break;
 		// not interested
 		case IXMLTags.NODE_SYSTEM_OUT:
 		case IXMLTags.NODE_SYSTEM_ERR:
 			break;
 		case IXMLTags.NODE_SKIPPED:
-			// before Ant 1.9.0: not an Ant JUnit tag, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=276068
-			// later: child of <suite> or <test>, see https://issues.apache.org/bugzilla/show_bug.cgi?id=43969
-			fStatus= Status.OK;
-			fFailureBuffer= new StringBuffer();
-			String message= attributes.getValue(IXMLTags.ATTR_MESSAGE);
+			// before Ant 1.9.0: not an Ant JUnit tag, see
+			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=276068
+			// later: child of <suite> or <test>, see
+			// https://issues.apache.org/bugzilla/show_bug.cgi?id=43969
+			fStatus = Status.OK;
+			fFailureBuffer = new StringBuffer();
+			String message = attributes.getValue(IXMLTags.ATTR_MESSAGE);
 			if (message != null) {
 				fFailureBuffer.append(message).append('\n');
 			}
 			break;
 		default:
-			throw new SAXParseException("unknown node '" + qName + "'", fLocator);  //$NON-NLS-1$//$NON-NLS-2$
+			throw new SAXParseException("unknown node '" + qName + "'", fLocator); //$NON-NLS-1$//$NON-NLS-2$
 		}
 	}
 
 	private void readTime(ITestElement testElement, Attributes attributes) {
-		String timeString= attributes.getValue(IXMLTags.ATTR_TIME);
+		String timeString = attributes.getValue(IXMLTags.ATTR_TIME);
 		if (timeString != null) {
 			try {
 				testElement.setElapsedTimeInSeconds(Double.parseDouble(timeString));
@@ -250,8 +255,8 @@ public class TestRunHandler extends DefaultHandler {
 			break;
 		case IXMLTags.NODE_TESTSUITE:
 			handleTestElementEnd(fTestSuite);
-			fTestSuite= fTestSuite.getParent();
-			//TODO: end suite: compare counters?
+			fTestSuite = fTestSuite.getParent();
+			// TODO: end suite: compare counters?
 			break;
 		// OK
 		case IXMLTags.NODE_PROPERTIES:
@@ -259,26 +264,25 @@ public class TestRunHandler extends DefaultHandler {
 			break;
 		case IXMLTags.NODE_TESTCASE:
 			handleTestElementEnd(fTestCase);
-			fTestCase= null;
+			fTestCase = null;
 			break;
 		case IXMLTags.NODE_FAILURE:
-		case IXMLTags.NODE_ERROR:
-			{
-				ITestElement testElement= fTestCase;
-				if (testElement == null)
-					testElement= fTestSuite;
-				handleFailure(testElement);
-				break;
-			}
+		case IXMLTags.NODE_ERROR: {
+			ITestElement testElement = fTestCase;
+			if (testElement == null)
+				testElement = fTestSuite;
+			handleFailure(testElement);
+			break;
+		}
 		case IXMLTags.NODE_EXPECTED:
-			fInExpected= false;
+			fInExpected = false;
 			if (fFailureBuffer != null) {
 				// skip whitespace from before <expected> and <actual> nodes
 				fFailureBuffer.setLength(0);
 			}
 			break;
 		case IXMLTags.NODE_ACTUAL:
-			fInActual= false;
+			fInActual = false;
 			if (fFailureBuffer != null) {
 				// skip whitespace from before <expected> and <actual> nodes
 				fFailureBuffer.setLength(0);
@@ -288,20 +292,20 @@ public class TestRunHandler extends DefaultHandler {
 		case IXMLTags.NODE_SYSTEM_OUT:
 		case IXMLTags.NODE_SYSTEM_ERR:
 			break;
-		case IXMLTags.NODE_SKIPPED:
-			{
-				ITestElement testElement= fTestCase;
-				if (testElement == null)
-					testElement= fTestSuite;
-				if (fFailureBuffer != null && fFailureBuffer.length() > 0) {
-					handleFailure(testElement);
-					testElement.setAssumptionFailed(true);
-				} else if (fTestCase != null) {
-					fTestCase.setIgnored(true);
-				} else { // not expected
-					testElement.setAssumptionFailed(true);
-				}	break;
+		case IXMLTags.NODE_SKIPPED: {
+			ITestElement testElement = fTestCase;
+			if (testElement == null)
+				testElement = fTestSuite;
+			if (fFailureBuffer != null && fFailureBuffer.length() > 0) {
+				handleFailure(testElement);
+				testElement.setAssumptionFailed(true);
+			} else if (fTestCase != null) {
+				fTestCase.setIgnored(true);
+			} else { // not expected
+				testElement.setAssumptionFailed(true);
 			}
+			break;
+		}
 		default:
 			handleUnknownNode(qName);
 			break;
@@ -309,17 +313,18 @@ public class TestRunHandler extends DefaultHandler {
 	}
 
 	private void handleTestElementEnd(ITestElement testElement) {
-		boolean completed= fNotRun.pop() != Boolean.TRUE;
+		boolean completed = fNotRun.pop() != Boolean.TRUE;
 		fTestRunSession.registerTestEnded(testElement, completed);
 	}
 
 	private void handleFailure(ITestElement testElement) {
 		if (fFailureBuffer != null) {
-			fTestRunSession.registerTestFailureStatus(testElement, fStatus, fFailureBuffer.toString(), toString(fExpectedBuffer), toString(fActualBuffer));
-			fFailureBuffer= null;
-			fExpectedBuffer= null;
-			fActualBuffer= null;
-			fStatus= null;
+			fTestRunSession.registerTestFailureStatus(testElement, fStatus, fFailureBuffer.toString(),
+					toString(fExpectedBuffer), toString(fActualBuffer));
+			fFailureBuffer = null;
+			fExpectedBuffer = null;
+			fActualBuffer = null;
+			fStatus = null;
 		}
 	}
 
@@ -328,10 +333,10 @@ public class TestRunHandler extends DefaultHandler {
 	}
 
 	private void handleUnknownNode(String qName) throws SAXException {
-		//TODO: just log if debug option is enabled?
-		String msg= "unknown node '" + qName + "'"; //$NON-NLS-1$//$NON-NLS-2$
+		// TODO: just log if debug option is enabled?
+		String msg = "unknown node '" + qName + "'"; //$NON-NLS-1$//$NON-NLS-2$
 		if (fLocator != null) {
-			msg += " at line " + fLocator.getLineNumber() + ", column " + fLocator.getColumnNumber();  //$NON-NLS-1$//$NON-NLS-2$
+			msg += " at line " + fLocator.getLineNumber() + ", column " + fLocator.getColumnNumber(); //$NON-NLS-1$//$NON-NLS-2$
 		}
 		throw new SAXException(msg);
 	}
