@@ -9,10 +9,13 @@ import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.unittest.ui.FailureTrace;
 import org.eclipse.unittest.ui.IOpenEditorAction;
+import org.eclipse.unittest.ui.Messages;
 import org.eclipse.unittest.ui.RerunAction;
 import org.eclipse.unittest.ui.TestRunnerViewPart;
 
 import org.eclipse.ui.IActionDelegate;
+
+import org.eclipse.debug.core.ILaunchManager;
 
 public class CDTTestViewSupport implements ITestViewSupport {
 
@@ -64,6 +67,16 @@ public class CDTTestViewSupport implements ITestViewSupport {
 
 	@Override
 	public RerunAction[] getRerunActions(TestRunnerViewPart testRunnerPart, ITestSuiteElement testSuite) {
-		return null;
+		String testMethodName = null; // test method name is null when re-running a regular test class
+		String testName = testSuite.getTestName();
+		String qualifiedName = testSuite.getClassName();
+
+		return qualifiedName != null ? new RerunAction[] {
+				new RerunAction(Messages.RerunAction_label_run, testRunnerPart, testSuite.getId(), qualifiedName,
+						testMethodName, testSuite.getDisplayName(), testSuite.getUniqueId(), ILaunchManager.RUN_MODE),
+				new RerunAction(Messages.RerunAction_label_debug, testRunnerPart, testSuite.getId(), qualifiedName,
+						testMethodName, testSuite.getDisplayName(), testSuite.getUniqueId(),
+						ILaunchManager.DEBUG_MODE) }
+				: null;
 	}
 }
