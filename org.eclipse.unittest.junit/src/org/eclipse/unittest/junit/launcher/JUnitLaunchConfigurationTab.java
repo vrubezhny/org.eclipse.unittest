@@ -253,7 +253,7 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 		fTestLoaderViewer = new ComboViewer(comp, SWT.DROP_DOWN | SWT.READ_ONLY);
 		fTestLoaderViewer.getCombo().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		ArrayList<TestKind> items = TestKindRegistry.getDefault().getAllKinds();
+		ArrayList<TestKind> items = TestKindRegistry.getDefault().getKinds(JUnitPlugin.PLUGIN_ID);
 		fTestLoaderViewer.setContentProvider(ArrayContentProvider.getInstance());
 		fTestLoaderViewer.setLabelProvider(new LabelProvider() {
 			@Override

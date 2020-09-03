@@ -17,7 +17,7 @@ package org.eclipse.unittest.launcher;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
+import java.util.stream.Collectors;
 
 import org.eclipse.unittest.UnitTestPlugin;
 
@@ -26,13 +26,13 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 
-
 public class TestKindRegistry {
 	public static TestKindRegistry getDefault() {
 		if (fgRegistry != null)
 			return fgRegistry;
 
-		fgRegistry= new TestKindRegistry(Platform.getExtensionRegistry().getExtensionPoint(UnitTestPlugin.ID_EXTENSION_POINT_TEST_KINDS));
+		fgRegistry = new TestKindRegistry(
+				Platform.getExtensionRegistry().getExtensionPoint(UnitTestPlugin.ID_EXTENSION_POINT_TEST_KINDS));
 		return fgRegistry;
 	}
 
@@ -50,26 +50,29 @@ public class TestKindRegistry {
 		return fTestKinds;
 	}
 
+	public ArrayList<TestKind> getKinds(final String filter) {
+		ArrayList<TestKind> allKinds = getAllKinds();
+		return allKinds != null ? allKinds.stream().filter(p -> p.getId().startsWith(filter))
+				.collect(Collectors.toCollection(ArrayList::new)) : null;
+	}
+
 	private void loadKinds() {
 		if (fTestKinds != null)
 			return;
 
-		ArrayList<TestKind> items= new ArrayList<>();
+		ArrayList<TestKind> items = new ArrayList<>();
 		for (IConfigurationElement configurationElement : getConfigurationElements()) {
 			items.add(new TestKind(configurationElement));
 		}
 
-		Collections.sort(items, new Comparator<TestKind>() {
-			@Override
-			public int compare(TestKind kind0, TestKind kind1) {
-				if (kind0.precedes(kind1))
-					return -1;
-				if (kind1.precedes(kind0))
-					return 1;
-				return 0;
-			}
+		Collections.sort(items, (kind0, kind1) -> {
+			if (kind0.precedes(kind1))
+				return -1;
+			if (kind1.precedes(kind0))
+				return 1;
+			return 0;
 		});
-		fTestKinds= items;
+		fTestKinds = items;
 	}
 
 	public ArrayList<String> getDisplayNames() {
@@ -95,10 +98,8 @@ public class TestKindRegistry {
 		return ITestKind.NULL;
 	}
 
-
-
 	private ArrayList<IConfigurationElement> getConfigurationElements() {
-		ArrayList<IConfigurationElement> items= new ArrayList<>();
+		ArrayList<IConfigurationElement> items = new ArrayList<>();
 		for (IExtension extension : fPoint.getExtensions()) {
 			Collections.addAll(items, extension.getConfigurationElements());
 		}
@@ -106,10 +107,10 @@ public class TestKindRegistry {
 	}
 
 	public String getAllKindIds() {
-		ArrayList<TestKind> allKinds= getAllKinds();
-		String returnThis= ""; //$NON-NLS-1$
+		ArrayList<TestKind> allKinds = getAllKinds();
+		String returnThis = ""; //$NON-NLS-1$
 		for (ITestKind kind : allKinds) {
-			returnThis+= "(" + kind.getId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+			returnThis += "(" + kind.getId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return returnThis;
 	}

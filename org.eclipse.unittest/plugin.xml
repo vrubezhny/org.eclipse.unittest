@@ -88,6 +88,7 @@
             class="org.eclipse.unittest.ui.UITestRunListener">
       </testRunListener>
    </extension>
+   
    <extension
          point="org.eclipse.ui.themes">
       <fontDefinition

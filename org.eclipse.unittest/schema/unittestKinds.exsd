@@ -23,21 +23,21 @@
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  a fulli qualified extention point identifier
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+                  a fully qualified identifier of the target extension point
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  
+                  a name of this extention point
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -48,6 +48,11 @@
    </element>
 
    <element name="kind">
+      <annotation>
+         <documentation>
+            A Test Kind definition that implements org.eclipse.unittest.launcher.ITestKind.
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="runtimeClasspathEntry" minOccurs="0" maxOccurs="unbounded"/>
@@ -89,21 +94,21 @@
          <attribute name="loaderClass" type="string" use="required">
             <annotation>
                <documentation>
-                  test loader class implementing org.eclipse.unittest.launcher.runner.ITestLoader (declared in plug-in &quot;loaderPluginId&quot;)
+                  test loader class (declared in plug-in &quot;loaderPluginId&quot;)
                </documentation>
             </annotation>
          </attribute>
          <attribute name="testRunnerClientClass" type="string" use="required">
             <annotation>
                <documentation>
-                  test runner class implementing org.eclipse.unittest.launcher.ITestRunnerClient (declared in plug-in &quot;loaderPluginId&quot;)
+                  test runner class implementing org.eclipse.unittest.launcher.ITestRunnerClient
                </documentation>
             </annotation>
          </attribute>
          <attribute name="testViewSupportClass" type="string" use="required">
             <annotation>
                <documentation>
-                  test view support class implementing org.eclipse.unittest.launcher.ITestViewSupport (declared in plug-in &quot;loaderPluginId&quot;)
+                  test view support class implementing org.eclipse.unittest.launcher.ITestViewSupport
                </documentation>
             </annotation>
          </attribute>
@@ -118,32 +123,29 @@
    </element>
 
    <element name="runtimeClasspathEntry">
+      <annotation>
+         <documentation>
+            A Runtime Classpath Entry definition
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="pluginId" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  A Runtime Classpath Entry Plug-in ID
                </documentation>
             </annotation>
          </attribute>
          <attribute name="pathToJar" type="string">
             <annotation>
                <documentation>
-                  
+                  A path to jar containng the plug-in &quot;loaderPluginId&quot;
                </documentation>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="since"/>
-      </appInfo>
-      <documentation>
-         3.2
-      </documentation>
-   </annotation>
 
 
 
@@ -153,7 +155,7 @@
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2006, 2008 IBM Corporation and others.
+         Copyright (c) 2006, 2020 IBM Corporation and others.
 
 This program and the accompanying materials are made available under the terms of the Eclipse Public License 2.0 which accompanies this distribution, and is available at &lt;a href=&quot;https://www.eclipse.org/legal/epl-2.0&quot;&gt;https://www.eclipse.org/legal/epl-v20.html&lt;/a&gt;/
 

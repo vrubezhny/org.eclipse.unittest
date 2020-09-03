@@ -37,6 +37,7 @@ import org.eclipse.jdt.core.JavaModelException;
 
 import org.eclipse.jdt.internal.junit.util.CoreTestSearchEngine;
 
+@SuppressWarnings("restriction")
 public class JUnit3TestFinder implements ITestFinder {
 
 	@Override
