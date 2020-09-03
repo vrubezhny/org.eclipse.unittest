@@ -39,6 +39,8 @@ public interface ITestFinder {
 	};
 
 	/**
+	 * Searches for the Unit Tests in a specified container object
+	 *
 	 * @param element element to search for tests
 	 * @param result  a Set to add ITypes
 	 * @param pm      the progress monitor
@@ -47,5 +49,12 @@ public interface ITestFinder {
 	void findTestsInContainer(Object element, @SuppressWarnings("rawtypes") Set result, IProgressMonitor pm)
 			throws CoreException;
 
+	/**
+	 * Detects if a specified type contains a Unit test
+	 *
+	 * @param type type to search for tests
+	 * @return true in case of a test is found
+	 * @throws CoreException thrown when tests can not be found
+	 */
 	boolean isTest(Object type) throws CoreException;
 }
