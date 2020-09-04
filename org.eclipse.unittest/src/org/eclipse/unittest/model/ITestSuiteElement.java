@@ -18,7 +18,6 @@ package org.eclipse.unittest.model;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- *
  */
 public interface ITestSuiteElement extends ITestElementContainer {
 
@@ -28,10 +27,10 @@ public interface ITestSuiteElement extends ITestElementContainer {
 	 *
 	 * @return the name of the suite
 	 */
-	public String getSuiteTypeName();
+	String getSuiteTypeName();
 
-	public void addChild(ITestElement child);
+	void addChild(ITestElement child);
 
-	public void childChangedStatus(ITestElement child, ITestElement.Status childStatus);
+	void childChangedStatus(ITestElement child, ITestElement.Status childStatus);
 
 }

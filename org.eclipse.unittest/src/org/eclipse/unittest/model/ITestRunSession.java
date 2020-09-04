@@ -63,48 +63,161 @@ public interface ITestRunSession extends ITestElementContainer {
 	 */
 	ITestKind getTestRunnerKind();
 
+	/**
+	 * Returns the Test Runner Client to be used to gather the test results, or
+	 * <code>null</code> if not available.
+	 *
+	 * @return the test runner client instance, or <code>null</code> is not
+	 *         available.
+	 */
 	ITestRunnerClient getTestRunnerClient();
 
+	/**
+	 * Creates a test element, either {@link ITestSuiteElement} or
+	 * {@link ITestCaseElement} instance, depending on the arguments.
+	 *
+	 * @param parent         a parent test suite element
+	 * @param id             an identifier of the test element
+	 * @param testName       a name of the test element
+	 * @param isSuite        a flag indicating if the test element should be
+	 *                       represented by a test suite element
+	 * @param testCount      a number of predefined test cases in case of test suite
+	 *                       element
+	 * @param isDynamicTest  a flag indicating that test suite is dynamic (that
+	 *                       doesn't have predefined tests)
+	 * @param displayName    a display name for the test element
+	 * @param parameterTypes an array of parameter types, or <code>null</code>
+	 * @param uniqueId       a unique identifier for the test element or
+	 *                       <code>null</code>
+	 * @return a created {@link ITestSuiteElement} or {@link ITestCaseElement}
+	 *         instance
+	 */
 	ITestElement createTestElement(ITestSuiteElement parent, String id, String testName, boolean isSuite, int testCount,
 			boolean isDynamicTest, String displayName, String[] parameterTypes, String uniqueId);
 
+	/**
+	 * Adds an {@link ITestSessionListener} to the test run session
+	 *
+	 * @param listener an {@link ITestSessionListener} instance
+	 */
 	void addTestSessionListener(ITestSessionListener listener);
 
+	/**
+	 * Removes an {@link ITestSessionListener} from the test run session
+	 *
+	 * @param listener an {@link ITestSessionListener} instance
+	 */
 	void removeTestSessionListener(ITestSessionListener listener);
 
-	ITestSuiteElement getTestRoot();
+	/**
+	 * Returns the root test element of this test run session
+	 *
+	 * @return a root test element
+	 */
+	ITestRoot getTestRoot();
 
+	/**
+	 * Returns a test element by its identifier
+	 *
+	 * @param id a test element identifier
+	 * @return a {@link ITestElement} found or <code>null</code>
+	 */
 	ITestElement getTestElement(String id);
 
+	/**
+	 * Returns an array of all failed {@link ITestElement}s
+	 *
+	 * @return an array of failed {@link ITestElement}s
+	 */
 	ITestElement[] getAllFailedTestElements();
 
+	/**
+	 * Returns the number of started test case elements
+	 *
+	 * @return a number of started test cases
+	 */
 	int getStartedCount();
 
+	/**
+	 * Returns the number of failed test case elements
+	 *
+	 * @return a number of failed test cases
+	 */
 	int getFailureCount();
 
+	/**
+	 * Returns the number of assumption failures
+	 *
+	 * @return a number of assumption failures
+	 */
 	int getAssumptionFailureCount();
 
+	/**
+	 * Returns the number of ignored test case elements
+	 *
+	 * @return a number of ignored test cases
+	 */
 	int getIgnoredCount();
 
+	/**
+	 * Returns the total number of test case elements
+	 *
+	 * @return a total number of test cases
+	 */
 	int getTotalCount();
 
+	/**
+	 * Returns the number of test case elements with errors
+	 *
+	 * @return a number of test cases with errors
+	 */
 	int getErrorCount();
 
+	/**
+	 * Indicates if the test run session is starting
+	 *
+	 * @return <code>true</code> in case of the test session is starting, otherwise
+	 *         returns <code>false</code>
+	 */
 	boolean isStarting();
 
+	/**
+	 * Indicates if the test run session is running
+	 *
+	 * @return <code>true</code> in case of the test session is running, otherwise
+	 *         returns <code>false</code>
+	 */
 	boolean isRunning();
 
+	/**
+	 * Indicates if the test run session has been kept alive
+	 *
+	 * @return <code>true</code> in case of the test session has been kept alive,
+	 *         otherwise returns <code>false</code>
+	 */
 	boolean isKeptAlive();
 
 	/**
-	 * @return <code>true</code> iff the session has been stopped or terminated
+	 * Indicates if the test run session has been stopped or terminated
+	 *
+	 * @return <code>true</code> if the session has been stopped or terminated,
+	 *         otherwise returns <code>false</code>
 	 */
 	boolean isStopped();
 
+	/**
+	 * Stops the test run
+	 */
 	void stopTestRun();
 
+	/**
+	 * Swaps in the test run session info
+	 */
 	void swapIn();
 
+	/**
+	 * Swaps out the test run session info
+	 */
 	void swapOut();
 
 	/**
@@ -113,7 +226,7 @@ public interface ITestRunSession extends ITestElementContainer {
 	 * @param testId    test id
 	 * @param className test class name
 	 * @param testName  test method name
-	 * @return <code>false</code> iff the rerun could not be started
+	 * @return <code>false</code> if the rerun could not be started
 	 */
 	boolean rerunTest(String testId, String className, String testName);
 

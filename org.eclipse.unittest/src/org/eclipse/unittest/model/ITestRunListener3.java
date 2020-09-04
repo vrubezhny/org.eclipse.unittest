@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.unittest.model;
 
+/**
+ * An interface to listen to the events from the
+ * {@link org.eclipse.unittest.launcher.ITestRunnerClient} and translates them into high-level model
+ * events (broadcasted to {@link ITestSessionListener}s).
+ */
 public interface ITestRunListener3 {
 
 	/**

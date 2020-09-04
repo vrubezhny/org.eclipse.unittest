@@ -514,7 +514,7 @@ public class TestViewer {
 			return;
 		}
 
-		ITestSuiteElement testRoot = fTestRunSession.getTestRoot();
+		ITestRoot testRoot = fTestRunSession.getTestRoot();
 
 		StructuredViewer viewer = getActiveViewer();
 		if (getActiveViewerNeedsRefresh()) {

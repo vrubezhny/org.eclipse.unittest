@@ -38,8 +38,18 @@ public interface ITestCaseElement extends ITestElement {
 	 */
 	String getTestClassName();
 
+	/**
+	 * Indicates if the test case was ignored
+	 *
+	 * @return true in case of the test case was ignored, otherwise false
+	 */
 	boolean isIgnored();
 
+	/**
+	 * Indicates if the test case is dynamic
+	 *
+	 * @return true in case of dynamic test case element, otherwise false
+	 */
 	boolean isDynamicTest();
 
 }

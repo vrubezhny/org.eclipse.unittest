@@ -273,8 +273,18 @@ public interface ITestElement {
 		}
 	}
 
+	/**
+	 * Returns an identifier of the test element
+	 *
+	 * @return a test element identifier
+	 */
 	String getId();
 
+	/**
+	 * Returns an unique identifier of the test element
+	 *
+	 * @return a test element unique identifier if exists, otherwise null
+	 */
 	String getUniqueId();
 
 	/**
@@ -362,16 +372,38 @@ public interface ITestElement {
 	 */
 	double getElapsedTimeInSeconds();
 
+	/**
+	 * Returns parent test suite element of this test element
+	 *
+	 * @return a parent test suite element
+	 */
 	ITestSuiteElement getParent();
 
+	/**
+	 * Returns the root test element
+	 *
+	 * @return a root test element
+	 */
 	ITestRoot getRoot();
 
+	/**
+	 * Returns the parameter types specified for this test element
+	 *
+	 * @return a parameter type array
+	 */
 	String[] getParameterTypes();
 
+	/**
+	 * Returns the name of the test element
+	 *
+	 * @return a name of test element
+	 */
 	String getTestName();
 
 	/**
-	 * @return return the class name
+	 * Returns the type/class of the test element
+	 *
+	 * @return return the type/class name
 	 */
 	String getClassName();
 
@@ -383,26 +415,102 @@ public interface ITestElement {
 	 */
 	String getDisplayName();
 
+	/**
+	 * Returns the status of this test element
+	 * <ul>
+	 * <li>{@link ITestElement.Status#NOT_RUN}: the test has not executed</li>
+	 * <li>{@link ITestElement.Status#OK}: the test is successful</li>
+	 * <li>{@link ITestElement.Status#ERROR}: the test had an error</li>
+	 * <li>{@link ITestElement.Status#FAILURE}: the test had an assertion
+	 * failure</li>
+	 * </ul>
+	 *
+	 * @return returns one of {@link ITestElement.Status#NOT_RUN},
+	 *         {@link ITestElement.Status#OK}, {@link ITestElement.Status#ERROR} or
+	 *         {@link ITestElement.Status#FAILURE}.
+	 */
 	Status getStatus();
 
+	/**
+	 * Sets the current test element status
+	 *
+	 * @param status one of {@link ITestElement.Status#NOT_RUN},
+	 *               {@link ITestElement.Status#OK},
+	 *               {@link ITestElement.Status#ERROR} or
+	 *               {@link ITestElement.Status#FAILURE}.
+	 */
 	void setStatus(Status status);
 
+	/**
+	 * Sets the extended status for this test element
+	 *
+	 * @param status   one of {@link ITestElement.Status#NOT_RUN},
+	 *                 {@link ITestElement.Status#OK},
+	 *                 {@link ITestElement.Status#ERROR} or
+	 *                 {@link ITestElement.Status#FAILURE}.
+	 * @param trace    stacktracee/error message or null
+	 * @param expected expected result value or null
+	 * @param actual   actual result value or null
+	 */
 	void setStatus(Status status, String trace, String expected, String actual);
 
+	/**
+	 * Returns the stacktrace/error message of this test element or
+	 * <code>null</code> if the test has not resulted in an error or failure.
+	 *
+	 * @return the stacktrace/error message of this test or <code>null</code>.
+	 */
 	String getTrace();
 
+	/**
+	 * Returns an expected value for this test element
+	 *
+	 * @return an expected result value or null
+	 */
 	String getExpected();
 
+	/**
+	 * Returns an actual value for this test element
+	 *
+	 * @return an actual result value or null
+	 */
 	String getActual();
 
+	/**
+	 * Indicates if there was a comparison failure
+	 *
+	 * @return true if there was a comparison failure, otherwise return false
+	 */
 	boolean isComparisonFailure();
 
+	/**
+	 * Sets up the assumption failure flag for this test
+	 *
+	 * @param assumptionFailed a flag indicating the assumption failure
+	 */
 	void setAssumptionFailed(boolean assumptionFailed);
 
+	/**
+	 * Indicates if there was an assumption failure
+	 *
+	 * @return true if there was a comparison failure, otherwise return false
+	 */
 	boolean isAssumptionFailure();
 
+	/**
+	 * Sets up the elapsted time ib seconds for this test element
+	 *
+	 * @param time in seconds
+	 */
 	void setElapsedTimeInSeconds(double time);
 
+	/**
+	 * Extracts and returns a raw class name from a test element name
+	 *
+	 * @param testNameString a test element name
+	 *
+	 * @return an extracted raw class name
+	 */
 	String extractRawClassName(String testNameString);
 
 }

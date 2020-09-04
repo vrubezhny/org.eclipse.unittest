@@ -13,6 +13,12 @@
  *******************************************************************************/
 package org.eclipse.unittest.model;
 
+/**
+ * Represents a root test element.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
+ */
 public interface ITestRoot extends ITestSuiteElement {
-
+	// empty
 }
