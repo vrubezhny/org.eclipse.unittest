@@ -261,7 +261,6 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	 *
 	 * @param buf the comparison result
 	 * @return the result or <code>null</code> if empty
-	 * @since 3.7
 	 */
 	private static String nullifyEmpty(StringBuffer buf) {
 		int length = buf.length();

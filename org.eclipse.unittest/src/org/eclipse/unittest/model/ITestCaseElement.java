@@ -19,8 +19,6 @@ package org.eclipse.unittest.model;
  * This interface is not intended to be implemented by clients.
  * </p>
  *
- * @since 3.3
- *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
@@ -31,17 +29,17 @@ public interface ITestCaseElement extends ITestElement {
 	 *
 	 * @return returns the name of the test method.
 	 */
-	public String getTestMethodName();
+	String getTestMethodName();
 
 	/**
 	 * Returns the qualified type name of the class the test is contained in.
 	 *
 	 * @return the qualified type name of the class the test is contained in.
 	 */
-	public String getTestClassName();
+	String getTestClassName();
 
-	public boolean isIgnored();
+	boolean isIgnored();
 
-	public boolean isDynamicTest();
+	boolean isDynamicTest();
 
 }

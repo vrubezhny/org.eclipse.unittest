@@ -306,7 +306,6 @@ public final class UnitTestModel implements IUnitTestModel {
 	 * @throws InvocationTargetException wrapping a CoreException if the import
 	 *                                   failed
 	 * @throws InterruptedException      if the import was cancelled
-	 * @since 3.6
 	 */
 	@Override
 	public ITestRunSession importTestRunSession(String url, IProgressMonitor monitor)

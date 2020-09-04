@@ -21,21 +21,20 @@ import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.core.resources.IResource;
 
-
 /**
- * A label provider for basic elements like paths. The label provider will make sure that the labels are correctly
- * shown in RTL environments.
- *
- * @since 3.4
+ * A label provider for basic elements like paths. The label provider will make
+ * sure that the labels are correctly shown in RTL environments.
  */
 public class BasicElementLabels {
 
-	private BasicElementLabels(){}
+	private BasicElementLabels() {
+	}
 
 	/**
-	 * Adds special marks so that that the given string is readable in a BIDI environment.
+	 * Adds special marks so that that the given string is readable in a BIDI
+	 * environment.
 	 *
-	 * @param string the string
+	 * @param string     the string
 	 * @param delimiters the additional delimiters
 	 * @return the processed styled string
 	 */
@@ -46,16 +45,17 @@ public class BasicElementLabels {
 	/**
 	 * Returns the label of a path.
 	 *
-	 * @param path the path
-	 * @param isOSPath if <code>true</code>, the path represents an OS path, if <code>false</code> it is a workspace path.
+	 * @param path     the path
+	 * @param isOSPath if <code>true</code>, the path represents an OS path, if
+	 *                 <code>false</code> it is a workspace path.
 	 * @return the label of the path to be used in the UI.
 	 */
 	public static String getPathLabel(IPath path, boolean isOSPath) {
 		String label;
 		if (isOSPath) {
-			label= path.toOSString();
+			label = path.toOSString();
 		} else {
-			label= path.makeRelative().toString();
+			label = path.makeRelative().toString();
 		}
 		return markLTR(label, "/\\:."); //$NON-NLS-1$
 	}
@@ -67,7 +67,7 @@ public class BasicElementLabels {
 	 * @return the label of the file path to be used in the UI.
 	 */
 	public static String getPathLabel(File file) {
-		return markLTR(file.getAbsolutePath(), "/\\:.");  //$NON-NLS-1$
+		return markLTR(file.getAbsolutePath(), "/\\:."); //$NON-NLS-1$
 	}
 
 	/**
@@ -81,7 +81,8 @@ public class BasicElementLabels {
 	}
 
 	/**
-	 * Returns the label for a URL, URI or URL part. Example is 'http://www.x.xom/s.html#1'
+	 * Returns the label for a URL, URI or URL part. Example is
+	 * 'http://www.x.xom/s.html#1'
 	 *
 	 * @param name the URL string
 	 * @return the label of the URL.
@@ -117,13 +118,12 @@ public class BasicElementLabels {
 	 * @return the version label
 	 */
 	public static String getVersionName(String name) {
-		return markLTR(name, ":.");  //$NON-NLS-1$
+		return markLTR(name, ":."); //$NON-NLS-1$
 	}
 
-
 	/**
-	 * Returns a label for Java element name. Example is 'new Test<? extends List>() { ...}'.
-	 * This method should only be used for simple element names. Use
+	 * Returns a label for Java element name. Example is 'new Test<? extends List>()
+	 * { ...}'. This method should only be used for simple element names. Use
 	 * JavaElementLabels to create a label from a Java element.
 	 *
 	 * @param name the Java element name.

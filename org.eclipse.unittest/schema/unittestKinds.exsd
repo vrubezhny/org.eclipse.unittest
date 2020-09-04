@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.unittest" id="unittestKinds" name="UnitTest Kinds"/>
       </appInfo>
       <documentation>
-         Internal extension point to register Unit Test test kinds. This extension point is not intended to be used by clients. It may be changed or removed at any time.
+         Internal extension point to register Unit Test test kinds. 
       </documentation>
    </annotation>
 

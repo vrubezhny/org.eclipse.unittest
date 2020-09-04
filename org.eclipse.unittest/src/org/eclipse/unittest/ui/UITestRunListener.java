@@ -21,8 +21,6 @@ import org.eclipse.unittest.model.ITestRunSession;
  * This test run listener is the entry point that makes sure the
  * org.eclipse.unittest plug-in gets loaded when a UnitTest launch configuration
  * is launched.
- *
- * @since 3.6
  */
 public class UITestRunListener extends TestRunListener {
 	@Override

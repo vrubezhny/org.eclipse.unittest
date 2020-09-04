@@ -244,30 +244,24 @@ public class TestRunnerViewPart extends ViewPart {
 	static final String TAG_ORIENTATION = "orientation"; //$NON-NLS-1$
 	static final String TAG_SCROLL = "scroll"; //$NON-NLS-1$
 	/**
-	 * @since 3.2
 	 */
 	static final String TAG_LAYOUT = "layout"; //$NON-NLS-1$
 	/**
-	 * @since 3.2
 	 */
 	static final String TAG_FAILURES_ONLY = "failuresOnly"; //$NON-NLS-1$
 
 	/**
-	 * @since 3.8
 	 */
 	static final String TAG_IGNORED_ONLY = "ignoredOnly"; //$NON-NLS-1$
 	/**
-	 * @since 3.4
 	 */
 	static final String TAG_SHOW_TIME = "time"; //$NON-NLS-1$
 
 	/**
-	 * @since 3.5
 	 */
 	static final String PREF_LAST_PATH = "lastImportExportPath"; //$NON-NLS-1$
 
 	/**
-	 * @since 3.6
 	 */
 	static final String PREF_LAST_URL = "lastImportURL"; //$NON-NLS-1$
 

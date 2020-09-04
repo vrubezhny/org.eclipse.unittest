@@ -359,8 +359,6 @@ public interface ITestElement {
 	 * @return total execution time for the test element in seconds, or
 	 *         {@link Double#NaN} if the state of the element is not
 	 *         {@link ITestElement.ProgressState#COMPLETED}
-	 *
-	 * @since 3.4
 	 */
 	double getElapsedTimeInSeconds();
 

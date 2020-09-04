@@ -33,8 +33,6 @@ import org.eclipse.unittest.model.ITestRunSession;
  * {@link #sessionFinished(ITestRunSession)}. After that call, no references
  * must be kept to the session or any of the test cases or suites.
  * </p>
- *
- * @since 3.3
  */
 public abstract class TestRunListener {
 
@@ -46,7 +44,6 @@ public abstract class TestRunListener {
 	 * </p>
 	 *
 	 * @param session the session that has just been launched
-	 * @since 3.6
 	 */
 	public void sessionLaunched(ITestRunSession session) {
 	}

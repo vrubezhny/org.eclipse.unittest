@@ -226,7 +226,6 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 	 *
 	 * @param serviceName name of service
 	 * @return service object or <code>null</code> if none
-	 * @since 3.5
 	 */
 	public Object getService(String serviceName) {
 		ServiceReference<?> reference = fBundleContext.getServiceReference(serviceName);
@@ -269,7 +268,6 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 	 *
 	 * @param bundleName the bundle name
 	 * @return the bundle
-	 * @since 3.2
 	 */
 	public Bundle getBundle(String bundleName) {
 		Bundle[] bundles = getBundles(bundleName, null);

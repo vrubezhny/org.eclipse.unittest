@@ -26,8 +26,6 @@ import org.eclipse.debug.core.ILaunch;
  * This interface is not intended to be implemented by clients.
  * </p>
  *
- * @since 3.3
- *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
@@ -46,7 +44,6 @@ public interface ITestRunSession extends ITestElementContainer {
 	 * or <code>null</code> if not available.
 	 *
 	 * @return the launched project, or <code>null</code> is not available.
-	 * @since 3.6
 	 */
 	IProject getLaunchedProject();
 
@@ -63,7 +60,6 @@ public interface ITestRunSession extends ITestElementContainer {
 	 * launched, or <code>null</code> if not available.
 	 *
 	 * @return the test runner kind, or <code>null</code> is not available.
-	 * @since 3.6
 	 */
 	ITestKind getTestRunnerKind();
 

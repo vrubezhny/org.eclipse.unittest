@@ -23,7 +23,7 @@
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  a fulli qualified extention point identifier
+                  a fully qualified extention point identifier
                </documentation>
             </annotation>
          </attribute>
