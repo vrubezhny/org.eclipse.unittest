@@ -310,7 +310,7 @@ public final class UnitTestModel implements IUnitTestModel {
 	@Override
 	public ITestRunSession importTestRunSession(String url, IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException {
-		monitor.beginTask(ModelMessages.JUnitModel_importing_from_url, IProgressMonitor.UNKNOWN);
+		monitor.beginTask(ModelMessages.UnitTestModel_importing_from_url, IProgressMonitor.UNKNOWN);
 		final String trimmedUrl = url.trim().replaceAll("\r\n?|\n", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		final TestRunHandler handler = new TestRunHandler(monitor);
 
@@ -342,7 +342,7 @@ public final class UnitTestModel implements IUnitTestModel {
 
 			private void storeImportError(Exception e) {
 				exception[0] = new CoreException(new org.eclipse.core.runtime.Status(IStatus.ERROR,
-						UnitTestPlugin.getPluginId(), ModelMessages.JUnitModel_could_not_import, e));
+						UnitTestPlugin.getPluginId(), ModelMessages.UnitTestModel_could_not_import, e));
 			}
 		};
 		importThread.start();
@@ -432,14 +432,14 @@ public final class UnitTestModel implements IUnitTestModel {
 	}
 
 	private static void throwExportError(File file, Exception e) throws CoreException {
-		throw new CoreException(new org.eclipse.core.runtime.Status(IStatus.ERROR, UnitTestPlugin.getPluginId(),
-				MessageFormat.format(ModelMessages.JUnitModel_could_not_write, BasicElementLabels.getPathLabel(file)),
-				e));
+		throw new CoreException(
+				new org.eclipse.core.runtime.Status(IStatus.ERROR, UnitTestPlugin.getPluginId(), MessageFormat.format(
+						ModelMessages.UnitTestModel_could_not_write, BasicElementLabels.getPathLabel(file)), e));
 	}
 
 	private static void throwImportError(File file, Exception e) throws CoreException {
 		throw new CoreException(new org.eclipse.core.runtime.Status(IStatus.ERROR, UnitTestPlugin.getPluginId(),
-				MessageFormat.format(ModelMessages.JUnitModel_could_not_read, BasicElementLabels.getPathLabel(file)),
+				MessageFormat.format(ModelMessages.UnitTestModel_could_not_read, BasicElementLabels.getPathLabel(file)),
 				e));
 	}
 

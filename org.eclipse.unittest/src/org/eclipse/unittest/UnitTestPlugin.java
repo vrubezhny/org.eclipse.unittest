@@ -19,7 +19,6 @@ package org.eclipse.unittest;
 
 import java.io.File;
 import java.net.URL;
-import java.util.List;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -73,11 +72,6 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 //	public static final String ID_EXTENSION_POINT_UNITTEST_LAUNCHCONFIGS = PLUGIN_ID + "." + "unittestLaunchConfigs"; //$NON-NLS-1$ //$NON-NLS-2$
 
 	private static final IPath ICONS_PATH = new Path("$nl$/icons/full"); //$NON-NLS-1$
-
-	/**
-	 * List storing the registered JUnit launch configuration types
-	 */
-	private List<String> fJUnitLaunchConfigTypeIDs;
 
 	private BundleContext fBundleContext;
 
