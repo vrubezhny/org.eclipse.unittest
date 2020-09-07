@@ -15,8 +15,8 @@ package org.eclipse.unittest.model;
 
 /**
  * An interface to listen to the events from the
- * {@link org.eclipse.unittest.launcher.ITestRunnerClient} and translates them into high-level model
- * events (broadcasted to {@link ITestSessionListener}s).
+ * {@link org.eclipse.unittest.launcher.ITestRunnerClient} and translates them
+ * into high-level model events (broadcasted to {@link ITestSessionListener}s).
  */
 public interface ITestRunListener3 {
 
@@ -92,8 +92,8 @@ public interface ITestRunListener3 {
 	 * @param displayName    the display name of the test
 	 * @param parameterTypes comma-separated list of method parameter types if
 	 *                       applicable, otherwise an empty string
-	 * @param uniqueId       the unique ID of the test provided by JUnit launcher,
-	 *                       otherwise an empty string
+	 * @param uniqueId       the unique ID of the test provided, otherwise an empty
+	 *                       string
 	 */
 
 	void testTreeEntry(String testId, String testName, boolean isSuite, int testCount, boolean isDynamicTest,

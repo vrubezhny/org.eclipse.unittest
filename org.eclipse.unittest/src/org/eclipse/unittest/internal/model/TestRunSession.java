@@ -10,8 +10,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Achim Demelt <a.demelt@exxcellent.de> - [junit] Separate UI from non-UI code - https://bugs.eclipse.org/bugs/show_bug.cgi?id=278844
- *     Thirumala Reddy Mutchukota <thirumala@google.com> - [JUnit] Avoid rerun test launch on UI thread - https://bugs.eclipse.org/bugs/show_bug.cgi?id=411841
  *******************************************************************************/
 package org.eclipse.unittest.internal.model;
 

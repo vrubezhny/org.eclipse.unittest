@@ -27,8 +27,8 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
  */
 public class UnitTestUIPreferencesConstants {
 	/**
-	 * Boolean preference controlling whether newly launched JUnit tests should be
-	 * shown in all JUnit views (in all windows).
+	 * Boolean preference controlling whether newly launched Unit tests should be
+	 * shown in all Unit Test views (in all windows).
 	 */
 	public static final String SHOW_IN_ALL_VIEWS = UnitTestPlugin.PLUGIN_ID + ".show_in_all_views"; //$NON-NLS-1$
 

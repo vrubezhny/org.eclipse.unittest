@@ -21,8 +21,8 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IActionDelegate;
 
 /**
- * Action to show the stack trace of a failed test from JUnit view's failure trace in debug's Java
- * stack trace console.
+ * Action to show the stack trace of a failed test from Unit Test view's failure
+ * trace in debug's Java stack trace console.
  */
 public class ShowStackTraceInConsoleViewAction extends Action {
 

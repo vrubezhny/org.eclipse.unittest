@@ -67,8 +67,6 @@ public class TextualTrace {
 		if (labelLength < maxLabelLength) {
 			display.addTraceLine(type, line);
 		} else {
-			// workaround for bug 74647: JUnit view truncates
-			// failure message
 			display.addTraceLine(type, line.substring(0, maxLabelLength));
 			int offset = maxLabelLength;
 			while (offset < labelLength) {

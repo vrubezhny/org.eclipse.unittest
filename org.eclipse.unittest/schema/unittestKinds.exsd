@@ -80,7 +80,7 @@
                   test finder class implementing org.eclipse.unittest.launcher.ITestFinder
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.jdt.internal.junit.launcher.ITestFinder"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.unittest.launcher.ITestFinder"/>
                </appInfo>
             </annotation>
          </attribute>

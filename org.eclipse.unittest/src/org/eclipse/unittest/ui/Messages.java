@@ -10,10 +10,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     David Saff (saff@mit.edu) - bug 102632: [JUnit] Support for JUnit 4.
- *     Robert Konigsberg <konigsberg@google.com> - [JUnit] Improve discoverability of the ability to run a single method under JUnit Tests - https://bugs.eclipse.org/bugs/show_bug.cgi?id=285637
- *     Andrej Zachar <andrej@chocolatejar.eu> - [JUnit] Add a filter for ignored tests - https://bugs.eclipse.org/bugs/show_bug.cgi?id=298603
- *     Gautier de Saint Martin Lacaze <gautier.desaintmartinlacaze@gmail.com> - [JUnit] need 'collapse all' feature in JUnit view - https://bugs.eclipse.org/bugs/show_bug.cgi?id=277806
  *******************************************************************************/
 package org.eclipse.unittest.ui;
 
@@ -29,10 +25,6 @@ public final class Messages extends NLS {
 	private Messages() {
 		// Do not instantiate
 	}
-
-//	public static String ClasspathVariableMarkerResolutionGenerator_use_JUnit3;
-
-//	public static String ClasspathVariableMarkerResolutionGenerator_use_JUnit3_desc;
 
 	public static String CompareResultDialog_actualLabel;
 	public static String CompareResultDialog_expectedLabel;

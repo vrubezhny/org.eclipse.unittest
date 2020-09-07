@@ -16,7 +16,7 @@ package org.eclipse.unittest.ui;
 import org.eclipse.unittest.UnitTestPlugin;
 
 /**
- * Help context ids for the JUnit UI.
+ * Help context ids for the Unit Test UI.
  */
 public interface IUnitTestHelpContextIds {
 	String PREFIX = UnitTestPlugin.PLUGIN_ID + '.';

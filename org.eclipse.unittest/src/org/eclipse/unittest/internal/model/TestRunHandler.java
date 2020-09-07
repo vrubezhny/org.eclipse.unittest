@@ -10,9 +10,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Brock Janiczak (brockj@tpg.com.au)
- *         - https://bugs.eclipse.org/bugs/show_bug.cgi?id=102236: [JUnit] display execution time next to each test
- *     Neale Upstone <neale@nealeupstone.com> - [JUnit] JUnit viewer doesn't recognise <skipped/> node - https://bugs.eclipse.org/bugs/show_bug.cgi?id=276068
  *******************************************************************************/
 
 package org.eclipse.unittest.internal.model;

@@ -10,8 +10,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Julien Ruaux: jruaux@octo.com
- * 	   Vincent Massol: vmassol@octo.com
  *******************************************************************************/
 package org.eclipse.unittest.model;
 

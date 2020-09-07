@@ -10,8 +10,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     David Saff (saff@mit.edu) - initial API and implementation
- *             (bug 102632: [JUnit] Support for JUnit 4.)
  *******************************************************************************/
 
 package org.eclipse.unittest.launcher;
@@ -52,11 +50,11 @@ public class UnitTestRuntimeClasspathEntry {
 		UnitTestRuntimeClasspathEntry other = (UnitTestRuntimeClasspathEntry) obj;
 		if (!fPluginId.equals(other.getPluginId()))
 			return false;
-		return Objects.equals(fPluginRelativePath,other.getPluginRelativePath());
+		return Objects.equals(fPluginRelativePath, other.getPluginRelativePath());
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(fPluginId,fPluginRelativePath);
+		return Objects.hash(fPluginId, fPluginRelativePath);
 	}
 }

@@ -31,26 +31,29 @@ public class RerunAction extends Action {
 
 	/**
 	 * Constructor for RerunAction.
-	 * @param actionName the name of the action
-	 * @param runner the JUnit view
-	 * @param testId the test id
-	 * @param className the class name containing the test
-	 * @param testName the method to run or <code>null</code>
-	 * @param testDisplayName the display name of the test to re-run or <code>null</code>
-	 * @param uniqueId the unique ID of the test to re-run or <code>null</code>
-	 * @param launchMode the launch mode
+	 *
+	 * @param actionName      the name of the action
+	 * @param runner          the Unit Test view
+	 * @param testId          the test id
+	 * @param className       the class name containing the test
+	 * @param testName        the method to run or <code>null</code>
+	 * @param testDisplayName the display name of the test to re-run or
+	 *                        <code>null</code>
+	 * @param uniqueId        the unique ID of the test to re-run or
+	 *                        <code>null</code>
+	 * @param launchMode      the launch mode
 	 */
 	public RerunAction(String actionName, TestRunnerViewPart runner, String testId, String className, String testName,
 			String testDisplayName, String uniqueId, String launchMode) {
 		super(actionName);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IUnitTestHelpContextIds.RERUN_ACTION);
-		fTestRunner= runner;
-		fTestId= testId;
-		fClassName= className;
-		fTestName= testName;
-		fTestDisplayName= testDisplayName;
-		fUniqueId= uniqueId;
-		fLaunchMode= launchMode;
+		fTestRunner = runner;
+		fTestId = testId;
+		fClassName = className;
+		fTestName = testName;
+		fTestDisplayName = testDisplayName;
+		fUniqueId = uniqueId;
+		fLaunchMode = launchMode;
 	}
 
 	@Override

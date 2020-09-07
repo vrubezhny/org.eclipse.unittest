@@ -10,10 +10,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Julien Ruaux: jruaux@octo.com
- * 	   Vincent Massol: vmassol@octo.com
- *     David Saff (saff@mit.edu) - bug 102632: [JUnit] Support for JUnit 4.
- *     Achim Demelt <a.demelt@exxcellent.de> - [junit] Separate UI from non-UI code - https://bugs.eclipse.org/bugs/show_bug.cgi?id=278844
  *******************************************************************************/
 package org.eclipse.unittest;
 
@@ -58,7 +54,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
- * The plug-in runtime class for the JUnit plug-in.
+ * The plug-in runtime class for the Unit Test plug-in.
  */
 @SuppressWarnings("deprecation")
 public class UnitTestPlugin extends AbstractUIPlugin {

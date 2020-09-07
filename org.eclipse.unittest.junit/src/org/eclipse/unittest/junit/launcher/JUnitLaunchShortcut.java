@@ -72,6 +72,8 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.ITypeRoot;
 import org.eclipse.jdt.core.JavaModelException;
 
+import org.eclipse.jdt.internal.junit.launcher.JUnitLaunchConfigurationConstants;
+
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
@@ -293,7 +295,7 @@ public class JUnitLaunchShortcut implements ILaunchShortcut2 {
 	 *         shortcut will create
 	 */
 	protected String getLaunchConfigurationTypeId() {
-		return UnitTestLaunchConfigurationConstants.ID_JUNIT_APPLICATION;
+		return UnitTestLaunchConfigurationConstants.ID_UNITESTT_APPLICATION;
 	}
 
 	/**
@@ -343,6 +345,7 @@ public class JUnitLaunchShortcut implements ILaunchShortcut2 {
 	 * @throws CoreException if creation failed
 	 * @since 3.8
 	 */
+	@SuppressWarnings("restriction")
 	protected ILaunchConfigurationWorkingCopy createLaunchConfiguration(IJavaElement element, String testName)
 			throws CoreException {
 		final String mainTypeQualifiedName;
@@ -407,7 +410,7 @@ public class JUnitLaunchShortcut implements ILaunchShortcut2 {
 		}
 		boolean isRunWithJUnitPlatform = JUnitTestKindUtil.isRunWithJUnitPlatform(element);
 		if (isRunWithJUnitPlatform) {
-			wc.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_RUN_WITH_JUNIT_PLATFORM_ANNOTATION, true);
+			wc.setAttribute(JUnitLaunchConfigurationConstants.ATTR_RUN_WITH_JUNIT_PLATFORM_ANNOTATION, true);
 		}
 		return wc;
 	}

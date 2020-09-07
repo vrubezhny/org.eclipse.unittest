@@ -13,11 +13,12 @@
  *******************************************************************************/
 package org.eclipse.unittest.ui;
 
-
 import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.model.ITestElement;
 
 import org.eclipse.jface.action.Action;
+
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Action to enable/disable stack trace filtering.
@@ -32,24 +33,24 @@ public class CompareResultsAction extends Action {
 		setDescription(Messages.CompareResultsAction_description);
 		setToolTipText(Messages.CompareResultsAction_tooltip);
 
-		setDisabledImageDescriptor(UnitTestPlugin.getImageDescriptor("dlcl16/compare.png"));  //$NON-NLS-1$
-		setHoverImageDescriptor(UnitTestPlugin.getImageDescriptor("elcl16/compare.png"));  //$NON-NLS-1$
-		setImageDescriptor(UnitTestPlugin.getImageDescriptor("elcl16/compare.png"));  //$NON-NLS-1$
-		//PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IJUnitHelpContextIds.ENABLEFILTER_ACTION);
-		fView= view;
+		setDisabledImageDescriptor(UnitTestPlugin.getImageDescriptor("dlcl16/compare.png")); //$NON-NLS-1$
+		setHoverImageDescriptor(UnitTestPlugin.getImageDescriptor("elcl16/compare.png")); //$NON-NLS-1$
+		setImageDescriptor(UnitTestPlugin.getImageDescriptor("elcl16/compare.png")); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IUnitTestHelpContextIds.ENABLEFILTER_ACTION);
+		fView = view;
 	}
 
 	@Override
 	public void run() {
-		ITestElement failedTest= fView.getFailedTest();
+		ITestElement failedTest = fView.getFailedTest();
 		if (fOpenDialog != null) {
 			fOpenDialog.setInput(failedTest);
 			fOpenDialog.getShell().setActive();
 
 		} else {
-			fOpenDialog= new CompareResultDialog(fView.getShell(), failedTest);
+			fOpenDialog = new CompareResultDialog(fView.getShell(), failedTest);
 			fOpenDialog.create();
-			fOpenDialog.getShell().addDisposeListener(e -> fOpenDialog= null);
+			fOpenDialog.getShell().addDisposeListener(e -> fOpenDialog = null);
 			fOpenDialog.setBlockOnOpen(false);
 			fOpenDialog.open();
 		}

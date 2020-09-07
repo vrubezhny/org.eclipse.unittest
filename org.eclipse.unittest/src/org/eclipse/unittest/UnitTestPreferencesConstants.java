@@ -10,7 +10,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     David Saff (saff@mit.edu) - bug 102632: [JUnit] Support for JUnit 4.
  *******************************************************************************/
 package org.eclipse.unittest;
 
@@ -35,7 +34,7 @@ public class UnitTestPreferencesConstants {
 	public static final String DO_FILTER_STACK = UnitTestPlugin.PLUGIN_ID + ".do_filter_stack"; //$NON-NLS-1$
 
 	/**
-	 * Boolean preference controlling whether the JUnit view should be shown on
+	 * Boolean preference controlling whether the Unit Test view should be shown on
 	 * errors only.
 	 */
 	public static final String SHOW_ON_ERROR_ONLY = UnitTestPlugin.PLUGIN_ID + ".show_on_error"; //$NON-NLS-1$

@@ -10,7 +10,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Achim Demelt <a.demelt@exxcellent.de> - [junit] Separate UI from non-UI code - https://bugs.eclipse.org/bugs/show_bug.cgi?id=278844
  *******************************************************************************/
 package org.eclipse.unittest.internal.model;
 
@@ -70,7 +69,7 @@ import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 
 /**
- * Central registry for JUnit test runs.
+ * Central registry for Unit Test test runs.
  */
 public final class UnitTestModel implements IUnitTestModel {
 
@@ -119,7 +118,6 @@ public final class UnitTestModel implements IUnitTestModel {
 			// and the factory will take care of creating the Test Run Session.
 			//
 			if (testRunnerClient != ITestRunnerClient.NULL && testRunnerClient instanceof RemoteTestRunnerClient) {
-				// test whether the launch defines the JUnit attributes
 				String portStr = launch.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_PORT);
 				if (portStr == null)
 					return;
@@ -162,7 +160,7 @@ public final class UnitTestModel implements IUnitTestModel {
 		 * TODO: restore on restart: - only import headers! - only import last n
 		 * sessions; remove all other files in historyDirectory
 		 */
-//		File historyDirectory= JUnitPlugin.getHistoryDirectory();
+//		File historyDirectory= UnitTestPlugin.getHistoryDirectory();
 //		File[] swapFiles= historyDirectory.listFiles();
 //		if (swapFiles != null) {
 //			Arrays.sort(swapFiles, new Comparator() {
@@ -179,7 +177,7 @@ public final class UnitTestModel implements IUnitTestModel {
 //						importTestRunSession(file );
 //					}
 //					public void handleException(Throwable exception) {
-//						JUnitPlugin.log(exception);
+//						UnitTestPlugin.log(exception);
 //					}
 //				});
 //			}
@@ -210,7 +208,7 @@ public final class UnitTestModel implements IUnitTestModel {
 //					session.swapOut();
 //				}
 //				public void handleException(Throwable exception) {
-//					JUnitPlugin.log(exception);
+//					UnitTestPlugin.log(exception);
 //				}
 //			});
 //		}
@@ -317,7 +315,7 @@ public final class UnitTestModel implements IUnitTestModel {
 		final CoreException[] exception = { null };
 		final TestRunSession[] session = { null };
 
-		Thread importThread = new Thread("JUnit URL importer") { //$NON-NLS-1$
+		Thread importThread = new Thread("UnitTest URL importer") { //$NON-NLS-1$
 			@Override
 			public void run() {
 				try {

@@ -10,7 +10,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Andreas Schmid, service@aaschmid.de - Locate test method even if it contains parameters - http://bugs.eclipse.org/343935
  *******************************************************************************/
 package org.eclipse.unittest.ui;
 

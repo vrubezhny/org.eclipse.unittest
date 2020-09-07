@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.unittest.ui;
 
-
 import java.text.MessageFormat;
 
 import org.eclipse.unittest.UnitTestPlugin;
@@ -37,20 +36,20 @@ public class CounterPanel extends Composite {
 	protected int fIgnoredCount;
 	protected int fAssumptionFailedCount;
 
-	private final Image fErrorIcon= UnitTestPlugin.createImage("ovr16/error_ovr.png"); //$NON-NLS-1$
-	private final Image fFailureIcon= UnitTestPlugin.createImage("ovr16/failed_ovr.png"); //$NON-NLS-1$
+	private final Image fErrorIcon = UnitTestPlugin.createImage("ovr16/error_ovr.png"); //$NON-NLS-1$
+	private final Image fFailureIcon = UnitTestPlugin.createImage("ovr16/failed_ovr.png"); //$NON-NLS-1$
 
 	public CounterPanel(Composite parent) {
 		super(parent, SWT.WRAP);
-		GridLayout gridLayout= new GridLayout();
-		gridLayout.numColumns= 9;
-		gridLayout.makeColumnsEqualWidth= false;
-		gridLayout.marginWidth= 0;
+		GridLayout gridLayout = new GridLayout();
+		gridLayout.numColumns = 9;
+		gridLayout.makeColumnsEqualWidth = false;
+		gridLayout.marginWidth = 0;
 		setLayout(gridLayout);
 
-		fNumberOfRuns= createLabel(Messages.CounterPanel_label_runs, null, " 0/0  "); //$NON-NLS-1$
-		fNumberOfErrors= createLabel(Messages.CounterPanel_label_errors, fErrorIcon, " 0 "); //$NON-NLS-1$
-		fNumberOfFailures= createLabel(Messages.CounterPanel_label_failures, fFailureIcon, " 0 "); //$NON-NLS-1$
+		fNumberOfRuns = createLabel(Messages.CounterPanel_label_runs, null, " 0/0  "); //$NON-NLS-1$
+		fNumberOfErrors = createLabel(Messages.CounterPanel_label_errors, fErrorIcon, " 0 "); //$NON-NLS-1$
+		fNumberOfFailures = createLabel(Messages.CounterPanel_label_failures, fFailureIcon, " 0 "); //$NON-NLS-1$
 
 		addDisposeListener(e -> disposeIcons());
 	}
@@ -61,19 +60,19 @@ public class CounterPanel extends Composite {
 	}
 
 	private Text createLabel(String name, Image image, String init) {
-		Label label= new Label(this, SWT.NONE);
+		Label label = new Label(this, SWT.NONE);
 		if (image != null) {
 			image.setBackground(label.getBackground());
 			label.setImage(image);
 		}
 		label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 
-		label= new Label(this, SWT.NONE);
+		label = new Label(this, SWT.NONE);
 		label.setText(name);
 		label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
-		//label.setFont(JFaceResources.getBannerFont());
+		// label.setFont(JFaceResources.getBannerFont());
 
-		Text value= new Text(this, SWT.READ_ONLY);
+		Text value = new Text(this, SWT.READ_ONLY);
 		value.setText(init);
 		// bug: 39661 Junit test counters do not repaint correctly [JUnit]
 		fixReadonlyTextBackground(value);
@@ -85,14 +84,14 @@ public class CounterPanel extends Composite {
 		setErrorValue(0);
 		setFailureValue(0);
 		setRunValue(0, 0, 0);
-		fTotal= 0;
+		fTotal = 0;
 	}
 
 	public void setTotal(int value) {
-		fTotal= value;
+		fTotal = value;
 	}
 
-	public int getTotal(){
+	public int getTotal() {
 		return fTotal;
 	}
 
@@ -100,31 +99,40 @@ public class CounterPanel extends Composite {
 		String runString;
 		String runStringTooltip;
 		if (ignoredCount == 0 && assumptionFailureCount == 0) {
-			runString= MessageFormat.format(Messages.CounterPanel_runcount, Integer.toString(value), Integer.toString(fTotal));
-			runStringTooltip= runString;
+			runString = MessageFormat.format(Messages.CounterPanel_runcount, Integer.toString(value),
+					Integer.toString(fTotal));
+			runStringTooltip = runString;
 		} else if (ignoredCount != 0 && assumptionFailureCount == 0) {
-			runString= MessageFormat.format(Messages.CounterPanel_runcount_skipped, Integer.toString(value), Integer.toString(fTotal), Integer.toString(ignoredCount));
-			runStringTooltip= MessageFormat.format(Messages.CounterPanel_runcount_ignored, Integer.toString(value), Integer.toString(fTotal), Integer.toString(ignoredCount));
+			runString = MessageFormat.format(Messages.CounterPanel_runcount_skipped, Integer.toString(value),
+					Integer.toString(fTotal), Integer.toString(ignoredCount));
+			runStringTooltip = MessageFormat.format(Messages.CounterPanel_runcount_ignored, Integer.toString(value),
+					Integer.toString(fTotal), Integer.toString(ignoredCount));
 		} else if (ignoredCount == 0 && assumptionFailureCount != 0) {
-			runString= MessageFormat.format(Messages.CounterPanel_runcount_skipped, Integer.toString(value), Integer.toString(fTotal), Integer.toString(assumptionFailureCount));
-			runStringTooltip= MessageFormat.format(Messages.CounterPanel_runcount_assumptionsFailed, Integer.toString(value), Integer.toString(fTotal), Integer.toString(assumptionFailureCount));
+			runString = MessageFormat.format(Messages.CounterPanel_runcount_skipped, Integer.toString(value),
+					Integer.toString(fTotal), Integer.toString(assumptionFailureCount));
+			runStringTooltip = MessageFormat.format(Messages.CounterPanel_runcount_assumptionsFailed,
+					Integer.toString(value), Integer.toString(fTotal), Integer.toString(assumptionFailureCount));
 		} else {
-			runString= MessageFormat.format(Messages.CounterPanel_runcount_skipped, Integer.toString(value), Integer.toString(fTotal), Integer.toString(ignoredCount + assumptionFailureCount));
-			runStringTooltip= MessageFormat.format(Messages.CounterPanel_runcount_ignored_assumptionsFailed, Integer.toString(value), Integer.toString(fTotal), Integer.toString(ignoredCount), Integer.toString(assumptionFailureCount));
+			runString = MessageFormat.format(Messages.CounterPanel_runcount_skipped, Integer.toString(value),
+					Integer.toString(fTotal), Integer.toString(ignoredCount + assumptionFailureCount));
+			runStringTooltip = MessageFormat.format(Messages.CounterPanel_runcount_ignored_assumptionsFailed,
+					Integer.toString(value), Integer.toString(fTotal), Integer.toString(ignoredCount),
+					Integer.toString(assumptionFailureCount));
 		}
 		fNumberOfRuns.setText(runString);
 		fNumberOfRuns.setToolTipText(runStringTooltip);
 
-		if (fIgnoredCount == 0 && ignoredCount > 0	|| fIgnoredCount != 0 && ignoredCount == 0) {
+		if (fIgnoredCount == 0 && ignoredCount > 0 || fIgnoredCount != 0 && ignoredCount == 0) {
 			layout();
-		} else if (fAssumptionFailedCount == 0 && assumptionFailureCount > 0 || fAssumptionFailedCount != 0 && assumptionFailureCount == 0) {
+		} else if (fAssumptionFailedCount == 0 && assumptionFailureCount > 0
+				|| fAssumptionFailedCount != 0 && assumptionFailureCount == 0) {
 			layout();
 		} else {
 			fNumberOfRuns.redraw();
 			redraw();
 		}
-		fIgnoredCount= ignoredCount;
-		fAssumptionFailedCount= assumptionFailureCount;
+		fIgnoredCount = ignoredCount;
+		fAssumptionFailedCount = assumptionFailureCount;
 	}
 
 	public void setErrorValue(int value) {
@@ -138,11 +146,12 @@ public class CounterPanel extends Composite {
 	}
 
 	/**
-	 * Fixes https://bugs.eclipse.org/71765 by setting the background
-	 * color to {@code SWT.COLOR_WIDGET_BACKGROUND}.
+	 * Fixes https://bugs.eclipse.org/71765 by setting the background color to
+	 * {@code SWT.COLOR_WIDGET_BACKGROUND}.
 	 * <p>
-	 * Should be applied to all SWT.READ_ONLY Texts in dialogs (or at least those which don't have an SWT.BORDER).
-	 * Search regex: {@code new Text\([^,]+,[^\)]+SWT\.READ_ONLY}
+	 * Should be applied to all SWT.READ_ONLY Texts in dialogs (or at least those
+	 * which don't have an SWT.BORDER). Search regex:
+	 * {@code new Text\([^,]+,[^\)]+SWT\.READ_ONLY}
 	 *
 	 * @param textField the text field
 	 */

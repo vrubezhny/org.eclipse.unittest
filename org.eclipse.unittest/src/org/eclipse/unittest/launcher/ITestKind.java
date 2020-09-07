@@ -10,8 +10,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     David Saff (saff@mit.edu) - initial API and implementation
- *             (bug 102632: [JUnit] Support for JUnit 4.)
  *******************************************************************************/
 
 package org.eclipse.unittest.launcher;
@@ -130,7 +128,7 @@ public interface ITestKind {
 
 	/**
 	 * Indicates if this Test Kind is an empty one
-	 * 
+	 *
 	 * @return true in case of empty Test Kind, false otherwise
 	 */
 	boolean isNull();

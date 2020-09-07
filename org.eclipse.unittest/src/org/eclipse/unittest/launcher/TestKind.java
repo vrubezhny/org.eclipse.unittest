@@ -10,8 +10,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     David Saff (saff@mit.edu) - initial API and implementation
- *             (bug 102632: [JUnit] Support for JUnit 4.)
  *******************************************************************************/
 
 package org.eclipse.unittest.launcher;
@@ -30,17 +28,17 @@ public class TestKind implements ITestKind {
 
 	public TestKind(IConfigurationElement element) {
 		fElement = element;
-		fFinder= null;
+		fFinder = null;
 	}
 
 	@Override
 	public ITestFinder getFinder() {
 		if (fFinder == null) {
 			try {
-				fFinder= (ITestFinder) fElement.createExecutableExtension(FINDER_CLASS_NAME);
+				fFinder = (ITestFinder) fElement.createExecutableExtension(FINDER_CLASS_NAME);
 			} catch (CoreException e1) {
 				UnitTestPlugin.log(e1);
-				fFinder= ITestFinder.NULL;
+				fFinder = ITestFinder.NULL;
 			}
 		}
 		return fFinder;
@@ -80,10 +78,11 @@ public class TestKind implements ITestKind {
 	public ITestRunnerClient getTestRunnerClient() {
 		if (fTestRunnerClient == null) {
 			try {
-				fTestRunnerClient= (ITestRunnerClient) fElement.createExecutableExtension(TEST_RUNNER_CLIENT_CLASS_NAME);
+				fTestRunnerClient = (ITestRunnerClient) fElement
+						.createExecutableExtension(TEST_RUNNER_CLIENT_CLASS_NAME);
 			} catch (CoreException e1) {
 				UnitTestPlugin.log(e1);
-				fTestRunnerClient= ITestRunnerClient.NULL;
+				fTestRunnerClient = ITestRunnerClient.NULL;
 			}
 		}
 		return fTestRunnerClient;
@@ -93,10 +92,10 @@ public class TestKind implements ITestKind {
 	public ITestViewSupport getTestViewSupport() {
 		if (fTestViewSupport == null) {
 			try {
-				fTestViewSupport= (ITestViewSupport) fElement.createExecutableExtension(TEST_VIEW_SUPPORT_CLASS_NAME);
+				fTestViewSupport = (ITestViewSupport) fElement.createExecutableExtension(TEST_VIEW_SUPPORT_CLASS_NAME);
 			} catch (CoreException e1) {
 				UnitTestPlugin.log(e1);
-				fTestViewSupport= ITestViewSupport.NULL;
+				fTestViewSupport = ITestViewSupport.NULL;
 			}
 		}
 		return fTestViewSupport;
@@ -109,7 +108,7 @@ public class TestKind implements ITestKind {
 
 	@Override
 	public String getPrecededKindId() {
-		String attribute= getAttribute(PRECEDES);
+		String attribute = getAttribute(PRECEDES);
 		return attribute == null ? "" : attribute; //$NON-NLS-1$
 	}
 
@@ -135,13 +134,13 @@ public class TestKind implements ITestKind {
 
 	@Override
 	public UnitTestRuntimeClasspathEntry[] getClasspathEntries() {
-		IConfigurationElement[] children= fElement.getChildren(ITestKind.RUNTIME_CLASSPATH_ENTRY);
-		UnitTestRuntimeClasspathEntry[] returnThis= new UnitTestRuntimeClasspathEntry[children.length];
-		for (int i= 0; i < children.length; i++) {
-			IConfigurationElement element= children[i];
-			String pluginID= element.getAttribute(ITestKind.CLASSPATH_PLUGIN_ID);
-			String pathToJar= element.getAttribute(ITestKind.CLASSPATH_PATH_TO_JAR);
-			returnThis[i]= new UnitTestRuntimeClasspathEntry(pluginID, pathToJar);
+		IConfigurationElement[] children = fElement.getChildren(ITestKind.RUNTIME_CLASSPATH_ENTRY);
+		UnitTestRuntimeClasspathEntry[] returnThis = new UnitTestRuntimeClasspathEntry[children.length];
+		for (int i = 0; i < children.length; i++) {
+			IConfigurationElement element = children[i];
+			String pluginID = element.getAttribute(ITestKind.CLASSPATH_PLUGIN_ID);
+			String pathToJar = element.getAttribute(ITestKind.CLASSPATH_PATH_TO_JAR);
+			returnThis[i] = new UnitTestRuntimeClasspathEntry(pluginID, pathToJar);
 		}
 		return returnThis;
 	}

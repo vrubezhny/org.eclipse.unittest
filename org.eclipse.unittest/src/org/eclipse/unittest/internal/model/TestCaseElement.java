@@ -10,7 +10,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Xavier Coulon <xcoulon@redhat.com> - https://bugs.eclipse.org/bugs/show_bug.cgi?id=102512 - [JUnit] test method name cut off before (
  *******************************************************************************/
 
 package org.eclipse.unittest.internal.model;
@@ -20,25 +19,25 @@ import org.eclipse.unittest.model.ITestSuiteElement;
 
 import org.eclipse.core.runtime.Assert;
 
-
 public class TestCaseElement extends TestElement implements ITestCaseElement {
 
 	private boolean fIgnored;
 	private boolean fIsDynamicTest;
 
-	public TestCaseElement(ITestSuiteElement parent, String id, String testName, String displayName, boolean isDynamicTest, String[] parameterTypes, String uniqueId) {
+	public TestCaseElement(ITestSuiteElement parent, String id, String testName, String displayName,
+			boolean isDynamicTest, String[] parameterTypes, String uniqueId) {
 		super(parent, id, testName, displayName, parameterTypes, uniqueId);
 		Assert.isNotNull(parent);
-		fIsDynamicTest= isDynamicTest;
+		fIsDynamicTest = isDynamicTest;
 	}
 
 	@Override
 	public String getTestMethodName() {
-		String testName= getTestName();
-		int index= testName.lastIndexOf('(');
+		String testName = getTestName();
+		int index = testName.lastIndexOf('(');
 		if (index > 0)
 			return testName.substring(0, index);
-		index= testName.indexOf('@');
+		index = testName.indexOf('@');
 		if (index > 0)
 			return testName.substring(0, index);
 		return testName;
@@ -58,7 +57,7 @@ public class TestCaseElement extends TestElement implements ITestCaseElement {
 	}
 
 	public void setIgnored(boolean ignored) {
-		fIgnored= ignored;
+		fIgnored = ignored;
 	}
 
 	@Override

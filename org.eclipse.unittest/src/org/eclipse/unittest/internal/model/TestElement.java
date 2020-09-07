@@ -10,9 +10,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Brock Janiczak (brockj@tpg.com.au)
- *         - https://bugs.eclipse.org/bugs/show_bug.cgi?id=102236: [JUnit] display execution time next to each test
- *     Xavier Coulon <xcoulon@redhat.com> - https://bugs.eclipse.org/bugs/show_bug.cgi?id=102512 - [JUnit] test method name cut off before (
  *******************************************************************************/
 
 package org.eclipse.unittest.internal.model;
@@ -43,8 +40,7 @@ public abstract class TestElement implements ITestElement {
 	private String[] fParameterTypes;
 
 	/**
-	 * The unique ID of the test element which can be <code>null</code> as it is
-	 * applicable to JUnit 5 and above.
+	 * The unique ID of the test element which can be <code>null</code>
 	 */
 	private String fUniqueId;
 
@@ -79,8 +75,7 @@ public abstract class TestElement implements ITestElement {
 	 * @param parameterTypes the array of method parameter types if applicable,
 	 *                       otherwise <code>null</code>
 	 * @param uniqueId       the unique ID of the test element, can be
-	 *                       <code>null</code> as it is applicable to JUnit 5 and
-	 *                       above
+	 *                       <code>null</code>
 	 */
 	public TestElement(ITestSuiteElement parent, String id, String testName, String displayName,
 			String[] parameterTypes, String uniqueId) {
@@ -285,8 +280,7 @@ public abstract class TestElement implements ITestElement {
 	}
 
 	/**
-	 * Returns the unique ID of the test element. Can be <code>null</code> as it is
-	 * applicable to JUnit 5 and above.
+	 * Returns the unique ID of the test element. Can be <code>null</code>
 	 *
 	 * @return the unique ID of the test, can be <code>null</code>
 	 */

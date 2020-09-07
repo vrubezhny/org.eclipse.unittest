@@ -102,6 +102,8 @@ import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
 
+import org.eclipse.jdt.internal.junit.launcher.JUnitLaunchConfigurationConstants;
+
 import org.eclipse.jdt.launching.AbstractVMInstall;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -1144,7 +1146,7 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 		initializeName(config, name);
 		boolean isRunWithJUnitPlatform = JUnitTestKindUtil.isRunWithJUnitPlatform(javaElement);
 		if (isRunWithJUnitPlatform) {
-			config.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_RUN_WITH_JUNIT_PLATFORM_ANNOTATION, true);
+			config.setAttribute(JUnitLaunchConfigurationConstants.ATTR_RUN_WITH_JUNIT_PLATFORM_ANNOTATION, true);
 		}
 	}
 
