@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * Interface to be implemented by for extension point
+ * An interface to be implemented by for extension point
  * org.org.eclipse.unittest.unittestKinds.
  */
 public interface ITestFinder {

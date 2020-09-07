@@ -501,49 +501,6 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 
 	private ITestElement addTreeEntry(String id, String testName, boolean isSuite, int testCount, boolean isDynamicTest,
 			String parentId, String displayName, String[] parameterTypes, String uniqueId) {
-		/*
-		 * // format:
-		 * testId","testName","isSuite","testcount","isDynamicTest","parentId","displayName","parameterTypes","uniqueId
-		 * int index0= treeEntry.indexOf(','); String id= treeEntry.substring(0,
-		 * index0);
-		 *
-		 * StringBuffer testNameBuffer= new StringBuffer(100); int index1=
-		 * scanTestName(treeEntry, index0 + 1, testNameBuffer); String testName=
-		 * testNameBuffer.toString().trim();
-		 *
-		 * int index2= treeEntry.indexOf(',', index1 + 1); boolean isSuite=
-		 * treeEntry.substring(index1 + 1, index2).equals("true"); //$NON-NLS-1$
-		 *
-		 * int testCount; boolean isDynamicTest; String parentId; String displayName;
-		 * StringBuffer displayNameBuffer= new StringBuffer(100); String[]
-		 * parameterTypes; StringBuffer parameterTypesBuffer= new StringBuffer(200);
-		 * String uniqueId; StringBuffer uniqueIdBuffer= new StringBuffer(200); int
-		 * index3= treeEntry.indexOf(',', index2 + 1); if (index3 == -1) { testCount=
-		 * Integer.parseInt(treeEntry.substring(index2 + 1)); isDynamicTest= false;
-		 * parentId= null; displayName= null; parameterTypes= null; uniqueId= null; }
-		 * else { testCount= Integer.parseInt(treeEntry.substring(index2 + 1, index3));
-		 *
-		 * int index4= treeEntry.indexOf(',', index3 + 1); isDynamicTest=
-		 * treeEntry.substring(index3 + 1, index4).equals("true"); //$NON-NLS-1$
-		 *
-		 * int index5= treeEntry.indexOf(',', index4 + 1); parentId=
-		 * treeEntry.substring(index4 + 1, index5); if (parentId.equals("-1")) {
-		 * //$NON-NLS-1$ parentId= null; }
-		 *
-		 * int index6= scanTestName(treeEntry, index5 + 1, displayNameBuffer);
-		 * displayName= displayNameBuffer.toString().trim(); if
-		 * (displayName.equals(testName)) { displayName= null; }
-		 *
-		 * int index7= scanTestName(treeEntry, index6 + 1, parameterTypesBuffer); String
-		 * parameterTypesString= parameterTypesBuffer.toString().trim(); if
-		 * (parameterTypesString.isEmpty()) { parameterTypes= null; } else {
-		 * parameterTypes= parameterTypesString.split(","); //$NON-NLS-1$
-		 * Arrays.parallelSetAll(parameterTypes, i -> parameterTypes[i].trim()); }
-		 *
-		 * scanTestName(treeEntry, index7 + 1, uniqueIdBuffer); uniqueId=
-		 * uniqueIdBuffer.toString().trim(); if (uniqueId.isEmpty()) { uniqueId= null; }
-		 * }
-		 */
 		if (isDynamicTest) {
 			if (parentId != null) {
 				for (IncompleteTestSuite suite : fFactoryTestSuites) {

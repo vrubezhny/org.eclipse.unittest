@@ -68,6 +68,8 @@ public abstract class TestElement implements ITestElement {
 	/* default */ double fTime = Double.NaN;
 
 	/**
+	 * Constructs the test element object
+	 *
 	 * @param parent         the parent, can be <code>null</code>
 	 * @param id             the test id
 	 * @param testName       the test name
@@ -128,9 +130,6 @@ public abstract class TestElement implements ITestElement {
 		return null;
 	}
 
-	/**
-	 * @return the parent suite, or <code>null</code> for the root
-	 */
 	@Override
 	public ITestSuiteElement getParent() {
 		return fParent;
@@ -270,20 +269,11 @@ public abstract class TestElement implements ITestElement {
 		return fDisplayName;
 	}
 
-	/**
-	 * @return the array of method parameter types if applicable, otherwise
-	 *         <code>null</code>
-	 */
 	@Override
 	public String[] getParameterTypes() {
 		return fParameterTypes;
 	}
 
-	/**
-	 * Returns the unique ID of the test element. Can be <code>null</code>
-	 *
-	 * @return the unique ID of the test, can be <code>null</code>
-	 */
 	@Override
 	public String getUniqueId() {
 		return fUniqueId;

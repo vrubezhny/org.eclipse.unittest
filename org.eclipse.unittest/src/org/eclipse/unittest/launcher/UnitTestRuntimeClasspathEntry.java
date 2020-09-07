@@ -16,24 +16,50 @@ package org.eclipse.unittest.launcher;
 
 import java.util.Objects;
 
+/**
+ * An interface to be implemented by for extension point
+ * org.org.eclipse.unittest.unittestKinds.
+ */
 public class UnitTestRuntimeClasspathEntry {
 	private final String fPluginId;
 
 	private final String fPluginRelativePath;
 
+	/**
+	 * Construct an {@link UnitTestRuntimeClasspathEntry} instance
+	 *
+	 * @param pluginId A Runtime Classpath Entry Plug-in identifier
+	 * @param jarFile  A path to jar containing the plug-in
+	 *                 &quot;loaderPluginId&quot;
+	 */
 	public UnitTestRuntimeClasspathEntry(String pluginId, String jarFile) {
 		fPluginId = pluginId;
 		fPluginRelativePath = jarFile;
 	}
 
+	/**
+	 * Returns a plug-in identifier for this Classpath Entry
+	 *
+	 * @return a plug-in identifier
+	 */
 	public String getPluginId() {
 		return fPluginId;
 	}
 
+	/**
+	 * Returns a plug-in relative path
+	 *
+	 * @return a plug-in relative path
+	 */
 	public String getPluginRelativePath() {
 		return fPluginRelativePath;
 	}
 
+	/**
+	 * Returns a development Classpath entry
+	 *
+	 * @return a development Classpath entry
+	 */
 	public UnitTestRuntimeClasspathEntry developmentModeEntry() {
 		return new UnitTestRuntimeClasspathEntry(getPluginId(), "bin"); //$NON-NLS-1$
 	}

@@ -24,6 +24,9 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 
+/**
+ * Test Kind registry
+ */
 public class TestKindRegistry {
 	public static TestKindRegistry getDefault() {
 		if (fgRegistry != null)
@@ -43,11 +46,23 @@ public class TestKindRegistry {
 		fPoint = point;
 	}
 
+	/**
+	 * Returns all the registered kinds
+	 *
+	 * @return an {@link ArrayList} containing all the registry kinds
+	 */
 	public ArrayList<TestKind> getAllKinds() {
 		loadKinds();
 		return fTestKinds;
 	}
 
+	/**
+	 * Returns all the registered kinds that suit the specified filter
+	 *
+	 * @param filter a registry identifier filter
+	 * @return an {@link ArrayList} containing the registry kings filtered by
+	 *         identifier
+	 */
 	public ArrayList<TestKind> getKinds(final String filter) {
 		ArrayList<TestKind> allKinds = getAllKinds();
 		return allKinds != null ? allKinds.stream().filter(p -> p.getId().startsWith(filter))
@@ -73,6 +88,11 @@ public class TestKindRegistry {
 		fTestKinds = items;
 	}
 
+	/**
+	 * Returns the kinds names
+	 *
+	 * @return an {@link ArrayList} of kind display names
+	 */
 	public ArrayList<String> getDisplayNames() {
 		ArrayList<String> result = new ArrayList<>();
 		ArrayList<TestKind> testTypes = getAllKinds();
@@ -84,6 +104,7 @@ public class TestKindRegistry {
 
 	/**
 	 * @param testKindId an id, can be <code>null</code>
+	 *
 	 * @return a TestKind, ITestKind.NULL if not available
 	 */
 	public ITestKind getKind(String testKindId) {
@@ -104,6 +125,11 @@ public class TestKindRegistry {
 		return items;
 	}
 
+	/**
+	 * Returns all the registered kind identifiers
+	 *
+	 * @return a registry kind identifiers string
+	 */
 	public String getAllKindIds() {
 		ArrayList<TestKind> allKinds = getAllKinds();
 		String returnThis = ""; //$NON-NLS-1$

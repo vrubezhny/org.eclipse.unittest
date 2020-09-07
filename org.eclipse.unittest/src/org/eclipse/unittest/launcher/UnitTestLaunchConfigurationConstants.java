@@ -72,6 +72,13 @@ public class UnitTestLaunchConfigurationConstants {
 
 	public static final String ATTR_PROJECT_NAME = UnitTestPlugin.PLUGIN_ID + ".ATTR_PROJECT_NAME"; //$NON-NLS-1$
 
+	/**
+	 * Returns {@link ITestKind} instance from the given launch configuration
+	 *
+	 * @param launchConfiguration a launch configuration
+	 * @return a test runner kind instance if exists or a <code>NULL</code>
+	 *         {@link ITestKind} instance
+	 */
 	public static ITestKind getTestRunnerKind(ILaunchConfiguration launchConfiguration) {
 		try {
 			String loaderId = launchConfiguration
@@ -80,10 +87,17 @@ public class UnitTestLaunchConfigurationConstants {
 				return TestKindRegistry.getDefault().getKind(loaderId);
 			}
 		} catch (CoreException e) {
+			// Ignore
 		}
 		return ITestKind.NULL;
 	}
 
+	/**
+	 * Returns {@link IProject} instance from the given launch configuration
+	 *
+	 * @param configuration a launch configuration
+	 * @return a project if exists or <code>null</code>
+	 */
 	public static IProject getProject(ILaunchConfiguration configuration) {
 		try {
 			String projectName = configuration.getAttribute(ATTR_PROJECT_NAME, (String) null);
@@ -91,6 +105,7 @@ public class UnitTestLaunchConfigurationConstants {
 				return ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 			}
 		} catch (CoreException e) {
+			// Ignore
 		}
 		return null;
 	}

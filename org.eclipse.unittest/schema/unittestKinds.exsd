@@ -139,7 +139,7 @@
          <attribute name="pathToJar" type="string">
             <annotation>
                <documentation>
-                  A path to jar containng the plug-in &quot;loaderPluginId&quot;
+                  A path to jar containing the plug-in &quot;loaderPluginId&quot;
                </documentation>
             </annotation>
          </attribute>

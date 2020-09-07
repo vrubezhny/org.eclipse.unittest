@@ -39,6 +39,13 @@ public interface ITestCaseElement extends ITestElement {
 	String getTestClassName();
 
 	/**
+	 * Sets ignored flag on the test case
+	 *
+	 * @param ignored an ignored flag value
+	 */
+	void setIgnored(boolean ignored);
+
+	/**
 	 * Indicates if the test case was ignored
 	 *
 	 * @return true in case of the test case was ignored, otherwise false

@@ -229,12 +229,6 @@ public final class UnitTestModel implements IUnitTestModel {
 		return new ArrayList<>(fTestRunSessions);
 	}
 
-	/**
-	 * Adds the given {@link TestRunSession} and notifies all registered
-	 * {@link ITestRunSessionListener}s.
-	 *
-	 * @param testRunSession the session to add
-	 */
 	@Override
 	public void addTestRunSession(ITestRunSession testRunSession) {
 		Assert.isNotNull(testRunSession);
@@ -295,16 +289,6 @@ public final class UnitTestModel implements IUnitTestModel {
 		return null; // does not happen
 	}
 
-	/**
-	 * Imports a test run session from the given URL.
-	 *
-	 * @param url     an URL to a test run session transcript
-	 * @param monitor a progress monitor for cancellation
-	 * @return the imported test run session
-	 * @throws InvocationTargetException wrapping a CoreException if the import
-	 *                                   failed
-	 * @throws InterruptedException      if the import was cancelled
-	 */
 	@Override
 	public ITestRunSession importTestRunSession(String url, IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException {
@@ -367,6 +351,13 @@ public final class UnitTestModel implements IUnitTestModel {
 		return session[0];
 	}
 
+	/**
+	 * Loads an {@link ITestRunSession} from a swap file
+	 *
+	 * @param swapFile       a swap file
+	 * @param testRunSession to be set from the swap file
+	 * @throws CoreException in case of import failure
+	 */
 	public static void importIntoTestRunSession(File swapFile, TestRunSession testRunSession) throws CoreException {
 		try {
 			SAXParserFactory parserFactory = SAXParserFactory.newInstance();
@@ -405,6 +396,15 @@ public final class UnitTestModel implements IUnitTestModel {
 		}
 	}
 
+	/**
+	 * Exports the given test run session.
+	 *
+	 * @param testRunSession the test run session
+	 * @param out            an {@link OutputStream} instance
+	 * @throws TransformerFactoryConfigurationError if a transformer factory
+	 *                                              configuration error occurred
+	 * @throws TransformerException                 if a transformer error occurred
+	 */
 	public static void exportTestRunSession(TestRunSession testRunSession, OutputStream out)
 			throws TransformerFactoryConfigurationError, TransformerException {
 
