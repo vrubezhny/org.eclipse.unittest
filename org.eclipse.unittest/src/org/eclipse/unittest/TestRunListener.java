@@ -34,7 +34,7 @@ import org.eclipse.unittest.model.ITestRunSession;
  * must be kept to the session or any of the test cases or suites.
  * </p>
  */
-public abstract class TestRunListener {
+public class TestRunListener {
 
 	/**
 	 * A test run session has been launched. The test tree is not available yet.
@@ -46,6 +46,7 @@ public abstract class TestRunListener {
 	 * @param session the session that has just been launched
 	 */
 	public void sessionLaunched(ITestRunSession session) {
+		// does nothing
 	}
 
 	/**
@@ -59,6 +60,7 @@ public abstract class TestRunListener {
 	 * @param session the session that has just started.
 	 */
 	public void sessionStarted(ITestRunSession session) {
+		// does nothing
 	}
 
 	/**
@@ -73,6 +75,7 @@ public abstract class TestRunListener {
 	 * @param session the test
 	 */
 	public void sessionFinished(ITestRunSession session) {
+		// does nothing
 	}
 
 	/**
@@ -86,6 +89,7 @@ public abstract class TestRunListener {
 	 * @param testCaseElement the test that has started to run
 	 */
 	public void testCaseStarted(ITestCaseElement testCaseElement) {
+		// does nothing
 	}
 
 	/**
@@ -99,5 +103,6 @@ public abstract class TestRunListener {
 	 * @param testCaseElement the test that has finished running
 	 */
 	public void testCaseFinished(ITestCaseElement testCaseElement) {
+		// does nothing
 	}
 }

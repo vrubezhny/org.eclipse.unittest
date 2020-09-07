@@ -19,7 +19,6 @@ package org.eclipse.unittest;
 
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.osgi.framework.Bundle;
@@ -71,7 +70,7 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 	private static UnitTestPlugin fgPlugin = null;
 
 	public static final String PLUGIN_ID = "org.eclipse.unittest"; //$NON-NLS-1$
-	public static final String ID_EXTENSION_POINT_JUNIT_LAUNCHCONFIGS = PLUGIN_ID + "." + "unittestLaunchConfigs"; //$NON-NLS-1$ //$NON-NLS-2$
+//	public static final String ID_EXTENSION_POINT_UNITTEST_LAUNCHCONFIGS = PLUGIN_ID + "." + "unittestLaunchConfigs"; //$NON-NLS-1$ //$NON-NLS-2$
 
 	private static final IPath ICONS_PATH = new Path("$nl$/icons/full"); //$NON-NLS-1$
 
@@ -84,14 +83,28 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 
 	private static boolean fIsStopped = false;
 
+	/**
+	 * Constructs a {@link UnitTestPlugin} object
+	 */
 	public UnitTestPlugin() {
 		fgPlugin = this;
 	}
 
+	/**
+	 * Returns the {@link UnitTestPlugin} instance
+	 *
+	 * @return a {@link UnitTestPlugin} instance
+	 */
 	public static UnitTestPlugin getDefault() {
 		return fgPlugin;
 	}
 
+	/**
+	 * Returns this workbench window's shell.
+	 *
+	 * @return the shell containing this window's controls or <code>null</code> if
+	 *         the shell has not been created yet or if the window has been closed
+	 */
 	public static Shell getActiveWorkbenchShell() {
 		IWorkbenchWindow workBenchWindow = getActiveWorkbenchWindow();
 		if (workBenchWindow == null)
@@ -102,7 +115,8 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 	/**
 	 * Returns the active workbench window
 	 *
-	 * @return the active workbench window
+	 * @return the active workbench window, or <code>null</code> if there is no
+	 *         active workbench window or if called from a non-UI thread
 	 */
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		if (fgPlugin == null)
@@ -113,6 +127,11 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 		return workBench.getActiveWorkbenchWindow();
 	}
 
+	/**
+	 * Returns the currently active page for this workbench window.
+	 *
+	 * @return the active page, or <code>null</code> if none
+	 */
 	public static IWorkbenchPage getActivePage() {
 		IWorkbenchWindow activeWorkbenchWindow = getActiveWorkbenchWindow();
 		if (activeWorkbenchWindow == null)
@@ -120,23 +139,52 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 		return activeWorkbenchWindow.getActivePage();
 	}
 
+	/**
+	 * Returns an identifier of {@link UnitTestPlugin}
+	 *
+	 * @return an {@link UnitTestPlugin} identifier
+	 */
 	public static String getPluginId() {
 		return PLUGIN_ID;
 	}
 
+	/**
+	 * Logs the given exception.
+	 *
+	 * @param e the {@link Throwable} to log
+	 */
 	public static void log(Throwable e) {
 		log(new Status(IStatus.ERROR, getPluginId(), IStatus.ERROR, "Error", e)); //$NON-NLS-1$
 	}
 
+	/**
+	 * Logs the given status.
+	 *
+	 * @param status the status to log
+	 */
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
 	}
 
+	/**
+	 * Create an {@link ImageDescriptor} from a given path
+	 *
+	 * @param relativePath relative path to the image
+	 * @return an {@link ImageDescriptor}, or <code>null</code> iff there's no image
+	 *         at the given location and <code>useMissingImageDescriptor</code> is
+	 *         <code>true</code>
+	 */
 	public static ImageDescriptor getImageDescriptor(String relativePath) {
 		IPath path = ICONS_PATH.append(relativePath);
 		return createImageDescriptor(getDefault().getBundle(), path, true);
 	}
 
+	/**
+	 * Creates an {@link Image} from a given path
+	 *
+	 * @param path path to the image
+	 * @return a new image or <code>null</code> if the image could not be created
+	 */
 	public static Image createImage(String path) {
 		return getImageDescriptor(path).createImage();
 	}
@@ -235,34 +283,6 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Loads the registered JUnit launch configurations
-	 */
-	private void loadLaunchConfigTypeIDs() {
-		fJUnitLaunchConfigTypeIDs = new ArrayList<>();
-		IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
-				.getExtensionPoint(ID_EXTENSION_POINT_JUNIT_LAUNCHCONFIGS);
-		if (extensionPoint == null) {
-			return;
-		}
-		IConfigurationElement[] configs = extensionPoint.getConfigurationElements();
-
-		for (IConfigurationElement config : configs) {
-			String configTypeID = config.getAttribute("configTypeID"); //$NON-NLS-1$
-			fJUnitLaunchConfigTypeIDs.add(configTypeID);
-		}
-	}
-
-	/**
-	 * @return a list of all JUnit launch configuration types
-	 */
-	public List<String> getJUnitLaunchConfigTypeIDs() {
-		if (fJUnitLaunchConfigTypeIDs == null) {
-			loadLaunchConfigTypeIDs();
-		}
-		return fJUnitLaunchConfigTypeIDs;
-	}
-
-	/**
 	 * Returns the bundle for a given bundle name, regardless whether the bundle is
 	 * resolved or not.
 	 *
@@ -297,10 +317,22 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 		return null;
 	}
 
+	/**
+	 * Indicates that the plug-in is stopped
+	 *
+	 * @return <code>true</code> in case the plug-in is stopped, otherwise returns
+	 *         <code>false</code>
+	 */
 	public static boolean isStopped() {
 		return fIsStopped;
 	}
 
+	/**
+	 * Returns the section with the given name in this dialog settings.
+	 *
+	 * @param name the key
+	 * @return {@link IDialogSettings} (the section), or <code>null</code> if none
+	 */
 	public IDialogSettings getDialogSettingsSection(String name) {
 		IDialogSettings dialogSettings = getDialogSettings();
 		IDialogSettings section = dialogSettings.getSection(name);
@@ -310,10 +342,19 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 		return section;
 	}
 
+	/**
+	 * Asynchronously makes visible the Test Runner View Part
+	 */
 	public static void asyncShowTestRunnerViewPart() {
 		getDisplay().asyncExec(UnitTestPlugin::showTestRunnerViewPartInActivePage);
 	}
 
+	/**
+	 * Creates a Test Runner View Part if it's not yet created and makes it visible
+	 * in active page
+	 *
+	 * @return a {@link TestRunnerViewPart} instance
+	 */
 	public static TestRunnerViewPart showTestRunnerViewPartInActivePage() {
 		try {
 			// Have to force the creation of view part contents
@@ -357,8 +398,13 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 	/**
 	 * List storing the registered test run listeners
 	 */
-	private ListenerList<TestRunListener> fNewTestRunListeners = new ListenerList<>();
+	private ListenerList<TestRunListener> fUnitTestRunListeners = new ListenerList<>();
 
+	/**
+	 * Returns a {@link IUnitTestModel} instance
+	 *
+	 * @return a {@link IUnitTestModel} instance
+	 */
 	public static IUnitTestModel getModel() {
 		return getDefault().fUnitTestModel;
 	}
@@ -366,17 +412,17 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 	/**
 	 * @return a <code>ListenerList</code> of all <code>TestRunListener</code>s
 	 */
-	public ListenerList<TestRunListener> getNewTestRunListeners() {
-		loadTestRunListeners();
+	public ListenerList<TestRunListener> getUnitTestRunListeners() {
+		loadUnitTestRunListeners();
 
-		return fNewTestRunListeners;
+		return fUnitTestRunListeners;
 	}
 
 	/**
 	 * Initializes TestRun Listener extensions
 	 */
-	private synchronized void loadTestRunListeners() {
-		if (!fNewTestRunListeners.isEmpty()) {
+	private synchronized void loadUnitTestRunListeners() {
+		if (!fUnitTestRunListeners.isEmpty()) {
 			return;
 		}
 
@@ -392,7 +438,7 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 			try {
 				Object testRunListener = config.createExecutableExtension("class"); //$NON-NLS-1$
 				if (testRunListener instanceof TestRunListener) {
-					fNewTestRunListeners.add((TestRunListener) testRunListener);
+					fUnitTestRunListeners.add((TestRunListener) testRunListener);
 				}
 			} catch (CoreException e) {
 				status.add(e.getStatus());
@@ -403,6 +449,13 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 		}
 	}
 
+	/**
+	 * Creates and returns a directory to store the History information
+	 *
+	 * @return the file corresponding to History directory
+	 * @throws IllegalStateException in case of failed to create or find an existing
+	 *                               directory
+	 */
 	public static File getHistoryDirectory() throws IllegalStateException {
 		File historyDir = getDefault().getStateLocation().append(HISTORY_DIR_NAME).toFile();
 		if (!historyDir.isDirectory()) {

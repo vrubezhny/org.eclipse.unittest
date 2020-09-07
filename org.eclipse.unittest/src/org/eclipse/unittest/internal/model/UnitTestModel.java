@@ -138,7 +138,7 @@ public final class UnitTestModel implements IUnitTestModel {
 			TestRunSession testRunSession = new TestRunSession(launch, project, port);
 			addTestRunSession(testRunSession);
 
-			for (TestRunListener listener : UnitTestPlugin.getDefault().getNewTestRunListeners()) {
+			for (TestRunListener listener : UnitTestPlugin.getDefault().getUnitTestRunListeners()) {
 				listener.sessionLaunched(testRunSession);
 			}
 		}

@@ -114,7 +114,7 @@ public class TestingProcessFactory implements IProcessFactory {
 		Thread t = new Thread(new TestingSessionRunner(runner, iStream, processWrapper));
 
 
-		for (TestRunListener listener : UnitTestPlugin.getDefault().getNewTestRunListeners()) {
+		for (TestRunListener listener : UnitTestPlugin.getDefault().getUnitTestRunListeners()) {
 			listener.sessionLaunched(testRunSession);
 		}
 

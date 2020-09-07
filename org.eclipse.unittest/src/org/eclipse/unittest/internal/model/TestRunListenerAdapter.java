@@ -34,7 +34,7 @@ public class TestRunListenerAdapter implements ITestSessionListener {
 	}
 
 	private ListenerList<TestRunListener> getListenerList() {
-		return UnitTestPlugin.getDefault().getNewTestRunListeners();
+		return UnitTestPlugin.getDefault().getUnitTestRunListeners();
 	}
 
 	private void fireSessionStarted() {
