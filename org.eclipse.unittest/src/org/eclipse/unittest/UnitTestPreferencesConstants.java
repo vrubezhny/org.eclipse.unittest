@@ -41,26 +41,6 @@ public class UnitTestPreferencesConstants {
 	public static final String SHOW_ON_ERROR_ONLY = UnitTestPlugin.PLUGIN_ID + ".show_on_error"; //$NON-NLS-1$
 
 	/**
-	 * Boolean preference controlling whether '-ea' should be added to VM arguments
-	 * when creating a new JUnit launch configuration.
-	 */
-	public static final String ENABLE_ASSERTIONS = UnitTestPlugin.PLUGIN_ID + ".enable_assertions"; //$NON-NLS-1$
-
-	public static final boolean ENABLE_ASSERTIONS_DEFAULT = true;
-
-	/**
-	 * List of active stack filters. A String containing a comma separated list of
-	 * fully qualified type names/patterns.
-	 */
-	public static final String PREF_ACTIVE_FILTERS_LIST = UnitTestPlugin.PLUGIN_ID + ".active_filters"; //$NON-NLS-1$
-
-	/**
-	 * List of inactive stack filters. A String containing a comma separated list of
-	 * fully qualified type names/patterns.
-	 */
-	public static final String PREF_INACTIVE_FILTERS_LIST = UnitTestPlugin.PLUGIN_ID + ".inactive_filters"; //$NON-NLS-1$
-
-	/**
 	 * Maximum number of remembered test runs.
 	 */
 	public static final String MAX_TEST_RUNS = UnitTestPlugin.PLUGIN_ID + ".max_test_runs"; //$NON-NLS-1$
@@ -103,6 +83,12 @@ public class UnitTestPreferencesConstants {
 		return list.toArray(new String[list.size()]);
 	}
 
+	/**
+	 * Returns an array of Filter patterns for Stacktraces/Error messages
+	 *
+	 * @param session a {@link ITestRunSession} to ask the filter pattern for
+	 * @return an array of filter patterns
+	 */
 	public static String[] getFilterPatterns(ITestRunSession session) {
 		if (session != null && !session.getTestRunnerKind().isNull()) {
 			ITestViewSupport viewSupport = session.getTestRunnerKind().getTestViewSupport();
@@ -113,10 +99,22 @@ public class UnitTestPreferencesConstants {
 		return new String[0];
 	}
 
+	/**
+	 * Indicates if a filter patterns are to be applied on a stacktrace/error
+	 * messages
+	 *
+	 * @return <code>true</code> in case the stacktrace is to be filtered, otherwise
+	 *         - <code>false</code>
+	 */
 	public static boolean getFilterStack() {
-		return Platform.getPreferencesService().getBoolean(UnitTestPlugin.PLUGIN_ID, DO_FILTER_STACK, true, null);
+		return Platform.getPreferencesService().getBoolean(UnitTestPlugin.PLUGIN_ID, DO_FILTER_STACK, false, null);
 	}
 
+	/**
+	 * Sets up a value for the DO_FILTER_STACK preference
+	 *
+	 * @param filter boolean indicating if a stacktrace is to be filtered
+	 */
 	public static void setFilterStack(boolean filter) {
 		InstanceScope.INSTANCE.getNode(UnitTestPlugin.PLUGIN_ID).putBoolean(DO_FILTER_STACK, filter);
 	}
