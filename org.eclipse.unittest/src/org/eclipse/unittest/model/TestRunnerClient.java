@@ -118,6 +118,7 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 				fSocket = null;
 			}
 		} catch (IOException e) {
+			// Ignore
 		}
 		try {
 			if (fServerSocket != null) {
@@ -125,6 +126,7 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 				fServerSocket = null;
 			}
 		} catch (IOException e) {
+			// Ignore
 		}
 	}
 

@@ -14,11 +14,23 @@
 
 package org.eclipse.unittest.model;
 
+/**
+ * An interface to listen to the events from the
+ * {@link org.eclipse.unittest.model.IUnitTestModel} on added/removed
+ * {@link ITestRunSession} instances.
+ */
 public interface ITestRunSessionListener {
 	/**
-	 * @param testRunSession the new session, or <code>null</code>
+	 * Notifies on an added {@link ITestRunSession} instance.
+	 *
+	 * @param testRunSession the new session
 	 */
 	void sessionAdded(ITestRunSession testRunSession);
 
+	/**
+	 * Notifies on a removed {@link ITestRunSession} instance.
+	 *
+	 * @param testRunSession the new session
+	 */
 	void sessionRemoved(ITestRunSession testRunSession);
 }

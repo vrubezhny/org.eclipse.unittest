@@ -24,6 +24,12 @@ import org.eclipse.core.resources.IProject;
 
 import org.eclipse.debug.core.ILaunch;
 
+/**
+ * Represents a Unit Test Model element.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
+ */
 public interface IUnitTestModel {
 
 	/**
@@ -41,12 +47,40 @@ public interface IUnitTestModel {
 	 */
 	List<ITestRunSession> getTestRunSessions();
 
+	/**
+	 * Adds an {@link ITestRunSessionListener}
+	 *
+	 * @param listener an {@link ITestRunSessionListener} instance
+	 */
 	void addTestRunSessionListener(ITestRunSessionListener listener);
 
+	/**
+	 * Removes an {@link ITestRunSessionListener} instance.
+	 *
+	 * @param listener an {@link ITestRunSessionListener} instance to remove
+	 */
 	void removeTestRunSessionListener(ITestRunSessionListener listener);
 
+	/**
+	 * Loads an {@link ITestRunSession} from a saved copy
+	 *
+	 * @param url     an URL of the test run session saved copy
+	 * @param monitor an {@link IProgressMonitor} monitor
+	 * @return a loaded {@link ITestRunSession} instance
+	 * @throws InvocationTargetException in case of an error
+	 * @throws InterruptedException      in case of operation is canceled
+	 */
 	ITestRunSession importTestRunSession(String url, IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException;
 
+	/**
+	 * Creates an {@link ITestRunSession}
+	 *
+	 * @param launch  an {@link ILaunch} to start a test run session
+	 * @param project an {@link IProject} to test
+	 * @param port    a port number to listen during the run of remote test runner
+	 *                or <code>-1</code> in case of a local test runner
+	 * @return a created {@link ITestRunSession} instance
+	 */
 	ITestRunSession createTestRunSession(ILaunch launch, IProject project, int port);
 }

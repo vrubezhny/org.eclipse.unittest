@@ -29,8 +29,20 @@ public interface ITestSuiteElement extends ITestElementContainer {
 	 */
 	String getSuiteTypeName();
 
+	/**
+	 * Adds a child {@link ITestElement} to this test suite element
+	 *
+	 * @param child a child {@link ITestElement}
+	 */
 	void addChild(ITestElement child);
 
+	/**
+	 * Notifies on the status changes in a specified child {@link ITestElement}
+	 * element
+	 *
+	 * @param child       a child {@link ITestElement} element
+	 * @param childStatus a new status value
+	 */
 	void childChangedStatus(ITestElement child, ITestElement.Status childStatus);
 
 }
