@@ -280,9 +280,9 @@ public class TestRunnerViewPart extends ViewPart {
 	 * A Job that runs as long as a test run is running. It is used to show busyness
 	 * for running jobs in the view (title in italics).
 	 */
-	private JUnitIsRunningJob fJUnitIsRunningJob;
-	private ILock fJUnitIsRunningLock;
-	public static final Object FAMILY_JUNIT_RUN = new Object();
+	private UnitTestIsRunningJob fUnitTestIsRunningJob;
+	private ILock fUnitTestIsRunningLock;
+	public static final Object FAMILY_UNITTEST_RUN = new Object();
 
 	private IPartListener2 fPartListener = new IPartListener2() {
 		@Override
@@ -737,8 +737,8 @@ public class TestRunnerViewPart extends ViewPart {
 		}
 	}
 
-	private class JUnitIsRunningJob extends Job {
-		public JUnitIsRunningJob(String name) {
+	private class UnitTestIsRunningJob extends Job {
+		public UnitTestIsRunningJob(String name) {
 			super(name);
 			setSystem(true);
 		}
@@ -746,13 +746,13 @@ public class TestRunnerViewPart extends ViewPart {
 		@Override
 		public IStatus run(IProgressMonitor monitor) {
 			// wait until the test run terminates
-			fJUnitIsRunningLock.acquire();
+			fUnitTestIsRunningLock.acquire();
 			return Status.OK_STATUS;
 		}
 
 		@Override
 		public boolean belongsTo(Object family) {
-			return family == TestRunnerViewPart.FAMILY_JUNIT_RUN;
+			return family == TestRunnerViewPart.FAMILY_UNITTEST_RUN;
 		}
 	}
 
@@ -1011,7 +1011,7 @@ public class TestRunnerViewPart extends ViewPart {
 		fMemento = memento;
 		IWorkbenchSiteProgressService progressService = getProgressService();
 		if (progressService != null)
-			progressService.showBusyForFamily(TestRunnerViewPart.FAMILY_JUNIT_RUN);
+			progressService.showBusyForFamily(TestRunnerViewPart.FAMILY_UNITTEST_RUN);
 	}
 
 	private IWorkbenchSiteProgressService getProgressService() {
@@ -1108,13 +1108,13 @@ public class TestRunnerViewPart extends ViewPart {
 		if (fUpdateJob != null) {
 			return;
 		}
-		fJUnitIsRunningJob = new JUnitIsRunningJob(Messages.TestRunnerViewPart_wrapperJobName);
-		fJUnitIsRunningLock = Job.getJobManager().newLock();
+		fUnitTestIsRunningJob = new UnitTestIsRunningJob(Messages.TestRunnerViewPart_wrapperJobName);
+		fUnitTestIsRunningLock = Job.getJobManager().newLock();
 		// acquire lock while a test run is running
 		// the lock is released when the test run terminates
 		// the wrapper job will wait on this lock.
-		fJUnitIsRunningLock.acquire();
-		getProgressService().schedule(fJUnitIsRunningJob);
+		fUnitTestIsRunningLock.acquire();
+		getProgressService().schedule(fUnitTestIsRunningJob);
 
 		fUpdateJob = new UpdateUIJob(Messages.TestRunnerViewPart_jobName);
 		fUpdateJob.schedule(REFRESH_INTERVAL);
@@ -1125,9 +1125,9 @@ public class TestRunnerViewPart extends ViewPart {
 			fUpdateJob.stop();
 			fUpdateJob = null;
 		}
-		if (fJUnitIsRunningJob != null && fJUnitIsRunningLock != null) {
-			fJUnitIsRunningLock.release();
-			fJUnitIsRunningJob = null;
+		if (fUnitTestIsRunningJob != null && fUnitTestIsRunningLock != null) {
+			fUnitTestIsRunningLock.release();
+			fUnitTestIsRunningJob = null;
 		}
 		postSyncProcessChanges();
 	}
@@ -1305,9 +1305,7 @@ public class TestRunnerViewPart extends ViewPart {
 	}
 
 	private void showMessageIfNoTests() {
-		if (fTestRunSession != null
-//				&& TestKindRegistry.JUNIT5_TEST_KIND_ID.equals(fTestRunSession.getTestRunnerKind().getId())
-				&& fTestRunSession.getTotalCount() == 0) {
+		if (fTestRunSession != null && fTestRunSession.getTotalCount() == 0) {
 			Display.getDefault().asyncExec(() -> {
 				String msg = MessageFormat.format(Messages.TestRunnerViewPart_error_notests_kind,
 						fTestRunSession.getTestRunnerKind().getDisplayName());
@@ -1433,16 +1431,8 @@ public class TestRunnerViewPart extends ViewPart {
 	}
 
 	private void updateRerunFailedFirstAction() {
-		boolean state = !isJUnit5() && hasErrorsOrFailures() && fTestRunSession.getLaunch() != null;
+		boolean state = hasErrorsOrFailures() && fTestRunSession.getLaunch() != null;
 		fRerunFailedFirstAction.setEnabled(state);
-	}
-
-	private boolean isJUnit5() {
-		if (fTestRunSession == null) {
-			return false;
-		}
-//		return TestKindRegistry.JUNIT5_TEST_KIND_ID.equals(fTestRunSession.getTestRunnerKind().getId());
-		return false;
 	}
 
 	/**
@@ -2002,8 +1992,6 @@ public class TestRunnerViewPart extends ViewPart {
 						}
 						String configName = MessageFormat.format(Messages.TestRunnerViewPart_configName, name);
 						ILaunchConfigurationWorkingCopy tmp = launchConfiguration.copy(configName);
-						// fix for bug: 64838 junit view run single test does not use correct class
-						// [JUnit]
 						tmp.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, className);
 						// reset the container
 						tmp.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_CONTAINER, ""); //$NON-NLS-1$
