@@ -17,6 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.unittest.junit.JUnitPlugin;
 import org.eclipse.unittest.launcher.ITestKind;
 
 import org.eclipse.core.runtime.CoreException;
@@ -31,16 +32,19 @@ import org.eclipse.jdt.internal.junit.util.CoreTestSearchEngine;
 
 /**
  * Custom Search engine for suite() methods
+ *
  * @see CoreTestSearchEngine
  */
+@SuppressWarnings("restriction")
 public class TestSearchEngine extends CoreTestSearchEngine {
 
-	public static IType[] findTests(IRunnableContext context, final IJavaElement element, final ITestKind testKind) throws InvocationTargetException, InterruptedException {
-		final Set<IType> result= new HashSet<>();
+	public static IType[] findTests(IRunnableContext context, final IJavaElement element, final ITestKind testKind)
+			throws InvocationTargetException, InterruptedException {
+		final Set<IType> result = new HashSet<>();
 
-		IRunnableWithProgress runnable= progressMonitor -> {
+		IRunnableWithProgress runnable = progressMonitor -> {
 			try {
-				testKind.getFinder().findTestsInContainer(element, result, progressMonitor);
+				JUnitPlugin.getTestFinder(testKind).findTestsInContainer(element, result, progressMonitor);
 			} catch (CoreException e) {
 				throw new InvocationTargetException(e);
 			}

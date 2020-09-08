@@ -209,7 +209,6 @@
       <kind
             id="org.eclipse.unittest.junit.loader.junit3"
             displayName="%testKind.junit3"
-            finderClass="org.eclipse.unittest.junit.launcher.JUnit3TestFinder"
             loaderPluginId="org.eclipse.jdt.junit.runtime"
             loaderClass="org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestLoader"
             testRunnerClientClass="org.eclipse.unittest.junit.launcher.JUnitRemoteTestRunnerClient"
@@ -219,7 +218,6 @@
       <kind
             id="org.eclipse.unittest.junit.loader.junit4"
             displayName="%testKind.junit4" 
-            finderClass="org.eclipse.unittest.junit.launcher.JUnit4TestFinder"
             loaderPluginId="org.eclipse.jdt.junit4.runtime"
             loaderClass="org.eclipse.jdt.internal.junit4.runner.JUnit4TestLoader"
 			testRunnerClientClass="org.eclipse.unittest.junit.launcher.JUnitRemoteTestRunnerClient"
@@ -230,7 +228,6 @@
       <kind
             id="org.eclipse.unittest.junit.loader.junit5"
             displayName="%testKind.junit5"
-            finderClass="org.eclipse.unittest.junit.launcher.JUnit5TestFinder"
             loaderPluginId="org.eclipse.jdt.junit5.runtime"
             loaderClass="org.eclipse.jdt.internal.junit5.runner.JUnit5TestLoader"
             testRunnerClientClass="org.eclipse.unittest.junit.launcher.JUnitRemoteTestRunnerClient"

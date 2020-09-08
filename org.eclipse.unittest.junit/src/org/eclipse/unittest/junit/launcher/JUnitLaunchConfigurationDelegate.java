@@ -38,6 +38,7 @@ import org.osgi.framework.Constants;
 
 import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.junit.JUnitMessages;
+import org.eclipse.unittest.junit.JUnitPlugin;
 import org.eclipse.unittest.launcher.ITestKind;
 import org.eclipse.unittest.launcher.TestKindRegistry;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
@@ -378,6 +379,7 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 	 * @return returns all types or methods that should be ran
 	 * @throws CoreException an exception is thrown when the search for tests failed
 	 */
+	@SuppressWarnings("restriction")
 	protected IMember[] evaluateTests(ILaunchConfiguration configuration, IProgressMonitor monitor)
 			throws CoreException {
 		IJavaProject javaProject = getJavaProject(configuration);
@@ -396,7 +398,7 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 		}
 		HashSet<IType> result = new HashSet<>();
 		ITestKind testKind = getTestRunnerKind(configuration);
-		testKind.getFinder().findTestsInContainer(testTarget, result, monitor);
+		JUnitPlugin.getTestFinder(testKind).findTestsInContainer(testTarget, result, monitor);
 		if (result.isEmpty()) {
 			String msg = MessageFormat.format(JUnitMessages.JUnitLaunchConfigurationDelegate_error_notests_kind,
 					testKind.getDisplayName());

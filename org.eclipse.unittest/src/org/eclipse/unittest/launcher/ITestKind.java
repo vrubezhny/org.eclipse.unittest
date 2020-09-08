@@ -49,13 +49,6 @@ public interface ITestKind {
 	String CLASSPATH_PATH_TO_JAR = "pathToJar"; //$NON-NLS-1$
 
 	/**
-	 * Returns a test finder defined for this Test Kind
-	 *
-	 * @return returns a test finder
-	 */
-	ITestFinder getFinder();
-
-	/**
 	 * Returns a Test Runner Client for this this Test Kind
 	 *
 	 * @return returns a Test Runner Client
@@ -82,13 +75,6 @@ public interface ITestKind {
 	 * @return returns a display name
 	 */
 	String getDisplayName();
-
-	/**
-	 * Returns a test finder qualified class name for this Test Kind
-	 *
-	 * @return a test finder qualified class name
-	 */
-	String getFinderClassName();
 
 	/**
 	 * Returns a Loader plug-in identifier for this Test Kind

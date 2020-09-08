@@ -281,6 +281,11 @@ public class CompareResultDialog extends TrayDialog {
 		}
 	}
 
+	/**
+	 * Sets a failed {@link ITestElement} as input for the CompareResultDialog
+	 *
+	 * @param failedTest a failed test element
+	 */
 	public void setInput(ITestElement failedTest) {
 		setFailedTest(failedTest);
 		setCompareViewerInput();

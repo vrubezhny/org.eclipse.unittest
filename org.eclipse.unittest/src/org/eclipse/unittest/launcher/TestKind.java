@@ -22,38 +22,31 @@ import org.eclipse.core.runtime.IConfigurationElement;
 public class TestKind implements ITestKind {
 
 	private final IConfigurationElement fElement;
-	private ITestFinder fFinder;
+//	private ITestFinder fFinder;
 	private ITestRunnerClient fTestRunnerClient;
 	private ITestViewSupport fTestViewSupport;
 
 	public TestKind(IConfigurationElement element) {
 		fElement = element;
-		fFinder = null;
+//		fFinder = null;
 	}
 
-	@Override
-	public ITestFinder getFinder() {
-		if (fFinder == null) {
-			try {
-				fFinder = (ITestFinder) fElement.createExecutableExtension(FINDER_CLASS_NAME);
-			} catch (CoreException e1) {
-				UnitTestPlugin.log(e1);
-				fFinder = ITestFinder.NULL;
-			}
-		}
-		return fFinder;
-	}
-
+	/*
+	 * @Override public ITestFinder getFinder() { if (fFinder == null) { try {
+	 * fFinder = (ITestFinder)
+	 * fElement.createExecutableExtension(FINDER_CLASS_NAME); } catch (CoreException
+	 * e1) { UnitTestPlugin.log(e1); fFinder = ITestFinder.NULL; } } return fFinder;
+	 * }
+	 */
 	@Override
 	public String getDisplayName() {
 		return getAttribute(DISPLAY_NAME);
 	}
 
-	@Override
-	public String getFinderClassName() {
-		return getAttribute(FINDER_CLASS_NAME);
-	}
-
+	/*
+	 * @Override public String getFinderClassName() { return
+	 * getAttribute(FINDER_CLASS_NAME); }
+	 */
 	@Override
 	public String getId() {
 		return getAttribute(ID);

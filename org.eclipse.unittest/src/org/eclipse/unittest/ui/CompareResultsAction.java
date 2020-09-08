@@ -56,6 +56,11 @@ public class CompareResultsAction extends Action {
 		}
 	}
 
+	/**
+	 * Updates the CompareResultDialog with a failed {@link ITestElement} as input
+	 *
+	 * @param failedTest a failed test element
+	 */
 	public void updateOpenDialog(ITestElement failedTest) {
 		if (fOpenDialog != null) {
 			fOpenDialog.setInput(failedTest);

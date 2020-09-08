@@ -79,6 +79,9 @@ public class CounterPanel extends Composite {
 		return value;
 	}
 
+	/**
+	 * Resets the counters presented on the panel
+	 */
 	public void reset() {
 		setErrorValue(0);
 		setFailureValue(0);
@@ -86,14 +89,31 @@ public class CounterPanel extends Composite {
 		fTotal = 0;
 	}
 
+	/**
+	 * Sets the total count value
+	 *
+	 * @param value total count value
+	 */
 	public void setTotal(int value) {
 		fTotal = value;
 	}
 
+	/**
+	 * Returns the total count value
+	 *
+	 * @return a total count value
+	 */
 	public int getTotal() {
 		return fTotal;
 	}
 
+	/**
+	 * Sets the run counter values
+	 *
+	 * @param value                  a run counter value
+	 * @param ignoredCount           an ignored tests counter value
+	 * @param assumptionFailureCount a number of assumption failure counter value
+	 */
 	public void setRunValue(int value, int ignoredCount, int assumptionFailureCount) {
 		String runString;
 		String runStringTooltip;
@@ -134,11 +154,21 @@ public class CounterPanel extends Composite {
 		fAssumptionFailedCount = assumptionFailureCount;
 	}
 
+	/**
+	 * Sets an error counter value
+	 *
+	 * @param value am error counter value
+	 */
 	public void setErrorValue(int value) {
 		fNumberOfErrors.setText(Integer.toString(value));
 		redraw();
 	}
 
+	/**
+	 * Sets a failure counter value
+	 *
+	 * @param value a failure counter value
+	 */
 	public void setFailureValue(int value) {
 		fNumberOfFailures.setText(Integer.toString(value));
 		redraw();

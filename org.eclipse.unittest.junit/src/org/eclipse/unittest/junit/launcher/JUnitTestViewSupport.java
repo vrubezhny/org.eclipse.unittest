@@ -3,10 +3,10 @@ package org.eclipse.unittest.junit.launcher;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+import org.eclipse.unittest.junit.JUnitPlugin;
 import org.eclipse.unittest.junit.ui.OpenEditorAtLineAction;
 import org.eclipse.unittest.junit.ui.OpenTestAction;
 import org.eclipse.unittest.junit.ui.ShowStackTraceInConsoleViewActionDelegate;
-import org.eclipse.unittest.launcher.ITestFinder;
 import org.eclipse.unittest.launcher.ITestViewSupport;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.model.ITestCaseElement;
@@ -36,6 +36,7 @@ import org.eclipse.jdt.core.JavaModelException;
 
 import org.eclipse.jdt.internal.junit.JUnitCorePlugin;
 import org.eclipse.jdt.internal.junit.JUnitPreferencesConstants;
+import org.eclipse.jdt.internal.junit.launcher.ITestFinder;
 
 public class JUnitTestViewSupport implements ITestViewSupport {
 
@@ -113,7 +114,7 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 		String testMethodName = null; // test method name is null when re-running a regular test class
 		String testName = testSuite.getTestName();
 
-		ITestFinder finder = testSuite.getTestRunSession().getTestRunnerKind().getFinder();
+		ITestFinder finder = JUnitPlugin.getTestFinder(testSuite.getTestRunSession().getTestRunnerKind());
 		if (ITestFinder.NULL.equals(finder)) {
 			return null;
 		}
@@ -164,8 +165,8 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 	 * Returns the element's test class or the next container's test class, which
 	 * exists, and for which ITestFinder.isTest() is true.
 	 */
-	private IType findTestClass(ITestElement element, ITestFinder finder, IJavaProject project,
-			boolean checkOnlyCurrentElement) {
+	private IType findTestClass(ITestElement element, @SuppressWarnings("restriction") ITestFinder finder,
+			IJavaProject project, boolean checkOnlyCurrentElement) {
 		ITestElement current = element;
 		while (current != null) {
 			try {

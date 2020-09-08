@@ -58,6 +58,11 @@ public class CopyFailureListAction extends Action {
 		}
 	}
 
+	/**
+	 * Returns the failure trace lines as a string
+	 *
+	 * @return a failure traces string
+	 */
 	public String getAllFailureTraces() {
 		StringBuilder buf = new StringBuilder();
 		ITestElement[] failures = fRunner.getAllFailures();

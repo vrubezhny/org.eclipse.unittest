@@ -74,16 +74,6 @@
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="finderClass" type="string">
-            <annotation>
-               <documentation>
-                  test finder class implementing org.eclipse.unittest.launcher.ITestFinder
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.unittest.launcher.ITestFinder"/>
-               </appInfo>
-            </annotation>
-         </attribute>
          <attribute name="loaderPluginId" type="string" use="required">
             <annotation>
                <documentation>
