@@ -38,6 +38,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 
 import org.eclipse.jdt.internal.junit.launcher.ITestFinder;
+import org.eclipse.jdt.internal.junit.launcher.JUnitRuntimeClasspathEntry;
 import org.eclipse.jdt.internal.junit.util.CoreTestSearchEngine;
 
 /**
@@ -212,7 +213,25 @@ public class JUnitPlugin extends AbstractUIPlugin {
 		case JUNIT5_TEST_KIND_ID:
 			return org.eclipse.jdt.internal.junit.launcher.TestKindRegistry.getDefault()
 					.getKind(ORIGINAL_JUNIT5_TEST_KIND_ID).getFinder();
+		default:
+			return ITestFinder.NULL;
 		}
-		return ITestFinder.NULL;
+	}
+
+	@SuppressWarnings("restriction")
+	public static JUnitRuntimeClasspathEntry[] getClasspathEntries(ITestKind kind) {
+		switch (kind.getId()) {
+		case JUNIT3_TEST_KIND_ID:
+			return org.eclipse.jdt.internal.junit.launcher.TestKindRegistry.getDefault()
+					.getKind(ORIGINAL_JUNIT3_TEST_KIND_ID).getClasspathEntries();
+		case JUNIT4_TEST_KIND_ID:
+			return org.eclipse.jdt.internal.junit.launcher.TestKindRegistry.getDefault()
+					.getKind(ORIGINAL_JUNIT4_TEST_KIND_ID).getClasspathEntries();
+		case JUNIT5_TEST_KIND_ID:
+			return org.eclipse.jdt.internal.junit.launcher.TestKindRegistry.getDefault()
+					.getKind(ORIGINAL_JUNIT5_TEST_KIND_ID).getClasspathEntries();
+		default:
+			return new JUnitRuntimeClasspathEntry[0];
+		}
 	}
 }

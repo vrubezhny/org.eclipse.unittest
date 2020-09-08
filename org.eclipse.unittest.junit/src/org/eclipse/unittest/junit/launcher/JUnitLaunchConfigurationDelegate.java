@@ -42,7 +42,6 @@ import org.eclipse.unittest.junit.JUnitPlugin;
 import org.eclipse.unittest.launcher.ITestKind;
 import org.eclipse.unittest.launcher.TestKindRegistry;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
-import org.eclipse.unittest.launcher.UnitTestRuntimeClasspathEntry;
 
 import org.eclipse.core.variables.VariablesPlugin;
 
@@ -75,6 +74,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
 import org.eclipse.jdt.internal.junit.launcher.JUnitLaunchConfigurationConstants;
+import org.eclipse.jdt.internal.junit.launcher.JUnitRuntimeClasspathEntry;
 import org.eclipse.jdt.internal.junit.util.CoreTestSearchEngine;
 import org.eclipse.jdt.internal.junit.util.IJUnitStatusConstants;
 
@@ -127,6 +127,7 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 		}
 	}
 
+	@SuppressWarnings("restriction")
 	private VMRunnerConfiguration getVMRunnerConfiguration(ILaunchConfiguration configuration, ILaunch launch,
 			String mode, IProgressMonitor monitor) throws CoreException {
 		VMRunnerConfiguration runConfig = null;
@@ -212,8 +213,8 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 					if (!Arrays.stream(classpath).anyMatch(
 							s -> s.contains("junit-platform-launcher") || s.contains("org.junit.platform.launcher"))) { //$NON-NLS-1$ //$NON-NLS-2$
 						try {
-							UnitTestRuntimeClasspathEntry x = new UnitTestRuntimeClasspathEntry(
-									"org.junit.platform.launcher", null); //$NON-NLS-1$
+							JUnitRuntimeClasspathEntry x = new JUnitRuntimeClasspathEntry("org.junit.platform.launcher", //$NON-NLS-1$
+									null);
 							String entryString = new ClasspathLocalizer(Platform.inDevelopmentMode()).entryString(x);
 							int length = classpath.length;
 							System.arraycopy(classpath, 0, classpath = new String[length + 1], 0, length);
@@ -746,11 +747,12 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 			fInDevelopmentMode = inDevelopmentMode;
 		}
 
+		@SuppressWarnings("restriction")
 		public List<String> localizeClasspath(ITestKind kind) {
-			UnitTestRuntimeClasspathEntry[] entries = kind.getClasspathEntries();
+			JUnitRuntimeClasspathEntry[] entries = JUnitPlugin.getClasspathEntries(kind);
 			List<String> junitEntries = new ArrayList<>();
 
-			for (UnitTestRuntimeClasspathEntry entrie : entries) {
+			for (JUnitRuntimeClasspathEntry entrie : entries) {
 				try {
 					addEntry(junitEntries, entrie);
 				} catch (IOException | URISyntaxException e) {
@@ -760,14 +762,16 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 			return junitEntries;
 		}
 
-		private void addEntry(List<String> junitEntries, final UnitTestRuntimeClasspathEntry entry)
+		private void addEntry(List<String> junitEntries,
+				@SuppressWarnings("restriction") final JUnitRuntimeClasspathEntry entry)
 				throws IOException, MalformedURLException, URISyntaxException {
 			String entryString = entryString(entry);
 			if (entryString != null)
 				junitEntries.add(entryString);
 		}
 
-		private String entryString(final UnitTestRuntimeClasspathEntry entry)
+		@SuppressWarnings("restriction")
+		private String entryString(final JUnitRuntimeClasspathEntry entry)
 				throws IOException, MalformedURLException, URISyntaxException {
 			if (inDevelopmentMode()) {
 				try {
@@ -783,7 +787,8 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 			return fInDevelopmentMode;
 		}
 
-		private String localURL(UnitTestRuntimeClasspathEntry jar)
+		@SuppressWarnings("restriction")
+		private String localURL(JUnitRuntimeClasspathEntry jar)
 				throws IOException, MalformedURLException, URISyntaxException {
 			Bundle bundle = UnitTestPlugin.getDefault().getBundle(jar.getPluginId());
 			URL url;

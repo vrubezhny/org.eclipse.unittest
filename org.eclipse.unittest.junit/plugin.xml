@@ -129,81 +129,6 @@
       </shortcut>
    </extension>
 
-
-
-    <!-- JUnit Container -->
-<!-- 
-   <extension
-         point="org.eclipse.jdt.ui.classpathContainerPage">
-      <classpathContainerPage
-            name="%JUnitContainerName"
-            class="org.eclipse.jdt.internal.junit.buildpath.JUnitContainerWizardPage"
-            id="org.eclipse.jdt.junit.JUNIT_CONTAINER">
-      </classpathContainerPage>
-   </extension>
-
-   <extension
-         point="org.eclipse.ui.editors">
-      <editor
-            default="false"
-            id="org.eclipse.jdt.junit.JUnitResultEditor"
-            icon="$nl$/icons/full/obj16/testfile_obj.png"
-            launcher="org.eclipse.jdt.internal.junit.ui.JUnitViewEditorLauncher"
-            name="%JUnitView.editor.name">
-         <contentTypeBinding
-               contentTypeId="org.eclipse.jdt.junit.JUnitResult">
-         </contentTypeBinding>
-      </editor>
-   </extension>
-   <extension
-         point="org.eclipse.debug.core.statusHandlers">
-      <statusHandler
-            class="org.eclipse.jdt.internal.junit.launcher.LaunchErrorStatusHandler"
-            code="101"
-            id="org.eclipse.jdt.junit.launch.ERR_UNSPECIFIED_MAIN_TYPE"
-            plugin="org.eclipse.jdt.junit.core">
-      </statusHandler>
-      <statusHandler
-            class="org.eclipse.jdt.internal.junit.launcher.LaunchErrorStatusHandler"
-            code="118"
-            id="org.eclipse.jdt.junit.launch.ERR_NO_SOCKET_AVAILABLE"
-            plugin="org.eclipse.jdt.junit.core">
-      </statusHandler>
-      <statusHandler
-            class="org.eclipse.jdt.internal.junit.launcher.LaunchErrorStatusHandler"
-            code="107"
-            id="org.eclipse.jdt.junit.launch.ERR_NOT_A_JAVA_PROJECT"
-            plugin="org.eclipse.jdt.junit.core">
-      </statusHandler>
-      <statusHandler
-            class="org.eclipse.jdt.internal.junit.launcher.LaunchErrorStatusHandler"
-            code="10004"
-            id="org.eclipse.jdt.junit.launch.ERR_JUNIT_NOT_ON_PATH"
-            plugin="org.eclipse.jdt.junit.core">
-      </statusHandler>
-   </extension>
--->
-<!--
-   <extension
-         point="org.eclipse.jdt.junit.testRunListeners">
-      <testRunListener
-            class="org.eclipse.unittest.ui.UITestRunListener">
-      </testRunListener>
-   </extension>
-   <extension
-         point="org.eclipse.ui.themes">
-      <fontDefinition
-            categoryId="org.eclipse.jdt.ui.presentation"
-            id="org.eclipse.jdt.junit.failurePaneFont"
-            label="%FailureTraceFont.label">
-         <description>
-            %FailureTraceFont.description
-         </description>
-      </fontDefinition>
-   </extension>
-
-   <extension-point id="unittestKinds" name="%testKinds.name"/>
--->
    <extension
          point="org.eclipse.unittest.unittestKinds">
       <kind
@@ -213,7 +138,6 @@
             loaderClass="org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestLoader"
             testRunnerClientClass="org.eclipse.unittest.junit.launcher.JUnitRemoteTestRunnerClient"
             testViewSupportClass="org.eclipse.unittest.junit.launcher.JUnitTestViewSupport">
-         <runtimeClasspathEntry pluginId="org.eclipse.jdt.junit.runtime"/>     	
       </kind>
       <kind
             id="org.eclipse.unittest.junit.loader.junit4"
@@ -222,8 +146,6 @@
             loaderClass="org.eclipse.jdt.internal.junit4.runner.JUnit4TestLoader"
 			testRunnerClientClass="org.eclipse.unittest.junit.launcher.JUnitRemoteTestRunnerClient"
             testViewSupportClass="org.eclipse.unittest.junit.launcher.JUnitTestViewSupport">
-         <runtimeClasspathEntry pluginId="org.eclipse.jdt.junit4.runtime" />
-         <runtimeClasspathEntry pluginId="org.eclipse.jdt.junit.runtime"/>     	
       </kind>
       <kind
             id="org.eclipse.unittest.junit.loader.junit5"
@@ -232,8 +154,6 @@
             loaderClass="org.eclipse.jdt.internal.junit5.runner.JUnit5TestLoader"
             testRunnerClientClass="org.eclipse.unittest.junit.launcher.JUnitRemoteTestRunnerClient"
             testViewSupportClass="org.eclipse.unittest.junit.launcher.JUnitTestViewSupport">
-         <runtimeClasspathEntry pluginId="org.eclipse.jdt.junit5.runtime" />
-         <runtimeClasspathEntry pluginId="org.eclipse.jdt.junit.runtime" />
       </kind>
    </extension>
 </plugin>

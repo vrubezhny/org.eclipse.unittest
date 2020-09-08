@@ -22,31 +22,18 @@ import org.eclipse.core.runtime.IConfigurationElement;
 public class TestKind implements ITestKind {
 
 	private final IConfigurationElement fElement;
-//	private ITestFinder fFinder;
 	private ITestRunnerClient fTestRunnerClient;
 	private ITestViewSupport fTestViewSupport;
 
 	public TestKind(IConfigurationElement element) {
 		fElement = element;
-//		fFinder = null;
 	}
 
-	/*
-	 * @Override public ITestFinder getFinder() { if (fFinder == null) { try {
-	 * fFinder = (ITestFinder)
-	 * fElement.createExecutableExtension(FINDER_CLASS_NAME); } catch (CoreException
-	 * e1) { UnitTestPlugin.log(e1); fFinder = ITestFinder.NULL; } } return fFinder;
-	 * }
-	 */
 	@Override
 	public String getDisplayName() {
 		return getAttribute(DISPLAY_NAME);
 	}
 
-	/*
-	 * @Override public String getFinderClassName() { return
-	 * getAttribute(FINDER_CLASS_NAME); }
-	 */
 	@Override
 	public String getId() {
 		return getAttribute(ID);
@@ -126,21 +113,7 @@ public class TestKind implements ITestKind {
 	}
 
 	@Override
-	public UnitTestRuntimeClasspathEntry[] getClasspathEntries() {
-		IConfigurationElement[] children = fElement.getChildren(ITestKind.RUNTIME_CLASSPATH_ENTRY);
-		UnitTestRuntimeClasspathEntry[] returnThis = new UnitTestRuntimeClasspathEntry[children.length];
-		for (int i = 0; i < children.length; i++) {
-			IConfigurationElement element = children[i];
-			String pluginID = element.getAttribute(ITestKind.CLASSPATH_PLUGIN_ID);
-			String pathToJar = element.getAttribute(ITestKind.CLASSPATH_PATH_TO_JAR);
-			returnThis[i] = new UnitTestRuntimeClasspathEntry(pluginID, pathToJar);
-		}
-		return returnThis;
-	}
-
-	@Override
 	public String toString() {
 		return getDisplayName() + " (id: " + getId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
-
 }

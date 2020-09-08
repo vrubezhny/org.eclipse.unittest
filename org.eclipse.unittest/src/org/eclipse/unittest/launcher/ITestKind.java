@@ -42,11 +42,6 @@ public interface ITestKind {
 
 	String PRECEDES = "precedesTestKind"; //$NON-NLS-1$
 
-	String RUNTIME_CLASSPATH_ENTRY = "runtimeClasspathEntry"; //$NON-NLS-1$
-
-	String CLASSPATH_PLUGIN_ID = "pluginId"; //$NON-NLS-1$
-	String CLASSPATH_PATH_TO_JAR = "pathToJar"; //$NON-NLS-1$
-
 	/**
 	 * Returns a Test Runner Client for this this Test Kind
 	 *
@@ -117,11 +112,4 @@ public interface ITestKind {
 	 * @return true in case of empty Test Kind, false otherwise
 	 */
 	boolean isNull();
-
-	/**
-	 * Returns an array of Runtime Classpath Entries for this Test Kind
-	 *
-	 * @return an array of Runtime Classpath Entries
-	 */
-	UnitTestRuntimeClasspathEntry[] getClasspathEntries();
 }
