@@ -68,7 +68,6 @@ public class CDTTestViewSupport implements ITestViewSupport {
 	@Override
 	public RerunAction[] getRerunActions(TestRunnerViewPart testRunnerPart, ITestSuiteElement testSuite) {
 		String testMethodName = null; // test method name is null when re-running a regular test class
-		String testName = testSuite.getTestName();
 		String qualifiedName = testSuite.getClassName();
 
 		return qualifiedName != null ? new RerunAction[] {

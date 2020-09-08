@@ -107,7 +107,7 @@ public abstract class BaseTestsLaunchDelegate extends LaunchConfigurationDelegat
 	 * <code>updatedLaunchConfigurationAttribute()</code>.
 	 *
 	 * @param config launch configuration to revert
-	 * @throws CoreException
+	 * @throws CoreException in case of error
 	 */
 	private void revertChangedToLaunchConfiguration(ILaunchConfiguration config) throws CoreException {
 		ILaunchConfigurationWorkingCopy configWC = config.getWorkingCopy();
@@ -125,6 +125,7 @@ public abstract class BaseTestsLaunchDelegate extends LaunchConfigurationDelegat
 	 * @param config launch configuration which attribute should be updated
 	 * @param attributeName attribute name
 	 * @param value new value of the specified attribute
+	 * @throws CoreException in case of error
 	 */
 	private void updatedLaunchConfigurationAttribute(ILaunchConfigurationWorkingCopy config, String attributeName,
 			String value) throws CoreException {
@@ -138,6 +139,7 @@ public abstract class BaseTestsLaunchDelegate extends LaunchConfigurationDelegat
 	 * the value that was obtained from Tests Runner provider plug-in.
 	 *
 	 * @param config launch configuration
+	 * @throws CoreException in case of error
 	 */
 	private void updatedLaunchConfiguration(ILaunchConfiguration config) throws CoreException {
 		changesToLaunchConfiguration.clear();
@@ -155,6 +157,7 @@ public abstract class BaseTestsLaunchDelegate extends LaunchConfigurationDelegat
 	 * Runner provider plug-in.
 	 *
 	 * @param config launch configuration
+	 * @throws CoreException in case of error
 	 */
 	private void setProgramArguments(ILaunchConfigurationWorkingCopy config) throws CoreException {
 		List<?> packedTestsFilter = config.getAttribute(ITestsLaunchConfigurationConstants.ATTR_TESTS_FILTER,
@@ -190,6 +193,8 @@ public abstract class BaseTestsLaunchDelegate extends LaunchConfigurationDelegat
 	 * launch configuration.
 	 *
 	 * @param config launch configuration
+	 * @return an {@link ITestsRunnerProvider} instance
+	 * @throws CoreException in case of error
 	 */
 	public static ITestsRunnerProvider getTestsRunner(ILaunchConfiguration config) throws CoreException {
 		TestsRunnerProviderInfo testsRunnerProviderInfo = TestsRunnerPlugin.getDefault()
@@ -214,6 +219,7 @@ public abstract class BaseTestsLaunchDelegate extends LaunchConfigurationDelegat
 	 * @param config launch configuration
 	 * @param mode mode
 	 * @return launch delegate
+	 * @throws CoreException in case of error
 	 */
 	private ILaunchConfigurationDelegate2 getPreferredDelegate(ILaunchConfiguration config, String mode)
 			throws CoreException {

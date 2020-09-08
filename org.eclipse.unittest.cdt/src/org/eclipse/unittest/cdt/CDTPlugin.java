@@ -20,6 +20,8 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
 import org.eclipse.unittest.UnitTestPlugin;
+import org.eclipse.unittest.launcher.ITestKind;
+import org.eclipse.unittest.launcher.TestKindRegistry;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
@@ -51,6 +53,11 @@ public class CDTPlugin extends Plugin {
 	public final static String JUNIT4_ANNOTATION_NAME= "org.junit.Test"; //$NON-NLS-1$
 	public static final String SIMPLE_TEST_INTERFACE_NAME= "Test"; //$NON-NLS-1$
 */
+
+	public static final String CDT_TEST_KIND_ID= "org.eclipse.unittest.cdt.loader"; //$NON-NLS-1$
+	public static final String CDT_DSF_DBG_TEST_KIND_ID= "org.eclipse.unittest.cdt.loader"; //$NON-NLS-1$
+
+
 	/**
 	 * The class path variable referring to the junit home location
 	 */
@@ -67,9 +74,6 @@ public class CDTPlugin extends Plugin {
 	private static final String HISTORY_DIR_NAME= "history"; //$NON-NLS-1$
 */
 	private BundleContext fBundleContext;
-
-	private static boolean fIsStopped= false;
-
 
 	public CDTPlugin() {
 		fgPlugin= this;
@@ -100,7 +104,6 @@ public class CDTPlugin extends Plugin {
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		fIsStopped= true;
 		try {
 			InstanceScope.INSTANCE.getNode(CDTPlugin.CORE_PLUGIN_ID).flush();
 		} finally {
@@ -121,5 +124,9 @@ public class CDTPlugin extends Plugin {
 		if (reference == null)
 			return null;
 		return fBundleContext.getService(reference);
+	}
+
+	public static ITestKind getTestKind(String testKindId) {
+		return TestKindRegistry.getDefault().getKind(testKindId);
 	}
 }

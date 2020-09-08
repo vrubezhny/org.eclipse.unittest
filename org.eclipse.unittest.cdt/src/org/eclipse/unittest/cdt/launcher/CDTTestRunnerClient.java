@@ -4,13 +4,12 @@ import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Stack;
 
+import org.eclipse.cdt.testsrunner.internal.model.TestCase;
+import org.eclipse.cdt.testsrunner.internal.model.TestSuite;
 import org.eclipse.cdt.testsrunner.launcher.ITestsRunnerProvider;
-import org.eclipse.cdt.testsrunner.model.IModelVisitor;
 import org.eclipse.cdt.testsrunner.model.ITestCase;
 import org.eclipse.cdt.testsrunner.model.ITestItem;
 import org.eclipse.cdt.testsrunner.model.ITestItem.Status;
-import org.eclipse.cdt.testsrunner.model.ITestLocation;
-import org.eclipse.cdt.testsrunner.model.ITestMessage;
 import org.eclipse.cdt.testsrunner.model.ITestMessage.Level;
 import org.eclipse.cdt.testsrunner.model.ITestModelUpdater;
 import org.eclipse.cdt.testsrunner.model.ITestSuite;
@@ -18,24 +17,24 @@ import org.eclipse.cdt.testsrunner.model.TestingException;
 import org.eclipse.unittest.cdt.CDTPlugin;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
-import org.eclipse.unittest.model.ITestElement.FailureTrace;
 import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.unittest.model.TestRunnerClient;
+
+import org.eclipse.core.runtime.IStatus;
 
 public class CDTTestRunnerClient extends TestRunnerClient {
 	private static final String FRAME_PREFIX = org.eclipse.unittest.ui.FailureTrace.FRAME_PREFIX;
 
 	class TestModelUpdaterAdapter implements ITestModelUpdater {
-		long testRunStartTime = -1;
 
 		class TestElementReference {
 			String parentId;
 			String id;
 			String name;
 			boolean isSuite;
-			long startTime;
-			int testingTime;
+			private long startTime;
+			private long testingTime;
 
 			public TestElementReference(String parentId, String id, String name, boolean isSuite) {
 				this.parentId = parentId;
@@ -45,9 +44,16 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 				this.startTime = System.currentTimeMillis();
 			}
 
-			double getElapsedTimeInSecs() {
-				long elapsed = System.currentTimeMillis() - startTime;
-				return (elapsed) / 1000.0d;
+			@Override
+			public String toString() {
+				return new StringBuilder().append("TestElementReference: ") //$NON-NLS-1$
+						.append("parentId = ").append(parentId).append("\r\n") //$NON-NLS-1$ //$NON-NLS-2$
+						.append("id = ").append(id).append("\r\n") //$NON-NLS-1$ //$NON-NLS-2$
+						.append("name = ").append(name).append("\r\n") //$NON-NLS-1$ //$NON-NLS-2$
+						.append("isSuite = ").append(isSuite).append("\r\n") //$NON-NLS-1$ //$NON-NLS-2$
+						.append("startTime = ").append(startTime).append("\r\n") //$NON-NLS-1$ //$NON-NLS-2$
+						.append("testingTime = ").append(testingTime).append("\r\n") //$NON-NLS-1$ //$NON-NLS-2$
+						.toString();
 			}
 		}
 
@@ -59,12 +65,13 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 
 		@Override
 		public void enterTestSuite(String name) {
-			System.out.println("TestModelUpdaterAdapter.enterTestSuite: name = " + name);
-
+			if (fDebug) {
+				System.out.println("TestModelUpdaterAdapter.enterTestSuite: name = " + name); //$NON-NLS-1$
+			}
 			TestElementReference pRef = testElementRefs.isEmpty() ? null : testElementRefs.peek();
 
 			TestElementReference cRef = new TestElementReference(
-					pRef == null ? String.valueOf("-1") : pRef.id,
+					pRef == null ? String.valueOf("-1") : pRef.id, //$NON-NLS-1$
 					String.valueOf(fTestId++),
 					name,
 					true);
@@ -73,13 +80,14 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 			this.fCurrentTestSuite = cRef.id;
 
 			notifyTestTreeEntry(cRef.id, cRef.name, cRef.isSuite, 0, true, cRef.parentId,
-					cRef.name, null, "");
+					cRef.name, null, null);
 		}
 
 		@Override
 		public void exitTestSuite() {
-			System.out.println("TestModelUpdaterAdapter.exitTestSuite");
-
+			if (fDebug) {
+				System.out.println("TestModelUpdaterAdapter.exitTestSuite"); //$NON-NLS-1$
+			}
 			TestElementReference cRef = testElementRefs.pop();
 			while (cRef != null && !cRef.isSuite) {
 				logUnexpectedTest(cRef.id, cRef);
@@ -89,11 +97,13 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 
 		@Override
 		public void enterTestCase(String name) {
-			System.out.println("TestModelUpdaterAdapter.enterTestCase: name = " + name);
+			if (fDebug) {
+				System.out.println("TestModelUpdaterAdapter.enterTestCase: name = " + name); //$NON-NLS-1$
+			}
 
 			TestElementReference pRef = testElementRefs.isEmpty() ? null : testElementRefs.peek();
 
-			String parentId = String.valueOf("-1");
+			String parentId = String.valueOf("-1"); //$NON-NLS-1$
 			if (pRef != null) {
 				parentId = pRef.isSuite ? pRef.id : pRef.parentId;
 			}
@@ -111,14 +121,17 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 			fActualResult.setLength(0);
 
 			notifyTestTreeEntry(cRef.id, cRef.name, cRef.isSuite, 0, true, cRef.parentId,
-					cRef.name, null, "");
+					cRef.name, null, null);
 
 			notifyTestStarted(cRef.id, cRef.name);
 		}
 
 		@Override
 		public void setTestStatus(Status status) {
-			System.out.println("TestModelUpdaterAdapter.setTestStatus: status = " + status.toString());
+			if (fDebug) {
+				System.out.println("TestModelUpdaterAdapter.setTestStatus: status = " + status.toString()); //$NON-NLS-1$
+			}
+
 			if (status.isError()) {
 				TestElementReference cRef = testElementRefs.isEmpty() ? null : testElementRefs.peek();
 				if (cRef != null) {
@@ -137,10 +150,13 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 
 		@Override
 		public void setTestingTime(int testingTime) {
-			System.out.println("TestModelUpdaterAdapter.setTestingTime: testingTime = " + testingTime);
+			if (fDebug) {
+				System.out.println("TestModelUpdaterAdapter.setTestingTime: testingTime = " + testingTime); //$NON-NLS-1$
+			}
+
 			TestElementReference cRef = testElementRefs.isEmpty() ? null : testElementRefs.peek();
 			if (cRef != null) {
-				cRef.testingTime = testingTime;
+				cRef.testingTime =testingTime;
 			} else {
 				logUnexpectedTest(fCurrentTestCase, null);
 			}
@@ -148,7 +164,9 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 
 		@Override
 		public void exitTestCase() {
-			System.out.println("TestModelUpdaterAdapter.exitTestCase");
+			if (fDebug) {
+				System.out.println("TestModelUpdaterAdapter.exitTestCase"); //$NON-NLS-1$
+			}
 
 			TestElementReference cRef = testElementRefs.isEmpty() ? null : testElementRefs.peek();
 
@@ -157,25 +175,29 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 
 				notifyTestEnded(cRef.id, cRef.name, false);
 			} else {
-				logUnexpectedTest(cRef == null ? "null" : cRef.id, cRef);
+				logUnexpectedTest(cRef == null ? "null" : cRef.id, cRef); //$NON-NLS-1$
 			}
 
 		}
 
 		@Override
 		public void addTestMessage(String file, int line, Level level, String text) {
-			System.out.println("TestModelUpdaterAdapter.addTestMessage: file = " + file +
-					", line = " + line +
-					", level = " + level.toString() +
-					", text = " + text);
+			if (fDebug) {
+				System.out.println("TestModelUpdaterAdapter.addTestMessage: file = " + file + //$NON-NLS-1$
+					", line = " + line + //$NON-NLS-1$
+					", level = " + level.toString() + //$NON-NLS-1$
+					", text = " + text); //$NON-NLS-1$
+			}
 
-			fFailedTrace.append(level.toString()).append(": ").append(text).append("\r\n")
-				.append(FRAME_PREFIX).append(file).append(':').append(line).append("\r\n");
+			fFailedTrace.append(level.toString()).append(": ").append(text).append("\r\n") //$NON-NLS-1$ //$NON-NLS-2$
+				.append(FRAME_PREFIX).append(file).append(':').append(line).append("\r\n"); //$NON-NLS-1$
 		}
 
 		@Override
 		public ITestSuite currentTestSuite() {
-			System.out.println("TestModelUpdaterAdapter.currentTestSuite");
+			if (fDebug) {
+				System.out.println("TestModelUpdaterAdapter.currentTestSuite"); //$NON-NLS-1$
+			}
 
 			ITestElement testElement = fTestRunSession.getTestElement(fCurrentTestSuite);
 			if (testElement instanceof ITestSuiteElement) {
@@ -187,189 +209,15 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 
 		@Override
 		public ITestCase currentTestCase() {
-			System.out.println("TestModelUpdaterAdapter.currentTestCase");
+			if (fDebug) {
+				System.out.println("TestModelUpdaterAdapter.currentTestCase"); //$NON-NLS-1$
+			}
 
 			ITestElement testElement = fTestRunSession.getTestElement(fCurrentTestCase);
 			if (testElement instanceof ITestCaseElement) {
 				return convertFromTestCaseElement((ITestCaseElement)testElement);
 			}
 			return null;
-		}
-
-		private Status convertFromStatus(ITestElement.Status status) {
-			//NotRun, Skipped, Passed, Failed, Aborted;
-			if (status.isNotRun()) {
-				return Status.NotRun;
-			} else if (status.isOK()) {
-				return Status.Passed;
-			} else if (status.isErrorOrFailure()) {
-				return Status.Failed;
-			} else if (status.isDone()) {
-				return Status.Passed;
-			}
-			// TODO Make this conversion more close to the reality
-			return Status.Aborted;
-		}
-
-		ITestCase convertFromTestCaseElement(final ITestCaseElement element) {
-			return new ITestCase() {
-				@Override
-				public void visit(IModelVisitor visitor) {
-					// TODO Auto-generated method stub
-				}
-
-				@Override
-				public boolean hasChildren() {
-					return false;
-				}
-
-				@Override
-				public int getTestingTime() {
-					return (int)(element.getElapsedTimeInSeconds() * 1000);
-				}
-
-				@Override
-				public Status getStatus() {
-					return convertFromStatus(element.getStatus());
-				}
-
-				@Override
-				public ITestSuite getParent() {
-					return convertFromTestSuiteElement(element.getParent());
-				}
-
-				@Override
-				public String getName() {
-					return element.getTestName();
-				}
-
-				@Override
-				public ITestItem[] getChildren() {
-					return new ITestItem[0];
-				}
-
-
-				@Override
-				public ITestMessage[] getTestMessages() {
-					FailureTrace trace = element.getFailureTrace();
-					if (trace == null) {
-						return new ITestMessage[0];
-					}
-					return new ITestMessage[] {
-							new ITestMessage() {
-
-								@Override
-								public ITestLocation getLocation() {
-									return null;
-								}
-
-								@Override
-								public Level getLevel() {
-									return Level.Info;
-								}
-
-								@Override
-								public String getText() {
-									return trace.toString();
-								}
-
-								@Override
-								public void visit(IModelVisitor visitor) {
-								}
-
-							}
-					};
-				}
-			};
-		}
-
-		ITestItem convertFromTestElement(final ITestElement element) {
-			return new ITestItem() {
-				@Override
-				public void visit(IModelVisitor visitor) {
-					// TODO Auto-generated method stub
-				}
-
-				@Override
-				public boolean hasChildren() {
-					return false;
-				}
-
-				@Override
-				public int getTestingTime() {
-					return (int)element.getElapsedTimeInSeconds() * 1000;
-				}
-
-				@Override
-				public Status getStatus() {
-					return convertFromStatus(element.getStatus());
-				}
-
-				@Override
-				public ITestSuite getParent() {
-					return convertFromTestSuiteElement(element.getParent());
-				}
-
-				@Override
-				public String getName() {
-					return element.getTestName();
-				}
-
-				@Override
-				public ITestItem[] getChildren() {
-					return new ITestItem[0];
-				}
-			};
-		}
-
-		ITestSuite convertFromTestSuiteElement(ITestSuiteElement testSuiteElement) {
-			if (testSuiteElement == null) {
-				return null;
-			}
-			return new ITestSuite() {
-
-				@Override
-				public void visit(IModelVisitor visitor) {
-					// TODO Auto-generated method stub
-				}
-
-				@Override
-				public boolean hasChildren() {
-					ITestElement[] children = testSuiteElement.getChildren();
-					return children != null && children.length > 0;
-				}
-
-				@Override
-				public int getTestingTime() {
-					return (int)testSuiteElement.getElapsedTimeInSeconds() * 1000;
-				}
-
-				@Override
-				public Status getStatus() {
-					return convertFromStatus(testSuiteElement.getStatus());
-				}
-
-				@Override
-				public ITestSuite getParent() {
-					return convertFromTestSuiteElement(testSuiteElement.getParent());
-				}
-
-				@Override
-				public String getName() {
-					return testSuiteElement.getTestName();
-				}
-
-				@Override
-				public ITestItem[] getChildren() {
-					ITestElement[] children = testSuiteElement.getChildren();
-					ITestItem[] childrenItems = new ITestItem[children == null ? 0 : children.length];
- 					int i = 0;
-					for (ITestElement child : children) {
- 						childrenItems[i++] = convertFromTestElement(child);
- 					}
-					return childrenItems;
-				}
-			};
 		}
 
 		private void logUnexpectedTest(String testId, TestElementReference testElement) {
@@ -379,15 +227,6 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 
 	private ITestRunSession fTestRunSession;
 	private ITestsRunnerProvider fTestsRunnerProvider;
-	private String fStatusMessage = "";
-	private boolean fHasErrors = false;
-
-	/*
-	public CDTTestRunnerClient(ITestRunSession testRunSession, ITestsRunnerProvider testsRunnerProvider) {
-		this.fTestRunSession = testRunSession;
-		this.fTestsRunnerProvider = testsRunnerProvider;
-	}
-	*/
 
 	public void setTestRunSession(ITestRunSession testRunSession) {
 		this.fTestRunSession = testRunSession;
@@ -409,19 +248,23 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 			// If testing session was stopped, the status is set in stop()
 			if (isRunning()) {
 				double testingTime = fTestRunSession.getElapsedTimeInSeconds();
-				fStatusMessage = MessageFormat.format(CDTMessages.TestingSession_finished_status,
-						testingTime);
+				CDTPlugin.log(
+						new org.eclipse.core.runtime.Status(IStatus.WARNING, CDTPlugin.PLUGIN_ID,
+						MessageFormat.format(CDTMessages.TestingSession_finished_status,
+								testingTime)));
 			}
+
 			notifyTestRunEnded((long)(fTestRunSession.getElapsedTimeInSeconds() * 1000));
 		} catch (TestingException e) {
 			// If testing session was stopped, the status is set in stop()
 			if (isRunning()) {
-				fStatusMessage = e.getLocalizedMessage();
-				fHasErrors = true;
+				CDTPlugin.log(
+						new org.eclipse.core.runtime.Status(IStatus.WARNING,
+								CDTPlugin.PLUGIN_ID,
+						e.getLocalizedMessage()));
 			}
 			notifyTestRunTerminated();
 		}
-//		finished = true;
 		shutDown();
 	}
 
@@ -438,6 +281,48 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 	@Override
 	public void rerunTest(String testId, String className, String testName) {
 		// Does nothing
+	}
+
+/*
+	private Status convertFromStatus(ITestElement.Status status) {
+		//NotRun, Skipped, Passed, Failed, Aborted;
+		if (status.isNotRun()) {
+			return Status.NotRun;
+		} else if (status.isOK()) {
+			return Status.Passed;
+		} else if (status.isFailure()) {
+			return Status.Failed;
+		} else if (status.isError()) {
+			return Status.Aborted;
+		} else if (status.isDone()) {
+			return Status.Passed;
+		}
+		// TODO Make this conversion more close to the reality
+		return Status.Aborted;
+	}
+*/
+	ITestItem convertFromTestElement(final ITestElement element) {
+		if (element instanceof ITestSuiteElement) {
+			return convertFromTestSuiteElement(((ITestSuiteElement)element));
+		}
+		if (element instanceof ITestCaseElement) {
+			return convertFromTestCaseElement((ITestCaseElement)element);
+		}
+		return null;
+	}
+
+	ITestCase convertFromTestCaseElement(final ITestCaseElement element) {
+		if (element == null) {
+			return null;
+		}
+		return new TestCase(element.getTestName(), (TestSuite)convertFromTestSuiteElement(element.getParent()));
+	}
+
+	ITestSuite convertFromTestSuiteElement(ITestSuiteElement testSuiteElement) {
+		if (testSuiteElement == null) {
+			return null;
+		}
+		return new TestSuite(testSuiteElement.getTestName(), (TestSuite)convertFromTestSuiteElement(testSuiteElement.getParent()));
 	}
 
 }

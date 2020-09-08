@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.unittest.cdt.internal.launcher;
 
+import org.eclipse.unittest.cdt.CDTPlugin;
 import org.eclipse.unittest.cdt.launcher.BaseTestsLaunchDelegate;
-import org.eclipse.unittest.cdt.launcher.CDTTestKindUtil;
 
 /**
  * Launch delegate implementation that is used for Run mode.
@@ -29,6 +29,6 @@ public class RunTestsLaunchDelegate extends BaseTestsLaunchDelegate {
 
 	@Override
 	public String getDefaultTestKindId() {
-		return CDTTestKindUtil.CDT_TEST_KIND_ID;
+		return CDTPlugin.CDT_TEST_KIND_ID;
 	}
 }
