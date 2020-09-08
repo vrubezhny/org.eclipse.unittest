@@ -38,6 +38,7 @@ import org.eclipse.jdt.internal.junit.JUnitCorePlugin;
 import org.eclipse.jdt.internal.junit.JUnitPreferencesConstants;
 import org.eclipse.jdt.internal.junit.launcher.ITestFinder;
 
+@SuppressWarnings("restriction")
 public class JUnitTestViewSupport implements ITestViewSupport {
 
 	@Override
@@ -165,8 +166,8 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 	 * Returns the element's test class or the next container's test class, which
 	 * exists, and for which ITestFinder.isTest() is true.
 	 */
-	private IType findTestClass(ITestElement element, @SuppressWarnings("restriction") ITestFinder finder,
-			IJavaProject project, boolean checkOnlyCurrentElement) {
+	private IType findTestClass(ITestElement element, ITestFinder finder, IJavaProject project,
+			boolean checkOnlyCurrentElement) {
 		ITestElement current = element;
 		while (current != null) {
 			try {

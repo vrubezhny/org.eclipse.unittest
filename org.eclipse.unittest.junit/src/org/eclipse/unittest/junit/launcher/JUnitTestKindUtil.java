@@ -31,17 +31,19 @@ import org.eclipse.jdt.internal.junit.util.CoreTestSearchEngine;
 
 @SuppressWarnings("restriction")
 public class JUnitTestKindUtil {
+}
 
-	public static final String JUNIT3_TEST_KIND_ID= "org.eclipse.unittest.junit.loader.junit3"; //$NON-NLS-1$
-	public static final String JUNIT4_TEST_KIND_ID= "org.eclipse.unittest.junit.loader.junit4"; //$NON-NLS-1$
-	public static final String JUNIT5_TEST_KIND_ID= "org.eclipse.unittest.junit.loader.junit5"; //$NON-NLS-1$
+class JUnitTestKindUtil1 {
+	public static final String JUNIT3_TEST_KIND_ID = "org.eclipse.unittest.junit.loader.junit3"; //$NON-NLS-1$
+	public static final String JUNIT4_TEST_KIND_ID = "org.eclipse.unittest.junit.loader.junit4"; //$NON-NLS-1$
+	public static final String JUNIT5_TEST_KIND_ID = "org.eclipse.unittest.junit.loader.junit5"; //$NON-NLS-1$
 
-	private JUnitTestKindUtil() {
+	private JUnitTestKindUtil1() {
 	}
 
 	public static String getContainerTestKindId(IJavaElement element) {
 		if (element != null) {
-			IJavaProject project= element.getJavaProject();
+			IJavaProject project = element.getJavaProject();
 			if (CoreTestSearchEngine.is50OrHigher(project)) {
 				if (CoreTestSearchEngine.is18OrHigher(project)) {
 					if (isRunWithJUnitPlatform(element)) {
@@ -66,19 +68,20 @@ public class JUnitTestKindUtil {
 	 */
 	public static boolean isRunWithJUnitPlatform(IJavaElement element) {
 		if (element instanceof ICompilationUnit) {
-			element= ((ICompilationUnit) element).findPrimaryType();
+			element = ((ICompilationUnit) element).findPrimaryType();
 		}
 		if (element instanceof IType) {
-			IType type= (IType) element;
+			IType type = (IType) element;
 			try {
-				IAnnotation runWithAnnotation= type.getAnnotation("RunWith"); //$NON-NLS-1$
+				IAnnotation runWithAnnotation = type.getAnnotation("RunWith"); //$NON-NLS-1$
 				if (!runWithAnnotation.exists()) {
-					runWithAnnotation= type.getAnnotation("org.junit.runner.RunWith"); //$NON-NLS-1$
+					runWithAnnotation = type.getAnnotation("org.junit.runner.RunWith"); //$NON-NLS-1$
 				}
 				if (runWithAnnotation.exists()) {
-					IMemberValuePair[] memberValuePairs= runWithAnnotation.getMemberValuePairs();
+					IMemberValuePair[] memberValuePairs = runWithAnnotation.getMemberValuePairs();
 					for (IMemberValuePair memberValuePair : memberValuePairs) {
-						if (memberValuePair.getMemberName().equals("value") && memberValuePair.getValue().equals("JUnitPlatform")) { //$NON-NLS-1$ //$NON-NLS-2$
+						if (memberValuePair.getMemberName().equals("value") //$NON-NLS-1$
+								&& memberValuePair.getValue().equals("JUnitPlatform")) { //$NON-NLS-1$
 							return true;
 						}
 					}

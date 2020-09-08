@@ -17,6 +17,8 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.eclipse.jdt.junit.JUnitCore;
+import org.eclipse.unittest.junit.JUnitPlugin;
+import org.eclipse.unittest.launcher.ITestKind;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -46,26 +48,25 @@ import org.eclipse.jdt.core.search.SearchPattern;
 import org.eclipse.jdt.core.search.SearchRequestor;
 
 import org.eclipse.jdt.internal.junit.JUnitCorePlugin;
-import org.eclipse.jdt.internal.junit.launcher.ITestKind;
 import org.eclipse.jdt.internal.junit.launcher.TestKindRegistry;
-
 
 /**
  * Custom Search engine for suite() methods
  */
 public class CoreTestSearchEngine {
 
+	@SuppressWarnings("restriction")
 	public static boolean isTestOrTestSuite(IType declaringType) throws CoreException {
-		ITestKind testKind= TestKindRegistry.getContainerTestKind(declaringType);
-		return testKind.getFinder().isTest(declaringType);
+		ITestKind testKind = JUnitPlugin.getContainerTestKind(declaringType);
+		return JUnitPlugin.getTestFinder(testKind).isTest(declaringType);
 	}
 
 	public static boolean isAccessibleClass(IType type, String testKindId) throws JavaModelException {
-		int flags= type.getFlags();
+		int flags = type.getFlags();
 		if (Flags.isInterface(flags)) {
 			return false;
 		}
-		IJavaElement parent= type.getParent();
+		IJavaElement parent = type.getParent();
 		while (true) {
 			if (parent instanceof ICompilationUnit || parent instanceof IClassFile) {
 				return true;
@@ -85,8 +86,8 @@ public class CoreTestSearchEngine {
 			} else if (!Flags.isStatic(flags) || !Flags.isPublic(flags)) {
 				return false;
 			}
-			flags= ((IType) parent).getFlags();
-			parent= parent.getParent();
+			flags = ((IType) parent).getFlags();
+			parent = parent.getParent();
 		}
 	}
 
@@ -98,23 +99,24 @@ public class CoreTestSearchEngine {
 		if (type.isInterface()) {
 			return false;
 		}
-		int modifiers= type.getModifiers();
+		int modifiers = type.getModifiers();
 		while (true) {
 			if (type.getDeclaringMethod() != null) {
 				return false;
 			}
-			ITypeBinding declaringClass= type.getDeclaringClass();
+			ITypeBinding declaringClass = type.getDeclaringClass();
 			if (declaringClass == null) {
 				return true;
 			}
 			if (!Modifier.isStatic(modifiers) || !Modifier.isPublic(modifiers)) {
 				return false;
 			}
-			modifiers= declaringClass.getModifiers();
-			type= declaringClass;
+			modifiers = declaringClass.getModifiers();
+			type = declaringClass;
 		}
 	}
 
+	@SuppressWarnings("restriction")
 	public static boolean hasTestCaseType(IJavaProject javaProject) {
 		try {
 			return javaProject != null && javaProject.findType(JUnitCorePlugin.TEST_SUPERCLASS_NAME) != null;
@@ -127,13 +129,16 @@ public class CoreTestSearchEngine {
 	public static boolean hasJUnit4TestAnnotation(IJavaProject project) {
 		try {
 			if (project != null) {
-				IType type= project.findType(JUnitCorePlugin.JUNIT4_ANNOTATION_NAME);
+				@SuppressWarnings("restriction")
+				IType type = project.findType(JUnitCorePlugin.JUNIT4_ANNOTATION_NAME);
 				if (type != null) {
-					// @Test annotation is not accessible if the JUnit classpath container is set to JUnit 3
+					// @Test annotation is not accessible if the JUnit classpath container is set to
+					// JUnit 3
 					// (although it may resolve to a JUnit 4 JAR)
-					IPackageFragmentRoot root= (IPackageFragmentRoot) type.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
-					IClasspathEntry cpEntry= root.getRawClasspathEntry();
-					return ! JUnitCore.JUNIT3_CONTAINER_PATH.equals(cpEntry.getPath());
+					IPackageFragmentRoot root = (IPackageFragmentRoot) type
+							.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
+					IClasspathEntry cpEntry = root.getRawClasspathEntry();
+					return !JUnitCore.JUNIT3_CONTAINER_PATH.equals(cpEntry.getPath());
 				}
 			}
 		} catch (JavaModelException e) {
@@ -145,13 +150,16 @@ public class CoreTestSearchEngine {
 	public static boolean hasJUnit5TestAnnotation(IJavaProject project) {
 		try {
 			if (project != null) {
-				IType type= project.findType(JUnitCorePlugin.JUNIT5_TESTABLE_ANNOTATION_NAME);
+				IType type = project.findType(JUnitCorePlugin.JUNIT5_TESTABLE_ANNOTATION_NAME);
 				if (type != null) {
-					// @Testable annotation is not accessible if the JUnit classpath container is set to JUnit 3 or JUnit 4
+					// @Testable annotation is not accessible if the JUnit classpath container is
+					// set to JUnit 3 or JUnit 4
 					// (although it may resolve to a JUnit 5 JAR)
-					IPackageFragmentRoot root= (IPackageFragmentRoot) type.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
-					IClasspathEntry cpEntry= root.getRawClasspathEntry();
-					return ! JUnitCore.JUNIT3_CONTAINER_PATH.equals(cpEntry.getPath()) && ! JUnitCore.JUNIT4_CONTAINER_PATH.equals(cpEntry.getPath());
+					IPackageFragmentRoot root = (IPackageFragmentRoot) type
+							.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
+					IClasspathEntry cpEntry = root.getRawClasspathEntry();
+					return !JUnitCore.JUNIT3_CONTAINER_PATH.equals(cpEntry.getPath())
+							&& !JUnitCore.JUNIT4_CONTAINER_PATH.equals(cpEntry.getPath());
 				}
 			}
 		} catch (JavaModelException e) {
@@ -161,8 +169,8 @@ public class CoreTestSearchEngine {
 	}
 
 	public static boolean isTestImplementor(IType type) throws JavaModelException {
-		ITypeHierarchy typeHier= type.newSupertypeHierarchy(null);
-		IType[] superInterfaces= typeHier.getAllInterfaces();
+		ITypeHierarchy typeHier = type.newSupertypeHierarchy(null);
+		IType[] superInterfaces = typeHier.getAllInterfaces();
 		for (IType superInterface : superInterfaces) {
 			if (JUnitCorePlugin.TEST_INTERFACE_NAME.equals(superInterface.getFullyQualifiedName('.'))) {
 				return true;
@@ -172,11 +180,11 @@ public class CoreTestSearchEngine {
 	}
 
 	public static boolean isTestImplementor(ITypeBinding type) {
-		ITypeBinding superType= type.getSuperclass();
+		ITypeBinding superType = type.getSuperclass();
 		if (superType != null && isTestImplementor(superType)) {
 			return true;
 		}
-		ITypeBinding[] interfaces= type.getInterfaces();
+		ITypeBinding[] interfaces = type.getInterfaces();
 		for (ITypeBinding curr : interfaces) {
 			if (JUnitCorePlugin.TEST_INTERFACE_NAME.equals(curr.getQualifiedName()) || isTestImplementor(curr)) {
 				return true;
@@ -186,24 +194,25 @@ public class CoreTestSearchEngine {
 	}
 
 	public static boolean hasSuiteMethod(IType type) throws JavaModelException {
-		IMethod method= type.getMethod("suite", new String[0]); //$NON-NLS-1$
+		IMethod method = type.getMethod("suite", new String[0]); //$NON-NLS-1$
 		if (!method.exists())
 			return false;
 
 		if (!Flags.isStatic(method.getFlags()) || !Flags.isPublic(method.getFlags())) {
 			return false;
 		}
-		if (!Signature.getSimpleName(Signature.toString(method.getReturnType())).equals(JUnitCorePlugin.SIMPLE_TEST_INTERFACE_NAME)) {
+		if (!Signature.getSimpleName(Signature.toString(method.getReturnType()))
+				.equals(JUnitCorePlugin.SIMPLE_TEST_INTERFACE_NAME)) {
 			return false;
 		}
 		return true;
 	}
 
 	public static IRegion getRegion(IJavaElement element) throws JavaModelException {
-		IRegion result= JavaCore.newRegion();
+		IRegion result = JavaCore.newRegion();
 		if (element.getElementType() == IJavaElement.JAVA_PROJECT) {
 			// for projects only add the contained source folders
-			IPackageFragmentRoot[] roots= ((IJavaProject) element).getPackageFragmentRoots();
+			IPackageFragmentRoot[] roots = ((IJavaProject) element).getPackageFragmentRoots();
 			for (IPackageFragmentRoot root : roots) {
 				if (!root.isArchive()) {
 					result.add(root);
@@ -215,13 +224,13 @@ public class CoreTestSearchEngine {
 		return result;
 	}
 
-	public static void findTestImplementorClasses(ITypeHierarchy typeHierarchy, IType testInterface, IRegion region, Set<IType> result)
-			throws JavaModelException {
-		IType[] subtypes= typeHierarchy.getAllSubtypes(testInterface);
+	public static void findTestImplementorClasses(ITypeHierarchy typeHierarchy, IType testInterface, IRegion region,
+			Set<IType> result) throws JavaModelException {
+		IType[] subtypes = typeHierarchy.getAllSubtypes(testInterface);
 		for (IType type : subtypes) {
-			int cachedFlags= typeHierarchy.getCachedFlags(type);
+			int cachedFlags = typeHierarchy.getCachedFlags(type);
 			if (!Flags.isInterface(cachedFlags) && !Flags.isAbstract(cachedFlags) // do the cheaper tests first
-				&& region.contains(type) && CoreTestSearchEngine.isAccessibleClass(type)) {
+					&& region.contains(type) && CoreTestSearchEngine.isAccessibleClass(type)) {
 				result.add(type);
 			}
 		}
@@ -232,21 +241,21 @@ public class CoreTestSearchEngine {
 		private Collection<IType> fResult;
 
 		public SuiteMethodTypesCollector(Collection<IType> result) {
-			fResult= result;
+			fResult = result;
 		}
 
 		@Override
 		public void acceptSearchMatch(SearchMatch match) throws CoreException {
-			Object enclosingElement= match.getElement();
+			Object enclosingElement = match.getElement();
 			if (!(enclosingElement instanceof IMethod))
 				return;
 
-			IMethod method= (IMethod) enclosingElement;
+			IMethod method = (IMethod) enclosingElement;
 			if (!Flags.isStatic(method.getFlags()) || !Flags.isPublic(method.getFlags())) {
 				return;
 			}
 
-			IType declaringType= ((IMethod) enclosingElement).getDeclaringType();
+			IType declaringType = ((IMethod) enclosingElement).getDeclaringType();
 			if (!CoreTestSearchEngine.isAccessibleClass(declaringType)) {
 				return;
 			}
@@ -254,18 +263,20 @@ public class CoreTestSearchEngine {
 		}
 	}
 
-	public static void findSuiteMethods(IJavaElement element, Set<IType> result, IProgressMonitor pm) throws CoreException {
+	public static void findSuiteMethods(IJavaElement element, Set<IType> result, IProgressMonitor pm)
+			throws CoreException {
 		// fix for bug 36449 JUnit should constrain tests to selected project
 		// [JUnit]
-		IJavaSearchScope scope= SearchEngine.createJavaSearchScope(new IJavaElement[] { element }, IJavaSearchScope.SOURCES);
+		IJavaSearchScope scope = SearchEngine.createJavaSearchScope(new IJavaElement[] { element },
+				IJavaSearchScope.SOURCES);
 
-		SearchRequestor requestor= new SuiteMethodTypesCollector(result);
-		int matchRule= SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE | SearchPattern.R_ERASURE_MATCH;
-		SearchPattern suitePattern= SearchPattern.createPattern("suite() Test", IJavaSearchConstants.METHOD, IJavaSearchConstants.DECLARATIONS, matchRule); //$NON-NLS-1$
-		SearchParticipant[] participants= new SearchParticipant[] { SearchEngine.getDefaultSearchParticipant() };
+		SearchRequestor requestor = new SuiteMethodTypesCollector(result);
+		int matchRule = SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE | SearchPattern.R_ERASURE_MATCH;
+		SearchPattern suitePattern = SearchPattern.createPattern("suite() Test", IJavaSearchConstants.METHOD, //$NON-NLS-1$
+				IJavaSearchConstants.DECLARATIONS, matchRule);
+		SearchParticipant[] participants = new SearchParticipant[] { SearchEngine.getDefaultSearchParticipant() };
 		new SearchEngine().search(suitePattern, participants, scope, requestor, pm);
 	}
-
 
 // --- copied from org.eclipse.jdt.internal.corext.util.JavaModelUtil: ---
 	/**
@@ -277,19 +288,22 @@ public class CoreTestSearchEngine {
 		return JavaCore.compareJavaVersions(version1, version2) < 0;
 	}
 
-
 	public static boolean is50OrHigher(String compliance) {
 		return !isVersionLessThan(compliance, JavaCore.VERSION_1_5);
 	}
 
 	/**
-	 * Checks if the given project or workspace has source compliance 5.0 or greater.
+	 * Checks if the given project or workspace has source compliance 5.0 or
+	 * greater.
 	 *
-	 * @param project the project to test or <code>null</code> to test the workspace settings
-	 * @return <code>true</code> if the given project or workspace has source compliance 5.0 or greater.
+	 * @param project the project to test or <code>null</code> to test the workspace
+	 *                settings
+	 * @return <code>true</code> if the given project or workspace has source
+	 *         compliance 5.0 or greater.
 	 */
 	public static boolean is50OrHigher(IJavaProject project) {
-		String source= project != null ? project.getOption(JavaCore.COMPILER_SOURCE, true) : JavaCore.getOption(JavaCore.COMPILER_SOURCE);
+		String source = project != null ? project.getOption(JavaCore.COMPILER_SOURCE, true)
+				: JavaCore.getOption(JavaCore.COMPILER_SOURCE);
 		return is50OrHigher(source);
 	}
 
@@ -298,14 +312,17 @@ public class CoreTestSearchEngine {
 	}
 
 	/**
-	 * Checks if the given project or workspace has source compliance 1.8 or greater.
+	 * Checks if the given project or workspace has source compliance 1.8 or
+	 * greater.
 	 *
-	 * @param project the project to test or <code>null</code> to test the workspace settings
-	 * @return <code>true</code> if the given project or workspace has source compliance 1.8 or
-	 *         greater.
+	 * @param project the project to test or <code>null</code> to test the workspace
+	 *                settings
+	 * @return <code>true</code> if the given project or workspace has source
+	 *         compliance 1.8 or greater.
 	 */
 	public static boolean is18OrHigher(IJavaProject project) {
-		String source= project != null ? project.getOption(JavaCore.COMPILER_SOURCE, true) : JavaCore.getOption(JavaCore.COMPILER_SOURCE);
+		String source = project != null ? project.getOption(JavaCore.COMPILER_SOURCE, true)
+				: JavaCore.getOption(JavaCore.COMPILER_SOURCE);
 		return is18OrHigher(source);
 	}
 // ---

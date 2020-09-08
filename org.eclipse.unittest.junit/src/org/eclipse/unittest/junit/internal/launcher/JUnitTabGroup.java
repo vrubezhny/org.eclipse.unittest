@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.unittest.junit.internal.launcher;
 
-
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaClasspathTab;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaDependenciesTab;
@@ -35,22 +34,16 @@ import org.eclipse.debug.ui.sourcelookup.SourceLookupTab;
 
 import org.eclipse.jdt.launching.JavaRuntime;
 
-
 public class JUnitTabGroup extends AbstractLaunchConfigurationTabGroup {
 
 	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		ILaunchConfiguration configuration = DebugUITools.getLaunchConfiguration(dialog);
-		boolean isModularConfiguration= configuration != null && JavaRuntime.isModularConfiguration(configuration);
-		ILaunchConfigurationTab[] tabs= new ILaunchConfigurationTab[] {
-			new JUnitLaunchConfigurationTab(),
-			new JavaArgumentsTab(),
-			new JavaJRETab(true),
-			isModularConfiguration ? new JavaDependenciesTab() : new JavaClasspathTab(),
-			new SourceLookupTab(),
-			new EnvironmentTab(),
-			new CommonTab()
-		};
+		boolean isModularConfiguration = configuration != null && JavaRuntime.isModularConfiguration(configuration);
+		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] { new JUnitLaunchConfigurationTab(),
+				new JavaArgumentsTab(), new JavaJRETab(true),
+				isModularConfiguration ? new JavaDependenciesTab() : new JavaClasspathTab(), new SourceLookupTab(),
+				new EnvironmentTab(), new CommonTab() };
 		setTabs(tabs);
 	}
 

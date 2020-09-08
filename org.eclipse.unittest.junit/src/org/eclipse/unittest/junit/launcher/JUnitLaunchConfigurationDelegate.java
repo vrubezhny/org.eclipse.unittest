@@ -95,6 +95,7 @@ import org.eclipse.jdt.launching.VMRunnerConfiguration;
  *
  * @since 3.3
  */
+@SuppressWarnings("restriction")
 public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigurationDelegate {
 
 	private boolean fKeepAlive = false;
@@ -127,7 +128,6 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 		}
 	}
 
-	@SuppressWarnings("restriction")
 	private VMRunnerConfiguration getVMRunnerConfiguration(ILaunchConfiguration configuration, ILaunch launch,
 			String mode, IProgressMonitor monitor) throws CoreException {
 		VMRunnerConfiguration runConfig = null;
@@ -166,8 +166,8 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 
 			ITestKind testKind = getTestRunnerKind(configuration);
 			IJavaProject javaProject = getJavaProject(configuration);
-			if (JUnitTestKindUtil.JUNIT3_TEST_KIND_ID.equals(testKind.getId())
-					|| JUnitTestKindUtil.JUNIT4_TEST_KIND_ID.equals(testKind.getId())) {
+			if (JUnitPlugin.JUNIT3_TEST_KIND_ID.equals(testKind.getId())
+					|| JUnitPlugin.JUNIT4_TEST_KIND_ID.equals(testKind.getId())) {
 				fTestElements = evaluateTests(configuration, SubMonitor.convert(monitor, 1));
 			} else {
 				IJavaElement testTarget = getTestTarget(configuration, javaProject);
@@ -207,7 +207,7 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 			String[] classpath = classpathAndModulepath[0];
 			String[] modulepath = classpathAndModulepath[1];
 
-			if (JUnitTestKindUtil.JUNIT5_TEST_KIND_ID.equals(getTestRunnerKind(configuration).getId())) {
+			if (JUnitPlugin.JUNIT5_TEST_KIND_ID.equals(getTestRunnerKind(configuration).getId())) {
 				if (!configuration.getAttribute(
 						JUnitLaunchConfigurationConstants.ATTR_DONT_ADD_MISSING_JUNIT5_DEPENDENCY, false)) {
 					if (!Arrays.stream(classpath).anyMatch(
@@ -321,8 +321,8 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 						IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT);
 			}
 			ITestKind testKind = getTestRunnerKind(configuration);
-			boolean isJUnit4Configuration = JUnitTestKindUtil.JUNIT4_TEST_KIND_ID.equals(testKind.getId());
-			boolean isJUnit5Configuration = JUnitTestKindUtil.JUNIT5_TEST_KIND_ID.equals(testKind.getId());
+			boolean isJUnit4Configuration = JUnitPlugin.JUNIT4_TEST_KIND_ID.equals(testKind.getId());
+			boolean isJUnit5Configuration = JUnitPlugin.JUNIT5_TEST_KIND_ID.equals(testKind.getId());
 			if (!isJUnit5Configuration && !CoreTestSearchEngine.hasTestCaseType(javaProject)) {
 				abort(JUnitMessages.JUnitLaunchConfigurationDelegate_error_junitnotonpath, null,
 						IJUnitStatusConstants.ERR_JUNIT_NOT_ON_PATH);
@@ -354,12 +354,12 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 	private ITestKind getTestRunnerKind(ILaunchConfiguration configuration) {
 		ITestKind testKind = UnitTestLaunchConfigurationConstants.getTestRunnerKind(configuration);
 		if (testKind.isNull()) {
-			testKind = TestKindRegistry.getDefault().getKind(JUnitTestKindUtil.JUNIT3_TEST_KIND_ID); // backward
-																										// compatible
-																										// for launch
-																										// configurations
-																										// with no
-																										// runner
+			testKind = TestKindRegistry.getDefault().getKind(JUnitPlugin.JUNIT3_TEST_KIND_ID); // backward
+																								// compatible
+																								// for launch
+																								// configurations
+																								// with no
+																								// runner
 		}
 		return testKind;
 	}
@@ -380,7 +380,6 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 	 * @return returns all types or methods that should be ran
 	 * @throws CoreException an exception is thrown when the search for tests failed
 	 */
-	@SuppressWarnings("restriction")
 	protected IMember[] evaluateTests(ILaunchConfiguration configuration, IProgressMonitor monitor)
 			throws CoreException {
 		IJavaProject javaProject = getJavaProject(configuration);
@@ -429,7 +428,7 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 		vmArguments.addAll(Arrays.asList(execArgs.getVMArgumentsArray()));
 		programArguments.addAll(Arrays.asList(execArgs.getProgramArgumentsArray()));
 
-		boolean isJUnit5 = JUnitTestKindUtil.JUNIT5_TEST_KIND_ID.equals(getTestRunnerKind(configuration).getId());
+		boolean isJUnit5 = JUnitPlugin.JUNIT5_TEST_KIND_ID.equals(getTestRunnerKind(configuration).getId());
 		boolean isModularProject = JavaRuntime.isModularProject(getJavaProject(configuration));
 		String addOpensTargets;
 		if (isModularProject) {
@@ -747,7 +746,6 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 			fInDevelopmentMode = inDevelopmentMode;
 		}
 
-		@SuppressWarnings("restriction")
 		public List<String> localizeClasspath(ITestKind kind) {
 			JUnitRuntimeClasspathEntry[] entries = JUnitPlugin.getClasspathEntries(kind);
 			List<String> junitEntries = new ArrayList<>();
@@ -762,15 +760,13 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 			return junitEntries;
 		}
 
-		private void addEntry(List<String> junitEntries,
-				@SuppressWarnings("restriction") final JUnitRuntimeClasspathEntry entry)
+		private void addEntry(List<String> junitEntries, final JUnitRuntimeClasspathEntry entry)
 				throws IOException, MalformedURLException, URISyntaxException {
 			String entryString = entryString(entry);
 			if (entryString != null)
 				junitEntries.add(entryString);
 		}
 
-		@SuppressWarnings("restriction")
 		private String entryString(final JUnitRuntimeClasspathEntry entry)
 				throws IOException, MalformedURLException, URISyntaxException {
 			if (inDevelopmentMode()) {
@@ -787,7 +783,6 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 			return fInDevelopmentMode;
 		}
 
-		@SuppressWarnings("restriction")
 		private String localURL(JUnitRuntimeClasspathEntry jar)
 				throws IOException, MalformedURLException, URISyntaxException {
 			Bundle bundle = UnitTestPlugin.getDefault().getBundle(jar.getPluginId());

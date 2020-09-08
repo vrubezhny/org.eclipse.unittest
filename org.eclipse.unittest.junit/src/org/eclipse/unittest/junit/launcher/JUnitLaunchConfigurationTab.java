@@ -102,6 +102,7 @@ import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
 
+import org.eclipse.jdt.internal.junit.JUnitCorePlugin;
 import org.eclipse.jdt.internal.junit.launcher.JUnitLaunchConfigurationConstants;
 
 import org.eclipse.jdt.launching.AbstractVMInstall;
@@ -131,6 +132,7 @@ import org.eclipse.jdt.internal.ui.wizards.TypedViewerFilter;
  *
  * @noextend This class is not intended to be subclassed by clients.
  */
+@SuppressWarnings("restriction")
 public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab {
 
 	// Project UI widgets
@@ -278,7 +280,7 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 			if (ss.size() == 1) {
 				Object first = ss.getFirstElement();
 				if (first instanceof ITestKind) {
-					boolean isJUnit5 = JUnitTestKindUtil.JUNIT5_TEST_KIND_ID.equals(((ITestKind) first).getId());
+					boolean isJUnit5 = JUnitPlugin.JUNIT5_TEST_KIND_ID.equals(((ITestKind) first).getId());
 					fIncludeExcludeTagsButton.setEnabled(isJUnit5);
 				}
 			}
@@ -469,10 +471,10 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 		ITestKind testKind = UnitTestLaunchConfigurationConstants.getTestRunnerKind(config);
 		if (testKind.isNull()) {
 			if (fContainerElement != null) {
-				testKind = JUnitTestKindUtil.getContainerTestKind(fContainerElement);
+				testKind = JUnitPlugin.getContainerTestKind(fContainerElement);
 			}
 			if (testKind.isNull()) {
-				testKind = TestKindRegistry.getDefault().getKind(JUnitTestKindUtil.JUNIT3_TEST_KIND_ID);
+				testKind = TestKindRegistry.getDefault().getKind(JUnitPlugin.JUNIT3_TEST_KIND_ID);
 			}
 		}
 		fTestLoaderViewer.setSelection(new StructuredSelection(testKind));
@@ -757,8 +759,8 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 					&& Signature.SIG_VOID.equals(method.getReturnType()) && methodName.startsWith("test")) { //$NON-NLS-1$
 				methodNames.add(methodName);
 			}
-			boolean isJUnit3 = JUnitTestKindUtil.JUNIT3_TEST_KIND_ID.equals(testKindId);
-			boolean isJUnit5 = JUnitTestKindUtil.JUNIT5_TEST_KIND_ID.equals(testKindId);
+			boolean isJUnit3 = JUnitPlugin.JUNIT3_TEST_KIND_ID.equals(testKindId);
+			boolean isJUnit5 = JUnitPlugin.JUNIT5_TEST_KIND_ID.equals(testKindId);
 			if (!isJUnit3 && !Modifier.isPrivate(flags) && !Modifier.isStatic(flags)) {
 				IAnnotation annotation = method.getAnnotation("Test"); //$NON-NLS-1$
 				if (annotation.exists()) {
@@ -797,7 +799,7 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 
 	private boolean matchesTestable(IType annotationType) {
 		return annotationType != null
-				&& JUnitPlugin.JUNIT5_TESTABLE_ANNOTATION_NAME.equals(annotationType.getFullyQualifiedName());
+				&& JUnitCorePlugin.JUNIT5_TESTABLE_ANNOTATION_NAME.equals(annotationType.getFullyQualifiedName());
 	}
 
 	private boolean matchesTestableInAnnotationHierarchy(IType annotationType, IJavaProject javaProject,
@@ -1000,24 +1002,25 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 		validateTestLoaderJVM();
 	}
 
+	@SuppressWarnings("restriction")
 	private void validateJavaProject(IJavaProject javaProject) {
 		TestKind testKind = getSelectedTestKind();
 		if (testKind != null) {
-			if (!JUnitTestKindUtil.JUNIT5_TEST_KIND_ID.equals(testKind.getId())
+			if (!JUnitPlugin.JUNIT5_TEST_KIND_ID.equals(testKind.getId())
 					&& !CoreTestSearchEngine.hasTestCaseType(javaProject)) {
 				setErrorMessage(JUnitMessages.JUnitLaunchConfigurationTab_error_testcasenotonpath);
 				return;
 			}
 
 			String msg = JUnitMessages.JUnitLaunchConfigurationTab_error_testannotationnotonpath;
-			if (JUnitTestKindUtil.JUNIT4_TEST_KIND_ID.equals(testKind.getId())
+			if (JUnitPlugin.JUNIT4_TEST_KIND_ID.equals(testKind.getId())
 					&& !CoreTestSearchEngine.hasJUnit4TestAnnotation(javaProject)) {
-				setErrorMessage(MessageFormat.format(msg, JUnitPlugin.JUNIT4_ANNOTATION_NAME));
+				setErrorMessage(MessageFormat.format(msg, JUnitCorePlugin.JUNIT4_ANNOTATION_NAME));
 				return;
 			}
-			if (JUnitTestKindUtil.JUNIT5_TEST_KIND_ID.equals(testKind.getId())
+			if (JUnitPlugin.JUNIT5_TEST_KIND_ID.equals(testKind.getId())
 					&& !CoreTestSearchEngine.hasJUnit5TestAnnotation(javaProject)) {
-				setErrorMessage(MessageFormat.format(msg, JUnitPlugin.JUNIT5_TESTABLE_ANNOTATION_NAME));
+				setErrorMessage(MessageFormat.format(msg, JUnitCorePlugin.JUNIT5_TESTABLE_ANNOTATION_NAME));
 				return;
 			}
 		}
@@ -1029,7 +1032,7 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 			return;
 
 		TestKind testKind = getSelectedTestKind();
-		if (testKind == null || JUnitTestKindUtil.JUNIT3_TEST_KIND_ID.equals(testKind.getId()))
+		if (testKind == null || JUnitPlugin.JUNIT3_TEST_KIND_ID.equals(testKind.getId()))
 			return;
 		try {
 			String path = fLaunchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH,
@@ -1040,10 +1043,10 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 					String compliance = ((AbstractVMInstall) vm).getJavaVersion();
 					if (compliance != null) {
 						String testKindId = testKind.getId();
-						if (JUnitTestKindUtil.JUNIT4_TEST_KIND_ID.equals(testKindId)
+						if (JUnitPlugin.JUNIT4_TEST_KIND_ID.equals(testKindId)
 								&& !JUnitStubUtility.is50OrHigher(compliance)) {
 							setErrorMessage(JUnitMessages.JUnitLaunchConfigurationTab_error_JDK15_required);
-						} else if (JUnitTestKindUtil.JUNIT5_TEST_KIND_ID.equals(testKindId)
+						} else if (JUnitPlugin.JUNIT5_TEST_KIND_ID.equals(testKindId)
 								&& !JUnitStubUtility.is18OrHigher(compliance)) {
 							setErrorMessage(JUnitMessages.JUnitLaunchConfigurationTab_error_JDK18_required);
 						}
@@ -1127,7 +1130,7 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 			// we only do a search for compilation units or class files or
 			// or source references
 			if (javaElement instanceof ISourceReference) {
-				ITestKind testKind = JUnitTestKindUtil.getContainerTestKind(javaElement);
+				ITestKind testKind = JUnitPlugin.getContainerTestKind(javaElement);
 				testKindId = testKind.getId();
 
 				IType[] types = TestSearchEngine.findTests(getLaunchConfigurationDialog(), javaElement, testKind);
@@ -1144,7 +1147,7 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 		if (testKindId != null)
 			config.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_RUNNER_KIND, testKindId);
 		initializeName(config, name);
-		boolean isRunWithJUnitPlatform = JUnitTestKindUtil.isRunWithJUnitPlatform(javaElement);
+		boolean isRunWithJUnitPlatform = JUnitPlugin.isRunWithJUnitPlatform(javaElement);
 		if (isRunWithJUnitPlatform) {
 			config.setAttribute(JUnitLaunchConfigurationConstants.ATTR_RUN_WITH_JUNIT_PLATFORM_ANNOTATION, true);
 		}

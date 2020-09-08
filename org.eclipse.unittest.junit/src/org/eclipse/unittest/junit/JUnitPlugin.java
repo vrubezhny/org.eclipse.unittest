@@ -55,16 +55,6 @@ public class JUnitPlugin extends AbstractUIPlugin {
 
 	public static final String PLUGIN_ID = "org.eclipse.unittest.junit"; //$NON-NLS-1$
 
-	public final static String TEST_SUPERCLASS_NAME = "junit.framework.TestCase"; //$NON-NLS-1$
-	public final static String TEST_INTERFACE_NAME = "junit.framework.Test"; //$NON-NLS-1$
-
-	public final static String JUNIT5_TESTABLE_ANNOTATION_NAME = "org.junit.platform.commons.annotation.Testable"; //$NON-NLS-1$
-	public final static String JUNIT5_JUPITER_TEST_ANNOTATION_NAME = "org.junit.jupiter.api.Test"; //$NON-NLS-1$
-	public final static String JUNIT5_JUPITER_NESTED_ANNOTATION_NAME = "org.junit.jupiter.api.Nested"; //$NON-NLS-1$
-
-	public final static String JUNIT4_ANNOTATION_NAME = "org.junit.Test"; //$NON-NLS-1$
-	public static final String SIMPLE_TEST_INTERFACE_NAME = "Test"; //$NON-NLS-1$
-
 	public static final String JUNIT3_TEST_KIND_ID = "org.eclipse.unittest.junit.loader.junit3"; //$NON-NLS-1$
 	public static final String JUNIT4_TEST_KIND_ID = "org.eclipse.unittest.junit.loader.junit4"; //$NON-NLS-1$
 	public static final String JUNIT5_TEST_KIND_ID = "org.eclipse.unittest.junit.loader.junit5"; //$NON-NLS-1$

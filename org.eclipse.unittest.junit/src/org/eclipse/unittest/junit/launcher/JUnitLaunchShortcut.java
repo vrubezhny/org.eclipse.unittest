@@ -22,6 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.unittest.UnitTestPlugin;
+import org.eclipse.unittest.junit.JUnitPlugin;
 import org.eclipse.unittest.junit.launcher.util.ExceptionHandler;
 import org.eclipse.unittest.junit.launcher.util.JUnitStubUtility;
 import org.eclipse.unittest.junit.launcher.util.TestSearchEngine;
@@ -218,7 +219,7 @@ public class JUnitLaunchShortcut implements ILaunchShortcut2 {
 	}
 
 	private IType[] findTypesToLaunch(ICompilationUnit cu) throws InterruptedException, InvocationTargetException {
-		ITestKind testKind = JUnitTestKindUtil.getContainerTestKind(cu);
+		ITestKind testKind = JUnitPlugin.getContainerTestKind(cu);
 		return TestSearchEngine.findTests(PlatformUI.getWorkbench().getActiveWorkbenchWindow(), cu, testKind);
 	}
 
@@ -379,7 +380,7 @@ public class JUnitLaunchShortcut implements ILaunchShortcut2 {
 					"Invalid element type to create a launch configuration: " + element.getClass().getName()); //$NON-NLS-1$
 		}
 
-		String testKindId = JUnitTestKindUtil.getContainerTestKindId(element);
+		String testKindId = JUnitPlugin.getContainerTestKindId(element);
 
 		ILaunchConfigurationType configType = getLaunchManager()
 				.getLaunchConfigurationType(getLaunchConfigurationTypeId());
@@ -408,7 +409,7 @@ public class JUnitLaunchShortcut implements ILaunchShortcut2 {
 		if (testName != null) {
 			wc.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_NAME, testName);
 		}
-		boolean isRunWithJUnitPlatform = JUnitTestKindUtil.isRunWithJUnitPlatform(element);
+		boolean isRunWithJUnitPlatform = JUnitPlugin.isRunWithJUnitPlatform(element);
 		if (isRunWithJUnitPlatform) {
 			wc.setAttribute(JUnitLaunchConfigurationConstants.ATTR_RUN_WITH_JUNIT_PLATFORM_ANNOTATION, true);
 		}

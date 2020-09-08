@@ -38,6 +38,7 @@ import org.eclipse.jdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.SelectionButtonDialogField;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.TextBoxDialogField;
 
+@SuppressWarnings("restriction")
 public class JUnitLaunchIncludeExcludeTagsDialog extends StatusDialog {
 	private SelectionButtonDialogField fHasIncludeTags;
 
@@ -49,13 +50,13 @@ public class JUnitLaunchIncludeExcludeTagsDialog extends StatusDialog {
 
 	private ILaunchConfiguration fLaunchConfiguration;
 
-	private static final String EMPTY_STRING= ""; //$NON-NLS-1$
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
-	IDialogFieldListener fListener= field -> doDialogFieldChanged(field);
+	IDialogFieldListener fListener = this::doDialogFieldChanged;
 
 	public JUnitLaunchIncludeExcludeTagsDialog(Shell parent, ILaunchConfiguration config) {
 		super(parent);
-		fLaunchConfiguration= config;
+		fLaunchConfiguration = config;
 		setTitle(JUnitMessages.JUnitLaunchConfigurationTab_addincludeexcludetagdialog_title);
 		createIncludeTagGroup();
 		createExcludeTagGroup();
@@ -65,22 +66,22 @@ public class JUnitLaunchIncludeExcludeTagsDialog extends StatusDialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		Composite composite= (Composite) super.createDialogArea(parent);
+		Composite composite = (Composite) super.createDialogArea(parent);
 
-		Composite inner= new Composite(composite, SWT.NONE);
+		Composite inner = new Composite(composite, SWT.NONE);
 		inner.setFont(composite.getFont());
 
-		GridLayout layout= new GridLayout();
-		layout.marginHeight= 0;
-		layout.marginWidth= 0;
-		layout.numColumns= 1;
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.numColumns = 1;
 		inner.setLayout(layout);
 		inner.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		fHasIncludeTags.doFillIntoGrid(inner, 1);
 		fIncludeTags.doFillIntoGrid(inner, 2);
 		LayoutUtil.setHorizontalIndent(fIncludeTags.getLabelControl(null));
-		Text includeTagControl= fIncludeTags.getTextControl(null);
+		Text includeTagControl = fIncludeTags.getTextControl(null);
 		LayoutUtil.setHorizontalIndent(includeTagControl);
 		LayoutUtil.setHorizontalGrabbing(includeTagControl);
 		LayoutUtil.setWidthHint(fIncludeTags.getLabelControl(null), convertWidthInCharsToPixels(50));
@@ -90,7 +91,7 @@ public class JUnitLaunchIncludeExcludeTagsDialog extends StatusDialog {
 		fHasExcludeTags.doFillIntoGrid(inner, 1);
 		fExcludeTags.doFillIntoGrid(inner, 2);
 		LayoutUtil.setHorizontalIndent(fExcludeTags.getLabelControl(null));
-		Text excludeTagsControl= fExcludeTags.getTextControl(null);
+		Text excludeTagsControl = fExcludeTags.getTextControl(null);
 		LayoutUtil.setHorizontalIndent(excludeTagsControl);
 		LayoutUtil.setHorizontalGrabbing(excludeTagsControl);
 		LayoutUtil.setWidthHint(fExcludeTags.getLabelControl(null), convertWidthInCharsToPixels(50));
@@ -104,9 +105,9 @@ public class JUnitLaunchIncludeExcludeTagsDialog extends StatusDialog {
 	private String getCommaSeperatedText(String input) {
 		if (input.isEmpty())
 			return EMPTY_STRING;
-		StringBuilder buf= new StringBuilder();
-		String[] strings= input.split(System.lineSeparator());
-		for (int i= 0; i < strings.length; i++) {
+		StringBuilder buf = new StringBuilder();
+		String[] strings = input.split(System.lineSeparator());
+		for (int i = 0; i < strings.length; i++) {
 			if (i > 0)
 				buf.append(',');
 			buf.append(strings[i]);
@@ -117,9 +118,9 @@ public class JUnitLaunchIncludeExcludeTagsDialog extends StatusDialog {
 	private String getLineSeperatedText(String input) {
 		if (input.isEmpty())
 			return EMPTY_STRING;
-		StringBuilder buf= new StringBuilder();
-		String[] strings= input.split(","); //$NON-NLS-1$
-		for (int i= 0; i < strings.length; i++) {
+		StringBuilder buf = new StringBuilder();
+		String[] strings = input.split(","); //$NON-NLS-1$
+		for (int i = 0; i < strings.length; i++) {
 			if (i > 0)
 				buf.append(System.lineSeparator());
 			buf.append(strings[i]);
@@ -144,57 +145,61 @@ public class JUnitLaunchIncludeExcludeTagsDialog extends StatusDialog {
 	}
 
 	private void createIncludeTagGroup() {
-		fHasIncludeTags= new SelectionButtonDialogField(SWT.CHECK);
+		fHasIncludeTags = new SelectionButtonDialogField(SWT.CHECK);
 		fHasIncludeTags.setDialogFieldListener(fListener);
 		fHasIncludeTags.setLabelText(JUnitMessages.JUnitLaunchConfigurationTab_includetag_checkbox_label);
 
-		fIncludeTags= new TextBoxDialogField();
+		fIncludeTags = new TextBoxDialogField();
 		fIncludeTags.setDialogFieldListener(fListener);
 		fIncludeTags.setLabelText(JUnitMessages.JUnitLaunchConfigurationTab_includetags_description);
 
 		try {
-			fHasIncludeTags.setSelection(fLaunchConfiguration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_HAS_INCLUDE_TAGS, false));
+			fHasIncludeTags.setSelection(fLaunchConfiguration
+					.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_HAS_INCLUDE_TAGS, false));
 		} catch (CoreException e) {
 			// ignore
 		}
 		fIncludeTags.setEnabled(fHasIncludeTags.isSelected());
 		try {
-			fIncludeTags
-					.setText(getLineSeperatedText(fLaunchConfiguration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_INCLUDE_TAGS, EMPTY_STRING)));
+			fIncludeTags.setText(getLineSeperatedText(fLaunchConfiguration
+					.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_INCLUDE_TAGS, EMPTY_STRING)));
 		} catch (CoreException e) {
 			// ignore
 		}
 	}
 
 	private void createExcludeTagGroup() {
-		fHasExcludeTags= new SelectionButtonDialogField(SWT.CHECK);
+		fHasExcludeTags = new SelectionButtonDialogField(SWT.CHECK);
 		fHasExcludeTags.setDialogFieldListener(fListener);
 		fHasExcludeTags.setLabelText(JUnitMessages.JUnitLaunchConfigurationTab_excludetag_checkbox_label);
 
-		fExcludeTags= new TextBoxDialogField();
+		fExcludeTags = new TextBoxDialogField();
 		fExcludeTags.setDialogFieldListener(fListener);
 		fExcludeTags.setLabelText(JUnitMessages.JUnitLaunchConfigurationTab_excludetags_description);
 
 		try {
-			fHasExcludeTags.setSelection(fLaunchConfiguration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_HAS_EXCLUDE_TAGS, false));
+			fHasExcludeTags.setSelection(fLaunchConfiguration
+					.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_HAS_EXCLUDE_TAGS, false));
 		} catch (CoreException e) {
 			// ignore
 		}
 		fExcludeTags.setEnabled(fHasExcludeTags.isSelected());
 		try {
-			fExcludeTags
-					.setText(getLineSeperatedText(fLaunchConfiguration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_EXCLUDE_TAGS, EMPTY_STRING)));
+			fExcludeTags.setText(getLineSeperatedText(fLaunchConfiguration
+					.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_EXCLUDE_TAGS, EMPTY_STRING)));
 		} catch (CoreException e) {
 			// ignore
 		}
 	}
 
 	private IStatus getValidationStatus() {
-		if (fHasIncludeTags != null && fHasIncludeTags.isSelected() && fIncludeTags.getText().trim().equals(EMPTY_STRING)) {
+		if (fHasIncludeTags != null && fHasIncludeTags.isSelected()
+				&& fIncludeTags.getText().trim().equals(EMPTY_STRING)) {
 			return new StatusInfo(IStatus.ERROR, JUnitMessages.JUnitLaunchConfigurationTab_includetag_empty_error);
 		}
 
-		if (fHasExcludeTags != null && fHasExcludeTags.isSelected() && fExcludeTags.getText().trim().equals(EMPTY_STRING))
+		if (fHasExcludeTags != null && fHasExcludeTags.isSelected()
+				&& fExcludeTags.getText().trim().equals(EMPTY_STRING))
 			return new StatusInfo(IStatus.ERROR, JUnitMessages.JUnitLaunchConfigurationTab_excludetag_empty_error);
 
 		return new StatusInfo();

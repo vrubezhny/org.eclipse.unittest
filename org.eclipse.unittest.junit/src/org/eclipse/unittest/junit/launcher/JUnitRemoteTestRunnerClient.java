@@ -30,6 +30,7 @@ import org.eclipse.jdt.internal.junit.runner.RemoteTestRunner;
  * The client side of the RemoteTestRunner. Handles the marshaling of the
  * different messages.
  */
+@SuppressWarnings("restriction")
 public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 
 	public abstract class ListenerSafeRunnable implements ISafeRunnable {
@@ -49,7 +50,10 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 	class DefaultProcessingState extends ProcessingState {
 		@Override
 		ProcessingState readMessage(String message) {
-			System.out.println("JUnitRemoteTestRunnerClient.DefaultProcessingState.readMessage: " + message);
+			if (fDebug) {
+				System.out.println("JUnitRemoteTestRunnerClient.DefaultProcessingState.readMessage: " + message);
+			}
+
 			if (message.startsWith(MessageIds.TRACE_START)) {
 				fFailedTrace.setLength(0);
 				return fTraceState;
@@ -306,12 +310,12 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 	 * (status.equals("FAILURE")) //$NON-NLS-1$ statusCode=
 	 * ITestRunListener2.STATUS_FAILURE; else if (status.equals("ERROR"))
 	 * //$NON-NLS-1$ statusCode= ITestRunListener2.STATUS_ERROR;
-	 * 
+	 *
 	 * String trace= ""; //$NON-NLS-1$ if (statusCode !=
 	 * ITestRunListener2.STATUS_OK) trace = fFailedRerunTrace.toString(); //
 	 * assumption a rerun trace was sent before notifyTestReran(testId, className,
 	 * testName, statusCode, trace); }
-	 * 
+	 *
 	 * @Override protected void extractFailure(String testId, String testName, int
 	 * status) { fFailedTestId= testId; fFailedTest= testName; fFailureKind= status;
 	 * }
@@ -345,7 +349,7 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 	 * final String testName, final int statusCode, final String trace) { for
 	 * (ITestRunListener2 listener : fListeners) { SafeRunner.run(new
 	 * ListenerSafeRunnable() {
-	 * 
+	 *
 	 * @Override public void run() { listener.testReran(testId, className, testName,
 	 * statusCode, trace, nullifyEmpty(fExpectedResult),
 	 * nullifyEmpty(fActualResult)); } }); } }
@@ -458,38 +462,38 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 	 * private void notifyTestRunStopped(final long elapsedTime) { if
 	 * (UnitTestPlugin.isStopped()) return; for (ITestRunListener2 listener :
 	 * fListeners) { SafeRunner.run(new ListenerSafeRunnable() {
-	 * 
+	 *
 	 * @Override public void run() { listener.testRunStopped(elapsedTime); } }); } }
 	 * private void testRunEnded(final long elapsedTime) { if
 	 * (UnitTestPlugin.isStopped()) return; for (ITestRunListener2 listener :
 	 * fListeners) { SafeRunner.run(new ListenerSafeRunnable() {
-	 * 
+	 *
 	 * @Override public void run() { listener.testRunEnded(elapsedTime); } }); } }
-	 * 
+	 *
 	 * private void notifyTestEnded(final String test) { if
 	 * (UnitTestPlugin.isStopped()) return; for (ITestRunListener2 listener :
 	 * fListeners) { SafeRunner.run(new ListenerSafeRunnable() {
-	 * 
+	 *
 	 * @Override public void run() { String s[]= extractTestId(test);
 	 * listener.testEnded(s[0], s[1]); } }); } }
-	 * 
+	 *
 	 * private void notifyTestStarted(final String test) { if
 	 * (UnitTestPlugin.isStopped()) return; for (ITestRunListener2 listener :
 	 * fListeners) { SafeRunner.run(new ListenerSafeRunnable() {
-	 * 
+	 *
 	 * @Override public void run() { String s[]= extractTestId(test);
 	 * listener.testStarted(s[0], s[1]); } }); } }
-	 * 
+	 *
 	 * private void notifyTestRunStarted(final int count) { if
 	 * (UnitTestPlugin.isStopped()) return; for (ITestRunListener2 listener :
 	 * fListeners) { SafeRunner.run(new ListenerSafeRunnable() {
-	 * 
+	 *
 	 * @Override public void run() { listener.testRunStarted(count); } }); } }
-	 * 
+	 *
 	 * private void notifyTestFailed() { if (UnitTestPlugin.isStopped()) return; for
 	 * (ITestRunListener2 listener : fListeners) { SafeRunner.run(new
 	 * ListenerSafeRunnable() {
-	 * 
+	 *
 	 * @Override public void run() { listener.testFailed(fFailureKind,
 	 * fFailedTestId, fFailedTest, fFailedTrace.toString(),
 	 * nullifyEmpty(fExpectedResult), nullifyEmpty(fActualResult)); } }); } }
@@ -507,17 +511,17 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 	/*
 	 * private static String nullifyEmpty(StringBuffer buf) { int length=
 	 * buf.length(); if (length == 0) return null;
-	 * 
+	 *
 	 * char last= buf.charAt(length - 1); if (last == '\n') { if (length > 1 &&
 	 * buf.charAt(length - 2) == '\r') return buf.substring(0, length - 2); else
 	 * return buf.substring(0, length - 1); } else if (last == '\r') { return
 	 * buf.substring(0, length - 1); } return buf.toString(); }
-	 * 
+	 *
 	 * private void notifyTestRunTerminated() { // fix for 77771
 	 * RemoteTestRunnerClient doing work after junit shutdown [JUnit] if
 	 * (UnitTestPlugin.isStopped()) return; for (ITestRunListener2 listener :
 	 * fListeners) { SafeRunner.run(new ListenerSafeRunnable() {
-	 * 
+	 *
 	 * @Override public void run() { listener.testRunTerminated(); } }); } }
 	 */
 	@Override
