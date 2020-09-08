@@ -35,7 +35,6 @@ public interface ITestKind {
 
 	String ID = "id"; //$NON-NLS-1$
 	String DISPLAY_NAME = "displayName"; //$NON-NLS-1$
-	String FINDER_CLASS_NAME = "finderClass"; //$NON-NLS-1$
 	String LOADER_PLUGIN_ID = "loaderPluginId"; //$NON-NLS-1$
 	String LOADER_CLASS_NAME = "loaderClass"; //$NON-NLS-1$
 	String TEST_RUNNER_CLIENT_CLASS_NAME = "testRunnerClientClass"; //$NON-NLS-1$
