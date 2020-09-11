@@ -25,8 +25,6 @@ import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.junit.JUnitPlugin;
 import org.eclipse.unittest.junit.launcher.util.ExceptionHandler;
 import org.eclipse.unittest.junit.launcher.util.JUnitStubUtility;
-import org.eclipse.unittest.junit.launcher.util.TestSearchEngine;
-import org.eclipse.unittest.launcher.ITestKind;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 
 import org.eclipse.swt.widgets.Display;
@@ -74,6 +72,7 @@ import org.eclipse.jdt.core.ITypeRoot;
 import org.eclipse.jdt.core.JavaModelException;
 
 import org.eclipse.jdt.internal.junit.launcher.JUnitLaunchConfigurationConstants;
+import org.eclipse.jdt.internal.junit.util.TestSearchEngine;
 
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 
@@ -219,8 +218,8 @@ public class JUnitLaunchShortcut implements ILaunchShortcut2 {
 	}
 
 	private IType[] findTypesToLaunch(ICompilationUnit cu) throws InterruptedException, InvocationTargetException {
-		ITestKind testKind = JUnitPlugin.getContainerTestKind(cu);
-		return TestSearchEngine.findTests(PlatformUI.getWorkbench().getActiveWorkbenchWindow(), cu, testKind);
+		return TestSearchEngine.findTests(PlatformUI.getWorkbench().getActiveWorkbenchWindow(), cu,
+				JUnitPlugin.getJUnitVersion(cu).getJUnitTestKind());
 	}
 
 	private void performLaunch(IJavaElement element, String mode) throws InterruptedException, CoreException {
@@ -380,8 +379,6 @@ public class JUnitLaunchShortcut implements ILaunchShortcut2 {
 					"Invalid element type to create a launch configuration: " + element.getClass().getName()); //$NON-NLS-1$
 		}
 
-		String testKindId = JUnitPlugin.getContainerTestKindId(element);
-
 		ILaunchConfigurationType configType = getLaunchManager()
 				.getLaunchConfigurationType(getLaunchConfigurationTypeId());
 		String configName = getLaunchManager()
@@ -402,8 +399,11 @@ public class JUnitLaunchShortcut implements ILaunchShortcut2 {
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, element.getJavaProject().getElementName());
 
 		wc.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_KEEPRUNNING, false);
-		wc.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_CONTAINER, containerHandleId);
-		wc.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_RUNNER_KIND, testKindId);
+		wc.setAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_CONTAINER, containerHandleId);
+		wc.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_UNIT_TEST_VIEW_SUPPORT,
+				JUnitPlugin.UNIT_TEST_VIEW_SUPPORT_ID);
+		wc.setAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_RUNNER_KIND,
+				JUnitPlugin.getJUnitVersion(element).getJUnitTestKind().getId());
 		JUnitMigrationDelegate.mapResources(wc);
 		AssertionVMArg.setArgDefault(wc);
 		if (testName != null) {
@@ -468,9 +468,10 @@ public class JUnitLaunchShortcut implements ILaunchShortcut2 {
 	 */
 	protected String[] getAttributeNamesToCompare() {
 		return new String[] { UnitTestLaunchConfigurationConstants.ATTR_PROJECT_NAME,
-				UnitTestLaunchConfigurationConstants.ATTR_TEST_CONTAINER,
+				JUnitLaunchConfigurationConstants.ATTR_TEST_CONTAINER,
 				UnitTestLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME,
-				UnitTestLaunchConfigurationConstants.ATTR_TEST_NAME };
+				UnitTestLaunchConfigurationConstants.ATTR_TEST_NAME,
+				UnitTestLaunchConfigurationConstants.ATTR_UNIT_TEST_VIEW_SUPPORT };
 	}
 
 	private static boolean hasSameAttributes(ILaunchConfiguration config1, ILaunchConfiguration config2,

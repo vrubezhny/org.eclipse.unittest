@@ -101,12 +101,24 @@ public final class UnitTestModel implements IUnitTestModel {
 			if (config == null)
 				return;
 
+			try {
+				if (!config.hasAttribute(UnitTestLaunchConfigurationConstants.ATTR_UNIT_TEST_VIEW_SUPPORT)) {
+					return;
+				}
+			} catch (CoreException e1) {
+				UnitTestPlugin.log(e1);
+				return;
+			}
+
 			final IProject javaProject = UnitTestLaunchConfigurationConstants.getProject(config);
 			if (javaProject == null)
 				return;
 
-			ITestKind testRunnerKind = UnitTestLaunchConfigurationConstants.getTestRunnerKind(config);
-			ITestRunnerClient testRunnerClient = testRunnerKind != ITestKind.NULL ? testRunnerKind.getTestRunnerClient()
+			// This testRunnerKind and testRunnerClient instances are not retained (just
+			// there for testing)
+			// so it's ok instantiating them.
+			ITestKind testRunnerKind = UnitTestLaunchConfigurationConstants.newTestRunnerKind(config);
+			ITestRunnerClient testRunnerClient = testRunnerKind != null ? testRunnerKind.newTestRunnerClient()
 					: ITestRunnerClient.NULL;
 
 			// If a Remote Test Runner Client exists try to create a new Test Run Session,

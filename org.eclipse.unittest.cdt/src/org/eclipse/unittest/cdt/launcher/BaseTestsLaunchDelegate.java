@@ -146,8 +146,7 @@ public abstract class BaseTestsLaunchDelegate extends LaunchConfigurationDelegat
 		ILaunchConfigurationWorkingCopy configWC = config.getWorkingCopy();
 		configWC.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_PROJECT_NAME,
 				config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, "")); //$NON-NLS-1$
-		configWC.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_RUNNER_KIND,
-				getDefaultTestKindId());
+		configWC.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_UNIT_TEST_VIEW_SUPPORT, getUnitTestViewSupportID());
 		setProgramArguments(configWC);
 		configWC.doSave();
 	}
@@ -250,7 +249,7 @@ public abstract class BaseTestsLaunchDelegate extends LaunchConfigurationDelegat
 	 *
 	 * @return default test kind ID
 	 */
-	public abstract String getDefaultTestKindId();
+	public abstract String getUnitTestViewSupportID();
 
 	/**
 	 * Activates the view showing testing results.

@@ -20,8 +20,6 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
 import org.eclipse.unittest.UnitTestPlugin;
-import org.eclipse.unittest.launcher.ITestKind;
-import org.eclipse.unittest.launcher.TestKindRegistry;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
@@ -126,7 +124,4 @@ public class CDTPlugin extends Plugin {
 		return fBundleContext.getService(reference);
 	}
 
-	public static ITestKind getTestKind(String testKindId) {
-		return TestKindRegistry.getDefault().getKind(testKindId);
-	}
 }

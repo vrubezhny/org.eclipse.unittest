@@ -39,8 +39,7 @@ import org.osgi.framework.Constants;
 import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.junit.JUnitMessages;
 import org.eclipse.unittest.junit.JUnitPlugin;
-import org.eclipse.unittest.launcher.ITestKind;
-import org.eclipse.unittest.launcher.TestKindRegistry;
+import org.eclipse.unittest.junit.JUnitPlugin.JUnitVersion;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 
 import org.eclipse.core.variables.VariablesPlugin;
@@ -73,6 +72,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
+import org.eclipse.jdt.internal.junit.launcher.ITestKind;
 import org.eclipse.jdt.internal.junit.launcher.JUnitLaunchConfigurationConstants;
 import org.eclipse.jdt.internal.junit.launcher.JUnitRuntimeClasspathEntry;
 import org.eclipse.jdt.internal.junit.util.CoreTestSearchEngine;
@@ -164,10 +164,9 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 			fPort = evaluatePort();
 			launch.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_PORT, String.valueOf(fPort));
 
-			ITestKind testKind = getTestRunnerKind(configuration);
+			JUnitVersion junitVersion = getJUnitVersion(configuration);
 			IJavaProject javaProject = getJavaProject(configuration);
-			if (JUnitPlugin.JUNIT3_TEST_KIND_ID.equals(testKind.getId())
-					|| JUnitPlugin.JUNIT4_TEST_KIND_ID.equals(testKind.getId())) {
+			if (junitVersion == JUnitVersion.JUNIT3 || junitVersion == JUnitVersion.JUNIT4) {
 				fTestElements = evaluateTests(configuration, SubMonitor.convert(monitor, 1));
 			} else {
 				IJavaElement testTarget = getTestTarget(configuration, javaProject);
@@ -207,7 +206,7 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 			String[] classpath = classpathAndModulepath[0];
 			String[] modulepath = classpathAndModulepath[1];
 
-			if (JUnitPlugin.JUNIT5_TEST_KIND_ID.equals(getTestRunnerKind(configuration).getId())) {
+			if (junitVersion == JUnitVersion.JUNIT5) {
 				if (!configuration.getAttribute(
 						JUnitLaunchConfigurationConstants.ATTR_DONT_ADD_MISSING_JUNIT5_DEPENDENCY, false)) {
 					if (!Arrays.stream(classpath).anyMatch(
@@ -260,6 +259,23 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 			monitor.worked(1);
 		}
 		return runConfig;
+	}
+
+	static JUnitVersion getJUnitVersion(ILaunchConfiguration configuration) {
+		try {
+			String junitTestKindId = configuration.getAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_RUNNER_KIND,
+					""); //$NON-NLS-1$
+			if (!junitTestKindId.isEmpty()) {
+				return JUnitVersion.fromJUnitTestKindId(junitTestKindId);
+			}
+		} catch (Exception ex) {
+			JUnitPlugin.log(ex);
+		}
+		IJavaProject javaProject = JUnitLaunchConfigurationConstants.getJavaProject(configuration);
+		if (javaProject != null) {
+			return JUnitPlugin.getJUnitVersion(javaProject);
+		}
+		return JUnitVersion.JUNIT3;
 	}
 
 	@Override
@@ -320,14 +336,12 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 				abort(JUnitMessages.JUnitLaunchConfigurationDelegate_error_invalidproject, null,
 						IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT);
 			}
-			ITestKind testKind = getTestRunnerKind(configuration);
-			boolean isJUnit4Configuration = JUnitPlugin.JUNIT4_TEST_KIND_ID.equals(testKind.getId());
-			boolean isJUnit5Configuration = JUnitPlugin.JUNIT5_TEST_KIND_ID.equals(testKind.getId());
-			if (!isJUnit5Configuration && !CoreTestSearchEngine.hasTestCaseType(javaProject)) {
+			JUnitVersion junitVersion = getJUnitVersion(configuration);
+			if (junitVersion != JUnitVersion.JUNIT5 && !CoreTestSearchEngine.hasTestCaseType(javaProject)) {
 				abort(JUnitMessages.JUnitLaunchConfigurationDelegate_error_junitnotonpath, null,
 						IJUnitStatusConstants.ERR_JUNIT_NOT_ON_PATH);
 			}
-			if (isJUnit4Configuration && !CoreTestSearchEngine.hasJUnit4TestAnnotation(javaProject)) {
+			if (junitVersion == JUnitVersion.JUNIT4 && !CoreTestSearchEngine.hasJUnit4TestAnnotation(javaProject)) {
 				abort(JUnitMessages.JUnitLaunchConfigurationDelegate_error_junit4notonpath, null,
 						IJUnitStatusConstants.ERR_JUNIT_NOT_ON_PATH);
 			}
@@ -349,19 +363,6 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 			return null;
 		}
 		return VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(mainType);
-	}
-
-	private ITestKind getTestRunnerKind(ILaunchConfiguration configuration) {
-		ITestKind testKind = UnitTestLaunchConfigurationConstants.getTestRunnerKind(configuration);
-		if (testKind.isNull()) {
-			testKind = TestKindRegistry.getDefault().getKind(JUnitPlugin.JUNIT3_TEST_KIND_ID); // backward
-																								// compatible
-																								// for launch
-																								// configurations
-																								// with no
-																								// runner
-		}
-		return testKind;
 	}
 
 	@Override
@@ -397,11 +398,12 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 			}
 		}
 		HashSet<IType> result = new HashSet<>();
-		ITestKind testKind = getTestRunnerKind(configuration);
-		JUnitPlugin.getTestFinder(testKind).findTestsInContainer(testTarget, result, monitor);
+		org.eclipse.jdt.internal.junit.launcher.ITestKind junitTestKind = getJUnitVersion(configuration)
+				.getJUnitTestKind();
+		junitTestKind.getFinder().findTestsInContainer(testTarget, result, monitor);
 		if (result.isEmpty()) {
 			String msg = MessageFormat.format(JUnitMessages.JUnitLaunchConfigurationDelegate_error_notests_kind,
-					testKind.getDisplayName());
+					junitTestKind.getDisplayName());
 			abort(msg, null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE);
 		}
 		return result.toArray(new IMember[result.size()]);
@@ -428,11 +430,10 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 		vmArguments.addAll(Arrays.asList(execArgs.getVMArgumentsArray()));
 		programArguments.addAll(Arrays.asList(execArgs.getProgramArgumentsArray()));
 
-		boolean isJUnit5 = JUnitPlugin.JUNIT5_TEST_KIND_ID.equals(getTestRunnerKind(configuration).getId());
 		boolean isModularProject = JavaRuntime.isModularProject(getJavaProject(configuration));
 		String addOpensTargets;
 		if (isModularProject) {
-			if (isJUnit5) {
+			if (getJUnitVersion(configuration) == JUnitVersion.JUNIT5) {
 				if (isOnModulePath(getJavaProject(configuration), "org.junit.jupiter.api.Test")) { //$NON-NLS-1$
 					addOpensTargets = "org.junit.platform.commons,ALL-UNNAMED"; //$NON-NLS-1$
 				} else {
@@ -471,7 +472,7 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 		if (fKeepAlive)
 			programArguments.add(0, "-keepalive"); //$NON-NLS-1$
 
-		ITestKind testRunnerKind = getTestRunnerKind(configuration);
+		ITestKind testRunnerKind = getJUnitVersion(configuration).getJUnitTestKind();
 
 		programArguments.add("-testLoaderClass"); //$NON-NLS-1$
 		programArguments.add(testRunnerKind.getLoaderClassName());
@@ -614,7 +615,8 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 		return null;
 	}
 
-	private String createPackageNamesFile(IJavaElement testContainer, ITestKind testRunnerKind, Set<String> pkgNames)
+	private String createPackageNamesFile(IJavaElement testContainer,
+			org.eclipse.jdt.internal.junit.launcher.ITestKind testRunnerKind, Set<String> pkgNames)
 			throws CoreException {
 		try {
 			File file = File.createTempFile("packageNames", ".txt"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -700,8 +702,8 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 		String[][] cpmp = super.getClasspathAndModulepath(configuration);
 		String[] cp = cpmp[0];
 
-		ITestKind kind = getTestRunnerKind(configuration);
-		List<String> junitEntries = new ClasspathLocalizer(Platform.inDevelopmentMode()).localizeClasspath(kind);
+		List<String> junitEntries = new ClasspathLocalizer(Platform.inDevelopmentMode())
+				.localizeClasspath(getJUnitVersion(configuration));
 
 		String[] classPath = new String[cp.length + junitEntries.size()];
 		Object[] jea = junitEntries.toArray();
@@ -713,31 +715,6 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 		return cpmp;
 	}
 
-	/**
-	 * @deprecated The call to
-	 *             {@link JUnitLaunchConfigurationDelegate#getClasspath(ILaunchConfiguration)
-	 *             getClasspath(ILaunchConfiguration)} in
-	 *             {@link JUnitLaunchConfigurationDelegate#launch(ILaunchConfiguration, String, ILaunch, IProgressMonitor)
-	 *             launch(...)} has been replaced with the call to
-	 *             {@link JUnitLaunchConfigurationDelegate#getClasspathAndModulepath(ILaunchConfiguration)
-	 *             getClasspathAndModulepath(ILaunchConfiguration)}.
-	 *
-	 */
-	@Override
-	@Deprecated
-	public String[] getClasspath(ILaunchConfiguration configuration) throws CoreException {
-		String[] cp = super.getClasspath(configuration);
-
-		ITestKind kind = getTestRunnerKind(configuration);
-		List<String> junitEntries = new ClasspathLocalizer(Platform.inDevelopmentMode()).localizeClasspath(kind);
-
-		String[] classPath = new String[cp.length + junitEntries.size()];
-		Object[] jea = junitEntries.toArray();
-		System.arraycopy(cp, 0, classPath, 0, cp.length);
-		System.arraycopy(jea, 0, classPath, cp.length, jea.length);
-		return classPath;
-	}
-
 	private static class ClasspathLocalizer {
 
 		private boolean fInDevelopmentMode;
@@ -746,8 +723,8 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 			fInDevelopmentMode = inDevelopmentMode;
 		}
 
-		public List<String> localizeClasspath(ITestKind kind) {
-			JUnitRuntimeClasspathEntry[] entries = JUnitPlugin.getClasspathEntries(kind);
+		public List<String> localizeClasspath(JUnitVersion junitVersion) {
+			JUnitRuntimeClasspathEntry[] entries = junitVersion.getJUnitTestKind().getClasspathEntries();
 			List<String> junitEntries = new ArrayList<>();
 
 			for (JUnitRuntimeClasspathEntry entrie : entries) {
@@ -805,8 +782,7 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 
 	private final IJavaElement getTestTarget(ILaunchConfiguration configuration, IJavaProject javaProject)
 			throws CoreException {
-		String containerHandle = configuration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_CONTAINER,
-				""); //$NON-NLS-1$
+		String containerHandle = configuration.getAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_CONTAINER, ""); //$NON-NLS-1$
 		if (containerHandle.length() != 0) {
 			IJavaElement element = JavaCore.create(containerHandle);
 			if (element == null || !element.exists()) {

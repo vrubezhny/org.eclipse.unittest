@@ -14,8 +14,9 @@
 package org.eclipse.unittest.ui;
 
 import org.eclipse.unittest.UnitTestPreferencesConstants;
-import org.eclipse.unittest.launcher.ITestKind;
+import org.eclipse.unittest.launcher.ITestViewSupport;
 import org.eclipse.unittest.model.ITestElement;
+import org.eclipse.unittest.model.ITestRunSession;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
@@ -130,8 +131,8 @@ public class FailureTrace implements IMenuListener {
 	}
 
 	private IAction createOpenEditorAction(String traceLine) {
-		ITestKind testKind = fFailure.getTestRunSession().getTestRunnerKind();
-		return testKind.getTestViewSupport().createOpenEditorAction(fTestRunner, fFailure, traceLine);
+		return fFailure.getTestRunSession().getTestViewSupport().createOpenEditorAction(fTestRunner, fFailure,
+				traceLine);
 	}
 
 	/**
@@ -169,10 +170,9 @@ public class FailureTrace implements IMenuListener {
 	}
 
 	private void updateActions(ITestElement test) {
-		ITestKind testKind = test != null ? fFailure.getTestRunSession().getTestRunnerKind() : null;
+		ITestViewSupport testViewSupport = test != null ? fFailure.getTestRunSession().getTestViewSupport() : null;
 		fShowTraceInConsoleAction.setDelegate(
-				testKind != null ? testKind.getTestViewSupport().createShowStackTraceInConsoleViewActionDelegate(this)
-						: null);
+				testViewSupport != null ? testViewSupport.createShowStackTraceInConsoleViewActionDelegate(this) : null);
 	}
 
 	private void updateEnablement(ITestElement test) {
@@ -200,7 +200,20 @@ public class FailureTrace implements IMenuListener {
 
 	private String[] getFilterPatterns() {
 		if (UnitTestPreferencesConstants.getFilterStack())
-			return UnitTestPreferencesConstants.getFilterPatterns(fFailure.getTestRunSession());
+			return getFilterPatterns(fFailure.getTestRunSession());
+		return new String[0];
+	}
+
+	/**
+	 * Returns an array of Filter patterns for Stacktraces/Error messages
+	 *
+	 * @param session a {@link ITestRunSession} to ask the filter pattern for
+	 * @return an array of filter patterns
+	 */
+	public String[] getFilterPatterns(ITestRunSession session) {
+		if (session != null && session.getTestViewSupport() != null) {
+			return session.getTestViewSupport().getFilterPatterns();
+		}
 		return new String[0];
 	}
 

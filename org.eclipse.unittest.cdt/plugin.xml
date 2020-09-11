@@ -47,11 +47,7 @@
          point="org.eclipse.unittest.unittestKinds">
       <kind
             id="org.eclipse.unittest.cdt.loader"
-            displayName="%testKind.cdt"
-            loaderPluginId="org.eclipse.jdt.junit.runtime"
-            loaderClass="org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestLoader"
-            testRunnerClientClass="org.eclipse.unittest.cdt.launcher.CDTTestRunnerClient"
-            testViewSupportClass="org.eclipse.unittest.cdt.launcher.CDTTestViewSupport">
+            class="org.eclipse.unittest.cdt.internal.launcher.CDTTestKind">
       </kind>
    </extension>
 

@@ -15,6 +15,7 @@ package org.eclipse.unittest.launcher;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.unittest.UnitTestPlugin;
@@ -40,7 +41,7 @@ public class TestKindRegistry {
 	private static TestKindRegistry fgRegistry;
 
 	private final IExtensionPoint fPoint;
-	private ArrayList<TestKind> fTestKinds;
+	private List<TestKindExtension> fTestKinds;
 
 	private TestKindRegistry(IExtensionPoint point) {
 		fPoint = point;
@@ -49,9 +50,9 @@ public class TestKindRegistry {
 	/**
 	 * Returns all the registered kinds
 	 *
-	 * @return an {@link ArrayList} containing all the registry kinds
+	 * @return a {@link List} containing all the registry kinds
 	 */
-	public ArrayList<TestKind> getAllKinds() {
+	private List<TestKindExtension> getAllKinds() {
 		loadKinds();
 		return fTestKinds;
 	}
@@ -63,19 +64,20 @@ public class TestKindRegistry {
 	 * @return an {@link ArrayList} containing the registry kings filtered by
 	 *         identifier
 	 */
-	public ArrayList<TestKind> getKinds(final String filter) {
-		ArrayList<TestKind> allKinds = getAllKinds();
-		return allKinds != null ? allKinds.stream().filter(p -> p.getId().startsWith(filter))
-				.collect(Collectors.toCollection(ArrayList::new)) : null;
+	public List<TestKindExtension> getKinds(final String filter) {
+		List<TestKindExtension> allKinds = getAllKinds();
+		return allKinds != null
+				? allKinds.stream().filter(p -> p.getId().startsWith(filter)).collect(Collectors.toList())
+				: null;
 	}
 
 	private void loadKinds() {
 		if (fTestKinds != null)
 			return;
 
-		ArrayList<TestKind> items = new ArrayList<>();
+		List<TestKindExtension> items = new ArrayList<>();
 		for (IConfigurationElement configurationElement : getConfigurationElements()) {
-			items.add(new TestKind(configurationElement));
+			items.add(new TestKindExtension(configurationElement));
 		}
 
 		Collections.sort(items, (kind0, kind1) -> {
@@ -89,53 +91,24 @@ public class TestKindRegistry {
 	}
 
 	/**
-	 * Returns the kinds names
-	 *
-	 * @return an {@link ArrayList} of kind display names
-	 */
-	public ArrayList<String> getDisplayNames() {
-		ArrayList<String> result = new ArrayList<>();
-		ArrayList<TestKind> testTypes = getAllKinds();
-		for (ITestKind type : testTypes) {
-			result.add(type.getDisplayName());
-		}
-		return result;
-	}
-
-	/**
 	 * @param testKindId an id, can be <code>null</code>
 	 *
-	 * @return a TestKind, ITestKind.NULL if not available
+	 * @return a TestKind, or <code>null</code> if not available
 	 */
-	public ITestKind getKind(String testKindId) {
+	public ITestKind getTestKindInstance(String testKindId) {
 		if (testKindId != null) {
-			for (TestKind kind : getAllKinds()) {
-				if (testKindId.equals(kind.getId()))
-					return kind;
-			}
+			return getAllKinds().stream().filter(kind -> kind.getId().equals(testKindId)).findFirst()
+					.map(TestKindExtension::instantiateKind).orElse(null);
 		}
-		return ITestKind.NULL;
+		return null;
 	}
 
-	private ArrayList<IConfigurationElement> getConfigurationElements() {
-		ArrayList<IConfigurationElement> items = new ArrayList<>();
+	private List<IConfigurationElement> getConfigurationElements() {
+		List<IConfigurationElement> items = new ArrayList<>();
 		for (IExtension extension : fPoint.getExtensions()) {
 			Collections.addAll(items, extension.getConfigurationElements());
 		}
 		return items;
 	}
 
-	/**
-	 * Returns all the registered kind identifiers
-	 *
-	 * @return a registry kind identifiers string
-	 */
-	public String getAllKindIds() {
-		ArrayList<TestKind> allKinds = getAllKinds();
-		String returnThis = ""; //$NON-NLS-1$
-		for (ITestKind kind : allKinds) {
-			returnThis += "(" + kind.getId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		return returnThis;
-	}
 }

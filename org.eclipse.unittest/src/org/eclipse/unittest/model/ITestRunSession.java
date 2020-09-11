@@ -15,6 +15,7 @@ package org.eclipse.unittest.model;
 
 import org.eclipse.unittest.launcher.ITestKind;
 import org.eclipse.unittest.launcher.ITestRunnerClient;
+import org.eclipse.unittest.launcher.ITestViewSupport;
 
 import org.eclipse.core.resources.IProject;
 
@@ -229,5 +230,7 @@ public interface ITestRunSession extends ITestElementContainer {
 	 * @return <code>false</code> if the rerun could not be started
 	 */
 	boolean rerunTest(String testId, String className, String testName);
+
+	ITestViewSupport getTestViewSupport();
 
 }

@@ -48,14 +48,10 @@ public class UnitTestLaunchConfigurationConstants {
 	public static final String ATTR_TEST_METHOD_NAME = ATTR_TEST_NAME;
 
 	public static final String ATTR_KEEPRUNNING = UnitTestPlugin.PLUGIN_ID + ".KEEPRUNNING_ATTR"; //$NON-NLS-1$
-	/**
-	 * The launch container, or "" iff running a single test type.
-	 */
-	public static final String ATTR_TEST_CONTAINER = UnitTestPlugin.PLUGIN_ID + ".CONTAINER"; //$NON-NLS-1$
 
 	public static final String ATTR_FAILURES_NAMES = UnitTestPlugin.PLUGIN_ID + ".FAILURENAMES"; //$NON-NLS-1$
 
-	public static final String ATTR_TEST_RUNNER_KIND = UnitTestPlugin.PLUGIN_ID + ".TEST_KIND"; //$NON-NLS-1$
+	public static final String ATTR_UNIT_TEST_VIEW_SUPPORT = UnitTestPlugin.PLUGIN_ID + ".TEST_KIND"; //$NON-NLS-1$
 
 	public static final String ATTR_TEST_HAS_INCLUDE_TAGS = UnitTestPlugin.PLUGIN_ID + ".HAS_INCLUDE_TAGS"; //$NON-NLS-1$
 
@@ -76,20 +72,19 @@ public class UnitTestLaunchConfigurationConstants {
 	 * Returns {@link ITestKind} instance from the given launch configuration
 	 *
 	 * @param launchConfiguration a launch configuration
-	 * @return a test runner kind instance if exists or a <code>NULL</code>
-	 *         {@link ITestKind} instance
+	 * @return a test runner kind instance if exists or <code>null</code>.
 	 */
-	public static ITestKind getTestRunnerKind(ILaunchConfiguration launchConfiguration) {
+	public static ITestKind newTestRunnerKind(ILaunchConfiguration launchConfiguration) {
 		try {
 			String loaderId = launchConfiguration
-					.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_RUNNER_KIND, (String) null);
+					.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_UNIT_TEST_VIEW_SUPPORT, (String) null);
 			if (loaderId != null) {
-				return TestKindRegistry.getDefault().getKind(loaderId);
+				return TestKindRegistry.getDefault().getTestKindInstance(loaderId);
 			}
 		} catch (CoreException e) {
 			// Ignore
 		}
-		return ITestKind.NULL;
+		return null;
 	}
 
 	/**

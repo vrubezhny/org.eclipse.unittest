@@ -78,4 +78,9 @@ public class CDTTestViewSupport implements ITestViewSupport {
 						ILaunchManager.DEBUG_MODE) }
 				: null;
 	}
+
+	@Override
+	public String getDisplayName() {
+		return "C/C++ Unit";
+	}
 }

@@ -19,97 +19,18 @@ package org.eclipse.unittest.launcher;
  * org.org.eclipse.unittest.unittestKinds.
  */
 public interface ITestKind {
-	static class NullTestKind extends TestKind {
-		private NullTestKind() {
-			super(null);
-		}
-
-		@Override
-		public boolean isNull() {
-			return true;
-		}
-
-	}
-
-	TestKind NULL = new NullTestKind();
-
-	String ID = "id"; //$NON-NLS-1$
-	String DISPLAY_NAME = "displayName"; //$NON-NLS-1$
-	String LOADER_PLUGIN_ID = "loaderPluginId"; //$NON-NLS-1$
-	String LOADER_CLASS_NAME = "loaderClass"; //$NON-NLS-1$
-	String TEST_RUNNER_CLIENT_CLASS_NAME = "testRunnerClientClass"; //$NON-NLS-1$
-	String TEST_VIEW_SUPPORT_CLASS_NAME = "testViewSupportClass"; //$NON-NLS-1$
-
-	String PRECEDES = "precedesTestKind"; //$NON-NLS-1$
-
 	/**
 	 * Returns a Test Runner Client for this this Test Kind
 	 *
 	 * @return returns a Test Runner Client
 	 */
-	ITestRunnerClient getTestRunnerClient();
+	ITestRunnerClient newTestRunnerClient();
 
 	/**
 	 * Returns a Test View Support for this Test Kind
 	 *
 	 * @return returns a Test View Support
 	 */
-	ITestViewSupport getTestViewSupport();
+	ITestViewSupport newTestViewSupport();
 
-	/**
-	 * Returns a Test Kind identifier
-	 *
-	 * @return returns an identifier
-	 */
-	String getId();
-
-	/**
-	 * Returns a Test Kind display name
-	 *
-	 * @return returns a display name
-	 */
-	String getDisplayName();
-
-	/**
-	 * Returns a Loader plug-in identifier for this Test Kind
-	 *
-	 * @return a Loader plug-in identifier
-	 */
-	String getLoaderPluginId();
-
-	/**
-	 * Returns a Loader qualified class name defined in loader plug-in for this Test
-	 * Kind
-	 *
-	 * @return a Loader qualified class name
-	 */
-	String getLoaderClassName();
-
-	/**
-	 * Returns a test runner client qualified class name for this Test Kind
-	 *
-	 * @return a test runner client qualified class name
-	 */
-	String getTestRunnerClientClassName();
-
-	/**
-	 * Returns a test view support qualified class name for this Test Kind
-	 *
-	 * @return a test view support qualified class name
-	 */
-	String getTestViewSupportClassName();
-
-	/**
-	 * Returns a preceded Test Kind identifier
-	 *
-	 * @return a preceded Test Kind identifier
-	 */
-	String getPrecededKindId();
-
-	/**
-	 * Indicates if this Test Kind is an empty one
-	 *
-	 * @return true in case of empty Test Kind, false otherwise
-	 */
-	boolean isNull();
 }

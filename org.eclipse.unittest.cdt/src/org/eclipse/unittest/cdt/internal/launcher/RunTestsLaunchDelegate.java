@@ -28,7 +28,7 @@ public class RunTestsLaunchDelegate extends BaseTestsLaunchDelegate {
 	}
 
 	@Override
-	public String getDefaultTestKindId() {
+	public String getUnitTestViewSupportID() {
 		return CDTPlugin.CDT_TEST_KIND_ID;
 	}
 }

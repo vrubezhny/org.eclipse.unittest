@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import org.eclipse.unittest.junit.JUnitPlugin;
+import org.eclipse.unittest.junit.JUnitPlugin.JUnitVersion;
 import org.eclipse.unittest.junit.ui.OpenEditorAtLineAction;
 import org.eclipse.unittest.junit.ui.OpenTestAction;
 import org.eclipse.unittest.junit.ui.ShowStackTraceInConsoleViewActionDelegate;
@@ -37,6 +38,8 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.junit.JUnitCorePlugin;
 import org.eclipse.jdt.internal.junit.JUnitPreferencesConstants;
 import org.eclipse.jdt.internal.junit.launcher.ITestFinder;
+import org.eclipse.jdt.internal.junit.launcher.ITestKind;
+import org.eclipse.jdt.internal.junit.launcher.JUnitLaunchConfigurationConstants;
 
 @SuppressWarnings("restriction")
 public class JUnitTestViewSupport implements ITestViewSupport {
@@ -115,17 +118,25 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 		String testMethodName = null; // test method name is null when re-running a regular test class
 		String testName = testSuite.getTestName();
 
-		ITestFinder finder = JUnitPlugin.getTestFinder(testSuite.getTestRunSession().getTestRunnerKind());
-		if (ITestFinder.NULL.equals(finder)) {
-			return null;
+		ILaunchConfiguration launchConfiguration = testSuite.getTestRunSession().getLaunch().getLaunchConfiguration();
+		ITestKind junitKind;
+		try {
+			junitKind = JUnitVersion
+					.fromJUnitTestKindId(launchConfiguration
+							.getAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_RUNNER_KIND, "")) //$NON-NLS-1$
+					.getJUnitTestKind();
+		} catch (CoreException e) {
+			JUnitPlugin.log(e);
+			return new RerunAction[0];
 		}
 
-		IJavaProject project = getJavaProject(testRunnerPart.getLaunchedProject());
-		if (project == null)
-			return null;
+		IJavaProject project = getJavaProject(testSuite.getTestRunSession().getLaunchedProject());
+		if (project == null) {
+			return new RerunAction[0];
+		}
 
 		String qualifiedName = null;
-		IType testType = findTestClass(testSuite, finder, project, true);
+		IType testType = findTestClass(testSuite, junitKind.getFinder(), project, true);
 		if (testType != null) {
 			qualifiedName = testType.getFullyQualifiedName();
 
@@ -142,7 +153,7 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 			}
 		} else {
 			// see bug 443498
-			testType = findTestClass(testSuite.getParent(), finder, project, false);
+			testType = findTestClass(testSuite.getParent(), junitKind.getFinder(), project, false);
 			if (testType != null) {
 				qualifiedName = testType.getFullyQualifiedName();
 
@@ -211,5 +222,10 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public String getDisplayName() {
+		return "JUnit";
 	}
 }

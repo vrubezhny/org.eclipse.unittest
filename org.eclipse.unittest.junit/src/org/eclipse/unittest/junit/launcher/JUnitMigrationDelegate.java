@@ -31,9 +31,11 @@ import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 
+import org.eclipse.jdt.internal.junit.launcher.JUnitLaunchConfigurationConstants;
+
 public class JUnitMigrationDelegate implements ILaunchConfigurationMigrationDelegate {
 
-	protected static final String EMPTY_STRING= ""; //$NON-NLS-1$
+	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	public JUnitMigrationDelegate() {
 
@@ -60,7 +62,7 @@ public class JUnitMigrationDelegate implements ILaunchConfigurationMigrationDele
 
 	@Override
 	public void migrate(ILaunchConfiguration candidate) throws CoreException {
-		ILaunchConfigurationWorkingCopy wc= candidate.getWorkingCopy();
+		ILaunchConfigurationWorkingCopy wc = candidate.getWorkingCopy();
 		mapResources(wc);
 		wc.doSave();
 	}
@@ -76,22 +78,23 @@ public class JUnitMigrationDelegate implements ILaunchConfigurationMigrationDele
 		if (resource == null) {
 			config.setMappedResources(null);
 		} else {
-			config.setMappedResources(new IResource[]{resource});
+			config.setMappedResources(new IResource[] { resource });
 		}
 	}
 
 	/**
-	 * Returns a resource mapping for the given launch configuration, or <code>null</code>
-	 * if none.
+	 * Returns a resource mapping for the given launch configuration, or
+	 * <code>null</code> if none.
 	 *
 	 * @param config working copy
 	 * @return resource or <code>null</code>
 	 * @throws CoreException if an exception occurs mapping resource
 	 */
 	private static IResource getResource(ILaunchConfiguration config) throws CoreException {
-		String projName = config.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
-		String containerHandle = config.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_CONTAINER, (String)null);
-		String typeName = config.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null);
+		String projName = config.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String) null);
+		String containerHandle = config.getAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_CONTAINER,
+				(String) null);
+		String typeName = config.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String) null);
 		IJavaElement element = null;
 		if (containerHandle != null && containerHandle.length() > 0) {
 			element = JavaCore.create(containerHandle);
@@ -105,7 +108,7 @@ public class JUnitMigrationDelegate implements ILaunchConfigurationMigrationDele
 					element = javaProject;
 				}
 			} else {
-				IProject project= javaProject.getProject();
+				IProject project = javaProject.getProject();
 				if (project.exists() && !project.isOpen()) {
 					return project;
 				}

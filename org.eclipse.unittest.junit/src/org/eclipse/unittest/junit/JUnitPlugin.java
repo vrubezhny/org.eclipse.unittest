@@ -16,12 +16,12 @@
  *******************************************************************************/
 package org.eclipse.unittest.junit;
 
+import java.util.Arrays;
+
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
 import org.eclipse.unittest.UnitTestPlugin;
-import org.eclipse.unittest.launcher.ITestKind;
-import org.eclipse.unittest.launcher.TestKindRegistry;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -37,8 +37,7 @@ import org.eclipse.jdt.core.IMemberValuePair;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 
-import org.eclipse.jdt.internal.junit.launcher.ITestFinder;
-import org.eclipse.jdt.internal.junit.launcher.JUnitRuntimeClasspathEntry;
+import org.eclipse.jdt.internal.junit.launcher.ITestKind;
 import org.eclipse.jdt.internal.junit.util.CoreTestSearchEngine;
 
 /**
@@ -55,9 +54,28 @@ public class JUnitPlugin extends AbstractUIPlugin {
 
 	public static final String PLUGIN_ID = "org.eclipse.unittest.junit"; //$NON-NLS-1$
 
-	public static final String JUNIT3_TEST_KIND_ID = "org.eclipse.unittest.junit.loader.junit3"; //$NON-NLS-1$
-	public static final String JUNIT4_TEST_KIND_ID = "org.eclipse.unittest.junit.loader.junit4"; //$NON-NLS-1$
-	public static final String JUNIT5_TEST_KIND_ID = "org.eclipse.unittest.junit.loader.junit5"; //$NON-NLS-1$
+	public static final String UNIT_TEST_VIEW_SUPPORT_ID = "org.eclipse.unittest.junit"; //$NON-NLS-1$
+
+	public enum JUnitVersion {
+		JUNIT3("org.eclipse.jdt.junit.loader.junit3"), //$NON-NLS-1$
+		JUNIT4("org.eclipse.jdt.junit.loader.junit4"), //$NON-NLS-1$
+		JUNIT5("org.eclipse.jdt.junit.loader.junit5"); //$NON-NLS-1$
+
+		public final String junitTestKindId;
+
+		private JUnitVersion(String junitTestKindId) {
+			this.junitTestKindId = junitTestKindId;
+		}
+
+		public static JUnitVersion fromJUnitTestKindId(String junitTestKindId) {
+			return Arrays.stream(values()).filter(version -> version.junitTestKindId.equals(junitTestKindId)).findAny()
+					.orElse(null);
+		}
+
+		public ITestKind getJUnitTestKind() {
+			return org.eclipse.jdt.internal.junit.launcher.TestKindRegistry.getDefault().getKind(junitTestKindId);
+		}
+	}
 
 	/**
 	 * The class path variable referring to the junit home location
@@ -131,24 +149,24 @@ public class JUnitPlugin extends AbstractUIPlugin {
 		return fBundleContext.getService(reference);
 	}
 
-	public static String getContainerTestKindId(IJavaElement element) {
+	public static JUnitVersion getJUnitVersion(IJavaElement element) {
 		if (element != null) {
 			IJavaProject project = element.getJavaProject();
 			if (CoreTestSearchEngine.is50OrHigher(project)) {
 				if (CoreTestSearchEngine.is18OrHigher(project)) {
 					if (isRunWithJUnitPlatform(element)) {
-						return JUNIT4_TEST_KIND_ID;
+						return JUnitVersion.JUNIT4;
 					}
 					if (CoreTestSearchEngine.hasJUnit5TestAnnotation(project)) {
-						return JUNIT5_TEST_KIND_ID;
+						return JUnitVersion.JUNIT5;
 					}
 				}
 				if (CoreTestSearchEngine.hasJUnit4TestAnnotation(project)) {
-					return JUNIT4_TEST_KIND_ID;
+					return JUnitVersion.JUNIT4;
 				}
 			}
 		}
-		return JUNIT3_TEST_KIND_ID;
+		return JUnitVersion.JUNIT3;
 	}
 
 	/**
@@ -183,45 +201,4 @@ public class JUnitPlugin extends AbstractUIPlugin {
 		return false;
 	}
 
-	public static ITestKind getContainerTestKind(IJavaElement element) {
-		return TestKindRegistry.getDefault().getKind(getContainerTestKindId(element));
-	}
-
-	public static final String ORIGINAL_JUNIT3_TEST_KIND_ID = "org.eclipse.jdt.junit.loader.junit3"; //$NON-NLS-1$
-	public static final String ORIGINAL_JUNIT4_TEST_KIND_ID = "org.eclipse.jdt.junit.loader.junit4"; //$NON-NLS-1$
-	public static final String ORIGINAL_JUNIT5_TEST_KIND_ID = "org.eclipse.jdt.junit.loader.junit5"; //$NON-NLS-1$
-
-	@SuppressWarnings("restriction")
-	public static ITestFinder getTestFinder(ITestKind kind) {
-		switch (kind.getId()) {
-		case JUNIT3_TEST_KIND_ID:
-			return org.eclipse.jdt.internal.junit.launcher.TestKindRegistry.getDefault()
-					.getKind(ORIGINAL_JUNIT3_TEST_KIND_ID).getFinder();
-		case JUNIT4_TEST_KIND_ID:
-			return org.eclipse.jdt.internal.junit.launcher.TestKindRegistry.getDefault()
-					.getKind(ORIGINAL_JUNIT4_TEST_KIND_ID).getFinder();
-		case JUNIT5_TEST_KIND_ID:
-			return org.eclipse.jdt.internal.junit.launcher.TestKindRegistry.getDefault()
-					.getKind(ORIGINAL_JUNIT5_TEST_KIND_ID).getFinder();
-		default:
-			return ITestFinder.NULL;
-		}
-	}
-
-	@SuppressWarnings("restriction")
-	public static JUnitRuntimeClasspathEntry[] getClasspathEntries(ITestKind kind) {
-		switch (kind.getId()) {
-		case JUNIT3_TEST_KIND_ID:
-			return org.eclipse.jdt.internal.junit.launcher.TestKindRegistry.getDefault()
-					.getKind(ORIGINAL_JUNIT3_TEST_KIND_ID).getClasspathEntries();
-		case JUNIT4_TEST_KIND_ID:
-			return org.eclipse.jdt.internal.junit.launcher.TestKindRegistry.getDefault()
-					.getKind(ORIGINAL_JUNIT4_TEST_KIND_ID).getClasspathEntries();
-		case JUNIT5_TEST_KIND_ID:
-			return org.eclipse.jdt.internal.junit.launcher.TestKindRegistry.getDefault()
-					.getKind(ORIGINAL_JUNIT5_TEST_KIND_ID).getClasspathEntries();
-		default:
-			return new JUnitRuntimeClasspathEntry[0];
-		}
-	}
 }

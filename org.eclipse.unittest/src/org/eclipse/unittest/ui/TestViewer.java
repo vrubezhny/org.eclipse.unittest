@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 
 import org.eclipse.unittest.internal.model.TestElement;
 import org.eclipse.unittest.internal.model.TestSuiteElement;
-import org.eclipse.unittest.launcher.ITestKind;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElement.Result;
@@ -264,9 +263,8 @@ public class TestViewer {
 
 			if (testElement instanceof ITestSuiteElement) {
 				ITestSuiteElement testSuiteElement = (ITestSuiteElement) testElement;
-				ITestKind testKind = testElement.getTestRunSession().getTestRunnerKind();
-				IAction openTestAction = testKind.getTestViewSupport().getOpenTestAction(fTestRunnerPart,
-						testSuiteElement);
+				IAction openTestAction = testSuiteElement.getTestRunSession().getTestViewSupport()
+						.getOpenTestAction(fTestRunnerPart, testSuiteElement);
 				if (openTestAction != null) {
 					manager.add(openTestAction);
 				}
@@ -276,9 +274,8 @@ public class TestViewer {
 				}
 			} else {
 				ITestCaseElement testCaseElement = (ITestCaseElement) testElement;
-				ITestKind testKind = testElement.getTestRunSession().getTestRunnerKind();
-				IAction openTestAction = testKind.getTestViewSupport().getOpenTestAction(fTestRunnerPart,
-						testCaseElement);
+				IAction openTestAction = testElement.getTestRunSession().getTestViewSupport()
+						.getOpenTestAction(fTestRunnerPart, testCaseElement);
 				if (openTestAction != null) {
 					manager.add(openTestAction);
 				}
@@ -324,8 +321,8 @@ public class TestViewer {
 	}
 
 	private void addRerunActions(IMenuManager manager, ITestSuiteElement testSuiteElement) {
-		ITestKind testKind = testSuiteElement.getTestRunSession().getTestRunnerKind();
-		RerunAction[] rerunActions = testKind.getTestViewSupport().getRerunActions(fTestRunnerPart, testSuiteElement);
+		RerunAction[] rerunActions = testSuiteElement.getTestRunSession().getTestViewSupport()
+				.getRerunActions(fTestRunnerPart, testSuiteElement);
 		if (rerunActions != null) {
 			for (RerunAction action : rerunActions) {
 				if (action != null) {
@@ -353,11 +350,11 @@ public class TestViewer {
 		ITestElement testElement = (ITestElement) selection.getFirstElement();
 		IOpenEditorAction action;
 		if (testElement instanceof ITestSuiteElement) {
-			ITestKind testKind = testElement.getTestRunSession().getTestRunnerKind();
-			action = testKind.getTestViewSupport().getOpenTestAction(fTestRunnerPart, (ITestSuiteElement) testElement);
+			action = testElement.getTestRunSession().getTestViewSupport().getOpenTestAction(fTestRunnerPart,
+					(ITestSuiteElement) testElement);
 		} else if (testElement instanceof ITestCaseElement) {
-			ITestKind testKind = testElement.getTestRunSession().getTestRunnerKind();
-			action = testKind.getTestViewSupport().getOpenTestAction(fTestRunnerPart, (ITestCaseElement) testElement);
+			action = testElement.getTestRunSession().getTestViewSupport().getOpenTestAction(fTestRunnerPart,
+					(ITestCaseElement) testElement);
 		} else {
 			throw new IllegalStateException(String.valueOf(testElement));
 		}

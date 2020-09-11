@@ -25,6 +25,7 @@ import java.util.List;
 import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.launcher.ITestKind;
 import org.eclipse.unittest.launcher.ITestRunnerClient;
+import org.eclipse.unittest.launcher.ITestViewSupport;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElementContainer;
@@ -147,6 +148,7 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 	volatile boolean fIsRunning;
 
 	volatile boolean fIsStopped;
+	private final ITestViewSupport fUnitTestViewSupport;
 
 	/**
 	 * Creates a test run session.
@@ -164,12 +166,13 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 
 		Assert.isNotNull(testRunName);
 		fTestRunName = testRunName;
-		fTestRunnerKind = ITestKind.NULL; // TODO
+		fTestRunnerKind = null;
 
 		fTestRoot = new TestRoot(this);
 		fIdToTest = new HashMap<>();
 
 		fTestRunnerClient = null;
+		fUnitTestViewSupport = null;
 
 		fSessionListeners = new ListenerList<>();
 	}
@@ -184,22 +187,25 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 		ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
 		if (launchConfiguration != null) {
 			fTestRunName = launchConfiguration.getName();
-			fTestRunnerKind = UnitTestLaunchConfigurationConstants.getTestRunnerKind(launchConfiguration);
+			fTestRunnerKind = UnitTestLaunchConfigurationConstants.newTestRunnerKind(launchConfiguration);
 		} else {
 			fTestRunName = project.getName();
-			fTestRunnerKind = ITestKind.NULL;
+			fTestRunnerKind = null;
 		}
 
 		fTestRoot = new TestRoot(this);
 		fIdToTest = new HashMap<>();
 
-		if (fTestRunnerKind != ITestKind.NULL) {
-			fTestRunnerClient = fTestRunnerKind.getTestRunnerClient();
+		if (fTestRunnerKind != null) {
+			fTestRunnerClient = fTestRunnerKind.newTestRunnerClient();
 			fTestRunnerClient.setListeners(new ITestRunListener3[] { new TestSessionNotifier() });
-
 			if (port != -1) {
 				fTestRunnerClient.startListening(port);
 			}
+
+			fUnitTestViewSupport = fTestRunnerKind.newTestViewSupport();
+		} else {
+			fUnitTestViewSupport = null;
 		}
 
 		final ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
@@ -913,5 +919,10 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 	@Override
 	public void setElapsedTimeInSeconds(double time) {
 		// not used
+	}
+
+	@Override
+	public ITestViewSupport getTestViewSupport() {
+		return this.fUnitTestViewSupport;
 	}
 }
