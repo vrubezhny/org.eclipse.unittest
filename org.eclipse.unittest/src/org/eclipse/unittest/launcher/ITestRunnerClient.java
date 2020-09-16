@@ -19,48 +19,6 @@ import org.eclipse.unittest.model.ITestRunListener3;
  * An interface to be implemented by a Test Runner Client
  */
 public interface ITestRunnerClient {
-	ITestRunnerClient NULL = new ITestRunnerClient() {
-
-		@Override
-		public boolean isRunning() {
-			return false;
-		}
-
-		@Override
-		public void rerunTest(String testId, String className, String testName) {
-			// do nothing
-		}
-
-		@Override
-		public void startListening(int port) {
-			// do nothing
-		}
-
-		@Override
-		public void setListeners(ITestRunListener3[] listeners) {
-			// do nothing
-		}
-
-		@Override
-		public void receiveMessage(String message) {
-			// do nothing
-		}
-
-		@Override
-		public void stopTest() {
-			// do nothing
-		}
-
-		@Override
-		public void stopWaiting() {
-			// do nothing
-		}
-
-		@Override
-		public void shutDown() {
-			// do nothing
-		}
-	};
 
 	/**
 	 * Indicates if a test run is in progress

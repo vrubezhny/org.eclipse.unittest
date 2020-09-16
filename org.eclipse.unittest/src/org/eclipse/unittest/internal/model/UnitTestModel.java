@@ -118,8 +118,7 @@ public final class UnitTestModel implements IUnitTestModel {
 			// there for testing)
 			// so it's ok instantiating them.
 			ITestKind testRunnerKind = UnitTestLaunchConfigurationConstants.newTestRunnerKind(config);
-			ITestRunnerClient testRunnerClient = testRunnerKind != null ? testRunnerKind.newTestRunnerClient()
-					: ITestRunnerClient.NULL;
+			ITestRunnerClient testRunnerClient = testRunnerKind != null ? testRunnerKind.newTestRunnerClient() : null;
 
 			// If a Remote Test Runner Client exists try to create a new Test Run Session,
 			// connect the Remote Test Runner and listen it
@@ -129,7 +128,7 @@ public final class UnitTestModel implements IUnitTestModel {
 			// point
 			// and the factory will take care of creating the Test Run Session.
 			//
-			if (testRunnerClient != ITestRunnerClient.NULL && testRunnerClient instanceof RemoteTestRunnerClient) {
+			if (testRunnerClient instanceof RemoteTestRunnerClient) {
 				String portStr = launch.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_PORT);
 				if (portStr == null)
 					return;
