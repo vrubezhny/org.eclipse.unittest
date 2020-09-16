@@ -29,7 +29,7 @@ import java.util.List;
 
 import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.UnitTestPreferencesConstants;
-import org.eclipse.unittest.launcher.ITestKind;
+import org.eclipse.unittest.launcher.ITestViewSupport;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
@@ -1308,7 +1308,7 @@ public class TestRunnerViewPart extends ViewPart {
 		if (fTestRunSession != null && fTestRunSession.getTotalCount() == 0) {
 			Display.getDefault().asyncExec(() -> {
 				String msg = MessageFormat.format(Messages.TestRunnerViewPart_error_notests_kind,
-						fTestRunSession.getTestRunnerKind().getDisplayName());
+						fTestRunSession.getTestViewSupport().getDisplayName());
 				MessageDialog.openInformation(UnitTestPlugin.getActiveWorkbenchShell(),
 						Messages.TestRunnerViewPart__error_cannotrun, msg);
 			});
@@ -1440,9 +1440,9 @@ public class TestRunnerViewPart extends ViewPart {
 	 *         <code>null</code>
 	 */
 	public String getTestKindDisplayName() {
-		ITestKind kind = fTestRunSession.getTestRunnerKind();
-		if (!kind.isNull()) {
-			return kind.getDisplayName();
+		ITestViewSupport testViewSupport = fTestRunSession.getTestViewSupport();
+		if (testViewSupport != null) {
+			return testViewSupport.getDisplayName();
 		}
 		return null;
 	}
@@ -1623,7 +1623,7 @@ public class TestRunnerViewPart extends ViewPart {
 		fFailureTrace = new FailureTrace(bottom, fClipboard, this, failureToolBar);
 		bottom.setContent(fFailureTrace.getComposite());
 
-		fSashForm.setWeights(new int[] { 50, 50 });
+		fSashForm.setWeights(50, 50);
 		return fSashForm;
 	}
 
@@ -1994,7 +1994,6 @@ public class TestRunnerViewPart extends ViewPart {
 						ILaunchConfigurationWorkingCopy tmp = launchConfiguration.copy(configName);
 						tmp.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, className);
 						// reset the container
-						tmp.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_CONTAINER, ""); //$NON-NLS-1$
 						tmp.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_NAME, testName);
 						tmp.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_UNIQUE_ID, uniqueId);
 						relaunch(tmp, launchMode);

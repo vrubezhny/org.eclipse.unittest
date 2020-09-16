@@ -16,9 +16,6 @@
 
 package org.eclipse.unittest.junit.launcher;
 
-import org.eclipse.unittest.launcher.ITestKind;
-import org.eclipse.unittest.launcher.TestKindRegistry;
-
 import org.eclipse.jdt.core.IAnnotation;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -29,16 +26,12 @@ import org.eclipse.jdt.core.JavaModelException;
 
 import org.eclipse.jdt.internal.junit.util.CoreTestSearchEngine;
 
-@SuppressWarnings("restriction")
-public class JUnitTestKindUtil {
-}
-
-class JUnitTestKindUtil1 {
+class JUnitTestKindUtil {
 	public static final String JUNIT3_TEST_KIND_ID = "org.eclipse.unittest.junit.loader.junit3"; //$NON-NLS-1$
 	public static final String JUNIT4_TEST_KIND_ID = "org.eclipse.unittest.junit.loader.junit4"; //$NON-NLS-1$
 	public static final String JUNIT5_TEST_KIND_ID = "org.eclipse.unittest.junit.loader.junit5"; //$NON-NLS-1$
 
-	private JUnitTestKindUtil1() {
+	private JUnitTestKindUtil() {
 	}
 
 	public static String getContainerTestKindId(IJavaElement element) {
@@ -91,9 +84,5 @@ class JUnitTestKindUtil1 {
 			}
 		}
 		return false;
-	}
-
-	public static ITestKind getContainerTestKind(IJavaElement element) {
-		return TestKindRegistry.getDefault().getKind(getContainerTestKindId(element));
 	}
 }

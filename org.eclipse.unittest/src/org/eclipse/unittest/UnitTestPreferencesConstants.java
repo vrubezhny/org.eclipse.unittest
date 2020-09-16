@@ -17,9 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.eclipse.unittest.launcher.ITestViewSupport;
-import org.eclipse.unittest.model.ITestRunSession;
-
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 
@@ -80,22 +77,6 @@ public class UnitTestPreferencesConstants {
 		while (tokenizer.hasMoreTokens())
 			list.add(tokenizer.nextToken());
 		return list.toArray(new String[list.size()]);
-	}
-
-	/**
-	 * Returns an array of Filter patterns for Stacktraces/Error messages
-	 *
-	 * @param session a {@link ITestRunSession} to ask the filter pattern for
-	 * @return an array of filter patterns
-	 */
-	public static String[] getFilterPatterns(ITestRunSession session) {
-		if (session != null && !session.getTestRunnerKind().isNull()) {
-			ITestViewSupport viewSupport = session.getTestRunnerKind().getTestViewSupport();
-			if (viewSupport != ITestViewSupport.NULL) {
-				return viewSupport.getFilterPatterns();
-			}
-		}
-		return new String[0];
 	}
 
 	/**

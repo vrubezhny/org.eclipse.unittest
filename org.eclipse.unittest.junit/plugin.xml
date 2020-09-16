@@ -132,28 +132,8 @@
    <extension
          point="org.eclipse.unittest.unittestKinds">
       <kind
-            id="org.eclipse.unittest.junit.loader.junit3"
-            displayName="%testKind.junit3"
-            loaderPluginId="org.eclipse.jdt.junit.runtime"
-            loaderClass="org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestLoader"
-            testRunnerClientClass="org.eclipse.unittest.junit.launcher.JUnitRemoteTestRunnerClient"
-            testViewSupportClass="org.eclipse.unittest.junit.launcher.JUnitTestViewSupport">
-      </kind>
-      <kind
-            id="org.eclipse.unittest.junit.loader.junit4"
-            displayName="%testKind.junit4" 
-            loaderPluginId="org.eclipse.jdt.junit4.runtime"
-            loaderClass="org.eclipse.jdt.internal.junit4.runner.JUnit4TestLoader"
-			testRunnerClientClass="org.eclipse.unittest.junit.launcher.JUnitRemoteTestRunnerClient"
-            testViewSupportClass="org.eclipse.unittest.junit.launcher.JUnitTestViewSupport">
-      </kind>
-      <kind
-            id="org.eclipse.unittest.junit.loader.junit5"
-            displayName="%testKind.junit5"
-            loaderPluginId="org.eclipse.jdt.junit5.runtime"
-            loaderClass="org.eclipse.jdt.internal.junit5.runner.JUnit5TestLoader"
-            testRunnerClientClass="org.eclipse.unittest.junit.launcher.JUnitRemoteTestRunnerClient"
-            testViewSupportClass="org.eclipse.unittest.junit.launcher.JUnitTestViewSupport">
+            class="org.eclipse.unittest.junit.internal.launcher.JUnitTestKind"
+            id="org.eclipse.unittest.junit">
       </kind>
    </extension>
 </plugin>

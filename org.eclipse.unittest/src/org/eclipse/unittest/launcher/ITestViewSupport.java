@@ -28,39 +28,6 @@ import org.eclipse.ui.IActionDelegate;
  * org.org.eclipse.unittest.unittestKinds extension.
  */
 public interface ITestViewSupport {
-	ITestViewSupport NULL = new ITestViewSupport() {
-
-		@Override
-		public String[] getFilterPatterns() {
-			return null;
-		}
-
-		@Override
-		public IOpenEditorAction getOpenTestAction(TestRunnerViewPart testRunnerPart, ITestCaseElement testCase) {
-			return null;
-		}
-
-		@Override
-		public IOpenEditorAction getOpenTestAction(TestRunnerViewPart testRunnerPart, ITestSuiteElement testSuite) {
-			return null;
-		}
-
-		@Override
-		public IOpenEditorAction createOpenEditorAction(TestRunnerViewPart testRunnerPart, ITestElement failure,
-				String traceLine) {
-			return null;
-		}
-
-		@Override
-		public IActionDelegate createShowStackTraceInConsoleViewActionDelegate(FailureTrace view) {
-			return null;
-		}
-
-		@Override
-		public RerunAction[] getRerunActions(TestRunnerViewPart testRunnerPart, ITestSuiteElement testSuite) {
-			return null;
-		}
-	};
 
 	/**
 	 * Returns a filter patterns array for a stack trace or an error message
@@ -119,4 +86,11 @@ public interface ITestViewSupport {
 	 *         if at least one such action can be created, otherwise - null
 	 */
 	RerunAction[] getRerunActions(TestRunnerViewPart testRunnerPart, ITestSuiteElement testSuite);
+
+	/**
+	 * Returns a Test Kind display name
+	 *
+	 * @return returns a display name
+	 */
+	String getDisplayName();
 }

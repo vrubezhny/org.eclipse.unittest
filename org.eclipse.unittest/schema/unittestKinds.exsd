@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.unittest" id="unittestKinds" name="UnitTest Kinds"/>
       </appInfo>
       <documentation>
-         Internal extension point to register Unit Test test kinds. 
+         Internal extension point to register Unit Test test kinds.
       </documentation>
    </annotation>
 
@@ -54,9 +54,6 @@
          </documentation>
       </annotation>
       <complexType>
-         <!-- sequence>
-            <element ref="runtimeClasspathEntry" minOccurs="0" maxOccurs="unbounded"/>
-         </sequence -->
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -64,77 +61,18 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="displayName" type="string" use="required">
+         <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  name of this test kind
+                  
                </documentation>
                <appInfo>
-                  <meta.attribute translatable="true"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.unittest.launcher.ITestKind"/>
                </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="loaderPluginId" type="string" use="required">
-            <annotation>
-               <documentation>
-                  test loader plug-in ID
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="loaderClass" type="string" use="required">
-            <annotation>
-               <documentation>
-                  test loader class (declared in plug-in &quot;loaderPluginId&quot;)
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="testRunnerClientClass" type="string" use="required">
-            <annotation>
-               <documentation>
-                  test runner class implementing org.eclipse.unittest.launcher.ITestRunnerClient
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="testViewSupportClass" type="string" use="required">
-            <annotation>
-               <documentation>
-                  test view support class implementing org.eclipse.unittest.launcher.ITestViewSupport
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="precedesTestKind" type="string">
-            <annotation>
-               <documentation>
-                  comma-separated list of kind ids. This test kind should be shown after all the other kinds it preceds.
-               </documentation>
             </annotation>
          </attribute>
       </complexType>
    </element>
-
-   <!-- element name="runtimeClasspathEntry">
-      <annotation>
-         <documentation>
-            A Runtime Classpath Entry definition
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="pluginId" type="string" use="required">
-            <annotation>
-               <documentation>
-                  A Runtime Classpath Entry Plug-in ID
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="pathToJar" type="string">
-            <annotation>
-               <documentation>
-                  A path to jar containing the plug-in &quot;loaderPluginId&quot;
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element -->
 
 
 
