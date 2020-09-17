@@ -144,8 +144,6 @@ public abstract class BaseTestsLaunchDelegate extends LaunchConfigurationDelegat
 	private void updatedLaunchConfiguration(ILaunchConfiguration config) throws CoreException {
 		changesToLaunchConfiguration.clear();
 		ILaunchConfigurationWorkingCopy configWC = config.getWorkingCopy();
-		configWC.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_PROJECT_NAME,
-				config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, "")); //$NON-NLS-1$
 		configWC.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_UNIT_TEST_VIEW_SUPPORT, getUnitTestViewSupportID());
 		setProgramArguments(configWC);
 		configWC.doSave();

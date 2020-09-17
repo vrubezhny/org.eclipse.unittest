@@ -386,8 +386,7 @@ public class JUnitLaunchShortcut implements ILaunchShortcut2 {
 		ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, configName);
 
 		wc.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, mainTypeQualifiedName);
-		wc.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_PROJECT_NAME,
-				element.getJavaProject().getElementName());
+		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, element.getJavaProject().getElementName());
 		/*
 		 * As AbstractJavaLaunchConfigurationDelegate.getVMSpecificAttributesMap(
 		 * ILaunchConfiguration) method works with Java Launch, it requires
@@ -467,7 +466,7 @@ public class JUnitLaunchShortcut implements ILaunchShortcut2 {
 	 * @return the attribute names of the attributes that are compared
 	 */
 	protected String[] getAttributeNamesToCompare() {
-		return new String[] { UnitTestLaunchConfigurationConstants.ATTR_PROJECT_NAME,
+		return new String[] { IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME,
 				JUnitLaunchConfigurationConstants.ATTR_TEST_CONTAINER,
 				UnitTestLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME,
 				UnitTestLaunchConfigurationConstants.ATTR_TEST_NAME,

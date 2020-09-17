@@ -20,8 +20,6 @@ import org.eclipse.unittest.internal.model.TestRunSession;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import org.eclipse.core.resources.IProject;
-
 import org.eclipse.debug.core.ILaunch;
 
 /**
@@ -76,11 +74,10 @@ public interface IUnitTestModel {
 	/**
 	 * Creates an {@link ITestRunSession}
 	 *
-	 * @param launch  an {@link ILaunch} to start a test run session
-	 * @param project an {@link IProject} to test
-	 * @param port    a port number to listen during the run of remote test runner
-	 *                or <code>-1</code> in case of a local test runner
+	 * @param launch an {@link ILaunch} to start a test run session
+	 * @param port   a port number to listen during the run of remote test runner or
+	 *               <code>-1</code> in case of a local test runner
 	 * @return a created {@link ITestRunSession} instance
 	 */
-	ITestRunSession createTestRunSession(ILaunch launch, IProject project, int port);
+	ITestRunSession createTestRunSession(ILaunch launch, int port);
 }

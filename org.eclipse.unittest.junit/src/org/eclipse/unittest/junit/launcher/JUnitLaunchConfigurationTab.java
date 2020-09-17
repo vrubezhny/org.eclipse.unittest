@@ -493,7 +493,7 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 	private void updateProjectFromConfig(ILaunchConfiguration config) {
 		String projectName = ""; //$NON-NLS-1$
 		try {
-			projectName = config.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
+			projectName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
 		} catch (CoreException ce) {
 		}
 		fProjText.setText(projectName);
@@ -540,7 +540,7 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		if (fTestContainerRadioButton.getSelection() && fContainerElement != null) {
-			config.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_PROJECT_NAME,
+			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME,
 					fContainerElement.getJavaProject().getElementName());
 			config.setAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_CONTAINER,
 					fContainerElement.getHandleIdentifier());
@@ -548,7 +548,7 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 			// workaround for bug 65399
 			config.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_NAME, ""); //$NON-NLS-1$
 		} else {
-			config.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_PROJECT_NAME, fProjText.getText());
+			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, fProjText.getText());
 			config.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, fTestText.getText());
 			config.setAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_CONTAINER, ""); //$NON-NLS-1$
 			config.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_NAME, fTestMethodText.getText());
@@ -1078,7 +1078,7 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 			// incorrect result (the performApply() method can result in empty values
 			// for these attributes being set on a config if there is nothing in the
 			// corresponding text boxes)
-			config.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
+			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
 			config.setAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_CONTAINER, ""); //$NON-NLS-1$
 		}
 		initializeTestAttributes(javaElement, config);
@@ -1248,7 +1248,7 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 		if (javaProject != null && javaProject.exists()) {
 			name = javaProject.getElementName();
 		}
-		config.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_PROJECT_NAME, name);
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, name);
 	}
 
 	private void setButtonGridData(Button button) {

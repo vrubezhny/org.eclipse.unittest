@@ -60,8 +60,6 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 
-import org.eclipse.core.resources.IProject;
-
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -485,7 +483,7 @@ public final class UnitTestModel implements IUnitTestModel {
 	}
 
 	@Override
-	public ITestRunSession createTestRunSession(ILaunch launch, IProject project, int port) {
+	public ITestRunSession createTestRunSession(ILaunch launch, int port) {
 		return new TestRunSession(launch, port);
 	}
 

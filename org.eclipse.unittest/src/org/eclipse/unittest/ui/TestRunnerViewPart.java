@@ -74,8 +74,6 @@ import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 
-import org.eclipse.core.resources.IProject;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -1917,16 +1915,6 @@ public class TestRunnerViewPart extends ViewPart {
 	 */
 	public ITestRunSession getCurrentTestRunSession() {
 		return fTestRunSession;
-	}
-
-	/**
-	 * @return the Java project, or <code>null</code>
-	 */
-	public IProject getLaunchedProject() {
-		if (fTestRunSession == null) {
-			return null;
-		}
-		return UnitTestLaunchConfigurationConstants.getProject(fTestRunSession.getLaunch());
 	}
 
 	private boolean isDisposed() {

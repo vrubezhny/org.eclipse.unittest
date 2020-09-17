@@ -26,12 +26,9 @@ import org.eclipse.unittest.TestRunListener;
 import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.cdt.launcher.CDTTestRunnerClient;
 import org.eclipse.unittest.launcher.ITestRunnerClient;
-import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.model.ITestRunSession;
 
 import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.core.resources.IProject;
 
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.IProcessFactory;
@@ -98,9 +95,7 @@ public class TestingProcessFactory implements IProcessFactory {
 		InputStream iStream = testsRunnerProvider.isOutputStreamRequired() ? process.getInputStream()
 				: testsRunnerProvider.isErrorStreamRequired() ? process.getErrorStream() : null;
 
-		IProject project = UnitTestLaunchConfigurationConstants.getProject(launch.getLaunchConfiguration());
-
-		ITestRunSession testRunSession= UnitTestPlugin.getModel().createTestRunSession(launch, project, -1);
+		ITestRunSession testRunSession= UnitTestPlugin.getModel().createTestRunSession(launch, -1);
 		UnitTestPlugin.getModel().addTestRunSession(testRunSession);
 		ITestRunnerClient runnerClient =  testRunSession.getTestRunnerClient();
 		CDTTestRunnerClient runner = (runnerClient instanceof CDTTestRunnerClient ?
