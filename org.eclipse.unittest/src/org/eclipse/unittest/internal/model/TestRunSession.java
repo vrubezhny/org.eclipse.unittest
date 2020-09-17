@@ -40,8 +40,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ListenerList;
 
-import org.eclipse.core.resources.IProject;
-
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -59,11 +57,6 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 	 */
 	private final ILaunch fLaunch;
 	private final String fTestRunName;
-	/**
-	 * Project, or <code>null</code>.
-	 */
-	private final IProject fProject;
-
 	private final ITestKind fTestRunnerKind;
 
 	/**
@@ -154,14 +147,12 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 	 * Creates a test run session.
 	 *
 	 * @param testRunName name of the test run
-	 * @param project     may be <code>null</code>
 	 */
-	public TestRunSession(String testRunName, IProject project) {
+	public TestRunSession(String testRunName) {
 		super(null, "-1", testRunName, null, null, null); //$NON-NLS-1$
 		// TODO: check assumptions about non-null fields
 
 		fLaunch = null;
-		fProject = project;
 		fStartTime = -System.currentTimeMillis();
 
 		Assert.isNotNull(testRunName);
@@ -177,19 +168,18 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 		fSessionListeners = new ListenerList<>();
 	}
 
-	public TestRunSession(ILaunch launch, IProject project, int port) {
+	public TestRunSession(ILaunch launch, int port) {
 		super(null, "-1", "<TestRunSession>", null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
 		Assert.isNotNull(launch);
 
 		fLaunch = launch;
-		fProject = project;
 
 		ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
 		if (launchConfiguration != null) {
 			fTestRunName = launchConfiguration.getName();
 			fTestRunnerKind = UnitTestLaunchConfigurationConstants.newTestRunnerKind(launchConfiguration);
 		} else {
-			fTestRunName = project.getName();
+			fTestRunName = "<TestRunSession>"; //$NON-NLS-1$
 			fTestRunnerKind = null;
 		}
 
@@ -305,11 +295,6 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 	public synchronized ITestRoot getTestRoot() {
 		swapIn(); // TODO: TestRoot should stay (e.g. for getTestRoot().getStatus())
 		return fTestRoot;
-	}
-
-	@Override
-	public IProject getLaunchedProject() {
-		return fProject;
 	}
 
 	@Override

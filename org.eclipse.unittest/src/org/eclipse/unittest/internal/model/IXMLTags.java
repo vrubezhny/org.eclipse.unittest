@@ -37,7 +37,7 @@ public interface IXMLTags {
 	/**
 	 * value: String
 	 */
-	String ATTR_PROJECT = "project"; //$NON-NLS-1$
+	String ATTR_LAUNCH_CONFIG_NAME = "launch_config_name"; //$NON-NLS-1$
 	/**
 	 * value: Integer
 	 */

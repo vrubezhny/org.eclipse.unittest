@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
@@ -105,7 +106,19 @@ public class UnitTestLaunchConfigurationConstants {
 		return null;
 	}
 
+	/**
+	 * Returns {@link IProject} instance from the given launch
+	 *
+	 * @param launch a launch
+	 * @return a project if exists or <code>null</code>
+	 */
+	public static IProject getProject(ILaunch launch) {
+		ILaunchConfiguration launchConfig = launch != null ? launch.getLaunchConfiguration() : null;
+		return launchConfig != null ? getProject(launchConfig) : null;
+	}
+
 	private UnitTestLaunchConfigurationConstants() {
+		// No instance allowed
 	}
 
 	/* Copied from org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants */
