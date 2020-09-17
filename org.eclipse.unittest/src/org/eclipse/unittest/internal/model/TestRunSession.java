@@ -30,7 +30,7 @@ import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElementContainer;
 import org.eclipse.unittest.model.ITestRoot;
-import org.eclipse.unittest.model.ITestRunListener3;
+import org.eclipse.unittest.model.ITestRunListener;
 import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestSessionListener;
 import org.eclipse.unittest.model.ITestSuiteElement;
@@ -198,7 +198,7 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 
 		if (fTestRunnerKind != null) {
 			fTestRunnerClient = fTestRunnerKind.newTestRunnerClient();
-			fTestRunnerClient.setListeners(new ITestRunListener3[] { new TestSessionNotifier() });
+			fTestRunnerClient.setListeners(new ITestRunListener[] { new TestSessionNotifier() });
 			if (port != -1) {
 				fTestRunnerClient.startListening(port);
 			}
@@ -568,11 +568,11 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 	}
 
 	/**
-	 * An {@link ITestRunListener3} that listens to events from the
+	 * An {@link ITestRunListener} that listens to events from the
 	 * {@link RemoteTestRunnerClient} and translates them into high-level model
 	 * events (broadcasted to {@link ITestSessionListener}s).
 	 */
-	private class TestSessionNotifier implements ITestRunListener3 {
+	private class TestSessionNotifier implements ITestRunListener {
 
 		@Override
 		public void testRunStarted(int testCount) {

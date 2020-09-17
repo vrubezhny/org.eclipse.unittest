@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.unittest.launcher;
 
-import org.eclipse.unittest.model.ITestRunListener3;
+import org.eclipse.unittest.model.ITestRunListener;
 
 /**
  * An interface to be implemented by a Test Runner Client
@@ -41,7 +41,7 @@ public interface ITestRunnerClient {
 	 *
 	 * @param listeners listeners to inform
 	 */
-	void setListeners(ITestRunListener3[] listeners);
+	void setListeners(ITestRunListener[] listeners);
 
 	/**
 	 * Start listening to a test run. Start a server connection that the

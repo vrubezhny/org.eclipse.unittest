@@ -30,9 +30,9 @@ public interface ITestElement {
 		public static final Status RUNNING_FAILURE = new Status("RUNNING_FAILURE", 6); //$NON-NLS-1$
 		public static final Status RUNNING = new Status("RUNNING", 3); //$NON-NLS-1$
 
-		public static final Status ERROR = new Status("ERROR", /* 1 */ITestRunListener3.STATUS_ERROR); //$NON-NLS-1$
-		public static final Status FAILURE = new Status("FAILURE", /* 2 */ITestRunListener3.STATUS_FAILURE); //$NON-NLS-1$
-		public static final Status OK = new Status("OK", /* 0 */ITestRunListener3.STATUS_OK); //$NON-NLS-1$
+		public static final Status ERROR = new Status("ERROR", /* 1 */ITestRunListener.STATUS_ERROR); //$NON-NLS-1$
+		public static final Status FAILURE = new Status("FAILURE", /* 2 */ITestRunListener.STATUS_FAILURE); //$NON-NLS-1$
+		public static final Status OK = new Status("OK", /* 0 */ITestRunListener.STATUS_OK); //$NON-NLS-1$
 		public static final Status NOT_RUN = new Status("NOT_RUN", 4); //$NON-NLS-1$
 
 		private static final Status[] OLD_CODE = { OK, ERROR, FAILURE };
@@ -136,7 +136,7 @@ public interface ITestElement {
 		}
 
 		/**
-		 * @param oldStatus one of {@link ITestRunListener3}'s STATUS_* constants
+		 * @param oldStatus one of {@link ITestRunListener}'s STATUS_* constants
 		 * @return the Status
 		 */
 		public static Status convert(int oldStatus) {

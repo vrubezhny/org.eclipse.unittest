@@ -18,7 +18,7 @@ package org.eclipse.unittest.model;
  * {@link org.eclipse.unittest.launcher.ITestRunnerClient} and translates them
  * into high-level model events (broadcasted to {@link ITestSessionListener}s).
  */
-public interface ITestRunListener3 {
+public interface ITestRunListener {
 
 	/**
 	 * Status constant indicating that a test passed (constant value 0).

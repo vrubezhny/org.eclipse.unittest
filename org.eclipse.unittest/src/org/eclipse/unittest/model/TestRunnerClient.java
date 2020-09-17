@@ -56,7 +56,7 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	/**
 	 * An array of listeners that are informed about test events.
 	 */
-	protected ITestRunListener3[] fListeners;
+	protected ITestRunListener[] fListeners;
 
 	/**
 	 * The server socket
@@ -85,7 +85,7 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	protected boolean fDebug = false;
 
 	@Override
-	public void setListeners(ITestRunListener3[] listeners) {
+	public void setListeners(ITestRunListener[] listeners) {
 		this.fListeners = listeners;
 	}
 
@@ -134,14 +134,14 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	}
 
 	protected void notifyTestReran(String testId, String className, String testName, String status) {
-		int statusCode = ITestRunListener3.STATUS_OK;
+		int statusCode = ITestRunListener.STATUS_OK;
 		if (status.equals("FAILURE")) //$NON-NLS-1$
-			statusCode = ITestRunListener3.STATUS_FAILURE;
+			statusCode = ITestRunListener.STATUS_FAILURE;
 		else if (status.equals("ERROR")) //$NON-NLS-1$
-			statusCode = ITestRunListener3.STATUS_ERROR;
+			statusCode = ITestRunListener.STATUS_ERROR;
 
 		String trace = ""; //$NON-NLS-1$
-		if (statusCode != ITestRunListener3.STATUS_OK)
+		if (statusCode != ITestRunListener.STATUS_OK)
 			trace = fFailedRerunTrace.toString();
 		// assumption a rerun trace was sent before
 		notifyTestReran(testId, className, testName, statusCode, trace);
@@ -156,7 +156,7 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 
 	protected void notifyTestReran(final String testId, final String className, final String testName,
 			final int statusCode, final String trace) {
-		for (ITestRunListener3 listener : fListeners) {
+		for (ITestRunListener listener : fListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
 				@Override
 				public void run() {
@@ -170,7 +170,7 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	protected void notifyTestTreeEntry(final String testId, final String testName, final boolean isSuite,
 			final int testCount, final boolean isDynamicTest, final String parentId, final String displayName,
 			final String[] parameterTypes, final String uniqueId) {
-		for (ITestRunListener3 listener : fListeners) {
+		for (ITestRunListener listener : fListeners) {
 			listener.testTreeEntry(testId, testName, isSuite, testCount, isDynamicTest, parentId, displayName,
 					parameterTypes, uniqueId);
 		}
@@ -179,7 +179,7 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	protected void notifyTestRunStopped(final long elapsedTime) {
 		if (UnitTestPlugin.isStopped())
 			return;
-		for (ITestRunListener3 listener : fListeners) {
+		for (ITestRunListener listener : fListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
 				@Override
 				public void run() {
@@ -192,7 +192,7 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	protected void notifyTestRunEnded(final long elapsedTime) {
 		if (UnitTestPlugin.isStopped())
 			return;
-		for (ITestRunListener3 listener : fListeners) {
+		for (ITestRunListener listener : fListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
 				@Override
 				public void run() {
@@ -205,7 +205,7 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	protected void notifyTestEnded(final String testId, final String testName, boolean isIgnored) {
 		if (UnitTestPlugin.isStopped())
 			return;
-		for (ITestRunListener3 listener : fListeners) {
+		for (ITestRunListener listener : fListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
 				@Override
 				public void run() {
@@ -218,7 +218,7 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	protected void notifyTestStarted(final String testId, final String testName) {
 		if (UnitTestPlugin.isStopped())
 			return;
-		for (ITestRunListener3 listener : fListeners) {
+		for (ITestRunListener listener : fListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
 				@Override
 				public void run() {
@@ -231,7 +231,7 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	protected void notifyTestRunStarted(final int count) {
 		if (UnitTestPlugin.isStopped())
 			return;
-		for (ITestRunListener3 listener : fListeners) {
+		for (ITestRunListener listener : fListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
 				@Override
 				public void run() {
@@ -244,7 +244,7 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	protected void notifyTestFailed() {
 		if (UnitTestPlugin.isStopped())
 			return;
-		for (ITestRunListener3 listener : fListeners) {
+		for (ITestRunListener listener : fListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
 				@Override
 				public void run() {
@@ -282,7 +282,7 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	protected void notifyTestRunTerminated() {
 		if (UnitTestPlugin.isStopped())
 			return;
-		for (ITestRunListener3 listener : fListeners) {
+		for (ITestRunListener listener : fListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
 				@Override
 				public void run() {
