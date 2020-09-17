@@ -24,6 +24,7 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElement.Status;
 import org.eclipse.unittest.model.ITestSuiteElement;
@@ -31,8 +32,9 @@ import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchManager;
 
 public class TestRunHandler extends DefaultHandler {
 
@@ -98,14 +100,28 @@ public class TestRunHandler extends DefaultHandler {
 		case IXMLTags.NODE_TESTRUN:
 			if (fTestRunSession == null) {
 				String name = attributes.getValue(IXMLTags.ATTR_NAME);
-				String projectName = attributes.getValue(IXMLTags.ATTR_PROJECT);
-				IProject project = null;
-				if (projectName != null) {
-					project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-					if (!project.exists())
-						project = null;
+				String launchConfigName = attributes.getValue(IXMLTags.ATTR_LAUNCH_CONFIG_NAME);
+				ILaunch launch = null;
+				int port = -1;
+				if (launchConfigName != null) {
+					ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+					for (ILaunch l : launchManager.getLaunches()) {
+						if (l.getLaunchConfiguration().getName().equals(name)) {
+							launch = l;
+							String portStr = launch.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_PORT);
+							if (portStr != null) {
+								try {
+									int portNumber = Integer.parseInt(portStr);
+									port = portNumber;
+								} catch (NumberFormatException e) {
+									// Ignore
+								}
+							}
+							break;
+						}
+					}
 				}
-				fTestRunSession = new TestRunSession(name, project);
+				fTestRunSession = new TestRunSession(launch, port);
 				String includeTags = attributes.getValue(IXMLTags.ATTR_INCLUDE_TAGS);
 				if (includeTags != null && includeTags.trim().length() > 0) {
 					fTestRunSession.setIncludeTags(includeTags);
@@ -126,7 +142,7 @@ public class TestRunHandler extends DefaultHandler {
 		case IXMLTags.NODE_TESTSUITE: {
 			String name = attributes.getValue(IXMLTags.ATTR_NAME);
 			if (fTestRunSession == null) {
-				fTestRunSession = new TestRunSession(name, null);
+				fTestRunSession = new TestRunSession(name);
 				fTestSuite = fTestRunSession.getTestRoot();
 			}
 			String pack = attributes.getValue(IXMLTags.ATTR_PACKAGE);

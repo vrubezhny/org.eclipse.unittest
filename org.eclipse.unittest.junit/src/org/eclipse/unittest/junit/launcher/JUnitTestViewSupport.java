@@ -130,7 +130,8 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 			return new RerunAction[0];
 		}
 
-		IJavaProject project = getJavaProject(testSuite.getTestRunSession().getLaunchedProject());
+		IJavaProject project = getJavaProject(
+				UnitTestLaunchConfigurationConstants.getProject(testSuite.getTestRunSession().getLaunch()));
 		if (project == null) {
 			return new RerunAction[0];
 		}
@@ -226,6 +227,6 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 
 	@Override
 	public String getDisplayName() {
-		return "JUnit";
+		return "JUnit"; //$NON-NLS-1$
 	}
 }

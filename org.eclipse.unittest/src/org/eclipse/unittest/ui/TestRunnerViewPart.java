@@ -1055,7 +1055,7 @@ public class TestRunnerViewPart extends ViewPart {
 //		}
 		Integer ratio = memento.getInteger(TAG_RATIO);
 		if (ratio != null)
-			fSashForm.setWeights(new int[] { ratio.intValue(), 1000 - ratio.intValue() });
+			fSashForm.setWeights(ratio.intValue(), 1000 - ratio.intValue());
 		Integer orientation = memento.getInteger(TAG_ORIENTATION);
 		if (orientation != null)
 			fOrientation = orientation.intValue();
@@ -1923,7 +1923,10 @@ public class TestRunnerViewPart extends ViewPart {
 	 * @return the Java project, or <code>null</code>
 	 */
 	public IProject getLaunchedProject() {
-		return fTestRunSession == null ? null : fTestRunSession.getLaunchedProject();
+		if (fTestRunSession == null) {
+			return null;
+		}
+		return UnitTestLaunchConfigurationConstants.getProject(fTestRunSession.getLaunch());
 	}
 
 	private boolean isDisposed() {

@@ -17,8 +17,6 @@ import org.eclipse.unittest.launcher.ITestKind;
 import org.eclipse.unittest.launcher.ITestRunnerClient;
 import org.eclipse.unittest.launcher.ITestViewSupport;
 
-import org.eclipse.core.resources.IProject;
-
 import org.eclipse.debug.core.ILaunch;
 
 /**
@@ -39,14 +37,6 @@ public interface ITestRunSession extends ITestElementContainer {
 	 * @return returns the test run name
 	 */
 	String getTestRunName();
-
-	/**
-	 * Returns the Java project from which this test run session has been launched,
-	 * or <code>null</code> if not available.
-	 *
-	 * @return the launched project, or <code>null</code> is not available.
-	 */
-	IProject getLaunchedProject();
 
 	/**
 	 * Returns the Java project from which this test run session has been launched,

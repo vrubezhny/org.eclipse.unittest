@@ -40,7 +40,7 @@ import org.eclipse.unittest.model.ITestRoot;
 
 import org.eclipse.core.runtime.Assert;
 
-import org.eclipse.core.resources.IProject;
+import org.eclipse.debug.core.ILaunchConfiguration;
 
 public class TestRunSessionSerializer implements XMLReader {
 
@@ -80,9 +80,14 @@ public class TestRunSessionSerializer implements XMLReader {
 	private void handleTestRun() throws SAXException {
 		AttributesImpl atts = new AttributesImpl();
 		addCDATA(atts, IXMLTags.ATTR_NAME, fTestRunSession.getTestRunName());
-		IProject project = fTestRunSession.getLaunchedProject();
-		if (project != null)
-			addCDATA(atts, IXMLTags.ATTR_PROJECT, project.getName());
+
+		ILaunchConfiguration launchConfig = fTestRunSession.getLaunch() != null
+				? fTestRunSession.getLaunch().getLaunchConfiguration()
+				: null;
+		if (launchConfig != null) {
+			addCDATA(atts, IXMLTags.ATTR_LAUNCH_CONFIG_NAME, launchConfig.getName());
+		}
+
 		addCDATA(atts, IXMLTags.ATTR_TESTS, fTestRunSession.getTotalCount());
 		addCDATA(atts, IXMLTags.ATTR_STARTED, fTestRunSession.getStartedCount());
 		addCDATA(atts, IXMLTags.ATTR_FAILURES, fTestRunSession.getFailureCount());

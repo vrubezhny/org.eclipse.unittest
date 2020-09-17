@@ -110,10 +110,6 @@ public final class UnitTestModel implements IUnitTestModel {
 				return;
 			}
 
-			final IProject javaProject = UnitTestLaunchConfigurationConstants.getProject(config);
-			if (javaProject == null)
-				return;
-
 			// This testRunnerKind and testRunnerClient instances are not retained (just
 			// there for testing)
 			// so it's ok instantiating them.
@@ -135,16 +131,16 @@ public final class UnitTestModel implements IUnitTestModel {
 				try {
 					final int port = Integer.parseInt(portStr);
 					fTrackedLaunches.remove(launch);
-					connectTestRunner(launch, javaProject, port);
+					connectTestRunner(launch, port);
 				} catch (NumberFormatException e) {
-					e.printStackTrace();
+					UnitTestPlugin.log(e);
 					return;
 				}
 			}
 		}
 
-		private void connectTestRunner(ILaunch launch, IProject project, int port) {
-			TestRunSession testRunSession = new TestRunSession(launch, project, port);
+		private void connectTestRunner(ILaunch launch, int port) {
+			TestRunSession testRunSession = new TestRunSession(launch, port);
 			addTestRunSession(testRunSession);
 
 			for (TestRunListener listener : UnitTestPlugin.getDefault().getUnitTestRunListeners()) {
@@ -490,7 +486,7 @@ public final class UnitTestModel implements IUnitTestModel {
 
 	@Override
 	public ITestRunSession createTestRunSession(ILaunch launch, IProject project, int port) {
-		return new TestRunSession(launch, project, port);
+		return new TestRunSession(launch, port);
 	}
 
 }
