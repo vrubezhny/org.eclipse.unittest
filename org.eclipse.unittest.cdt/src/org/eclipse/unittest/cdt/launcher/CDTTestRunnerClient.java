@@ -24,7 +24,7 @@ import org.eclipse.unittest.model.TestRunnerClient;
 import org.eclipse.core.runtime.IStatus;
 
 public class CDTTestRunnerClient extends TestRunnerClient {
-	private static final String FRAME_PREFIX = org.eclipse.unittest.ui.FailureTrace.FRAME_PREFIX;
+	private static final String FRAME_PREFIX = org.eclipse.unittest.ui.FailureTraceUIBlock.FRAME_PREFIX;
 
 	class TestModelUpdaterAdapter implements ITestModelUpdater {
 

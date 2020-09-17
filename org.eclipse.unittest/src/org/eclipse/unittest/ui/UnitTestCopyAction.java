@@ -38,13 +38,13 @@ import org.eclipse.ui.actions.SelectionListenerAction;
  * Copies a test failure stack trace to the clipboard.
  */
 public class UnitTestCopyAction extends SelectionListenerAction {
-	private FailureTrace fView;
+	private FailureTraceUIBlock fView;
 
 	private final Clipboard fClipboard;
 
 	private ITestElement fTestElement;
 
-	public UnitTestCopyAction(FailureTrace view, Clipboard clipboard) {
+	public UnitTestCopyAction(FailureTraceUIBlock view, Clipboard clipboard) {
 		super(Messages.CopyTrace_action_label);
 		Assert.isNotNull(clipboard);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IUnitTestHelpContextIds.COPYTRACE_ACTION);

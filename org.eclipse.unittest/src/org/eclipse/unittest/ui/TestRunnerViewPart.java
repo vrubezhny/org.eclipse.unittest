@@ -161,7 +161,7 @@ public class TestRunnerViewPart extends ViewPart {
 	protected Clipboard fClipboard;
 	protected volatile String fInfoMessage;
 
-	private FailureTrace fFailureTrace;
+	private FailureTraceUIBlock fFailureTrace;
 
 	private TestViewer fTestViewer;
 	/**
@@ -1620,7 +1620,7 @@ public class TestRunnerViewPart extends ViewPart {
 		bottom.setTopLeft(label);
 		ToolBar failureToolBar = new ToolBar(bottom, SWT.FLAT | SWT.WRAP);
 		bottom.setTopCenter(failureToolBar);
-		fFailureTrace = new FailureTrace(bottom, fClipboard, this, failureToolBar);
+		fFailureTrace = new FailureTraceUIBlock(bottom, fClipboard, this, failureToolBar);
 		bottom.setContent(fFailureTrace.getComposite());
 
 		fSashForm.setWeights(50, 50);
@@ -2062,7 +2062,7 @@ public class TestRunnerViewPart extends ViewPart {
 		}
 	}
 
-	public FailureTrace getFailureTrace() {
+	public FailureTraceUIBlock getFailureTrace() {
 		return fFailureTrace;
 	}
 

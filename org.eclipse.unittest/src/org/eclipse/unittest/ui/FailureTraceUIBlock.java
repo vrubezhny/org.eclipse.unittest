@@ -39,7 +39,7 @@ import org.eclipse.jface.util.OpenStrategy;
 /**
  * A pane that shows a stack trace of a failed test.
  */
-public class FailureTrace implements IMenuListener {
+public class FailureTraceUIBlock implements IMenuListener {
 
 	/*
 	 * Internal property change listener for handling workbench font changes.
@@ -66,7 +66,7 @@ public class FailureTrace implements IMenuListener {
 	private final FailureTableDisplay fFailureTableDisplay;
 	private ShowStackTraceInConsoleViewAction fShowTraceInConsoleAction;
 
-	public FailureTrace(Composite parent, Clipboard clipboard, TestRunnerViewPart testRunner, ToolBar toolBar) {
+	public FailureTraceUIBlock(Composite parent, Clipboard clipboard, TestRunnerViewPart testRunner, ToolBar toolBar) {
 		Assert.isNotNull(clipboard);
 
 		// fill the failure trace viewer toolbar
@@ -115,7 +115,7 @@ public class FailureTrace implements IMenuListener {
 			IAction a = createOpenEditorAction(getSelectedText());
 			if (a != null)
 				manager.add(a);
-			manager.add(new UnitTestCopyAction(FailureTrace.this, fClipboard));
+			manager.add(new UnitTestCopyAction(FailureTraceUIBlock.this, fClipboard));
 		}
 		// fix for bug 68058
 		if (fFailure != null && fFailure.isComparisonFailure())

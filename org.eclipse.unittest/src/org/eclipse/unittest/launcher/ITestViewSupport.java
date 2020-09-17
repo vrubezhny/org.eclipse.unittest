@@ -16,7 +16,7 @@ package org.eclipse.unittest.launcher;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestSuiteElement;
-import org.eclipse.unittest.ui.FailureTrace;
+import org.eclipse.unittest.ui.FailureTraceUIBlock;
 import org.eclipse.unittest.ui.IOpenEditorAction;
 import org.eclipse.unittest.ui.RerunAction;
 import org.eclipse.unittest.ui.TestRunnerViewPart;
@@ -74,7 +74,7 @@ public interface ITestViewSupport {
 	 * @param view a test runner view Failure Trace view instance
 	 * @return an action delegate if it can be created, otherwise - null
 	 */
-	IActionDelegate createShowStackTraceInConsoleViewActionDelegate(FailureTrace view);
+	IActionDelegate createShowStackTraceInConsoleViewActionDelegate(FailureTraceUIBlock view);
 
 	/**
 	 * Returns an array of Rerun test actions for a specified Test Suite element

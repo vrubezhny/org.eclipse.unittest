@@ -89,7 +89,7 @@ public class TextualTrace {
 				pattern = pattern.substring(0, len);
 			} else if (Character.isUpperCase(pattern.charAt(0))) {
 				// class in the default package
-				pattern = FailureTrace.FRAME_PREFIX + pattern + '.';
+				pattern = FailureTraceUIBlock.FRAME_PREFIX + pattern + '.';
 			} else {
 				// class names start w/ an uppercase letter after the .
 				final int lastDotIndex = pattern.lastIndexOf('.');

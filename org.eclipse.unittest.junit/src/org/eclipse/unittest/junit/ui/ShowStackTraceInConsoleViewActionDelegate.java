@@ -15,7 +15,7 @@ package org.eclipse.unittest.junit.ui;
 
 import org.eclipse.jdt.debug.ui.console.JavaStackTraceConsoleFactory;
 import org.eclipse.unittest.model.ITestElement;
-import org.eclipse.unittest.ui.FailureTrace;
+import org.eclipse.unittest.ui.FailureTraceUIBlock;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -28,10 +28,10 @@ import org.eclipse.ui.IActionDelegate;
  */
 public class ShowStackTraceInConsoleViewActionDelegate implements IActionDelegate {
 
-	private FailureTrace fView;
+	private FailureTraceUIBlock fView;
 	private JavaStackTraceConsoleFactory fFactory;
 
-	public ShowStackTraceInConsoleViewActionDelegate(FailureTrace view) {
+	public ShowStackTraceInConsoleViewActionDelegate(FailureTraceUIBlock view) {
 		fView= view;
 	}
 

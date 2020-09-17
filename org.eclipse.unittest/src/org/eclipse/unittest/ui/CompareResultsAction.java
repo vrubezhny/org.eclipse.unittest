@@ -25,10 +25,10 @@ import org.eclipse.ui.PlatformUI;
  */
 public class CompareResultsAction extends Action {
 
-	private FailureTrace fView;
+	private FailureTraceUIBlock fView;
 	private CompareResultDialog fOpenDialog;
 
-	public CompareResultsAction(FailureTrace view) {
+	public CompareResultsAction(FailureTraceUIBlock view) {
 		super(Messages.CompareResultsAction_label);
 		setDescription(Messages.CompareResultsAction_description);
 		setToolTipText(Messages.CompareResultsAction_tooltip);

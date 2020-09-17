@@ -14,7 +14,7 @@ import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestRoot;
 import org.eclipse.unittest.model.ITestSuiteElement;
-import org.eclipse.unittest.ui.FailureTrace;
+import org.eclipse.unittest.ui.FailureTraceUIBlock;
 import org.eclipse.unittest.ui.IOpenEditorAction;
 import org.eclipse.unittest.ui.RerunAction;
 import org.eclipse.unittest.ui.TestRunnerViewPart;
@@ -84,12 +84,12 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 			String traceLine) {
 		try {
 			String testName = traceLine;
-			int indexOfFramePrefix = testName.indexOf(FailureTrace.FRAME_PREFIX);
+			int indexOfFramePrefix = testName.indexOf(FailureTraceUIBlock.FRAME_PREFIX);
 			if (indexOfFramePrefix == -1) {
 				return null;
 			}
 			testName = testName.substring(indexOfFramePrefix);
-			testName = testName.substring(FailureTrace.FRAME_PREFIX.length(), testName.lastIndexOf('(')).trim();
+			testName = testName.substring(FailureTraceUIBlock.FRAME_PREFIX.length(), testName.lastIndexOf('(')).trim();
 			int indexOfModuleSeparator = testName.lastIndexOf('/');
 			if (indexOfModuleSeparator != -1) {
 				testName = testName.substring(indexOfModuleSeparator + 1);
@@ -109,7 +109,7 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 	}
 
 	@Override
-	public IActionDelegate createShowStackTraceInConsoleViewActionDelegate(FailureTrace view) {
+	public IActionDelegate createShowStackTraceInConsoleViewActionDelegate(FailureTraceUIBlock view) {
 		return new ShowStackTraceInConsoleViewActionDelegate(view);
 	}
 
