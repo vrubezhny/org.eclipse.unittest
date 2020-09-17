@@ -17,10 +17,6 @@ import org.eclipse.unittest.UnitTestPlugin;
 
 import org.eclipse.core.runtime.CoreException;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
-
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
@@ -67,8 +63,6 @@ public class UnitTestLaunchConfigurationConstants {
 	 */
 	public static final String ATTR_TEST_UNIQUE_ID = UnitTestPlugin.PLUGIN_ID + ".TEST_UNIQUE_ID"; //$NON-NLS-1$
 
-	public static final String ATTR_PROJECT_NAME = UnitTestPlugin.PLUGIN_ID + ".ATTR_PROJECT_NAME"; //$NON-NLS-1$
-
 	/**
 	 * Returns {@link ITestKind} instance from the given launch configuration
 	 *
@@ -86,35 +80,6 @@ public class UnitTestLaunchConfigurationConstants {
 			// Ignore
 		}
 		return null;
-	}
-
-	/**
-	 * Returns {@link IProject} instance from the given launch configuration
-	 *
-	 * @param configuration a launch configuration
-	 * @return a project if exists or <code>null</code>
-	 */
-	public static IProject getProject(ILaunchConfiguration configuration) {
-		try {
-			String projectName = configuration.getAttribute(ATTR_PROJECT_NAME, (String) null);
-			if (projectName != null && projectName.length() > 0) {
-				return ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-			}
-		} catch (CoreException e) {
-			// Ignore
-		}
-		return null;
-	}
-
-	/**
-	 * Returns {@link IProject} instance from the given launch
-	 *
-	 * @param launch a launch
-	 * @return a project if exists or <code>null</code>
-	 */
-	public static IProject getProject(ILaunch launch) {
-		ILaunchConfiguration launchConfig = launch != null ? launch.getLaunchConfiguration() : null;
-		return launchConfig != null ? getProject(launchConfig) : null;
 	}
 
 	private UnitTestLaunchConfigurationConstants() {

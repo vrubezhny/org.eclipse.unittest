@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *******************************************************************************/
 package org.eclipse.unittest.junit.launcher;
 
 import java.util.Arrays;
@@ -22,8 +32,6 @@ import org.eclipse.unittest.ui.TestRunnerViewPart;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 
-import org.eclipse.core.resources.IProject;
-
 import org.eclipse.ui.IActionDelegate;
 
 import org.eclipse.debug.core.ILaunch;
@@ -32,7 +40,6 @@ import org.eclipse.debug.core.ILaunchManager;
 
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
 import org.eclipse.jdt.internal.junit.JUnitCorePlugin;
@@ -130,8 +137,8 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 			return new RerunAction[0];
 		}
 
-		IJavaProject project = getJavaProject(
-				UnitTestLaunchConfigurationConstants.getProject(testSuite.getTestRunSession().getLaunch()));
+		IJavaProject project = JUnitLaunchConfigurationConstants
+				.getJavaProject(testSuite.getTestRunSession().getLaunch().getLaunchConfiguration());
 		if (project == null) {
 			return new RerunAction[0];
 		}
@@ -211,16 +218,6 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 				// fall through
 			}
 			current = current.getParent();
-		}
-		return null;
-	}
-
-	private IJavaProject getJavaProject(IProject testProject) {
-		if (testProject != null) {
-			IJavaProject javaProject = JavaCore.create(testProject);
-			if (javaProject != null && javaProject.exists()) {
-				return javaProject;
-			}
 		}
 		return null;
 	}

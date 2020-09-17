@@ -33,6 +33,8 @@ import org.eclipse.jdt.core.JavaCore;
 
 import org.eclipse.jdt.internal.junit.launcher.JUnitLaunchConfigurationConstants;
 
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+
 public class JUnitMigrationDelegate implements ILaunchConfigurationMigrationDelegate {
 
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
@@ -91,7 +93,7 @@ public class JUnitMigrationDelegate implements ILaunchConfigurationMigrationDele
 	 * @throws CoreException if an exception occurs mapping resource
 	 */
 	private static IResource getResource(ILaunchConfiguration config) throws CoreException {
-		String projName = config.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String) null);
+		String projName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String) null);
 		String containerHandle = config.getAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_CONTAINER,
 				(String) null);
 		String typeName = config.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String) null);

@@ -27,8 +27,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 
-import org.eclipse.core.resources.IProject;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -42,13 +40,14 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.core.search.SearchPattern;
 import org.eclipse.jdt.core.search.TypeNameMatch;
 import org.eclipse.jdt.core.search.TypeNameMatchRequestor;
+
+import org.eclipse.jdt.internal.junit.launcher.JUnitLaunchConfigurationConstants;
 
 import org.eclipse.jdt.ui.JavaUI;
 
@@ -75,7 +74,8 @@ public abstract class OpenEditorAction extends Action implements IOpenEditorActi
 	public void run() {
 		IEditorPart editor = null;
 		try {
-			IJavaElement element = findElement(getLaunchedProject(), fClassName);
+			IJavaElement element = findElement(JUnitLaunchConfigurationConstants.getJavaProject(
+					fTestRunner.getCurrentTestRunSession().getLaunch().getLaunchConfiguration()), fClassName);
 			if (element == null) {
 				MessageDialog.openError(getShell(), JUnitMessages.OpenEditorAction_error_cannotopen_title,
 						JUnitMessages.OpenEditorAction_error_cannotopen_message);
@@ -98,20 +98,6 @@ public abstract class OpenEditorAction extends Action implements IOpenEditorActi
 		return fTestRunner.getSite().getShell();
 	}
 
-	/**
-	 * @return the Java project, or <code>null</code>
-	 */
-	protected IJavaProject getLaunchedProject() {
-		IProject testProject = fTestRunner.getLaunchedProject();
-		if (testProject != null) {
-			IJavaProject javaProject = JavaCore.create(testProject);
-			if (javaProject != null && javaProject.exists()) {
-				return javaProject;
-			}
-		}
-		return null;
-	}
-
 	protected String getClassName() {
 		return fClassName;
 	}
@@ -123,12 +109,13 @@ public abstract class OpenEditorAction extends Action implements IOpenEditorActi
 	protected final IType findType(final IJavaProject project, String className) {
 		final IType[] result = { null };
 		final String dottedName = className.replace('$', '.'); // for nested classes...
+		if (project == null) {
+			return null;
+		}
 		try {
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(monitor -> {
 				try {
-					if (project != null) {
-						result[0] = internalFindType(project, dottedName, new HashSet<IJavaProject>(), monitor);
-					}
+					result[0] = internalFindType(project, dottedName, new HashSet<IJavaProject>(), monitor);
 					if (result[0] == null) {
 						int lastDot = dottedName.lastIndexOf('.');
 						TypeNameMatchRequestor nameMatchRequestor = new TypeNameMatchRequestor() {

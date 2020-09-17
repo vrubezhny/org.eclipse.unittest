@@ -352,7 +352,7 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 
 	@Override
 	public String getJavaProjectName(ILaunchConfiguration configuration) throws CoreException {
-		return configuration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String) null);
+		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String) null);
 	}
 
 	@Override
