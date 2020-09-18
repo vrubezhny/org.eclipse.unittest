@@ -138,8 +138,8 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 		}
 
 		try {
-			if (mode.equals(UnitTestLaunchConfigurationConstants.MODE_RUN_QUIETLY_MODE)) {
-				launch.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_NO_DISPLAY, "true"); //$NON-NLS-1$
+			if (mode.equals(JUnitLaunchConfigurationConstants.MODE_RUN_QUIETLY_MODE)) {
+				launch.setAttribute(JUnitLaunchConfigurationConstants.ATTR_NO_DISPLAY, "true"); //$NON-NLS-1$
 				mode = ILaunchManager.RUN_MODE;
 			}
 
