@@ -15,7 +15,7 @@ package org.eclipse.unittest.ui;
 
 
 import org.eclipse.unittest.UnitTestPlugin;
-import org.eclipse.unittest.UnitTestPreferencesConstants;
+import org.eclipse.unittest.internal.UnitTestPreferencesConstants;
 
 import org.eclipse.jface.action.Action;
 
