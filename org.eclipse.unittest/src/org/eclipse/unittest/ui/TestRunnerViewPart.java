@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.unittest.UnitTestPlugin;
-import org.eclipse.unittest.UnitTestPreferencesConstants;
+import org.eclipse.unittest.internal.UnitTestPreferencesConstants;
 import org.eclipse.unittest.launcher.ITestViewSupport;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.model.ITestCaseElement;

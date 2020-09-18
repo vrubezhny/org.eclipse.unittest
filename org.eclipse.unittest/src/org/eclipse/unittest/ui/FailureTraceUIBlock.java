@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.unittest.ui;
 
-import org.eclipse.unittest.UnitTestPreferencesConstants;
+import org.eclipse.unittest.internal.UnitTestPreferencesConstants;
 import org.eclipse.unittest.launcher.ITestViewSupport;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestRunSession;

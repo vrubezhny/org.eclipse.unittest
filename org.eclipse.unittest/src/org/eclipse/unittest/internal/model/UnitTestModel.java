@@ -42,7 +42,7 @@ import org.xml.sax.SAXException;
 
 import org.eclipse.unittest.TestRunListener;
 import org.eclipse.unittest.UnitTestPlugin;
-import org.eclipse.unittest.UnitTestPreferencesConstants;
+import org.eclipse.unittest.internal.UnitTestPreferencesConstants;
 import org.eclipse.unittest.launcher.ITestKind;
 import org.eclipse.unittest.launcher.ITestRunnerClient;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
