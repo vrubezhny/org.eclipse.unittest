@@ -14,13 +14,15 @@
 /**
  *
  */
-package org.eclipse.unittest.ui;
+package org.eclipse.unittest.internal.ui;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+
+import org.eclipse.unittest.ui.FailureTraceUIBlock;
 
 public class TextualTrace {
 	public static final int LINE_TYPE_EXCEPTION = 1;

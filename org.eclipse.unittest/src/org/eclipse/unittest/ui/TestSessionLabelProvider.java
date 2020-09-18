@@ -32,7 +32,7 @@ import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 
-public class TestSessionLabelProvider extends LabelProvider implements IStyledLabelProvider {
+class TestSessionLabelProvider extends LabelProvider implements IStyledLabelProvider {
 
 	private final TestRunnerViewPart fTestRunnerPart;
 	private final int fLayoutMode;

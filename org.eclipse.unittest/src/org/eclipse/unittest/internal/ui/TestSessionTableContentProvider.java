@@ -12,7 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.unittest.ui;
+package org.eclipse.unittest.internal.ui;
 
 import java.util.ArrayList;
 

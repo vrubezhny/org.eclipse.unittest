@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.unittest.ui;
 
+import org.eclipse.unittest.internal.ui.IUnitTestHelpContextIds;
+
 import org.eclipse.jface.action.Action;
 
 import org.eclipse.ui.PlatformUI;

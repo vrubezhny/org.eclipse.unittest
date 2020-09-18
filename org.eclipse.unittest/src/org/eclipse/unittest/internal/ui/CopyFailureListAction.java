@@ -11,10 +11,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.unittest.ui;
+package org.eclipse.unittest.internal.ui;
 
 import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.model.ITestElement;
+import org.eclipse.unittest.ui.Messages;
+import org.eclipse.unittest.ui.TestRunnerViewPart;
 
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.dnd.Clipboard;
@@ -65,7 +67,7 @@ public class CopyFailureListAction extends Action {
 	 */
 	public String getAllFailureTraces() {
 		StringBuilder buf = new StringBuilder();
-		ITestElement[] failures = fRunner.getAllFailures();
+		ITestElement[] failures = fRunner.getCurrentTestRunSession().getAllFailedTestElements();
 
 		String lineDelim = System.getProperty("line.separator", "\n"); //$NON-NLS-1$//$NON-NLS-2$
 		for (ITestElement failure : failures) {

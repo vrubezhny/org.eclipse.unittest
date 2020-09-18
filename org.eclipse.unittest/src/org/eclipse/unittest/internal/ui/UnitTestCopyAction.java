@@ -11,7 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.unittest.ui;
+package org.eclipse.unittest.internal.ui;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,6 +20,8 @@ import java.io.StringReader;
 import java.io.StringWriter;
 
 import org.eclipse.unittest.model.ITestElement;
+import org.eclipse.unittest.ui.FailureTraceUIBlock;
+import org.eclipse.unittest.ui.Messages;
 
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.dnd.Clipboard;

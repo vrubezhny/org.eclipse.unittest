@@ -11,11 +11,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.unittest.ui;
+package org.eclipse.unittest.internal.ui;
 
 import java.text.MessageFormat;
 
 import org.eclipse.unittest.UnitTestPlugin;
+import org.eclipse.unittest.ui.Messages;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
