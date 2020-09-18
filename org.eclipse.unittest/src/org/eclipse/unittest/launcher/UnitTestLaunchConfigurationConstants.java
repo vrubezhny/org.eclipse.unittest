@@ -25,10 +25,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  */
 public class UnitTestLaunchConfigurationConstants {
 
-	public static final String MODE_RUN_QUIETLY_MODE = "runQuietly"; //$NON-NLS-1$
 	public static final String ID_UNITESTT_APPLICATION = "org.eclipse.unittest.launchconfig"; //$NON-NLS-1$
-
-	public static final String ATTR_NO_DISPLAY = UnitTestPlugin.PLUGIN_ID + ".NO_DISPLAY"; //$NON-NLS-1$
 
 	public static final String ATTR_PORT = UnitTestPlugin.PLUGIN_ID + ".PORT"; //$NON-NLS-1$
 
@@ -38,11 +35,6 @@ public class UnitTestLaunchConfigurationConstants {
 	 * test type.
 	 */
 	public static final String ATTR_TEST_NAME = UnitTestPlugin.PLUGIN_ID + ".TESTNAME"; //$NON-NLS-1$
-
-	/**
-	 * @Deprecated use {@link #ATTR_TEST_NAME}
-	 **/
-	public static final String ATTR_TEST_METHOD_NAME = ATTR_TEST_NAME;
 
 	public static final String ATTR_KEEPRUNNING = UnitTestPlugin.PLUGIN_ID + ".KEEPRUNNING_ATTR"; //$NON-NLS-1$
 
