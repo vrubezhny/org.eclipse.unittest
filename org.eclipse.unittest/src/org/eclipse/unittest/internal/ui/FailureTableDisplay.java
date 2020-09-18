@@ -14,7 +14,7 @@
 /**
  *
  */
-package org.eclipse.unittest.ui;
+package org.eclipse.unittest.internal.ui;
 
 import org.eclipse.unittest.UnitTestPlugin;
 
@@ -26,9 +26,9 @@ import org.eclipse.swt.widgets.TableItem;
 public class FailureTableDisplay implements ITraceDisplay {
 	private final Table fTable;
 
-	private final Image fExceptionIcon= UnitTestPlugin.createImage("obj16/exc_catch.png"); //$NON-NLS-1$
+	private final Image fExceptionIcon = UnitTestPlugin.createImage("obj16/exc_catch.png"); //$NON-NLS-1$
 
-	private final Image fStackIcon= UnitTestPlugin.createImage("obj16/stkfrm_obj.png"); //$NON-NLS-1$
+	private final Image fStackIcon = UnitTestPlugin.createImage("obj16/stkfrm_obj.png"); //$NON-NLS-1$
 
 	public FailureTableDisplay(Table table) {
 		fTable = table;
@@ -71,7 +71,7 @@ public class FailureTableDisplay implements ITraceDisplay {
 			fStackIcon.dispose();
 	}
 
-	TableItem newTableItem() {
+	public TableItem newTableItem() {
 		return new TableItem(fTable, SWT.NONE);
 	}
 }

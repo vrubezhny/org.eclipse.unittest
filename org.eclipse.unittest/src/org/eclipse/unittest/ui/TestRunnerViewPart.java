@@ -29,6 +29,15 @@ import java.util.List;
 
 import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.internal.UnitTestPreferencesConstants;
+import org.eclipse.unittest.internal.ui.CounterPanel;
+import org.eclipse.unittest.internal.ui.IUnitTestHelpContextIds;
+import org.eclipse.unittest.internal.ui.ProgressImages;
+import org.eclipse.unittest.internal.ui.ScrollLockAction;
+import org.eclipse.unittest.internal.ui.ShowNextFailureAction;
+import org.eclipse.unittest.internal.ui.ShowPreviousFailureAction;
+import org.eclipse.unittest.internal.ui.UnitTestCopyAction;
+import org.eclipse.unittest.internal.ui.UnitTestProgressBar;
+import org.eclipse.unittest.internal.ui.UnitTestUIPreferencesConstants;
 import org.eclipse.unittest.launcher.ITestViewSupport;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.model.ITestCaseElement;

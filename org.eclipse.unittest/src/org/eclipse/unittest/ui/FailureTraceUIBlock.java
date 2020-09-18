@@ -14,6 +14,12 @@
 package org.eclipse.unittest.ui;
 
 import org.eclipse.unittest.internal.UnitTestPreferencesConstants;
+import org.eclipse.unittest.internal.ui.CompareResultsAction;
+import org.eclipse.unittest.internal.ui.EnableStackFilterAction;
+import org.eclipse.unittest.internal.ui.FailureTableDisplay;
+import org.eclipse.unittest.internal.ui.ShowStackTraceInConsoleViewAction;
+import org.eclipse.unittest.internal.ui.TextualTrace;
+import org.eclipse.unittest.internal.ui.UnitTestCopyAction;
 import org.eclipse.unittest.launcher.ITestViewSupport;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestRunSession;
@@ -140,7 +146,7 @@ public class FailureTraceUIBlock implements IMenuListener {
 	 *
 	 * @return The composite
 	 */
-	Composite getComposite() {
+	public Composite getComposite() {
 		return fTable;
 	}
 

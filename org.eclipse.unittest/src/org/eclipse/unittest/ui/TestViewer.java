@@ -25,6 +25,10 @@ import java.util.stream.Collectors;
 
 import org.eclipse.unittest.internal.model.TestElement;
 import org.eclipse.unittest.internal.model.TestSuiteElement;
+import org.eclipse.unittest.internal.ui.CopyFailureListAction;
+import org.eclipse.unittest.internal.ui.SelectionProviderMediator;
+import org.eclipse.unittest.internal.ui.TestSessionTableContentProvider;
+import org.eclipse.unittest.internal.ui.TestSessionTreeContentProvider;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElement.Result;
@@ -63,7 +67,7 @@ import org.eclipse.ui.part.PageBook;
 
 import org.eclipse.debug.core.ILaunchManager;
 
-public class TestViewer {
+class TestViewer {
 	private final class TestSelectionListener implements ISelectionChangedListener {
 		@Override
 		public void selectionChanged(SelectionChangedEvent event) {

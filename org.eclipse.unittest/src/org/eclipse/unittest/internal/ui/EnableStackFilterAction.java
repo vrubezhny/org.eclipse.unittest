@@ -11,11 +11,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.unittest.ui;
+package org.eclipse.unittest.internal.ui;
 
 
 import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.internal.UnitTestPreferencesConstants;
+import org.eclipse.unittest.ui.FailureTraceUIBlock;
+import org.eclipse.unittest.ui.Messages;
 
 import org.eclipse.jface.action.Action;
 

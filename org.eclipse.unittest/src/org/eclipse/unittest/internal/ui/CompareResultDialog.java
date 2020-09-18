@@ -11,7 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.unittest.ui;
+package org.eclipse.unittest.internal.ui;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -19,6 +19,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.model.ITestElement;
+import org.eclipse.unittest.ui.Messages;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;

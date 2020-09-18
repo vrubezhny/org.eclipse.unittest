@@ -85,7 +85,7 @@
    <extension
          point="org.eclipse.unittest.testRunListeners">
       <testRunListener
-            class="org.eclipse.unittest.ui.UITestRunListener">
+            class="org.eclipse.unittest.internal.ui.UITestRunListener">
       </testRunListener>
    </extension>
 
