@@ -23,8 +23,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.unittest.UnitTestPlugin;
-import org.eclipse.unittest.junit.JUnitPlugin;
-import org.eclipse.unittest.junit.JUnitPlugin.JUnitVersion;
+import org.eclipse.unittest.junit.JUnitTestPlugin;
+import org.eclipse.unittest.junit.JUnitTestPlugin.JUnitVersion;
 import org.eclipse.unittest.junit.launcher.util.JUnitStubUtility;
 import org.eclipse.unittest.junit.launcher.util.LayoutUtil;
 import org.eclipse.unittest.junit.ui.JUnitMessages;
@@ -467,7 +467,7 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 		JUnitVersion junitVersion = JUnitLaunchConfigurationDelegate.getJUnitVersion(config);
 		if (junitVersion == null) {
 			if (fContainerElement != null) {
-				junitVersion = JUnitPlugin.getJUnitVersion(fContainerElement);
+				junitVersion = JUnitTestPlugin.getJUnitVersion(fContainerElement);
 			}
 			if (junitVersion == null) {
 				junitVersion = JUnitVersion.JUNIT3;
@@ -554,7 +554,7 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 			config.setAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_NAME, fTestMethodText.getText());
 		}
 		config.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_UNIT_TEST_VIEW_SUPPORT,
-				JUnitPlugin.UNIT_TEST_VIEW_SUPPORT_ID);
+				JUnitTestPlugin.UNIT_TEST_VIEW_SUPPORT_ID);
 		config.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_KEEPRUNNING, fKeepRunning.getSelection());
 		try {
 			mapResources(config);
@@ -1121,7 +1121,7 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 			// we only do a search for compilation units or class files or
 			// or source references
 			if (javaElement instanceof ISourceReference) {
-				ITestKind testKind = JUnitPlugin.getJUnitVersion(javaElement).getJUnitTestKind();
+				ITestKind testKind = JUnitTestPlugin.getJUnitVersion(javaElement).getJUnitTestKind();
 				testKindId = testKind.getId();
 
 				IType[] types = TestSearchEngine.findTests(getLaunchConfigurationDialog(), javaElement, testKind);
@@ -1138,7 +1138,7 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 		if (testKindId != null)
 			config.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_UNIT_TEST_VIEW_SUPPORT, testKindId);
 		initializeName(config, name);
-		boolean isRunWithJUnitPlatform = JUnitPlugin.isRunWithJUnitPlatform(javaElement);
+		boolean isRunWithJUnitPlatform = JUnitTestPlugin.isRunWithJUnitPlatform(javaElement);
 		if (isRunWithJUnitPlatform) {
 			config.setAttribute(JUnitLaunchConfigurationConstants.ATTR_RUN_WITH_JUNIT_PLATFORM_ANNOTATION, true);
 		}

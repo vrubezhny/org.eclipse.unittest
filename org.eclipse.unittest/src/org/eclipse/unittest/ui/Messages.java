@@ -83,7 +83,7 @@ public final class Messages extends NLS {
 	public static String TestRunnerViewPart_configName;
 	public static String TestRunnerViewPart__error_cannotrun;
 	public static String TestRunnerViewPart_error_cannotrerun;
-	public static String TestRunnerViewPart_error_notests_kind;
+	public static String TestRunnerViewPart_error_no_tests_found;
 
 	public static String TestRunnerViewPart_jobName;
 

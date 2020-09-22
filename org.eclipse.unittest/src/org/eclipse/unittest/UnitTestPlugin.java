@@ -357,6 +357,7 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 				// create and show the result view if it isn't created yet.
 				return (TestRunnerViewPart) page.showView(TestRunnerViewPart.NAME, null, IWorkbenchPage.VIEW_VISIBLE);
 			} else {
+				page.activate(view);
 				return view;
 			}
 		} catch (PartInitException pie) {
@@ -379,7 +380,7 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 	 */
 
 	public static final String ID_EXTENSION_POINT_TESTRUN_LISTENERS = PLUGIN_ID + "." + "testRunListeners"; //$NON-NLS-1$ //$NON-NLS-2$
-	public static final String ID_EXTENSION_POINT_TEST_KINDS = PLUGIN_ID + "." + "unittestKinds"; //$NON-NLS-1$ //$NON-NLS-2$
+	public static final String ID_EXTENSION_POINT_TEST_VIEW_SUPPORTS = PLUGIN_ID + "." + "unittestViewSupport"; //$NON-NLS-1$ //$NON-NLS-2$
 
 	private static final String HISTORY_DIR_NAME = "history"; //$NON-NLS-1$
 

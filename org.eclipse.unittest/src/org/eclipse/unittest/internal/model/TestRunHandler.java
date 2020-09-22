@@ -62,14 +62,27 @@ public class TestRunHandler extends DefaultHandler {
 	private IProgressMonitor fMonitor;
 	private int fLastReportedLine;
 
+	/**
+	 * Constructs a default {@link TestRunHandler} object instance
+	 */
 	public TestRunHandler() {
 
 	}
 
+	/**
+	 * Constructs a {@link TestRunHandler} object instance
+	 *
+	 * @param monitor a progress monitor
+	 */
 	public TestRunHandler(IProgressMonitor monitor) {
 		fMonitor = monitor;
 	}
 
+	/**
+	 * Constructs a {@link TestRunHandler} object instance
+	 *
+	 * @param testRunSession a {@link TestRunSession} instance
+	 */
 	public TestRunHandler(TestRunSession testRunSession) {
 		fTestRunSession = testRunSession;
 	}
@@ -81,6 +94,7 @@ public class TestRunHandler extends DefaultHandler {
 
 	@Override
 	public void startDocument() throws SAXException {
+		// Nothing to do
 	}
 
 	@Override
@@ -240,6 +254,7 @@ public class TestRunHandler extends DefaultHandler {
 			try {
 				testElement.setElapsedTimeInSeconds(Double.parseDouble(timeString));
 			} catch (NumberFormatException e) {
+				// Ignore
 			}
 		}
 	}

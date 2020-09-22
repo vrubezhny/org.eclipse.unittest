@@ -52,8 +52,8 @@ public class CDTUnitTestPlugin extends Plugin {
 	public static final String SIMPLE_TEST_INTERFACE_NAME= "Test"; //$NON-NLS-1$
 */
 
-	public static final String CDT_TEST_KIND_ID= "org.eclipse.unittest.cdt.loader"; //$NON-NLS-1$
-	public static final String CDT_DSF_DBG_TEST_KIND_ID= "org.eclipse.unittest.cdt.loader"; //$NON-NLS-1$
+	public static final String CDT_TEST_VIEW_SUPPORT_ID= "org.eclipse.unittest.cdt.loader"; //$NON-NLS-1$
+	public static final String CDT_DSF_DBG_TEST_VIEW_SUPPORT_ID= "org.eclipse.unittest.cdt.loader"; //$NON-NLS-1$
 
 
 	/**

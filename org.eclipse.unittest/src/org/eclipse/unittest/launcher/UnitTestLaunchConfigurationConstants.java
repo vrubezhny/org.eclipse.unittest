@@ -33,7 +33,7 @@ public class UnitTestLaunchConfigurationConstants {
 
 	public static final String ATTR_FAILURES_NAMES = UnitTestPlugin.PLUGIN_ID + ".FAILURENAMES"; //$NON-NLS-1$
 
-	public static final String ATTR_UNIT_TEST_VIEW_SUPPORT = UnitTestPlugin.PLUGIN_ID + ".TEST_KIND"; //$NON-NLS-1$
+	public static final String ATTR_UNIT_TEST_VIEW_SUPPORT = UnitTestPlugin.PLUGIN_ID + ".TEST_VIEW_SUPPPORT"; //$NON-NLS-1$
 
 	public static final String ATTR_TEST_HAS_INCLUDE_TAGS = UnitTestPlugin.PLUGIN_ID + ".HAS_INCLUDE_TAGS"; //$NON-NLS-1$
 
@@ -49,18 +49,15 @@ public class UnitTestLaunchConfigurationConstants {
 	public static final String ATTR_TEST_UNIQUE_ID = UnitTestPlugin.PLUGIN_ID + ".TEST_UNIQUE_ID"; //$NON-NLS-1$
 
 	/**
-	 * Returns {@link ITestKind} instance from the given launch configuration
+	 * Returns {@link ITestViewSupport} instance from the given launch configuration
 	 *
 	 * @param launchConfiguration a launch configuration
-	 * @return a test runner kind instance if exists or <code>null</code>.
+	 * @return a test runner view support instance if exists or <code>null</code>.
 	 */
-	public static ITestKind newTestRunnerKind(ILaunchConfiguration launchConfiguration) {
+	public static ITestViewSupport newTestRunnerViewSupport(ILaunchConfiguration launchConfiguration) {
 		try {
-			String loaderId = launchConfiguration
-					.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_UNIT_TEST_VIEW_SUPPORT, (String) null);
-			if (loaderId != null) {
-				return TestKindRegistry.getDefault().getTestKindInstance(loaderId);
-			}
+			return TestViewSupportRegistry.getDefault().getTestViewSupportInstance(launchConfiguration
+					.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_UNIT_TEST_VIEW_SUPPORT, (String) null));
 		} catch (CoreException e) {
 			// Ignore
 		}

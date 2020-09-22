@@ -44,11 +44,11 @@
    </extension>
 
    <extension
-         point="org.eclipse.unittest.unittestKinds">
-      <kind
+         point="org.eclipse.unittest.unittestViewSupport">
+      <view_support
             id="org.eclipse.unittest.cdt.loader"
-            class="org.eclipse.unittest.cdt.internal.launcher.CDTTestKind">
-      </kind>
+            class="org.eclipse.unittest.cdt.launcher.CDTTestViewSupport">
+      </view_support>
    </extension>
 
    <extension

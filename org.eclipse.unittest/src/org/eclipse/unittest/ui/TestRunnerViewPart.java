@@ -1314,8 +1314,7 @@ public class TestRunnerViewPart extends ViewPart {
 	private void showMessageIfNoTests() {
 		if (fTestRunSession != null && fTestRunSession.getTotalCount() == 0) {
 			Display.getDefault().asyncExec(() -> {
-				String msg = MessageFormat.format(Messages.TestRunnerViewPart_error_notests_kind,
-						fTestRunSession.getTestViewSupport().getDisplayName());
+				String msg = MessageFormat.format(Messages.TestRunnerViewPart_error_no_tests_found, getDisplayName());
 				MessageDialog.openInformation(UnitTestPlugin.getActiveWorkbenchShell(),
 						Messages.TestRunnerViewPart__error_cannotrun, msg);
 			});
@@ -1443,24 +1442,20 @@ public class TestRunnerViewPart extends ViewPart {
 	}
 
 	/**
-	 * @return the display name of the current test run sessions kind, or
+	 * @return the display name of the current test run session, or
 	 *         <code>null</code>
 	 */
-	public String getTestKindDisplayName() {
+	public String getDisplayName() {
 		ITestViewSupport testViewSupport = fTestRunSession.getTestViewSupport();
-		if (testViewSupport != null) {
-			return testViewSupport.getDisplayName();
-		}
-		return null;
+		return testViewSupport != null ? testViewSupport.getDisplayName() : null;
 	}
 
 	private void setTitleToolTip() {
-		String testKindDisplayStr = getTestKindDisplayName();
+		String displayStr = getDisplayName();
 
 		String testRunLabel = BasicElementLabels.getJavaElementName(fTestRunSession.getTestRunName());
-		if (testKindDisplayStr != null)
-			setTitleToolTip(
-					MessageFormat.format(Messages.TestRunnerViewPart_titleToolTip, testRunLabel, testKindDisplayStr));
+		if (displayStr != null)
+			setTitleToolTip(MessageFormat.format(Messages.TestRunnerViewPart_titleToolTip, testRunLabel, displayStr));
 		else
 			setTitleToolTip(testRunLabel);
 	}

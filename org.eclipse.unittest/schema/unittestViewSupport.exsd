@@ -3,10 +3,10 @@
 <schema targetNamespace="org.eclipse.unittest" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.unittest" id="unittestKinds" name="UnitTest Kinds"/>
+         <meta.schema plugin="org.eclipse.unittest" id="unittestViewSupport" name="UnitTest View Support"/>
       </appInfo>
       <documentation>
-         Internal extension point to register Unit Test test kinds.
+         Internal extension point to register Unit Test View support.
       </documentation>
    </annotation>
 
@@ -18,7 +18,7 @@
       </annotation>
       <complexType>
          <sequence>
-            <element ref="kind" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="view_support" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -47,17 +47,17 @@
       </complexType>
    </element>
 
-   <element name="kind">
+   <element name="view_support">
       <annotation>
          <documentation>
-            A Test Kind definition that implements org.eclipse.unittest.launcher.ITestKind.
+            A Test Kind definition that implements org.eclipse.unittest.launcher.ITestViewSupport.
          </documentation>
       </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique test kind ID
+                  a unique test view support ID
                </documentation>
             </annotation>
          </attribute>
@@ -67,7 +67,7 @@
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.unittest.launcher.ITestKind"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.unittest.launcher.ITestViewSupport"/>
                </appInfo>
             </annotation>
          </attribute>

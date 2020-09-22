@@ -43,8 +43,8 @@ import org.xml.sax.SAXException;
 import org.eclipse.unittest.TestRunListener;
 import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.internal.UnitTestPreferencesConstants;
-import org.eclipse.unittest.launcher.ITestKind;
 import org.eclipse.unittest.launcher.ITestRunnerClient;
+import org.eclipse.unittest.launcher.ITestViewSupport;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestRunSessionListener;
@@ -108,11 +108,15 @@ public final class UnitTestModel implements IUnitTestModel {
 				return;
 			}
 
-			// This testRunnerKind and testRunnerClient instances are not retained (just
+			// This testRunnerViewSupport and testRunnerClient instances are not retained
+			// (just
 			// there for testing)
 			// so it's ok instantiating them.
-			ITestKind testRunnerKind = UnitTestLaunchConfigurationConstants.newTestRunnerKind(config);
-			ITestRunnerClient testRunnerClient = testRunnerKind != null ? testRunnerKind.newTestRunnerClient() : null;
+			ITestViewSupport testRunnerViewSupport = UnitTestLaunchConfigurationConstants
+					.newTestRunnerViewSupport(config);
+			ITestRunnerClient testRunnerClient = testRunnerViewSupport != null
+					? testRunnerViewSupport.getTestRunnerClient()
+					: null;
 
 			// If a Remote Test Runner Client exists try to create a new Test Run Session,
 			// connect the Remote Test Runner and listen it

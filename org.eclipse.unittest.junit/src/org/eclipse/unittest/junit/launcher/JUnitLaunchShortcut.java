@@ -22,7 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.unittest.UnitTestPlugin;
-import org.eclipse.unittest.junit.JUnitPlugin;
+import org.eclipse.unittest.junit.JUnitTestPlugin;
 import org.eclipse.unittest.junit.launcher.util.ExceptionHandler;
 import org.eclipse.unittest.junit.launcher.util.JUnitStubUtility;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
@@ -219,7 +219,7 @@ public class JUnitLaunchShortcut implements ILaunchShortcut2 {
 
 	private IType[] findTypesToLaunch(ICompilationUnit cu) throws InterruptedException, InvocationTargetException {
 		return TestSearchEngine.findTests(PlatformUI.getWorkbench().getActiveWorkbenchWindow(), cu,
-				JUnitPlugin.getJUnitVersion(cu).getJUnitTestKind());
+				JUnitTestPlugin.getJUnitVersion(cu).getJUnitTestKind());
 	}
 
 	private void performLaunch(IJavaElement element, String mode) throws InterruptedException, CoreException {
@@ -400,15 +400,15 @@ public class JUnitLaunchShortcut implements ILaunchShortcut2 {
 		wc.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_KEEPRUNNING, false);
 		wc.setAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_CONTAINER, containerHandleId);
 		wc.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_UNIT_TEST_VIEW_SUPPORT,
-				JUnitPlugin.UNIT_TEST_VIEW_SUPPORT_ID);
+				JUnitTestPlugin.UNIT_TEST_VIEW_SUPPORT_ID);
 		wc.setAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_RUNNER_KIND,
-				JUnitPlugin.getJUnitVersion(element).getJUnitTestKind().getId());
+				JUnitTestPlugin.getJUnitVersion(element).getJUnitTestKind().getId());
 		JUnitMigrationDelegate.mapResources(wc);
 		AssertionVMArg.setArgDefault(wc);
 		if (testName != null) {
 			wc.setAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_NAME, testName);
 		}
-		boolean isRunWithJUnitPlatform = JUnitPlugin.isRunWithJUnitPlatform(element);
+		boolean isRunWithJUnitPlatform = JUnitTestPlugin.isRunWithJUnitPlatform(element);
 		if (isRunWithJUnitPlatform) {
 			wc.setAttribute(JUnitLaunchConfigurationConstants.ATTR_RUN_WITH_JUNIT_PLATFORM_ANNOTATION, true);
 		}

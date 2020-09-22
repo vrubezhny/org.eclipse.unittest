@@ -63,10 +63,10 @@ class TestSessionLabelProvider extends LabelProvider implements IStyledLabelProv
 		ITestElement testElement = (ITestElement) element;
 		if (fLayoutMode == TestRunnerViewPart.LAYOUT_HIERARCHICAL) {
 			if (testElement.getParentContainer() instanceof ITestRunSession) {
-				String testKindDisplayName = fTestRunnerPart.getTestKindDisplayName();
-				if (testKindDisplayName != null) {
+				String displayName = fTestRunnerPart.getDisplayName();
+				if (displayName != null) {
 					String decorated = MessageFormat.format(Messages.TestSessionLabelProvider_testName_RunnerVersion,
-							label, testKindDisplayName);
+							label, displayName);
 					text = StyledCellLabelProvider.styleDecoratedString(decorated, StyledString.QUALIFIER_STYLER, text);
 				}
 			}
@@ -135,10 +135,10 @@ class TestSessionLabelProvider extends LabelProvider implements IStyledLabelProv
 		ITestElement testElement = (ITestElement) element;
 		if (fLayoutMode == TestRunnerViewPart.LAYOUT_HIERARCHICAL) {
 			if (testElement.getParentContainer() instanceof ITestRunSession) {
-				String testKindDisplayName = fTestRunnerPart.getTestKindDisplayName();
-				if (testKindDisplayName != null) {
+				String displayName = fTestRunnerPart.getDisplayName();
+				if (displayName != null) {
 					label = MessageFormat.format(Messages.TestSessionLabelProvider_testName_RunnerVersion, label,
-							testKindDisplayName);
+							displayName);
 				}
 			}
 		} else {

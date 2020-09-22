@@ -130,10 +130,10 @@
    </extension>
 
    <extension
-         point="org.eclipse.unittest.unittestKinds">
-      <kind
-            class="org.eclipse.unittest.junit.internal.launcher.JUnitTestKind"
+         point="org.eclipse.unittest.unittestViewSupport">
+      <view_support
+            class="org.eclipse.unittest.junit.launcher.JUnitTestViewSupport"
             id="org.eclipse.unittest.junit">
-      </kind>
+      </view_support>
    </extension>
 </plugin>
