@@ -18,10 +18,11 @@ import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.unittest.ui.FailureTraceUIBlock;
 import org.eclipse.unittest.ui.IOpenEditorAction;
-import org.eclipse.unittest.ui.RerunAction;
 import org.eclipse.unittest.ui.TestRunnerViewPart;
 
 import org.eclipse.ui.IActionDelegate;
+
+import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
  * Interface to be implemented by a Test View Support to be returned by
@@ -79,13 +80,12 @@ public interface ITestViewSupport {
 	/**
 	 * Returns an array of Rerun test actions for a specified Test Suite element
 	 *
-	 * @param testRunnerPart a test runner view part instance
-	 * @param testSuite      a test suite element
+	 * @param testElement a test suite element
 	 *
-	 * @return an array of org.eclipse.unittest.ui.RerunActionn instances interface
-	 *         if at least one such action can be created, otherwise - null
+	 * @return a {@link ILaunchConfiguration}, derived from current test session and
+	 *         selected element.
 	 */
-	RerunAction[] getRerunActions(TestRunnerViewPart testRunnerPart, ITestSuiteElement testSuite);
+	ILaunchConfiguration getRerunLaunchConfiguration(ITestElement testElement);
 
 	/**
 	 * Returns a Test Kind display name

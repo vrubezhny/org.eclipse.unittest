@@ -299,11 +299,6 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 
 			// Launch the configuration - 1 unit of work
 			runner.run(runConfig, launch, monitor);
-
-			// check for cancellation
-			if (monitor.isCanceled()) {
-				return;
-			}
 		} finally {
 			fTestElements = null;
 			monitor.done();
@@ -357,7 +352,7 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 
 	@Override
 	public String getMainTypeName(ILaunchConfiguration configuration) throws CoreException {
-		String mainType = configuration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME,
+		String mainType = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME,
 				(String) null);
 		if (mainType == null) {
 			return null;
@@ -386,7 +381,7 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 		IJavaProject javaProject = getJavaProject(configuration);
 
 		IJavaElement testTarget = getTestTarget(configuration, javaProject);
-		String testMethodName = configuration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_NAME, ""); //$NON-NLS-1$
+		String testMethodName = configuration.getAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_NAME, ""); //$NON-NLS-1$
 		if (testMethodName.length() > 0) {
 			if (testTarget instanceof IType) {
 				// If parameters exist, testMethodName is followed by a comma-separated list of

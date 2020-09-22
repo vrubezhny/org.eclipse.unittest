@@ -14,7 +14,7 @@ import org.eclipse.cdt.testsrunner.model.ITestMessage.Level;
 import org.eclipse.cdt.testsrunner.model.ITestModelUpdater;
 import org.eclipse.cdt.testsrunner.model.ITestSuite;
 import org.eclipse.cdt.testsrunner.model.TestingException;
-import org.eclipse.unittest.cdt.CDTPlugin;
+import org.eclipse.unittest.cdt.CDTUnitTestPlugin;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestRunSession;
@@ -221,7 +221,7 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 		}
 
 		private void logUnexpectedTest(String testId, TestElementReference testElement) {
-			CDTPlugin.log(new Exception("Unexpected TestElement type for testId '" + testId + "': " + testElement)); //$NON-NLS-1$ //$NON-NLS-2$
+			CDTUnitTestPlugin.log(new Exception("Unexpected TestElement type for testId '" + testId + "': " + testElement)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -248,8 +248,8 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 			// If testing session was stopped, the status is set in stop()
 			if (isRunning()) {
 				double testingTime = fTestRunSession.getElapsedTimeInSeconds();
-				CDTPlugin.log(
-						new org.eclipse.core.runtime.Status(IStatus.WARNING, CDTPlugin.PLUGIN_ID,
+				CDTUnitTestPlugin.log(
+						new org.eclipse.core.runtime.Status(IStatus.WARNING, CDTUnitTestPlugin.PLUGIN_ID,
 						MessageFormat.format(CDTMessages.TestingSession_finished_status,
 								testingTime)));
 			}
@@ -258,9 +258,9 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 		} catch (TestingException e) {
 			// If testing session was stopped, the status is set in stop()
 			if (isRunning()) {
-				CDTPlugin.log(
+				CDTUnitTestPlugin.log(
 						new org.eclipse.core.runtime.Status(IStatus.WARNING,
-								CDTPlugin.PLUGIN_ID,
+								CDTUnitTestPlugin.PLUGIN_ID,
 						e.getLocalizedMessage()));
 			}
 			notifyTestRunTerminated();
@@ -275,11 +275,6 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 
 	@Override
 	public void stopTest() {
-		// Does nothing
-	}
-
-	@Override
-	public void rerunTest(String testId, String className, String testName) {
 		// Does nothing
 	}
 

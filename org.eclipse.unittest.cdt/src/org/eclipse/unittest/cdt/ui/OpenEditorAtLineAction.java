@@ -18,7 +18,7 @@ import java.net.URI;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.unittest.UnitTestPlugin;
-import org.eclipse.unittest.cdt.CDTPlugin;
+import org.eclipse.unittest.cdt.CDTUnitTestPlugin;
 import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.ui.IOpenEditorAction;
 import org.eclipse.unittest.ui.TestRunnerViewPart;
@@ -127,7 +127,7 @@ public class OpenEditorAtLineAction extends Action implements IOpenEditorAction 
 		try {
 			openEditorAndSelect(result, lineNumber);
 		} catch (PartInitException|BadLocationException e) {
-			CDTPlugin.log(e);
+			CDTUnitTestPlugin.log(e);
 		}
 	}
 

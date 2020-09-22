@@ -385,7 +385,7 @@ public class JUnitLaunchShortcut implements ILaunchShortcut2 {
 				.generateLaunchConfigurationName(suggestLaunchConfigurationName(element, testName));
 		ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, configName);
 
-		wc.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, mainTypeQualifiedName);
+		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, mainTypeQualifiedName);
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, element.getJavaProject().getElementName());
 		/*
 		 * As AbstractJavaLaunchConfigurationDelegate.getVMSpecificAttributesMap(
@@ -406,7 +406,7 @@ public class JUnitLaunchShortcut implements ILaunchShortcut2 {
 		JUnitMigrationDelegate.mapResources(wc);
 		AssertionVMArg.setArgDefault(wc);
 		if (testName != null) {
-			wc.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_NAME, testName);
+			wc.setAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_NAME, testName);
 		}
 		boolean isRunWithJUnitPlatform = JUnitPlugin.isRunWithJUnitPlatform(element);
 		if (isRunWithJUnitPlatform) {
@@ -466,10 +466,10 @@ public class JUnitLaunchShortcut implements ILaunchShortcut2 {
 	 * @return the attribute names of the attributes that are compared
 	 */
 	protected String[] getAttributeNamesToCompare() {
-		return new String[] { IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME,
-				JUnitLaunchConfigurationConstants.ATTR_TEST_CONTAINER,
-				UnitTestLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME,
-				UnitTestLaunchConfigurationConstants.ATTR_TEST_NAME,
+		return new String[] { IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, //
+				JUnitLaunchConfigurationConstants.ATTR_TEST_CONTAINER, //
+				IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, //
+				JUnitLaunchConfigurationConstants.ATTR_TEST_NAME, //
 				UnitTestLaunchConfigurationConstants.ATTR_UNIT_TEST_VIEW_SUPPORT };
 	}
 

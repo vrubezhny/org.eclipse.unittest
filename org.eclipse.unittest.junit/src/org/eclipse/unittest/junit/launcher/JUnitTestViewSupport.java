@@ -19,14 +19,12 @@ import org.eclipse.unittest.junit.ui.OpenEditorAtLineAction;
 import org.eclipse.unittest.junit.ui.OpenTestAction;
 import org.eclipse.unittest.junit.ui.ShowStackTraceInConsoleViewActionDelegate;
 import org.eclipse.unittest.launcher.ITestViewSupport;
-import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestRoot;
 import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.unittest.ui.FailureTraceUIBlock;
 import org.eclipse.unittest.ui.IOpenEditorAction;
-import org.eclipse.unittest.ui.RerunAction;
 import org.eclipse.unittest.ui.TestRunnerViewPart;
 
 import org.eclipse.core.runtime.CoreException;
@@ -36,7 +34,7 @@ import org.eclipse.ui.IActionDelegate;
 
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
@@ -47,6 +45,8 @@ import org.eclipse.jdt.internal.junit.JUnitPreferencesConstants;
 import org.eclipse.jdt.internal.junit.launcher.ITestFinder;
 import org.eclipse.jdt.internal.junit.launcher.ITestKind;
 import org.eclipse.jdt.internal.junit.launcher.JUnitLaunchConfigurationConstants;
+
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 
 @SuppressWarnings("restriction")
 public class JUnitTestViewSupport implements ITestViewSupport {
@@ -121,7 +121,7 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 	}
 
 	@Override
-	public RerunAction[] getRerunActions(TestRunnerViewPart testRunnerPart, ITestSuiteElement testSuite) {
+	public ILaunchConfiguration getRerunLaunchConfiguration(ITestElement testSuite) {
 		String testMethodName = null; // test method name is null when re-running a regular test class
 		String testName = testSuite.getTestName();
 
@@ -134,13 +134,13 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 					.getJUnitTestKind();
 		} catch (CoreException e) {
 			JUnitPlugin.log(e);
-			return new RerunAction[0];
+			return null;
 		}
 
 		IJavaProject project = JUnitLaunchConfigurationConstants
 				.getJavaProject(testSuite.getTestRunSession().getLaunch().getLaunchConfiguration());
 		if (project == null) {
-			return new RerunAction[0];
+			return null;
 		}
 
 		String qualifiedName = null;
@@ -162,23 +162,26 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 		} else {
 			// see bug 443498
 			testType = findTestClass(testSuite.getParent(), junitKind.getFinder(), project, false);
-			if (testType != null) {
+			if (testType != null && testSuite instanceof ITestSuiteElement) {
 				qualifiedName = testType.getFullyQualifiedName();
 
-				String className = testSuite.getSuiteTypeName();
+				String className = ((ITestSuiteElement) testSuite).getSuiteTypeName();
 				if (!qualifiedName.equals(className)) {
 					testMethodName = testName;
 				}
 			}
 		}
 
-		return qualifiedName != null ? new RerunAction[] {
-				new RerunAction(Messages.RerunAction_label_run, testRunnerPart, testSuite.getId(), qualifiedName,
-						testMethodName, testSuite.getDisplayName(), testSuite.getUniqueId(), ILaunchManager.RUN_MODE),
-				new RerunAction(Messages.RerunAction_label_debug, testRunnerPart, testSuite.getId(), qualifiedName,
-						testMethodName, testSuite.getDisplayName(), testSuite.getUniqueId(),
-						ILaunchManager.DEBUG_MODE) }
-				: null;
+		ILaunchConfigurationWorkingCopy res;
+		try {
+			res = launchConfiguration.copy(launchConfiguration.getName() + " - rerun"); //$NON-NLS-1$
+			res.setAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_METHOD_NAME, testMethodName);
+			return res;
+		} catch (CoreException e) {
+			JUnitPlugin.log(e);
+			return null;
+		}
+
 	}
 
 	/*
@@ -196,8 +199,8 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 					if (launch != null) {
 						ILaunchConfiguration configuration = launch.getLaunchConfiguration();
 						if (configuration != null) {
-							className = configuration.getAttribute(
-									UnitTestLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String) null);
+							className = configuration
+									.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String) null);
 						}
 					}
 				} else {

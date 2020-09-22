@@ -1,6 +1,7 @@
 package org.eclipse.unittest.cdt.launcher;
 
-import org.eclipse.unittest.cdt.CDTPlugin;
+import org.eclipse.cdt.testsrunner.internal.launcher.ITestsLaunchConfigurationConstants;
+import org.eclipse.unittest.cdt.CDTUnitTestPlugin;
 import org.eclipse.unittest.cdt.ui.OpenEditorAtLineAction;
 import org.eclipse.unittest.cdt.ui.OpenTestAction;
 import org.eclipse.unittest.launcher.ITestViewSupport;
@@ -9,13 +10,14 @@ import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.unittest.ui.FailureTraceUIBlock;
 import org.eclipse.unittest.ui.IOpenEditorAction;
-import org.eclipse.unittest.ui.Messages;
-import org.eclipse.unittest.ui.RerunAction;
 import org.eclipse.unittest.ui.TestRunnerViewPart;
+
+import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.ui.IActionDelegate;
 
-import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 
 public class CDTTestViewSupport implements ITestViewSupport {
 
@@ -52,10 +54,10 @@ public class CDTTestViewSupport implements ITestViewSupport {
 			int line= Integer.valueOf(lineNumber).intValue();
 			return new OpenEditorAtLineAction(testRunnerPart, testName, line);
 		} catch(NumberFormatException e) {
-			CDTPlugin.log(e);
+			CDTUnitTestPlugin.log(e);
 		}
 		catch(IndexOutOfBoundsException e) {
-			CDTPlugin.log(e);
+			CDTUnitTestPlugin.log(e);
 		}
 		return null;
 	}
@@ -66,17 +68,18 @@ public class CDTTestViewSupport implements ITestViewSupport {
 	}
 
 	@Override
-	public RerunAction[] getRerunActions(TestRunnerViewPart testRunnerPart, ITestSuiteElement testSuite) {
-		String testMethodName = null; // test method name is null when re-running a regular test class
+	public ILaunchConfiguration getRerunLaunchConfiguration(ITestElement testSuite) {
 		String qualifiedName = testSuite.getClassName();
-
-		return qualifiedName != null ? new RerunAction[] {
-				new RerunAction(Messages.RerunAction_label_run, testRunnerPart, testSuite.getId(), qualifiedName,
-						testMethodName, testSuite.getDisplayName(), testSuite.getUniqueId(), ILaunchManager.RUN_MODE),
-				new RerunAction(Messages.RerunAction_label_debug, testRunnerPart, testSuite.getId(), qualifiedName,
-						testMethodName, testSuite.getDisplayName(), testSuite.getUniqueId(),
-						ILaunchManager.DEBUG_MODE) }
-				: null;
+		ILaunchConfiguration origin = testSuite.getTestRunSession().getLaunch().getLaunchConfiguration();
+		ILaunchConfigurationWorkingCopy res;
+		try {
+			res= origin.copy(origin.getName() + "\uD83D\uDD03" + testSuite.getTestName()); //$NON-NLS-1$
+			res.setAttribute(ITestsLaunchConfigurationConstants.ATTR_TESTS_FILTER, qualifiedName);
+			return res;
+		} catch (CoreException e) {
+			CDTUnitTestPlugin.log(e);
+			return null;
+		}
 	}
 
 	@Override

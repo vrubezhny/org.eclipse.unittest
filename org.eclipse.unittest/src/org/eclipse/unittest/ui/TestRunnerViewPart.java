@@ -1964,53 +1964,6 @@ public class TestRunnerViewPart extends ViewPart {
 			getDisplay().asyncExec(r);
 	}
 
-	public void rerunTest(String testId, String className, String testName, String testDisplayName, String uniqueId,
-			String launchMode) {
-		if (lastLaunchIsKeptAlive()) {
-			fTestRunSession.rerunTest(testId, className, testName);
-			ITestCaseElement testCaseElement = (ITestCaseElement) fTestRunSession.getTestElement(testId);
-			testCaseElement.setStatus(ITestElement.Status.RUNNING, null, null, null);
-			fTestViewer.registerViewerUpdate(testCaseElement);
-			postSyncProcessChanges();
-			return;
-		}
-
-		if (fTestRunSession != null) {
-			ILaunch launch = fTestRunSession.getLaunch();
-			if (launch != null) {
-				// run the selected test using the previous launch configuration
-				ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
-				if (launchConfiguration != null) {
-					try {
-						String name;
-						if (testDisplayName != null) {
-							name = testDisplayName;
-						} else {
-							name = className;
-							if (testName != null)
-								name += "." + testName; //$NON-NLS-1$
-						}
-						String configName = MessageFormat.format(Messages.TestRunnerViewPart_configName, name);
-						ILaunchConfigurationWorkingCopy tmp = launchConfiguration.copy(configName);
-						tmp.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, className);
-						// reset the container
-						tmp.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_NAME, testName);
-						tmp.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_UNIQUE_ID, uniqueId);
-						relaunch(tmp, launchMode);
-						return;
-					} catch (CoreException e) {
-						ErrorDialog.openError(getSite().getShell(), Messages.TestRunnerViewPart_error_cannotrerun,
-								e.getMessage(), e.getStatus());
-						return;
-					}
-				}
-			}
-		}
-
-		MessageDialog.openInformation(getSite().getShell(), Messages.TestRunnerViewPart_cannotrerun_title,
-				Messages.TestRunnerViewPart_cannotrerurn_message);
-	}
-
 	private void postSyncProcessChanges() {
 		postSyncRunnable(this::processChangesInUI);
 	}

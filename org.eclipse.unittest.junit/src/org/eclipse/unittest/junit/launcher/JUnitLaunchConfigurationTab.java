@@ -503,8 +503,8 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 		String testTypeName = ""; //$NON-NLS-1$
 		fOriginalTestMethodName = ""; //$NON-NLS-1$
 		try {
-			testTypeName = config.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, ""); //$NON-NLS-1$
-			fOriginalTestMethodName = config.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_NAME, ""); //$NON-NLS-1$
+			testTypeName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, ""); //$NON-NLS-1$
+			fOriginalTestMethodName = config.getAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_NAME, ""); //$NON-NLS-1$
 		} catch (CoreException ce) {
 		}
 		fTestRadioButton.setSelection(true);
@@ -544,14 +544,14 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 					fContainerElement.getJavaProject().getElementName());
 			config.setAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_CONTAINER,
 					fContainerElement.getHandleIdentifier());
-			config.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, ""); //$NON-NLS-1$
+			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, ""); //$NON-NLS-1$
 			// workaround for bug 65399
-			config.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_NAME, ""); //$NON-NLS-1$
+			config.setAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_NAME, ""); //$NON-NLS-1$
 		} else {
 			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, fProjText.getText());
-			config.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, fTestText.getText());
+			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, fTestText.getText());
 			config.setAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_CONTAINER, ""); //$NON-NLS-1$
-			config.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_NAME, fTestMethodText.getText());
+			config.setAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_NAME, fTestMethodText.getText());
 		}
 		config.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_UNIT_TEST_VIEW_SUPPORT,
 				JUnitPlugin.UNIT_TEST_VIEW_SUPPORT_ID);
@@ -565,7 +565,7 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 		if (!junitVersionSelection.isEmpty()) {
 			JUnitVersion junitVersion = (JUnitVersion) junitVersionSelection.getFirstElement();
 			config.setAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_RUNNER_KIND,
-					junitVersion.getJUnitTestKind().toString());
+					junitVersion.getJUnitTestKind().getId());
 		}
 	}
 
