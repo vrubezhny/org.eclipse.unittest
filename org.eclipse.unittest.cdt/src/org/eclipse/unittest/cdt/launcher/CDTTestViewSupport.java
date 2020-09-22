@@ -1,12 +1,18 @@
 package org.eclipse.unittest.cdt.launcher;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.cdt.testsrunner.internal.launcher.ITestsLaunchConfigurationConstants;
 import org.eclipse.unittest.cdt.CDTUnitTestPlugin;
 import org.eclipse.unittest.cdt.ui.OpenEditorAtLineAction;
 import org.eclipse.unittest.cdt.ui.OpenTestAction;
+import org.eclipse.unittest.launcher.ITestRunnerClient;
 import org.eclipse.unittest.launcher.ITestViewSupport;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
+import org.eclipse.unittest.model.ITestRoot;
 import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.unittest.ui.FailureTraceUIBlock;
 import org.eclipse.unittest.ui.IOpenEditorAction;
@@ -20,6 +26,11 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 
 public class CDTTestViewSupport implements ITestViewSupport {
+	/**
+	 * The delimiter between parts of serialized test path. Should not be met in
+	 * test paths names.
+	 */
+	private static final String TEST_PATH_PART_DELIMITER = "\n"; //$NON-NLS-1$
 
 	@Override
 	public String[] getFilterPatterns() {
@@ -69,12 +80,12 @@ public class CDTTestViewSupport implements ITestViewSupport {
 
 	@Override
 	public ILaunchConfiguration getRerunLaunchConfiguration(ITestElement testSuite) {
-		String qualifiedName = testSuite.getClassName();
 		ILaunchConfiguration origin = testSuite.getTestRunSession().getLaunch().getLaunchConfiguration();
 		ILaunchConfigurationWorkingCopy res;
 		try {
 			res= origin.copy(origin.getName() + "\uD83D\uDD03" + testSuite.getTestName()); //$NON-NLS-1$
-			res.setAttribute(ITestsLaunchConfigurationConstants.ATTR_TESTS_FILTER, qualifiedName);
+			List<String> testsFilterAttr = Arrays.asList(packTestPaths(testSuite));
+			res.setAttribute(ITestsLaunchConfigurationConstants.ATTR_TESTS_FILTER, testsFilterAttr);
 			return res;
 		} catch (CoreException e) {
 			CDTUnitTestPlugin.log(e);
@@ -82,8 +93,48 @@ public class CDTTestViewSupport implements ITestViewSupport {
 		}
 	}
 
+	/**
+	 * Pack the paths to specified test items to string list.
+	 * @param testElement test element to pack
+	 *
+	 * @return string list
+	 */
+	private static String[] packTestPaths(ITestElement testElement) {
+		String[] result = new String[1];
+		List<String> testPath = new ArrayList<>();
+
+		// Collect test path parts (in reverse order)
+		testPath.clear();
+		ITestElement element = testElement;
+		while (element != null && !(element.getParent() instanceof ITestRoot)) {
+			// Exclude root test suite
+			if (element.getParent() != null) {
+				testPath.add(element.getTestName());
+			}
+			element = element.getParent();
+		}
+		// Join path parts into the only string
+		StringBuilder sb = new StringBuilder();
+		boolean needDelimiter = false;
+		for (int pathPartIdx = testPath.size() - 1; pathPartIdx >= 0; pathPartIdx--) {
+			if (needDelimiter) {
+				sb.append(TEST_PATH_PART_DELIMITER);
+			} else {
+				needDelimiter = true;
+			}
+			sb.append(testPath.get(pathPartIdx));
+		}
+		result[0] = sb.toString();
+		return result;
+	}
+
 	@Override
 	public String getDisplayName() {
-		return "C/C++ Unit";
+		return "C/C++ Unit"; //$NON-NLS-1$
+	}
+
+	@Override
+	public ITestRunnerClient getTestRunnerClient() {
+		return new CDTTestRunnerClient();
 	}
 }

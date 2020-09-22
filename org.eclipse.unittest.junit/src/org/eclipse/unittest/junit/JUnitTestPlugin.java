@@ -43,12 +43,12 @@ import org.eclipse.jdt.internal.junit.util.CoreTestSearchEngine;
 /**
  * The plug-in runtime class for the JUnit core plug-in.
  */
-public class JUnitPlugin extends AbstractUIPlugin {
+public class JUnitTestPlugin extends AbstractUIPlugin {
 
 	/**
 	 * The single instance of this plug-in runtime class.
 	 */
-	private static JUnitPlugin fgPlugin = null;
+	private static JUnitTestPlugin fgPlugin = null;
 
 	public static final String CORE_PLUGIN_ID = "org.eclipse.unittest"; //$NON-NLS-1$
 
@@ -97,11 +97,11 @@ public class JUnitPlugin extends AbstractUIPlugin {
 
 	private static boolean fIsStopped = false;
 
-	public JUnitPlugin() {
+	public JUnitTestPlugin() {
 		fgPlugin = this;
 	}
 
-	public static JUnitPlugin getDefault() {
+	public static JUnitTestPlugin getDefault() {
 		return fgPlugin;
 	}
 
@@ -128,7 +128,7 @@ public class JUnitPlugin extends AbstractUIPlugin {
 	public void stop(BundleContext context) throws Exception {
 		fIsStopped = true;
 		try {
-			InstanceScope.INSTANCE.getNode(JUnitPlugin.CORE_PLUGIN_ID).flush();
+			InstanceScope.INSTANCE.getNode(JUnitTestPlugin.CORE_PLUGIN_ID).flush();
 		} finally {
 			super.stop(context);
 		}

@@ -17,7 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.unittest.junit.JUnitPlugin;
+import org.eclipse.unittest.junit.JUnitTestPlugin;
 import org.eclipse.unittest.ui.IOpenEditorAction;
 import org.eclipse.unittest.ui.TestRunnerViewPart;
 
@@ -137,7 +137,7 @@ public abstract class OpenEditorAction extends Action implements IOpenEditorActi
 				}
 			});
 		} catch (InvocationTargetException e) {
-			JUnitPlugin.log(e);
+			JUnitTestPlugin.log(e);
 		} catch (InterruptedException e) {
 			// user cancelled
 		}

@@ -243,9 +243,9 @@ public abstract class BaseTestsLaunchDelegate extends LaunchConfigurationDelegat
 	public abstract String getPreferredDelegateId();
 
 	/**
-	 * Returns the default test Kind id
+	 * Returns the default test View Support identifier
 	 *
-	 * @return default test kind ID
+	 * @return default test View Support identifier
 	 */
 	public abstract String getUnitTestViewSupportID();
 

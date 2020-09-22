@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.unittest.model;
 
-import org.eclipse.unittest.launcher.ITestKind;
 import org.eclipse.unittest.launcher.ITestRunnerClient;
 import org.eclipse.unittest.launcher.ITestViewSupport;
 
@@ -47,12 +46,12 @@ public interface ITestRunSession extends ITestElementContainer {
 	ILaunch getLaunch();
 
 	/**
-	 * Returns the Test Runner Kind for which this test run session has been
+	 * Returns the Test Runner View Support for which this test run session has been
 	 * launched, or <code>null</code> if not available.
 	 *
-	 * @return the test runner kind, or <code>null</code> is not available.
+	 * @return the test runner view support, or <code>null</code> is not available.
 	 */
-	ITestKind getTestRunnerKind();
+	ITestViewSupport getTestViewSupport();
 
 	/**
 	 * Returns the Test Runner Client to be used to gather the test results, or
@@ -210,7 +209,5 @@ public interface ITestRunSession extends ITestElementContainer {
 	 * Swaps out the test run session info
 	 */
 	void swapOut();
-
-	ITestViewSupport getTestViewSupport();
 
 }

@@ -26,9 +26,16 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
  * Interface to be implemented by a Test View Support to be returned by
- * org.org.eclipse.unittest.unittestKinds extension.
+ * org.org.eclipse.unittest.unittestViewSupport extension.
  */
 public interface ITestViewSupport {
+
+	/**
+	 * Returns a Test Runner Client for this this Test View Support
+	 *
+	 * @return returns a Test Runner Client
+	 */
+	ITestRunnerClient getTestRunnerClient();
 
 	/**
 	 * Returns a filter patterns array for a stack trace or an error message
@@ -88,7 +95,7 @@ public interface ITestViewSupport {
 	ILaunchConfiguration getRerunLaunchConfiguration(ITestElement testElement);
 
 	/**
-	 * Returns a Test Kind display name
+	 * Returns a Test View Support display name
 	 *
 	 * @return returns a display name
 	 */

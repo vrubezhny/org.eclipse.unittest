@@ -19,15 +19,14 @@ import org.eclipse.unittest.UnitTestPlugin;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 
-public class TestKindExtension {
+public class TestViewSupportExtension {
 
 	private static final String ID = "id"; //$NON-NLS-1$
 	private static final String CLASS = "class"; //$NON-NLS-1$
-	private static final String PRECEDES = "precedesTestKind"; //$NON-NLS-1$
 
 	private final IConfigurationElement fElement;
 
-	public TestKindExtension(IConfigurationElement element) {
+	public TestViewSupportExtension(IConfigurationElement element) {
 		fElement = element;
 	}
 
@@ -35,34 +34,18 @@ public class TestKindExtension {
 		return getAttribute(ID);
 	}
 
-	public String getPrecededKindId() {
-		String attribute = getAttribute(PRECEDES);
-		return attribute == null ? "" : attribute; //$NON-NLS-1$
-	}
-
 	protected String getAttribute(String attributeName) {
 		return fElement.getAttribute(attributeName);
 	}
 
-	boolean precedes(TestKindExtension otherKind) {
-		final String precededKindId = getPrecededKindId();
-		String[] ids = precededKindId.split(","); //$NON-NLS-1$
-		for (String id : ids) {
-			if (id.equals(otherKind.getId())) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	/**
 	 *
-	 * @return an instance of ITestKind for the given extension. <code>null</code>
-	 *         if class couldn't be loaded.
+	 * @return an instance of {@link ITestViewSupport} for the given extension.
+	 *         <code>null</code> if class couldn't be loaded.
 	 */
-	ITestKind instantiateKind() {
+	ITestViewSupport instantiateTestViewSupport() {
 		try {
-			return (ITestKind) fElement.createExecutableExtension(CLASS);
+			return (ITestViewSupport) fElement.createExecutableExtension(CLASS);
 		} catch (Exception e) {
 			UnitTestPlugin.log(e);
 			return null;

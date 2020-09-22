@@ -38,8 +38,8 @@ import org.osgi.framework.Constants;
 
 import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.junit.JUnitMessages;
-import org.eclipse.unittest.junit.JUnitPlugin;
-import org.eclipse.unittest.junit.JUnitPlugin.JUnitVersion;
+import org.eclipse.unittest.junit.JUnitTestPlugin;
+import org.eclipse.unittest.junit.JUnitTestPlugin.JUnitVersion;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 
 import org.eclipse.core.variables.VariablesPlugin;
@@ -269,11 +269,11 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 				return JUnitVersion.fromJUnitTestKindId(junitTestKindId);
 			}
 		} catch (Exception ex) {
-			JUnitPlugin.log(ex);
+			JUnitTestPlugin.log(ex);
 		}
 		IJavaProject javaProject = JUnitLaunchConfigurationConstants.getJavaProject(configuration);
 		if (javaProject != null) {
-			return JUnitPlugin.getJUnitVersion(javaProject);
+			return JUnitTestPlugin.getJUnitVersion(javaProject);
 		}
 		return JUnitVersion.JUNIT3;
 	}

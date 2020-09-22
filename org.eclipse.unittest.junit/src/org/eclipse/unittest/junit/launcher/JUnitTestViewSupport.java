@@ -13,11 +13,12 @@ package org.eclipse.unittest.junit.launcher;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import org.eclipse.unittest.junit.JUnitPlugin;
-import org.eclipse.unittest.junit.JUnitPlugin.JUnitVersion;
+import org.eclipse.unittest.junit.JUnitTestPlugin;
+import org.eclipse.unittest.junit.JUnitTestPlugin.JUnitVersion;
 import org.eclipse.unittest.junit.ui.OpenEditorAtLineAction;
 import org.eclipse.unittest.junit.ui.OpenTestAction;
 import org.eclipse.unittest.junit.ui.ShowStackTraceInConsoleViewActionDelegate;
+import org.eclipse.unittest.launcher.ITestRunnerClient;
 import org.eclipse.unittest.launcher.ITestViewSupport;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
@@ -133,7 +134,7 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 							.getAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_RUNNER_KIND, "")) //$NON-NLS-1$
 					.getJUnitTestKind();
 		} catch (CoreException e) {
-			JUnitPlugin.log(e);
+			JUnitTestPlugin.log(e);
 			return null;
 		}
 
@@ -178,7 +179,7 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 			res.setAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_METHOD_NAME, testMethodName);
 			return res;
 		} catch (CoreException e) {
-			JUnitPlugin.log(e);
+			JUnitTestPlugin.log(e);
 			return null;
 		}
 
@@ -228,5 +229,10 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 	@Override
 	public String getDisplayName() {
 		return "JUnit"; //$NON-NLS-1$
+	}
+
+	@Override
+	public ITestRunnerClient getTestRunnerClient() {
+		return new JUnitRemoteTestRunnerClient();
 	}
 }

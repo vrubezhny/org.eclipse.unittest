@@ -13,13 +13,13 @@
  *******************************************************************************/
 package org.eclipse.unittest.junit.ui;
 
-import org.eclipse.unittest.junit.JUnitPlugin;
+import org.eclipse.unittest.junit.JUnitTestPlugin;
 
 /**
  * Help context ids for the JUnit UI.
  */
 public interface IJUnitHelpContextIds {
-	public static final String PREFIX= JUnitPlugin.PLUGIN_ID + '.';
+	public static final String PREFIX= JUnitTestPlugin.PLUGIN_ID + '.';
 
 	// Actions
 	public static final String COPYTRACE_ACTION= PREFIX + "copy_trace_action_context"; //$NON-NLS-1$
