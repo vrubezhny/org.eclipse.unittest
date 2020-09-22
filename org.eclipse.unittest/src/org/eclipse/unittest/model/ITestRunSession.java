@@ -211,16 +211,6 @@ public interface ITestRunSession extends ITestElementContainer {
 	 */
 	void swapOut();
 
-	/**
-	 * Reruns the given test method if the session is kept alive.
-	 *
-	 * @param testId    test id
-	 * @param className test class name
-	 * @param testName  test method name
-	 * @return <code>false</code> if the rerun could not be started
-	 */
-	boolean rerunTest(String testId, String className, String testName);
-
 	ITestViewSupport getTestViewSupport();
 
 }

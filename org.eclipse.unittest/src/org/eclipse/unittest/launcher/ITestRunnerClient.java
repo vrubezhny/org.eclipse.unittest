@@ -28,15 +28,6 @@ public interface ITestRunnerClient {
 	boolean isRunning();
 
 	/**
-	 * Requests to Re-Runs a specified test case
-	 *
-	 * @param testId    test element identifier
-	 * @param className test type
-	 * @param testName  test name
-	 */
-	void rerunTest(String testId, String className, String testName);
-
-	/**
 	 * Setup listeners for a test run.
 	 *
 	 * @param listeners listeners to inform

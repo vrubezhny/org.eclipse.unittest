@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.unittest.junit.launcher;
 
-import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 
@@ -96,7 +94,7 @@ public class JUnitMigrationDelegate implements ILaunchConfigurationMigrationDele
 		String projName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String) null);
 		String containerHandle = config.getAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_CONTAINER,
 				(String) null);
-		String typeName = config.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String) null);
+		String typeName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String) null);
 		IJavaElement element = null;
 		if (containerHandle != null && containerHandle.length() > 0) {
 			element = JavaCore.create(containerHandle);

@@ -292,6 +292,4 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 		}
 	}
 
-	@Override
-	abstract public void rerunTest(String testId, String className, String testName);
 }

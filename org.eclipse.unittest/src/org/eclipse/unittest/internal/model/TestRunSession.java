@@ -471,21 +471,6 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 	}
 
 	@Override
-	public boolean rerunTest(String testId, String className, String testName) {
-		if (isKeptAlive()) {
-			Status status = ((TestCaseElement) getTestElement(testId)).getStatus();
-			if (status == Status.ERROR) {
-				fErrorCount--;
-			} else if (status == Status.FAILURE) {
-				fFailureCount--;
-			}
-			fTestRunnerClient.rerunTest(testId, className, testName);
-			return true;
-		}
-		return false;
-	}
-
-	@Override
 	public ITestElement getTestElement(String id) {
 		return fIdToTest.get(id);
 	}

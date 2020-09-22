@@ -29,13 +29,6 @@ public class UnitTestLaunchConfigurationConstants {
 
 	public static final String ATTR_PORT = UnitTestPlugin.PLUGIN_ID + ".PORT"; //$NON-NLS-1$
 
-	/**
-	 * The test method name (followed by a comma-separated list of fully qualified
-	 * parameter type names in parentheses, if exists), or "" iff running the whole
-	 * test type.
-	 */
-	public static final String ATTR_TEST_NAME = UnitTestPlugin.PLUGIN_ID + ".TESTNAME"; //$NON-NLS-1$
-
 	public static final String ATTR_KEEPRUNNING = UnitTestPlugin.PLUGIN_ID + ".KEEPRUNNING_ATTR"; //$NON-NLS-1$
 
 	public static final String ATTR_FAILURES_NAMES = UnitTestPlugin.PLUGIN_ID + ".FAILURENAMES"; //$NON-NLS-1$
@@ -77,12 +70,5 @@ public class UnitTestLaunchConfigurationConstants {
 	private UnitTestLaunchConfigurationConstants() {
 		// No instance allowed
 	}
-
-	/* Copied from org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants */
-	/**
-	 * Launch configuration attribute key. The value is a fully qualified name of a
-	 * main type to launch.
-	 */
-	public static final String ATTR_MAIN_TYPE_NAME = UnitTestPlugin.getPluginId() + ".MAIN_TYPE"; //$NON-NLS-1$
 
 }

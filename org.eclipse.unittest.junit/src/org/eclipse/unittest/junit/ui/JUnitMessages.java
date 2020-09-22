@@ -29,7 +29,6 @@ public final class JUnitMessages extends NLS {
 
 	public static String CompareResultDialog_actualLabel;
 	public static String CompareResultDialog_expectedLabel;
-	public static String CompareResultDialog_labelOK;
 	public static String CompareResultDialog_title;
 	public static String CompareResultsAction_description;
 	public static String CompareResultsAction_label;

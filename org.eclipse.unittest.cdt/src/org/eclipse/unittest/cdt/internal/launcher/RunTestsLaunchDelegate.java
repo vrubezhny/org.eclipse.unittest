@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.unittest.cdt.internal.launcher;
 
-import org.eclipse.unittest.cdt.CDTPlugin;
+import org.eclipse.unittest.cdt.CDTUnitTestPlugin;
 import org.eclipse.unittest.cdt.launcher.BaseTestsLaunchDelegate;
 
 /**
@@ -29,6 +29,6 @@ public class RunTestsLaunchDelegate extends BaseTestsLaunchDelegate {
 
 	@Override
 	public String getUnitTestViewSupportID() {
-		return CDTPlugin.CDT_TEST_KIND_ID;
+		return CDTUnitTestPlugin.CDT_TEST_KIND_ID;
 	}
 }

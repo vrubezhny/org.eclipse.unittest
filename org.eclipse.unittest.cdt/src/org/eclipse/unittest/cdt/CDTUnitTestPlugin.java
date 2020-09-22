@@ -29,12 +29,12 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 /**
  * The plug-in runtime class for the JUnit core plug-in.
  */
-public class CDTPlugin extends Plugin {
+public class CDTUnitTestPlugin extends Plugin {
 
 	/**
 	 * The single instance of this plug-in runtime class.
 	 */
-	private static CDTPlugin fgPlugin= null;
+	private static CDTUnitTestPlugin fgPlugin= null;
 
 	public static final String CORE_PLUGIN_ID= "org.eclipse.unittest"; //$NON-NLS-1$
 
@@ -73,11 +73,11 @@ public class CDTPlugin extends Plugin {
 */
 	private BundleContext fBundleContext;
 
-	public CDTPlugin() {
+	public CDTUnitTestPlugin() {
 		fgPlugin= this;
 	}
 
-	public static CDTPlugin getDefault() {
+	public static CDTUnitTestPlugin getDefault() {
 		return fgPlugin;
 	}
 
@@ -103,7 +103,7 @@ public class CDTPlugin extends Plugin {
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		try {
-			InstanceScope.INSTANCE.getNode(CDTPlugin.CORE_PLUGIN_ID).flush();
+			InstanceScope.INSTANCE.getNode(CDTUnitTestPlugin.CORE_PLUGIN_ID).flush();
 		} finally {
 			super.stop(context);
 		}

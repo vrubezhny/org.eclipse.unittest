@@ -16,13 +16,14 @@ package org.eclipse.unittest.ui;
 
 import java.util.AbstractList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.stream.Collectors;
 
+import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.internal.model.TestElement;
 import org.eclipse.unittest.internal.model.TestSuiteElement;
 import org.eclipse.unittest.internal.ui.CopyFailureListAction;
@@ -46,6 +47,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.TableItem;
 
+import org.eclipse.core.runtime.CoreException;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -65,13 +68,19 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.PageBook;
 
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 
 class TestViewer {
 	private final class TestSelectionListener implements ISelectionChangedListener {
 		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
-			handleSelected();
+			IStructuredSelection selection = (IStructuredSelection) fSelectionProvider.getSelection();
+			ITestElement testElement = null;
+			if (selection.size() == 1) {
+				testElement = (ITestElement) selection.getFirstElement();
+			}
+			fTestRunnerPart.handleTestSelected(testElement);
 		}
 	}
 
@@ -188,7 +197,6 @@ class TestViewer {
 	private TestSessionTreeContentProvider fTreeContentProvider;
 	private TestSessionLabelProvider fTreeLabelProvider;
 	private TableViewer fTableViewer;
-	private TestSessionTableContentProvider fTableContentProvider;
 	private TestSessionLabelProvider fTableLabelProvider;
 	private SelectionProviderMediator fSelectionProvider;
 
@@ -232,7 +240,7 @@ class TestViewer {
 
 		fTableViewer = new TableViewer(fViewerbook, SWT.V_SCROLL | SWT.H_SCROLL | SWT.SINGLE);
 		fTableViewer.setUseHashlookup(true);
-		fTableContentProvider = new TestSessionTableContentProvider();
+		TestSessionTableContentProvider fTableContentProvider = new TestSessionTableContentProvider();
 		fTableViewer.setContentProvider(fTableContentProvider);
 		fTableLabelProvider = new TestSessionLabelProvider(fTestRunnerPart, TestRunnerViewPart.LAYOUT_FLAT);
 //		fTableViewer.setLabelProvider(new ColoringLabelProvider(fTableLabelProvider));
@@ -302,36 +310,22 @@ class TestViewer {
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "-end")); //$NON-NLS-1$
 	}
 
-	private void addRerunActions(IMenuManager manager, ITestCaseElement testCaseElement) {
-		String className = testCaseElement.getTestClassName();
-		String testMethodName = testCaseElement.getTestMethodName();
-		String[] parameterTypes = testCaseElement.getParameterTypes();
-		if (parameterTypes != null) {
-			String paramTypesStr = Arrays.stream(parameterTypes).collect(Collectors.joining(",")); //$NON-NLS-1$
-			testMethodName = testMethodName + "(" + paramTypesStr + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+	private void addRerunActions(IMenuManager manager, ITestElement testCaseElement) {
+		ILaunchConfiguration rerunLaunchConfiguration = testCaseElement.getTestRunSession().getTestViewSupport()
+				.getRerunLaunchConfiguration(testCaseElement);
+		if (rerunLaunchConfiguration == null) {
+			return;
 		}
 		if (fTestRunnerPart.lastLaunchIsKeptAlive()) {
-			manager.add(new RerunAction(Messages.RerunAction_label_rerun, fTestRunnerPart, testCaseElement.getId(),
-					className, testMethodName, testCaseElement.getDisplayName(), testCaseElement.getUniqueId(),
-					ILaunchManager.RUN_MODE));
+			manager.add(new RerunAction(rerunLaunchConfiguration, ILaunchManager.RUN_MODE));
 		} else {
-			manager.add(new RerunAction(Messages.RerunAction_label_run, fTestRunnerPart, testCaseElement.getId(),
-					className, testMethodName, testCaseElement.getDisplayName(), testCaseElement.getUniqueId(),
-					ILaunchManager.RUN_MODE));
-			manager.add(new RerunAction(Messages.RerunAction_label_debug, fTestRunnerPart, testCaseElement.getId(),
-					className, testMethodName, testCaseElement.getDisplayName(), testCaseElement.getUniqueId(),
-					ILaunchManager.DEBUG_MODE));
-		}
-	}
-
-	private void addRerunActions(IMenuManager manager, ITestSuiteElement testSuiteElement) {
-		RerunAction[] rerunActions = testSuiteElement.getTestRunSession().getTestViewSupport()
-				.getRerunActions(fTestRunnerPart, testSuiteElement);
-		if (rerunActions != null) {
-			for (RerunAction action : rerunActions) {
-				if (action != null) {
-					manager.add(action);
-				}
+			try {
+				rerunLaunchConfiguration.getType().getSupportedModeCombinations().stream() //
+						.filter(modes -> modes.size() == 1) //
+						.flatMap(Collection::stream) //
+						.forEach(mode -> manager.add(new RerunAction(rerunLaunchConfiguration, mode)));
+			} catch (CoreException e) {
+				UnitTestPlugin.log(e);
 			}
 		}
 	}
@@ -365,16 +359,6 @@ class TestViewer {
 
 		if (action != null && action.isEnabled())
 			action.run();
-		return;
-	}
-
-	private void handleSelected() {
-		IStructuredSelection selection = (IStructuredSelection) fSelectionProvider.getSelection();
-		ITestElement testElement = null;
-		if (selection.size() == 1) {
-			testElement = (ITestElement) selection.getFirstElement();
-		}
-		fTestRunnerPart.handleTestSelected(testElement);
 	}
 
 	public synchronized void setShowTime(boolean showTime) {
