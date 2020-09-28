@@ -16,6 +16,13 @@ package org.eclipse.unittest.internal.ui;
 import org.eclipse.unittest.TestRunListener;
 import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.model.ITestRunSession;
+import org.eclipse.unittest.ui.TestRunnerViewPart;
+
+import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * This test run listener is the entry point that makes sure the
@@ -25,6 +32,42 @@ import org.eclipse.unittest.model.ITestRunSession;
 public class UITestRunListener extends TestRunListener {
 	@Override
 	public void sessionLaunched(ITestRunSession session) {
-		UnitTestPlugin.asyncShowTestRunnerViewPart();
+		getDisplay().asyncExec(this::showTestRunnerViewPartInActivePage);
 	}
+
+	/**
+	 * Creates a Test Runner View Part if it's not yet created and makes it visible
+	 * in active page
+	 *
+	 * @return a {@link TestRunnerViewPart} instance
+	 */
+	private TestRunnerViewPart showTestRunnerViewPartInActivePage() {
+		try {
+			// Have to force the creation of view part contents
+			// otherwise the UI will not be updated
+			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+			if (page == null)
+				return null;
+			TestRunnerViewPart view = (TestRunnerViewPart) page.findView(TestRunnerViewPart.NAME);
+			if (view == null) {
+				// create and show the result view if it isn't created yet.
+				return (TestRunnerViewPart) page.showView(TestRunnerViewPart.NAME, null, IWorkbenchPage.VIEW_VISIBLE);
+			} else {
+				page.activate(view);
+				return view;
+			}
+		} catch (PartInitException pie) {
+			UnitTestPlugin.log(pie);
+			return null;
+		}
+	}
+
+	private static Display getDisplay() {
+		Display display = Display.getCurrent();
+		if (display == null) {
+			display = Display.getDefault();
+		}
+		return display;
+	}
+
 }

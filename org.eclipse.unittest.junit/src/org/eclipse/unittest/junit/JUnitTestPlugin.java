@@ -25,11 +25,17 @@ import org.osgi.service.packageadmin.PackageAdmin;
 
 import org.eclipse.unittest.UnitTestPlugin;
 
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import org.eclipse.jdt.core.IAnnotation;
@@ -237,6 +243,46 @@ public class JUnitTestPlugin extends AbstractUIPlugin {
 		if (bundles != null && bundles.length > 0)
 			return bundles;
 		return null;
+	}
+
+	/**
+	 * Returns this workbench window's shell.
+	 *
+	 * @return the shell containing this window's controls or <code>null</code> if
+	 *         the shell has not been created yet or if the window has been closed
+	 */
+	public static Shell getActiveWorkbenchShell() {
+		IWorkbenchWindow workBenchWindow = getActiveWorkbenchWindow();
+		if (workBenchWindow == null)
+			return null;
+		return workBenchWindow.getShell();
+	}
+
+	/**
+	 * Returns the active workbench window
+	 *
+	 * @return the active workbench window, or <code>null</code> if there is no
+	 *         active workbench window or if called from a non-UI thread
+	 */
+	public static IWorkbenchWindow getActiveWorkbenchWindow() {
+		if (fgPlugin == null)
+			return null;
+		IWorkbench workBench = PlatformUI.getWorkbench();
+		if (workBench == null)
+			return null;
+		return workBench.getActiveWorkbenchWindow();
+	}
+
+	/**
+	 * Returns the currently active page for this workbench window.
+	 *
+	 * @return the active page, or <code>null</code> if none
+	 */
+	public static IWorkbenchPage getActivePage() {
+		IWorkbenchWindow activeWorkbenchWindow = getActiveWorkbenchWindow();
+		if (activeWorkbenchWindow == null)
+			return null;
+		return activeWorkbenchWindow.getActivePage();
 	}
 
 }

@@ -17,7 +17,6 @@ import java.net.URI;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
-import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.cdt.CDTUnitTestPlugin;
 import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.ui.TestRunnerViewPart;
@@ -41,6 +40,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -163,7 +163,7 @@ public class OpenEditorAtLineAction extends Action {
 		}
 		if (input != null && editorID != null) {
 			// Open the editor
-			IWorkbenchPage activePage = UnitTestPlugin.getActivePage();
+			IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 
 			IEditorPart editor = IDE.openEditor(activePage, input, editorID);
 			// Select the line

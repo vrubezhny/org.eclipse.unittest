@@ -14,14 +14,14 @@
 
 package org.eclipse.unittest.junit.launcher.util;
 
-import org.eclipse.unittest.UnitTestPlugin;
+import org.eclipse.unittest.junit.JUnitTestPlugin;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 
 /**
- * An implemention of IStatus.
- * TO DO: Why is it duplicated, it should leverage the Status base class???
+ * An implemention of IStatus. TO DO: Why is it duplicated, it should leverage
+ * the Status base class???
  */
 public class JUnitStatus implements IStatus {
 	private String fStatusMessage;
@@ -36,13 +36,14 @@ public class JUnitStatus implements IStatus {
 
 	/**
 	 * Creates a status .
+	 *
 	 * @param severity The status severity: ERROR, WARNING, INFO and OK.
-	 * @param message The message of the status. Applies only for ERROR,
-	 * WARNING and INFO.
+	 * @param message  The message of the status. Applies only for ERROR, WARNING
+	 *                 and INFO.
 	 */
 	public JUnitStatus(int severity, String message) {
-		fStatusMessage= message;
-		fSeverity= severity;
+		fStatusMessage = message;
+		fSeverity = severity;
 	}
 
 	public static IStatus createError(String message) {
@@ -59,6 +60,7 @@ public class JUnitStatus implements IStatus {
 
 	/**
 	 * Returns if the status' severity is OK.
+	 *
 	 * @return returns if the status' severity is OK.
 	 */
 	@Override
@@ -68,6 +70,7 @@ public class JUnitStatus implements IStatus {
 
 	/**
 	 * Returns if the status' severity is WARNING.
+	 *
 	 * @return returns if the status' severity is WARNING.
 	 */
 	public boolean isWarning() {
@@ -76,6 +79,7 @@ public class JUnitStatus implements IStatus {
 
 	/**
 	 * Returns if the status' severity is INFO.
+	 *
 	 * @return returns if the status' severity is INFO.
 	 */
 	public boolean isInfo() {
@@ -83,7 +87,8 @@ public class JUnitStatus implements IStatus {
 	}
 
 	/**
-	 *  Returns if the status' severity is ERROR.
+	 * Returns if the status' severity is ERROR.
+	 *
 	 * @return returns if the status' severity is ERROR.
 	 */
 	public boolean isError() {
@@ -97,40 +102,43 @@ public class JUnitStatus implements IStatus {
 
 	/**
 	 * Sets the status to ERROR.
+	 *
 	 * @param errorMessage the error message (can be empty, but not null)
 	 */
 	public void setError(String errorMessage) {
 		Assert.isNotNull(errorMessage);
-		fStatusMessage= errorMessage;
-		fSeverity= IStatus.ERROR;
+		fStatusMessage = errorMessage;
+		fSeverity = IStatus.ERROR;
 	}
 
 	/**
 	 * Sets the status to WARNING.
+	 *
 	 * @param warningMessage the warning message (can be empty, but not null)
 	 */
 	public void setWarning(String warningMessage) {
 		Assert.isNotNull(warningMessage);
-		fStatusMessage= warningMessage;
-		fSeverity= IStatus.WARNING;
+		fStatusMessage = warningMessage;
+		fSeverity = IStatus.WARNING;
 	}
 
 	/**
 	 * Sets the status to INFO.
+	 *
 	 * @param infoMessage the info message (can be empty, but not null)
 	 */
 	public void setInfo(String infoMessage) {
 		Assert.isNotNull(infoMessage);
-		fStatusMessage= infoMessage;
-		fSeverity= IStatus.INFO;
+		fStatusMessage = infoMessage;
+		fSeverity = IStatus.INFO;
 	}
 
 	/**
 	 * Sets the status to OK.
 	 */
 	public void setOK() {
-		fStatusMessage= null;
-		fSeverity= IStatus.OK;
+		fStatusMessage = null;
+		fSeverity = IStatus.OK;
 	}
 
 	@Override
@@ -140,6 +148,7 @@ public class JUnitStatus implements IStatus {
 
 	/**
 	 * Returns always <code>false</code>.
+	 *
 	 * @see IStatus#isMultiStatus()
 	 */
 	@Override
@@ -154,11 +163,12 @@ public class JUnitStatus implements IStatus {
 
 	@Override
 	public String getPlugin() {
-		return UnitTestPlugin.PLUGIN_ID;
+		return JUnitTestPlugin.PLUGIN_ID;
 	}
 
 	/**
 	 * Returns always <code>null</code>.
+	 *
 	 * @see IStatus#getException()
 	 */
 	@Override
@@ -168,6 +178,7 @@ public class JUnitStatus implements IStatus {
 
 	/**
 	 * Returns always the error severity.
+	 *
 	 * @see IStatus#getCode()
 	 */
 	@Override
@@ -177,6 +188,7 @@ public class JUnitStatus implements IStatus {
 
 	/**
 	 * Returns always <code>null</code>.
+	 *
 	 * @see IStatus#getChildren()
 	 */
 	@Override

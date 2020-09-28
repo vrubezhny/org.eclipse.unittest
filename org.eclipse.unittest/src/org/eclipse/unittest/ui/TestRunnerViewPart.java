@@ -567,7 +567,7 @@ public class TestRunnerViewPart extends ViewPart {
 		public void sessionAdded(final ITestRunSession testRunSession) {
 			getDisplay().asyncExec(() -> {
 				if (UnitTestUIPreferencesConstants.getShowInAllViews()
-						|| getSite().getWorkbenchWindow() == UnitTestPlugin.getActiveWorkbenchWindow()) {
+						|| getSite().getWorkbenchWindow() == PlatformUI.getWorkbench().getActiveWorkbenchWindow()) {
 					if (fInfoMessage == null) {
 						String testRunLabel = BasicElementLabels.getJavaElementName(testRunSession.getTestRunName());
 						String msg;
@@ -1317,8 +1317,7 @@ public class TestRunnerViewPart extends ViewPart {
 		if (fTestRunSession != null && fTestRunSession.getTotalCount() == 0) {
 			Display.getDefault().asyncExec(() -> {
 				String msg = MessageFormat.format(Messages.TestRunnerViewPart_error_no_tests_found, getDisplayName());
-				MessageDialog.openInformation(UnitTestPlugin.getActiveWorkbenchShell(),
-						Messages.TestRunnerViewPart__error_cannotrun, msg);
+				MessageDialog.openInformation(getSite().getShell(), Messages.TestRunnerViewPart__error_cannotrun, msg);
 			});
 		}
 	}

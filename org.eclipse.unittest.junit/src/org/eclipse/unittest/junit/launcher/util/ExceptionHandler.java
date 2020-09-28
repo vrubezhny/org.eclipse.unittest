@@ -16,7 +16,7 @@ package org.eclipse.unittest.junit.launcher.util;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.unittest.UnitTestPlugin;
+import org.eclipse.unittest.junit.JUnitTestPlugin;
 import org.eclipse.unittest.junit.launcher.wizards.WizardMessages;
 
 import org.eclipse.swt.widgets.Shell;
@@ -28,36 +28,37 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 
 /**
- * The default exception handler shows an error dialog when one of its handle methods
- * is called. If the passed exception is a <code>CoreException</code> an error dialog
- * pops up showing the exception's status information. For a <code>InvocationTargetException</code>
- * a normal message dialog pops up showing the exception's message. Additionally the exception
- * is written to the platform log.
+ * The default exception handler shows an error dialog when one of its handle
+ * methods is called. If the passed exception is a <code>CoreException</code> an
+ * error dialog pops up showing the exception's status information. For a
+ * <code>InvocationTargetException</code> a normal message dialog pops up
+ * showing the exception's message. Additionally the exception is written to the
+ * platform log.
  *
  * TO DO: this class is duplicated from org.eclipse.jdt.ui
  */
 public class ExceptionHandler {
 
-	private static ExceptionHandler fgInstance= new ExceptionHandler();
+	private static ExceptionHandler fgInstance = new ExceptionHandler();
 
 	/**
-	 * Handles the given <code>CoreException</code>. The workbench shell is used as a parent
-	 * for the dialog window.
+	 * Handles the given <code>CoreException</code>. The workbench shell is used as
+	 * a parent for the dialog window.
 	 *
-	 * @param e the <code>CoreException</code> to be handled
-	 * @param title the dialog window's window title
+	 * @param e       the <code>CoreException</code> to be handled
+	 * @param title   the dialog window's window title
 	 * @param message message to be displayed by the dialog window
 	 */
 	public static void handle(CoreException e, String title, String message) {
-		handle(e, UnitTestPlugin.getActiveWorkbenchShell(), title, message);
+		handle(e, JUnitTestPlugin.getActiveWorkbenchShell(), title, message);
 	}
 
 	/**
 	 * Handles the given <code>CoreException</code>.
 	 *
-	 * @param e the <code>CoreException</code> to be handled
-	 * @param parent the dialog window's parent shell or <code>null</code>
-	 * @param title the dialog window's window title
+	 * @param e       the <code>CoreException</code> to be handled
+	 * @param parent  the dialog window's parent shell or <code>null</code>
+	 * @param title   the dialog window's window title
 	 * @param message message to be displayed by the dialog window
 	 */
 	public static void handle(CoreException e, Shell parent, String title, String message) {
@@ -67,20 +68,21 @@ public class ExceptionHandler {
 	/**
 	 * Handles the given <code>InvocationTargetException</code>.
 	 *
-	 * @param e the <code>InvocationTargetException</code> to be handled
-	 * @param parent the dialog window's parent shell or <code>null</code>
-	 * @param title the dialog window's window title
+	 * @param e       the <code>InvocationTargetException</code> to be handled
+	 * @param parent  the dialog window's parent shell or <code>null</code>
+	 * @param title   the dialog window's window title
 	 * @param message message to be displayed by the dialog window
 	 */
 	public static void handle(InvocationTargetException e, Shell parent, String title, String message) {
 		fgInstance.perform(e, parent, title, message);
 	}
 
-	//---- Hooks for subclasses to control exception handling ------------------------------------
+	// ---- Hooks for subclasses to control exception handling
+	// ------------------------------------
 
 	protected void perform(CoreException e, Shell shell, String title, String message) {
-		UnitTestPlugin.log(e);
-		IStatus status= e.getStatus();
+		JUnitTestPlugin.log(e);
+		IStatus status = e.getStatus();
 		if (status != null) {
 			ErrorDialog.openError(shell, title, message, status);
 		} else {
@@ -89,11 +91,11 @@ public class ExceptionHandler {
 	}
 
 	protected void perform(InvocationTargetException e, Shell shell, String title, String message) {
-		Throwable target= e.getTargetException();
+		Throwable target = e.getTargetException();
 		if (target instanceof CoreException) {
-			perform((CoreException)target, shell, title, message);
+			perform((CoreException) target, shell, title, message);
 		} else {
-			UnitTestPlugin.log(e);
+			JUnitTestPlugin.log(e);
 			if (e.getMessage() != null && e.getMessage().length() > 0) {
 				displayMessageDialog(e.getMessage(), shell, title, message);
 			} else {
@@ -103,7 +105,7 @@ public class ExceptionHandler {
 	}
 
 	private void displayMessageDialog(String exceptionMessage, Shell shell, String title, String message) {
-		StringWriter msg= new StringWriter();
+		StringWriter msg = new StringWriter();
 		if (message != null) {
 			msg.write(message);
 			msg.write("\n\n"); //$NON-NLS-1$

@@ -36,7 +36,6 @@ import java.util.Set;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 
-import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.junit.JUnitMessages;
 import org.eclipse.unittest.junit.JUnitTestPlugin;
 import org.eclipse.unittest.junit.JUnitTestPlugin.JUnitVersion;
@@ -220,7 +219,7 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 							classpath[length] = entryString;
 						} catch (IOException | URISyntaxException e) {
 							throw new CoreException(
-									new Status(IStatus.ERROR, UnitTestPlugin.PLUGIN_ID, IStatus.ERROR, "", e)); //$NON-NLS-1$
+									new Status(IStatus.ERROR, JUnitTestPlugin.PLUGIN_ID, IStatus.ERROR, "", e)); //$NON-NLS-1$
 						}
 					}
 				}
@@ -647,7 +646,7 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 			}
 			return file.getAbsolutePath();
 		} catch (IOException | JavaModelException e) {
-			throw new CoreException(new Status(IStatus.ERROR, UnitTestPlugin.PLUGIN_ID, IStatus.ERROR, "", e)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, JUnitTestPlugin.PLUGIN_ID, IStatus.ERROR, "", e)); //$NON-NLS-1$
 		}
 	}
 
@@ -688,7 +687,7 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 			}
 			return file.getAbsolutePath();
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, UnitTestPlugin.PLUGIN_ID, IStatus.ERROR, "", e)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, JUnitTestPlugin.PLUGIN_ID, IStatus.ERROR, "", e)); //$NON-NLS-1$
 		}
 	}
 

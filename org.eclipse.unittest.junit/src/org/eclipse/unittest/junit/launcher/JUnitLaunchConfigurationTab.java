@@ -566,7 +566,7 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 		try {
 			mapResources(config);
 		} catch (CoreException e) {
-			UnitTestPlugin.log(e.getStatus());
+			JUnitTestPlugin.log(e.getStatus());
 		}
 		IStructuredSelection junitVersionSelection = (IStructuredSelection) fTestLoaderViewer.getSelection();
 		if (!junitVersionSelection.isEmpty()) {
@@ -614,7 +614,7 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 			setErrorMessage(e.getMessage());
 			return;
 		} catch (InvocationTargetException e) {
-			UnitTestPlugin.log(e.getTargetException());
+			JUnitTestPlugin.log(e.getTargetException());
 			return;
 		} finally {
 			fTestRadioButton.setSelection(radioSetting[0]);
@@ -696,7 +696,7 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 				updateLaunchConfigurationDialog();
 			}
 		} catch (JavaModelException e) {
-			UnitTestPlugin.log(e.getStatus());
+			JUnitTestPlugin.log(e.getStatus());
 		}
 	}
 
@@ -863,7 +863,7 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 		try {
 			projects = JavaCore.create(getWorkspaceRoot()).getJavaProjects();
 		} catch (JavaModelException e) {
-			UnitTestPlugin.log(e.getStatus());
+			JUnitTestPlugin.log(e.getStatus());
 			projects = new IJavaProject[0];
 		}
 
@@ -1000,7 +1000,7 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 					}
 				}
 			} catch (CoreException e) {
-				UnitTestPlugin.log(e);
+				JUnitTestPlugin.log(e);
 			}
 		}
 

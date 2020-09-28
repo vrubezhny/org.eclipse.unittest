@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.unittest.internal.ui;
 
-import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.ui.TestRunnerViewPart;
 
@@ -53,7 +52,7 @@ public class CopyFailureListAction extends Action {
 		} catch (SWTError e) {
 			if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
 				throw e;
-			if (MessageDialog.openQuestion(UnitTestPlugin.getActiveWorkbenchShell(), Messages.CopyFailureList_problem,
+			if (MessageDialog.openQuestion(fRunner.getSite().getShell(), Messages.CopyFailureList_problem,
 					Messages.CopyFailureList_clipboard_busy))
 				run();
 		}

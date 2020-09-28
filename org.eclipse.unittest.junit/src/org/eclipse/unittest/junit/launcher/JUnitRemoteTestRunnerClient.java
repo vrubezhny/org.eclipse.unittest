@@ -17,7 +17,7 @@ package org.eclipse.unittest.junit.launcher;
 
 import java.util.Arrays;
 
-import org.eclipse.unittest.UnitTestPlugin;
+import org.eclipse.unittest.junit.JUnitTestPlugin;
 import org.eclipse.unittest.model.ITestRunListener;
 import org.eclipse.unittest.model.RemoteTestRunnerClient;
 
@@ -36,7 +36,7 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 	public abstract class ListenerSafeRunnable implements ISafeRunnable {
 		@Override
 		public void handleException(Throwable exception) {
-			UnitTestPlugin.log(exception);
+			JUnitTestPlugin.log(exception);
 		}
 	}
 

@@ -21,7 +21,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.junit.JUnitTestPlugin;
 import org.eclipse.unittest.junit.launcher.util.ExceptionHandler;
 import org.eclipse.unittest.junit.launcher.util.JUnitStubUtility;
@@ -250,7 +249,7 @@ public class JUnitLaunchShortcut implements ILaunchShortcut2 {
 	}
 
 	private Shell getShell() {
-		return UnitTestPlugin.getActiveWorkbenchShell();
+		return JUnitTestPlugin.getActiveWorkbenchShell();
 	}
 
 	private ILaunchManager getLaunchManager() {
