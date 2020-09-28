@@ -202,7 +202,7 @@ public final class UnitTestModel implements IUnitTestModel {
 		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		launchManager.removeLaunchListener(fLaunchListener);
 
-		File historyDirectory = UnitTestPlugin.getHistoryDirectory();
+		File historyDirectory = getHistoryDirectory();
 		File[] swapFiles = historyDirectory.listFiles();
 		if (swapFiles != null) {
 			for (File swapFile : swapFiles) {
@@ -489,6 +489,23 @@ public final class UnitTestModel implements IUnitTestModel {
 	@Override
 	public ITestRunSession createTestRunSession(ILaunch launch, int port) {
 		return new TestRunSession(launch, port);
+	}
+
+	private static final String HISTORY_DIR_NAME = "history"; //$NON-NLS-1$
+
+	/**
+	 * Creates and returns a directory to store the History information
+	 *
+	 * @return the file corresponding to History directory
+	 * @throws IllegalStateException in case of failed to create or find an existing
+	 *                               directory
+	 */
+	public static File getHistoryDirectory() throws IllegalStateException {
+		File historyDir = UnitTestPlugin.getDefault().getStateLocation().append(HISTORY_DIR_NAME).toFile();
+		if (!historyDir.isDirectory()) {
+			historyDir.mkdir();
+		}
+		return historyDir;
 	}
 
 }

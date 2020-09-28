@@ -13,10 +13,7 @@
  *******************************************************************************/
 package org.eclipse.unittest;
 
-import java.io.File;
-
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
 
 import org.eclipse.unittest.internal.model.UnitTestModel;
 import org.eclipse.unittest.model.IUnitTestModel;
@@ -44,11 +41,6 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 	private static UnitTestPlugin fgPlugin = null;
 
 	public static final String PLUGIN_ID = "org.eclipse.unittest"; //$NON-NLS-1$
-//	public static final String ID_EXTENSION_POINT_UNITTEST_LAUNCHCONFIGS = PLUGIN_ID + "." + "unittestLaunchConfigs"; //$NON-NLS-1$ //$NON-NLS-2$
-
-	private BundleContext fBundleContext;
-
-	private static boolean fIsStopped = false;
 
 	/**
 	 * Constructs a {@link UnitTestPlugin} object
@@ -87,13 +79,11 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		fBundleContext = context;
 		fUnitTestModel.start();
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		fIsStopped = true;
 		super.stop(context);
 		try {
 			InstanceScope.INSTANCE.getNode(UnitTestPlugin.PLUGIN_ID).flush();
@@ -101,30 +91,6 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 		} finally {
 			super.stop(context);
 		}
-		fBundleContext = null;
-	}
-
-	/**
-	 * Returns a service with the specified name or <code>null</code> if none.
-	 *
-	 * @param serviceName name of service
-	 * @return service object or <code>null</code> if none
-	 */
-	public Object getService(String serviceName) {
-		ServiceReference<?> reference = fBundleContext.getServiceReference(serviceName);
-		if (reference == null)
-			return null;
-		return fBundleContext.getService(reference);
-	}
-
-	/**
-	 * Indicates that the plug-in is stopped
-	 *
-	 * @return <code>true</code> in case the plug-in is stopped, otherwise returns
-	 *         <code>false</code>
-	 */
-	public static boolean isStopped() {
-		return fIsStopped;
 	}
 
 	/*
@@ -134,8 +100,6 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 
 	public static final String ID_EXTENSION_POINT_TESTRUN_LISTENERS = PLUGIN_ID + "." + "testRunListeners"; //$NON-NLS-1$ //$NON-NLS-2$
 	public static final String ID_EXTENSION_POINT_TEST_VIEW_SUPPORTS = PLUGIN_ID + "." + "unittestViewSupport"; //$NON-NLS-1$ //$NON-NLS-2$
-
-	private static final String HISTORY_DIR_NAME = "history"; //$NON-NLS-1$
 
 	private final UnitTestModel fUnitTestModel = new UnitTestModel();
 
@@ -192,18 +156,4 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 		}
 	}
 
-	/**
-	 * Creates and returns a directory to store the History information
-	 *
-	 * @return the file corresponding to History directory
-	 * @throws IllegalStateException in case of failed to create or find an existing
-	 *                               directory
-	 */
-	public static File getHistoryDirectory() throws IllegalStateException {
-		File historyDir = getDefault().getStateLocation().append(HISTORY_DIR_NAME).toFile();
-		if (!historyDir.isDirectory()) {
-			historyDir.mkdir();
-		}
-		return historyDir;
-	}
 }

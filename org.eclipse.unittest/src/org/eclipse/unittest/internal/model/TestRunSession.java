@@ -403,7 +403,7 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 	}
 
 	private File getSwapFile() throws IllegalStateException {
-		File historyDir = UnitTestPlugin.getHistoryDirectory();
+		File historyDir = UnitTestModel.getHistoryDirectory();
 		String isoTime = new SimpleDateFormat("yyyyMMdd-HHmmss.SSS").format(new Date(getStartTime())); //$NON-NLS-1$
 		String swapFileName = isoTime + ".xml"; //$NON-NLS-1$
 		return new File(historyDir, swapFileName);

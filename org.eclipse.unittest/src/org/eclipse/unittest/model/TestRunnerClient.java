@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import org.osgi.framework.Bundle;
+
 import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.launcher.ITestRunnerClient;
 
@@ -177,7 +179,7 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	}
 
 	protected void notifyTestRunStopped(final long elapsedTime) {
-		if (UnitTestPlugin.isStopped())
+		if (isStopped())
 			return;
 		for (ITestRunListener listener : fListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
@@ -190,7 +192,7 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	}
 
 	protected void notifyTestRunEnded(final long elapsedTime) {
-		if (UnitTestPlugin.isStopped())
+		if (isStopped())
 			return;
 		for (ITestRunListener listener : fListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
@@ -203,7 +205,7 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	}
 
 	protected void notifyTestEnded(final String testId, final String testName, boolean isIgnored) {
-		if (UnitTestPlugin.isStopped())
+		if (isStopped())
 			return;
 		for (ITestRunListener listener : fListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
@@ -216,7 +218,7 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	}
 
 	protected void notifyTestStarted(final String testId, final String testName) {
-		if (UnitTestPlugin.isStopped())
+		if (isStopped())
 			return;
 		for (ITestRunListener listener : fListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
@@ -229,7 +231,7 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	}
 
 	protected void notifyTestRunStarted(final int count) {
-		if (UnitTestPlugin.isStopped())
+		if (isStopped())
 			return;
 		for (ITestRunListener listener : fListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
@@ -242,7 +244,7 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	}
 
 	protected void notifyTestFailed() {
-		if (UnitTestPlugin.isStopped())
+		if (isStopped())
 			return;
 		for (ITestRunListener listener : fListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
@@ -280,7 +282,7 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	}
 
 	protected void notifyTestRunTerminated() {
-		if (UnitTestPlugin.isStopped())
+		if (isStopped())
 			return;
 		for (ITestRunListener listener : fListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
@@ -292,4 +294,13 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 		}
 	}
 
+	private boolean isStopped() {
+		switch (UnitTestPlugin.getDefault().getBundle().getState()) {
+		case Bundle.ACTIVE:
+		case Bundle.STARTING:
+			return false;
+		default:
+			return true;
+		}
+	}
 }
