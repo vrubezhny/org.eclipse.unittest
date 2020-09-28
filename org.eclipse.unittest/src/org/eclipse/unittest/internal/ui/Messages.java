@@ -17,9 +17,8 @@ import org.eclipse.osgi.util.NLS;
 
 public final class Messages extends NLS {
 
-	private static final String BUNDLE_NAME = "org.eclipse.unittest.ui.Messages";//$NON-NLS-1$
 	static {
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}
 
 	private Messages() {
