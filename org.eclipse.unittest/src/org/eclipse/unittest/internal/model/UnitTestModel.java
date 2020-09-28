@@ -333,7 +333,7 @@ public final class UnitTestModel implements IUnitTestModel {
 
 			private void storeImportError(Exception e) {
 				exception[0] = new CoreException(new org.eclipse.core.runtime.Status(IStatus.ERROR,
-						UnitTestPlugin.getPluginId(), ModelMessages.UnitTestModel_could_not_import, e));
+						UnitTestPlugin.PLUGIN_ID, ModelMessages.UnitTestModel_could_not_import, e));
 			}
 		};
 		importThread.start();
@@ -440,12 +440,12 @@ public final class UnitTestModel implements IUnitTestModel {
 
 	private static void throwExportError(File file, Exception e) throws CoreException {
 		throw new CoreException(
-				new org.eclipse.core.runtime.Status(IStatus.ERROR, UnitTestPlugin.getPluginId(), MessageFormat.format(
+				new org.eclipse.core.runtime.Status(IStatus.ERROR, UnitTestPlugin.PLUGIN_ID, MessageFormat.format(
 						ModelMessages.UnitTestModel_could_not_write, BasicElementLabels.getPathLabel(file)), e));
 	}
 
 	private static void throwImportError(File file, Exception e) throws CoreException {
-		throw new CoreException(new org.eclipse.core.runtime.Status(IStatus.ERROR, UnitTestPlugin.getPluginId(),
+		throw new CoreException(new org.eclipse.core.runtime.Status(IStatus.ERROR, UnitTestPlugin.PLUGIN_ID,
 				MessageFormat.format(ModelMessages.UnitTestModel_could_not_read, BasicElementLabels.getPathLabel(file)),
 				e));
 	}

@@ -31,6 +31,7 @@ import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.internal.UnitTestPreferencesConstants;
 import org.eclipse.unittest.internal.ui.CounterPanel;
 import org.eclipse.unittest.internal.ui.IUnitTestHelpContextIds;
+import org.eclipse.unittest.internal.ui.Images;
 import org.eclipse.unittest.internal.ui.Messages;
 import org.eclipse.unittest.internal.ui.ProgressImages;
 import org.eclipse.unittest.internal.ui.ScrollLockAction;
@@ -221,11 +222,11 @@ public class TestRunnerViewPart extends ViewPart {
 	final Image fTestRunningIcon;
 	final Image fTestIgnoredIcon;
 
-	final ImageDescriptor fSuiteIconDescriptor = UnitTestPlugin.getImageDescriptor("obj16/tsuite.png"); //$NON-NLS-1$
-	final ImageDescriptor fSuiteOkIconDescriptor = UnitTestPlugin.getImageDescriptor("obj16/tsuiteok.png"); //$NON-NLS-1$
-	final ImageDescriptor fSuiteErrorIconDescriptor = UnitTestPlugin.getImageDescriptor("obj16/tsuiteerror.png"); //$NON-NLS-1$
-	final ImageDescriptor fSuiteFailIconDescriptor = UnitTestPlugin.getImageDescriptor("obj16/tsuitefail.png"); //$NON-NLS-1$
-	final ImageDescriptor fSuiteRunningIconDescriptor = UnitTestPlugin.getImageDescriptor("obj16/tsuiterun.png"); //$NON-NLS-1$
+	final ImageDescriptor fSuiteIconDescriptor = Images.getImageDescriptor("obj16/tsuite.png"); //$NON-NLS-1$
+	final ImageDescriptor fSuiteOkIconDescriptor = Images.getImageDescriptor("obj16/tsuiteok.png"); //$NON-NLS-1$
+	final ImageDescriptor fSuiteErrorIconDescriptor = Images.getImageDescriptor("obj16/tsuiteerror.png"); //$NON-NLS-1$
+	final ImageDescriptor fSuiteFailIconDescriptor = Images.getImageDescriptor("obj16/tsuitefail.png"); //$NON-NLS-1$
+	final ImageDescriptor fSuiteRunningIconDescriptor = Images.getImageDescriptor("obj16/tsuiterun.png"); //$NON-NLS-1$
 
 	final Image fSuiteIcon;
 	final Image fSuiteOkIcon;
@@ -790,7 +791,7 @@ public class TestRunnerViewPart extends ViewPart {
 		public StopAction() {
 			setText(Messages.TestRunnerViewPart_stopaction_text);
 			setToolTipText(Messages.TestRunnerViewPart_stopaction_tooltip);
-			UnitTestPlugin.setLocalImageDescriptors(this, "stop.png"); //$NON-NLS-1$
+			Images.setLocalImageDescriptors(this, "stop.png"); //$NON-NLS-1$
 		}
 
 		@Override
@@ -804,7 +805,7 @@ public class TestRunnerViewPart extends ViewPart {
 		public RerunLastAction() {
 			setText(Messages.TestRunnerViewPart_rerunaction_label);
 			setToolTipText(Messages.TestRunnerViewPart_rerunaction_tooltip);
-			UnitTestPlugin.setLocalImageDescriptors(this, "relaunch.png"); //$NON-NLS-1$
+			Images.setLocalImageDescriptors(this, "relaunch.png"); //$NON-NLS-1$
 			setEnabled(false);
 			setActionDefinitionId(RERUN_LAST_COMMAND);
 		}
@@ -819,7 +820,7 @@ public class TestRunnerViewPart extends ViewPart {
 		public RerunLastFailedFirstAction() {
 			setText(Messages.TestRunnerViewPart_rerunfailuresaction_label);
 			setToolTipText(Messages.TestRunnerViewPart_rerunfailuresaction_tooltip);
-			UnitTestPlugin.setLocalImageDescriptors(this, "relaunchf.png"); //$NON-NLS-1$
+			Images.setLocalImageDescriptors(this, "relaunchf.png"); //$NON-NLS-1$
 			setEnabled(false);
 			setActionDefinitionId(RERUN_FAILED_FIRST_COMMAND);
 		}
@@ -838,15 +839,15 @@ public class TestRunnerViewPart extends ViewPart {
 			switch (orientation) {
 			case TestRunnerViewPart.VIEW_ORIENTATION_HORIZONTAL:
 				setText(Messages.TestRunnerViewPart_toggle_horizontal_label);
-				setImageDescriptor(UnitTestPlugin.getImageDescriptor("elcl16/th_horizontal.png")); //$NON-NLS-1$
+				setImageDescriptor(Images.getImageDescriptor("elcl16/th_horizontal.png")); //$NON-NLS-1$
 				break;
 			case TestRunnerViewPart.VIEW_ORIENTATION_VERTICAL:
 				setText(Messages.TestRunnerViewPart_toggle_vertical_label);
-				setImageDescriptor(UnitTestPlugin.getImageDescriptor("elcl16/th_vertical.png")); //$NON-NLS-1$
+				setImageDescriptor(Images.getImageDescriptor("elcl16/th_vertical.png")); //$NON-NLS-1$
 				break;
 			case TestRunnerViewPart.VIEW_ORIENTATION_AUTOMATIC:
 				setText(Messages.TestRunnerViewPart_toggle_automatic_label);
-				setImageDescriptor(UnitTestPlugin.getImageDescriptor("elcl16/th_automatic.png")); //$NON-NLS-1$
+				setImageDescriptor(Images.getImageDescriptor("elcl16/th_automatic.png")); //$NON-NLS-1$
 				break;
 			default:
 				break;
@@ -907,7 +908,7 @@ public class TestRunnerViewPart extends ViewPart {
 		public FailuresOnlyFilterAction() {
 			super(Messages.TestRunnerViewPart_show_failures_only, AS_CHECK_BOX);
 			setToolTipText(Messages.TestRunnerViewPart_show_failures_only);
-			setImageDescriptor(UnitTestPlugin.getImageDescriptor("obj16/failures.png")); //$NON-NLS-1$
+			setImageDescriptor(Images.getImageDescriptor("obj16/failures.png")); //$NON-NLS-1$
 		}
 
 		@Override
@@ -920,7 +921,7 @@ public class TestRunnerViewPart extends ViewPart {
 		public IgnoredOnlyFilterAction() {
 			super(Messages.TestRunnerViewPart_show_ignored_only, AS_CHECK_BOX);
 			setToolTipText(Messages.TestRunnerViewPart_show_ignored_only);
-			setImageDescriptor(UnitTestPlugin.getImageDescriptor("obj16/testignored.png")); //$NON-NLS-1$
+			setImageDescriptor(Images.getImageDescriptor("obj16/testignored.png")); //$NON-NLS-1$
 		}
 
 		@Override
@@ -945,7 +946,7 @@ public class TestRunnerViewPart extends ViewPart {
 
 		public ShowTestHierarchyAction() {
 			super(Messages.TestRunnerViewPart_hierarchical_layout, IAction.AS_CHECK_BOX);
-			setImageDescriptor(UnitTestPlugin.getImageDescriptor("elcl16/hierarchicalLayout.png")); //$NON-NLS-1$
+			setImageDescriptor(Images.getImageDescriptor("elcl16/hierarchicalLayout.png")); //$NON-NLS-1$
 		}
 
 		@Override
@@ -1001,7 +1002,7 @@ public class TestRunnerViewPart extends ViewPart {
 	}
 
 	private Image createManagedImage(String path) {
-		return createManagedImage(UnitTestPlugin.getImageDescriptor(path));
+		return createManagedImage(Images.getImageDescriptor(path));
 	}
 
 	private Image createManagedImage(ImageDescriptor descriptor) {

@@ -17,6 +17,7 @@
 package org.eclipse.unittest.junit.launcher;
 
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashSet;
@@ -45,6 +46,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -55,6 +57,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -439,7 +442,11 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 	}
 
 	private static Image createImage(String path) {
-		return UnitTestPlugin.getImageDescriptor(path).createImage();
+		URL url = FileLocator.find(JUnitTestPlugin.getDefault().getBundle(), new Path("icons/full/" + path)); //$NON-NLS-1$
+		if (url != null) {
+			return ImageDescriptor.createFromURL(url).createImage();
+		}
+		return null;
 	}
 
 	@Override

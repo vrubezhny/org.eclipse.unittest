@@ -15,8 +15,6 @@ package org.eclipse.unittest.internal.ui;
 
 import java.text.MessageFormat;
 
-import org.eclipse.unittest.UnitTestPlugin;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -36,8 +34,8 @@ public class CounterPanel extends Composite {
 	protected int fIgnoredCount;
 	protected int fAssumptionFailedCount;
 
-	private final Image fErrorIcon = UnitTestPlugin.createImage("ovr16/error_ovr.png"); //$NON-NLS-1$
-	private final Image fFailureIcon = UnitTestPlugin.createImage("ovr16/failed_ovr.png"); //$NON-NLS-1$
+	private final Image fErrorIcon = Images.createImage("ovr16/error_ovr.png"); //$NON-NLS-1$
+	private final Image fFailureIcon = Images.createImage("ovr16/failed_ovr.png"); //$NON-NLS-1$
 
 	public CounterPanel(Composite parent) {
 		super(parent, SWT.WRAP);

@@ -202,7 +202,22 @@ public class CompareResultDialog extends TrayDialog {
 
 	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
-		return UnitTestPlugin.getDefault().getDialogSettingsSection(getClass().getName());
+		return getDialogSettingsSection(getClass().getName());
+	}
+
+	/**
+	 * Returns the section with the given name in this dialog settings.
+	 *
+	 * @param name the key
+	 * @return {@link IDialogSettings} (the section), or <code>null</code> if none
+	 */
+	private IDialogSettings getDialogSettingsSection(String name) {
+		IDialogSettings dialogSettings = UnitTestPlugin.getDefault().getDialogSettings();
+		IDialogSettings section = dialogSettings.getSection(name);
+		if (section == null) {
+			section = dialogSettings.addNewSection(name);
+		}
+		return section;
 	}
 
 	private void computePrefixSuffix() {

@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.unittest.internal.ui;
 
-import org.eclipse.unittest.UnitTestPlugin;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 
@@ -33,9 +31,9 @@ public class ShowStackTraceInConsoleViewAction extends Action {
 		setDescription(Messages.ShowStackTraceInConsoleViewAction_description);
 		setToolTipText(Messages.ShowStackTraceInConsoleViewAction_tooltip);
 
-		setHoverImageDescriptor(UnitTestPlugin.getImageDescriptor("elcl16/open_console.png")); //$NON-NLS-1$
-		setImageDescriptor(UnitTestPlugin.getImageDescriptor("elcl16/open_console.png")); //$NON-NLS-1$
-		setDisabledImageDescriptor(UnitTestPlugin.getImageDescriptor("dlcl16/open_console.png")); //$NON-NLS-1$
+		setHoverImageDescriptor(Images.getImageDescriptor("elcl16/open_console.png")); //$NON-NLS-1$
+		setImageDescriptor(Images.getImageDescriptor("elcl16/open_console.png")); //$NON-NLS-1$
+		setDisabledImageDescriptor(Images.getImageDescriptor("dlcl16/open_console.png")); //$NON-NLS-1$
 
 		fDelegate = null;
 	}

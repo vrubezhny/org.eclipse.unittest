@@ -18,12 +18,15 @@ package org.eclipse.unittest.junit;
 
 import java.util.Arrays;
 
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+import org.osgi.service.packageadmin.PackageAdmin;
 
 import org.eclipse.unittest.UnitTestPlugin;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 
@@ -199,6 +202,41 @@ public class JUnitTestPlugin extends AbstractUIPlugin {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Returns the bundle for a given bundle name, regardless whether the bundle is
+	 * resolved or not.
+	 *
+	 * @param bundleName the bundle name
+	 * @return the bundle
+	 */
+	public Bundle getBundle(String bundleName) {
+		Bundle[] bundles = getBundles(bundleName, null);
+		if (bundles != null && bundles.length > 0)
+			return bundles[0];
+		return null;
+	}
+
+	/**
+	 * Returns the bundles for a given bundle name,
+	 *
+	 * @param bundleName the bundle name
+	 * @param version    the version of the bundle
+	 * @return the bundles of the given name
+	 */
+	public Bundle[] getBundles(String bundleName, String version) {
+		Bundle[] bundles = Platform.getBundles(bundleName, version);
+		if (bundles != null)
+			return bundles;
+
+		// Accessing unresolved bundle
+		ServiceReference<PackageAdmin> serviceRef = fBundleContext.getServiceReference(PackageAdmin.class);
+		PackageAdmin admin = fBundleContext.getService(serviceRef);
+		bundles = admin.getBundles(bundleName, version);
+		if (bundles != null && bundles.length > 0)
+			return bundles;
+		return null;
 	}
 
 }

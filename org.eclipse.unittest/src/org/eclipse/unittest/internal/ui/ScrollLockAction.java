@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.unittest.internal.ui;
 
-
-import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.ui.TestRunnerViewPart;
 
 import org.eclipse.jface.action.Action;
@@ -30,14 +28,12 @@ public class ScrollLockAction extends Action {
 
 	public ScrollLockAction(TestRunnerViewPart viewer) {
 		super(Messages.ScrollLockAction_action_label);
-		fRunnerViewPart= viewer;
+		fRunnerViewPart = viewer;
 		setToolTipText(Messages.ScrollLockAction_action_tooltip);
-		setDisabledImageDescriptor(UnitTestPlugin.getImageDescriptor("dlcl16/lock.png")); //$NON-NLS-1$
-		setHoverImageDescriptor(UnitTestPlugin.getImageDescriptor("elcl16/lock.png")); //$NON-NLS-1$
-		setImageDescriptor(UnitTestPlugin.getImageDescriptor("elcl16/lock.png")); //$NON-NLS-1$
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(
-			this,
-			IUnitTestHelpContextIds.OUTPUT_SCROLL_LOCK_ACTION);
+		setDisabledImageDescriptor(Images.getImageDescriptor("dlcl16/lock.png")); //$NON-NLS-1$
+		setHoverImageDescriptor(Images.getImageDescriptor("elcl16/lock.png")); //$NON-NLS-1$
+		setImageDescriptor(Images.getImageDescriptor("elcl16/lock.png")); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IUnitTestHelpContextIds.OUTPUT_SCROLL_LOCK_ACTION);
 		setChecked(false);
 	}
 

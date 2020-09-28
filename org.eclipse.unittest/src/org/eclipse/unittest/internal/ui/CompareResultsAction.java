@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.unittest.internal.ui;
 
-import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.ui.FailureTraceUIBlock;
 
@@ -34,9 +33,9 @@ public class CompareResultsAction extends Action {
 		setDescription(Messages.CompareResultsAction_description);
 		setToolTipText(Messages.CompareResultsAction_tooltip);
 
-		setDisabledImageDescriptor(UnitTestPlugin.getImageDescriptor("dlcl16/compare.png")); //$NON-NLS-1$
-		setHoverImageDescriptor(UnitTestPlugin.getImageDescriptor("elcl16/compare.png")); //$NON-NLS-1$
-		setImageDescriptor(UnitTestPlugin.getImageDescriptor("elcl16/compare.png")); //$NON-NLS-1$
+		setDisabledImageDescriptor(Images.getImageDescriptor("dlcl16/compare.png")); //$NON-NLS-1$
+		setHoverImageDescriptor(Images.getImageDescriptor("elcl16/compare.png")); //$NON-NLS-1$
+		setImageDescriptor(Images.getImageDescriptor("elcl16/compare.png")); //$NON-NLS-1$
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IUnitTestHelpContextIds.ENABLEFILTER_ACTION);
 		fView = view;
 	}

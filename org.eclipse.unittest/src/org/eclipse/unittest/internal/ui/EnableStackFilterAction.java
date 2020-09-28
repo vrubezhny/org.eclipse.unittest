@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.unittest.internal.ui;
 
-
-import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.internal.UnitTestPreferencesConstants;
 import org.eclipse.unittest.ui.FailureTraceUIBlock;
 
@@ -34,12 +32,12 @@ public class EnableStackFilterAction extends Action {
 		setDescription(Messages.EnableStackFilterAction_action_description);
 		setToolTipText(Messages.EnableStackFilterAction_action_tooltip);
 
-		setDisabledImageDescriptor(UnitTestPlugin.getImageDescriptor("dlcl16/cfilter.png")); //$NON-NLS-1$
-		setHoverImageDescriptor(UnitTestPlugin.getImageDescriptor("elcl16/cfilter.png")); //$NON-NLS-1$
-		setImageDescriptor(UnitTestPlugin.getImageDescriptor("elcl16/cfilter.png")); //$NON-NLS-1$
+		setDisabledImageDescriptor(Images.getImageDescriptor("dlcl16/cfilter.png")); //$NON-NLS-1$
+		setHoverImageDescriptor(Images.getImageDescriptor("elcl16/cfilter.png")); //$NON-NLS-1$
+		setImageDescriptor(Images.getImageDescriptor("elcl16/cfilter.png")); //$NON-NLS-1$
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IUnitTestHelpContextIds.ENABLEFILTER_ACTION);
 
-		fView= view;
+		fView = view;
 		setChecked(UnitTestPreferencesConstants.getFilterStack());
 	}
 

@@ -757,7 +757,7 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 
 		private String localURL(JUnitRuntimeClasspathEntry jar)
 				throws IOException, MalformedURLException, URISyntaxException {
-			Bundle bundle = UnitTestPlugin.getDefault().getBundle(jar.getPluginId());
+			Bundle bundle = JUnitTestPlugin.getDefault().getBundle(jar.getPluginId());
 			URL url;
 			if (jar.getPluginRelativePath() == null) {
 				String bundleClassPath = bundle.getHeaders().get(Constants.BUNDLE_CLASSPATH);
@@ -800,7 +800,7 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 
 	@Override
 	protected void abort(String message, Throwable exception, int code) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, UnitTestPlugin.PLUGIN_ID, code, message, exception));
+		throw new CoreException(new Status(IStatus.ERROR, JUnitTestPlugin.PLUGIN_ID, code, message, exception));
 	}
 
 }

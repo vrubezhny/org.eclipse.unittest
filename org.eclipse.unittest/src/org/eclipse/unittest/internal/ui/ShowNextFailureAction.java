@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.unittest.internal.ui;
 
-import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.ui.TestRunnerViewPart;
 
 import org.eclipse.jface.action.Action;
@@ -24,9 +23,9 @@ public class ShowNextFailureAction extends Action {
 
 	public ShowNextFailureAction(TestRunnerViewPart part) {
 		super(Messages.ShowNextFailureAction_label);
-		setDisabledImageDescriptor(UnitTestPlugin.getImageDescriptor("dlcl16/select_next.png")); //$NON-NLS-1$
-		setHoverImageDescriptor(UnitTestPlugin.getImageDescriptor("elcl16/select_next.png")); //$NON-NLS-1$
-		setImageDescriptor(UnitTestPlugin.getImageDescriptor("elcl16/select_next.png")); //$NON-NLS-1$
+		setDisabledImageDescriptor(Images.getImageDescriptor("dlcl16/select_next.png")); //$NON-NLS-1$
+		setHoverImageDescriptor(Images.getImageDescriptor("elcl16/select_next.png")); //$NON-NLS-1$
+		setImageDescriptor(Images.getImageDescriptor("elcl16/select_next.png")); //$NON-NLS-1$
 		setToolTipText(Messages.ShowNextFailureAction_tooltip);
 		fPart = part;
 	}
