@@ -20,7 +20,6 @@ import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.cdt.CDTUnitTestPlugin;
 import org.eclipse.unittest.model.ITestRunSession;
-import org.eclipse.unittest.ui.IOpenEditorAction;
 import org.eclipse.unittest.ui.TestRunnerViewPart;
 
 import org.eclipse.core.filesystem.URIUtil;
@@ -63,7 +62,7 @@ import org.eclipse.debug.ui.sourcelookup.ISourceLookupResult;
 /**
  * Opens the editor in place where the currently selected message is pointed to.
  */
-public class OpenEditorAtLineAction extends Action implements IOpenEditorAction {
+public class OpenEditorAtLineAction extends Action {
 	private TestRunnerViewPart testRunner;
 	private String fileName;
 	private int line;

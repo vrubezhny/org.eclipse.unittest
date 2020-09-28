@@ -17,8 +17,9 @@ import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.unittest.ui.FailureTraceUIBlock;
-import org.eclipse.unittest.ui.IOpenEditorAction;
 import org.eclipse.unittest.ui.TestRunnerViewPart;
+
+import org.eclipse.jface.action.IAction;
 
 import org.eclipse.ui.IActionDelegate;
 
@@ -52,7 +53,7 @@ public interface ITestViewSupport {
 	 * @return an action implementing org.eclipse.unittest.ui.IOpenEditorAction
 	 *         interface if an action can be created, otherwise - null
 	 */
-	IOpenEditorAction getOpenTestAction(TestRunnerViewPart testRunnerPart, ITestCaseElement testCase);
+	IAction getOpenTestAction(TestRunnerViewPart testRunnerPart, ITestCaseElement testCase);
 
 	/**
 	 * Returns an Open Test action for a specified test suite element
@@ -62,7 +63,7 @@ public interface ITestViewSupport {
 	 * @return an action implementing org.eclipse.unittest.ui.IOpenEditorAction
 	 *         interface if an action can be created, otherwise - null
 	 */
-	IOpenEditorAction getOpenTestAction(TestRunnerViewPart testRunnerPart, ITestSuiteElement testSuite);
+	IAction getOpenTestAction(TestRunnerViewPart testRunnerPart, ITestSuiteElement testSuite);
 
 	/**
 	 * Returns an Open Editor action for a specified failed test element
@@ -73,7 +74,7 @@ public interface ITestViewSupport {
 	 * @return an action implementing org.eclipse.unittest.ui.IOpenEditorAction
 	 *         interface if an action can be created, otherwise - null
 	 */
-	IOpenEditorAction createOpenEditorAction(TestRunnerViewPart testRunnerPart, ITestElement failure, String traceLine);
+	IAction createOpenEditorAction(TestRunnerViewPart testRunnerPart, ITestElement failure, String traceLine);
 
 	/**
 	 * Returns an action delegate to copy an existing stack trace/error message into

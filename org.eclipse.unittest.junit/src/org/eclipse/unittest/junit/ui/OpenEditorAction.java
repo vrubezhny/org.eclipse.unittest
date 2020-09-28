@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.unittest.junit.JUnitTestPlugin;
-import org.eclipse.unittest.ui.IOpenEditorAction;
 import org.eclipse.unittest.ui.TestRunnerViewPart;
 
 import org.eclipse.swt.widgets.Shell;
@@ -28,6 +27,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 
@@ -54,7 +54,7 @@ import org.eclipse.jdt.ui.JavaUI;
 /**
  * Abstract Action for opening a Java editor.
  */
-public abstract class OpenEditorAction extends Action implements IOpenEditorAction {
+public abstract class OpenEditorAction extends Action implements IAction {
 	protected String fClassName;
 	protected TestRunnerViewPart fTestRunner;
 	private final boolean fActivate;

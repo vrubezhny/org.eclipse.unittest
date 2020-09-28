@@ -347,7 +347,7 @@ class TestViewer {
 			return;
 
 		ITestElement testElement = (ITestElement) selection.getFirstElement();
-		IOpenEditorAction action;
+		IAction action;
 		if (testElement instanceof ITestSuiteElement) {
 			action = testElement.getTestRunSession().getTestViewSupport().getOpenTestAction(fTestRunnerPart,
 					(ITestSuiteElement) testElement);

@@ -15,10 +15,11 @@ import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestRoot;
 import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.unittest.ui.FailureTraceUIBlock;
-import org.eclipse.unittest.ui.IOpenEditorAction;
 import org.eclipse.unittest.ui.TestRunnerViewPart;
 
 import org.eclipse.core.runtime.CoreException;
+
+import org.eclipse.jface.action.IAction;
 
 import org.eclipse.ui.IActionDelegate;
 
@@ -40,17 +41,17 @@ public class CDTTestViewSupport implements ITestViewSupport {
 	}
 
 	@Override
-	public IOpenEditorAction getOpenTestAction(TestRunnerViewPart testRunnerPart, ITestCaseElement testCase) {
+	public IAction getOpenTestAction(TestRunnerViewPart testRunnerPart, ITestCaseElement testCase) {
 		return new OpenTestAction(testRunnerPart, testCase.getParent(), testCase);
 	}
 
 	@Override
-	public IOpenEditorAction getOpenTestAction(TestRunnerViewPart testRunnerPart, ITestSuiteElement testSuite) {
+	public IAction getOpenTestAction(TestRunnerViewPart testRunnerPart, ITestSuiteElement testSuite) {
 		return new OpenTestAction(testRunnerPart, testSuite);
 	}
 
 	@Override
-	public IOpenEditorAction createOpenEditorAction(TestRunnerViewPart testRunnerPart, ITestElement failure, String traceLine) {
+	public IAction createOpenEditorAction(TestRunnerViewPart testRunnerPart, ITestElement failure, String traceLine) {
 		try {
 			String testName= traceLine;
 			int indexOfFramePrefix= testName.indexOf(FailureTraceUIBlock.FRAME_PREFIX);
