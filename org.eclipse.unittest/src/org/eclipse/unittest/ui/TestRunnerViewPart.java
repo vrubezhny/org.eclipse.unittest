@@ -31,6 +31,7 @@ import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.internal.UnitTestPreferencesConstants;
 import org.eclipse.unittest.internal.ui.CounterPanel;
 import org.eclipse.unittest.internal.ui.IUnitTestHelpContextIds;
+import org.eclipse.unittest.internal.ui.Messages;
 import org.eclipse.unittest.internal.ui.ProgressImages;
 import org.eclipse.unittest.internal.ui.ScrollLockAction;
 import org.eclipse.unittest.internal.ui.ShowNextFailureAction;

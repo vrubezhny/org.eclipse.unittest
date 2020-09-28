@@ -19,7 +19,6 @@ import java.nio.charset.StandardCharsets;
 
 import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.model.ITestElement;
-import org.eclipse.unittest.ui.Messages;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
