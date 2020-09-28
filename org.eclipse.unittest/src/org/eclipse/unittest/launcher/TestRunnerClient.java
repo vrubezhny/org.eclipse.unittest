@@ -11,7 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.unittest.model;
+package org.eclipse.unittest.launcher;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -20,7 +20,7 @@ import java.net.Socket;
 import org.osgi.framework.Bundle;
 
 import org.eclipse.unittest.UnitTestPlugin;
-import org.eclipse.unittest.launcher.ITestRunnerClient;
+import org.eclipse.unittest.model.ITestRunListener;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;

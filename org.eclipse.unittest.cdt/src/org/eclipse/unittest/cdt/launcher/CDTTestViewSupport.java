@@ -9,12 +9,12 @@ import org.eclipse.unittest.cdt.CDTUnitTestPlugin;
 import org.eclipse.unittest.cdt.ui.OpenEditorAtLineAction;
 import org.eclipse.unittest.cdt.ui.OpenTestAction;
 import org.eclipse.unittest.launcher.ITestRunnerClient;
-import org.eclipse.unittest.launcher.ITestViewSupport;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestRoot;
 import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.unittest.ui.FailureTraceUIBlock;
+import org.eclipse.unittest.ui.ITestViewSupport;
 import org.eclipse.unittest.ui.TestRunnerViewPart;
 
 import org.eclipse.core.runtime.CoreException;

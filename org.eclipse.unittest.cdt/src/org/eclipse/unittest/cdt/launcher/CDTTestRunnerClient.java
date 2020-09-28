@@ -15,11 +15,11 @@ import org.eclipse.cdt.testsrunner.model.ITestModelUpdater;
 import org.eclipse.cdt.testsrunner.model.ITestSuite;
 import org.eclipse.cdt.testsrunner.model.TestingException;
 import org.eclipse.unittest.cdt.CDTUnitTestPlugin;
+import org.eclipse.unittest.launcher.TestRunnerClient;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestSuiteElement;
-import org.eclipse.unittest.model.TestRunnerClient;
 
 import org.eclipse.core.runtime.IStatus;
 

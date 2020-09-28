@@ -15,6 +15,7 @@ package org.eclipse.unittest.launcher;
 
 import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.internal.launcher.TestViewSupportRegistry;
+import org.eclipse.unittest.ui.ITestViewSupport;
 
 import org.eclipse.core.runtime.CoreException;
 

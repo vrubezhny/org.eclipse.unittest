@@ -11,7 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.unittest.model;
+package org.eclipse.unittest.launcher;
 
 import java.io.BufferedReader;
 import java.io.IOException;

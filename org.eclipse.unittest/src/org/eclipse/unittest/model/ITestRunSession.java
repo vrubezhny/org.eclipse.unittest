@@ -14,7 +14,7 @@
 package org.eclipse.unittest.model;
 
 import org.eclipse.unittest.launcher.ITestRunnerClient;
-import org.eclipse.unittest.launcher.ITestViewSupport;
+import org.eclipse.unittest.ui.ITestViewSupport;
 
 import org.eclipse.debug.core.ILaunch;
 

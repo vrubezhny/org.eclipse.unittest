@@ -24,7 +24,7 @@ import java.util.List;
 
 import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.launcher.ITestRunnerClient;
-import org.eclipse.unittest.launcher.ITestViewSupport;
+import org.eclipse.unittest.launcher.RemoteTestRunnerClient;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElementContainer;
@@ -33,7 +33,7 @@ import org.eclipse.unittest.model.ITestRunListener;
 import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestSessionListener;
 import org.eclipse.unittest.model.ITestSuiteElement;
-import org.eclipse.unittest.model.RemoteTestRunnerClient;
+import org.eclipse.unittest.ui.ITestViewSupport;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;

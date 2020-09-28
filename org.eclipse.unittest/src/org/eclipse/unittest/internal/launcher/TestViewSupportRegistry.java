@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.unittest.UnitTestPlugin;
-import org.eclipse.unittest.launcher.ITestViewSupport;
+import org.eclipse.unittest.ui.ITestViewSupport;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;

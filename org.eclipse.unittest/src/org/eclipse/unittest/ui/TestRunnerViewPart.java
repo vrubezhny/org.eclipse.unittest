@@ -40,7 +40,6 @@ import org.eclipse.unittest.internal.ui.ShowPreviousFailureAction;
 import org.eclipse.unittest.internal.ui.UnitTestCopyAction;
 import org.eclipse.unittest.internal.ui.UnitTestProgressBar;
 import org.eclipse.unittest.internal.ui.UnitTestUIPreferencesConstants;
-import org.eclipse.unittest.launcher.ITestViewSupport;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;

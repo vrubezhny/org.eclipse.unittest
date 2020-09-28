@@ -11,13 +11,12 @@
  * Contributors:
  *     Red Hat Inc. - initial API and implementation
  *******************************************************************************/
-package org.eclipse.unittest.launcher;
+package org.eclipse.unittest.ui;
 
+import org.eclipse.unittest.launcher.ITestRunnerClient;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestSuiteElement;
-import org.eclipse.unittest.ui.FailureTraceUIBlock;
-import org.eclipse.unittest.ui.TestRunnerViewPart;
 
 import org.eclipse.jface.action.IAction;
 
