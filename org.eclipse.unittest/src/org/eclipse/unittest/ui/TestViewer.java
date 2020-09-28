@@ -27,6 +27,7 @@ import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.internal.model.TestElement;
 import org.eclipse.unittest.internal.model.TestSuiteElement;
 import org.eclipse.unittest.internal.ui.CopyFailureListAction;
+import org.eclipse.unittest.internal.ui.RerunAction;
 import org.eclipse.unittest.internal.ui.SelectionProviderMediator;
 import org.eclipse.unittest.internal.ui.TestSessionTableContentProvider;
 import org.eclipse.unittest.internal.ui.TestSessionTreeContentProvider;

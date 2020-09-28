@@ -13,9 +13,10 @@
  *     Victor Rubezhny, Mickael Istria (Red Hat Inc.) - Adaptation from JUnit
  *******************************************************************************/
 
-package org.eclipse.unittest.launcher;
+package org.eclipse.unittest.internal.launcher;
 
 import org.eclipse.unittest.UnitTestPlugin;
+import org.eclipse.unittest.launcher.ITestViewSupport;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 
