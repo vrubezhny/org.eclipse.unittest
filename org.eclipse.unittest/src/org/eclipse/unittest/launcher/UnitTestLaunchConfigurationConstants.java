@@ -26,8 +26,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  */
 public class UnitTestLaunchConfigurationConstants {
 
-	public static final String ID_UNITESTT_APPLICATION = "org.eclipse.unittest.launchconfig"; //$NON-NLS-1$
-
 	public static final String ATTR_PORT = UnitTestPlugin.PLUGIN_ID + ".PORT"; //$NON-NLS-1$
 
 	public static final String ATTR_KEEPRUNNING = UnitTestPlugin.PLUGIN_ID + ".KEEPRUNNING_ATTR"; //$NON-NLS-1$

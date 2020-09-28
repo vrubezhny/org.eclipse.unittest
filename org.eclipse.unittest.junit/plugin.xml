@@ -47,7 +47,7 @@
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
             icon="$nl$/icons/full/obj16/julaunch.png"
-            configTypeID="org.eclipse.unittest.launchconfig"
+            configTypeID="org.eclipse.unittest.junit.launchConfiguration"
             id="org.eclipse.unittest.launchimage">
       </launchConfigurationTypeImage>
    </extension>
@@ -55,7 +55,7 @@
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
-            type="org.eclipse.unittest.launchconfig"
+            type="org.eclipse.unittest.junit.launchConfiguration"
             helpContextId="org.eclipse.unittest.junit_tab_group"
             class="org.eclipse.unittest.junit.internal.launcher.JUnitTabGroup"
             id="org.eclipse.jdt.junit.launchConfigurationTabGroup.junit">
@@ -80,7 +80,7 @@
             allowCommandLine="true"
             delegate="org.eclipse.unittest.junit.launcher.AdvancedJUnitLaunchConfigurationDelegate"
             modes="run, debug"
-            id="org.eclipse.unittest.launchconfig"
+            id="org.eclipse.unittest.junit.launchConfiguration"
             sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"
             sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer"
             migrationDelegate="org.eclipse.jdt.internal.junit.launcher.JUnitMigrationDelegate">
@@ -116,7 +116,7 @@
             </enablement>
          </contextualLaunch>
          <configurationType
-               id="org.eclipse.unittest.launchconfig">
+               id="org.eclipse.unittest.junit.launchConfiguration">
          </configurationType>
          <description
                description="%DebugJUnitLaunchShortcut.description"

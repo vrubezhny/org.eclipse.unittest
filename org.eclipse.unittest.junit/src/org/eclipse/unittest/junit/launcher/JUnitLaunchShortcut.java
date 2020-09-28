@@ -294,7 +294,8 @@ public class JUnitLaunchShortcut implements ILaunchShortcut2 {
 	 *         shortcut will create
 	 */
 	protected String getLaunchConfigurationTypeId() {
-		return UnitTestLaunchConfigurationConstants.ID_UNITESTT_APPLICATION;
+		// must match extension in plugin.xml
+		return JUnitTestPlugin.PLUGIN_ID + ".launchConfiguration"; //$NON-NLS-1$
 	}
 
 	/**

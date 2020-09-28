@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -58,8 +57,6 @@ public class JUnitTestPlugin extends AbstractUIPlugin {
 	 * The single instance of this plug-in runtime class.
 	 */
 	private static JUnitTestPlugin fgPlugin = null;
-
-	public static final String CORE_PLUGIN_ID = "org.eclipse.unittest"; //$NON-NLS-1$
 
 	public static final String PLUGIN_ID = "org.eclipse.unittest.junit"; //$NON-NLS-1$
 
@@ -136,11 +133,7 @@ public class JUnitTestPlugin extends AbstractUIPlugin {
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		fIsStopped = true;
-		try {
-			InstanceScope.INSTANCE.getNode(JUnitTestPlugin.CORE_PLUGIN_ID).flush();
-		} finally {
-			super.stop(context);
-		}
+		super.stop(context);
 		fBundleContext = null;
 	}
 
