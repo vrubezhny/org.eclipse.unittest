@@ -18,7 +18,7 @@
       </annotation>
       <complexType>
          <sequence>
-            <element ref="view_support" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="viewSupport" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -47,7 +47,7 @@
       </complexType>
    </element>
 
-   <element name="view_support">
+   <element name="viewSupport">
       <annotation>
          <documentation>
             A Test Kind definition that implements org.eclipse.unittest.launcher.ITestViewSupport.

@@ -45,10 +45,10 @@
 
    <extension
          point="org.eclipse.unittest.unittestViewSupport">
-      <view_support
+      <viewSupport
             id="org.eclipse.unittest.cdt.loader"
             class="org.eclipse.unittest.cdt.launcher.CDTTestViewSupport">
-      </view_support>
+      </viewSupport>
    </extension>
 
    <extension
