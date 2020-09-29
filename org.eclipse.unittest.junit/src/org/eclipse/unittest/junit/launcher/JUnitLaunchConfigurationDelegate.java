@@ -39,7 +39,6 @@ import org.osgi.framework.Constants;
 import org.eclipse.unittest.junit.JUnitMessages;
 import org.eclipse.unittest.junit.JUnitTestPlugin;
 import org.eclipse.unittest.junit.JUnitTestPlugin.JUnitVersion;
-import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 
 import org.eclipse.core.variables.VariablesPlugin;
 
@@ -58,6 +57,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.unittest.launcher.UnitTestLaunchConfigurationConstants;
 
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;

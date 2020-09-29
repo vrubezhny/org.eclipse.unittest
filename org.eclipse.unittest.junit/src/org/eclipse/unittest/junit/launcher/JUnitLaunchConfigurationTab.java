@@ -23,14 +23,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.junit.JUnitTestPlugin;
 import org.eclipse.unittest.junit.JUnitTestPlugin.JUnitVersion;
 import org.eclipse.unittest.junit.launcher.util.JUnitStubUtility;
 import org.eclipse.unittest.junit.launcher.util.LayoutUtil;
 import org.eclipse.unittest.junit.ui.JUnitMessages;
-import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
-import org.eclipse.unittest.ui.BasicElementLabels;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -81,6 +78,9 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.unittest.UnitTestPlugin;
+import org.eclipse.debug.unittest.launcher.UnitTestLaunchConfigurationConstants;
+import org.eclipse.debug.unittest.ui.BasicElementLabels;
 
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 

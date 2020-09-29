@@ -23,8 +23,6 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.packageadmin.PackageAdmin;
 
-import org.eclipse.unittest.UnitTestPlugin;
-
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.runtime.IStatus;
@@ -36,6 +34,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+
+import org.eclipse.debug.unittest.UnitTestPlugin;
 
 import org.eclipse.jdt.core.IAnnotation;
 import org.eclipse.jdt.core.ICompilationUnit;

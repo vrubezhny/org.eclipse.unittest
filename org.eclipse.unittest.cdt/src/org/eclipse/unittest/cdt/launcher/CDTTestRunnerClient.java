@@ -15,16 +15,17 @@ import org.eclipse.cdt.testsrunner.model.ITestModelUpdater;
 import org.eclipse.cdt.testsrunner.model.ITestSuite;
 import org.eclipse.cdt.testsrunner.model.TestingException;
 import org.eclipse.unittest.cdt.CDTUnitTestPlugin;
-import org.eclipse.unittest.launcher.TestRunnerClient;
-import org.eclipse.unittest.model.ITestCaseElement;
-import org.eclipse.unittest.model.ITestElement;
-import org.eclipse.unittest.model.ITestRunSession;
-import org.eclipse.unittest.model.ITestSuiteElement;
 
 import org.eclipse.core.runtime.IStatus;
 
+import org.eclipse.debug.unittest.launcher.TestRunnerClient;
+import org.eclipse.debug.unittest.model.ITestCaseElement;
+import org.eclipse.debug.unittest.model.ITestElement;
+import org.eclipse.debug.unittest.model.ITestRunSession;
+import org.eclipse.debug.unittest.model.ITestSuiteElement;
+
 public class CDTTestRunnerClient extends TestRunnerClient {
-	private static final String FRAME_PREFIX = org.eclipse.unittest.ui.FailureTraceUIBlock.FRAME_PREFIX;
+	private static final String FRAME_PREFIX = org.eclipse.debug.unittest.ui.FailureTraceUIBlock.FRAME_PREFIX;
 
 	class TestModelUpdaterAdapter implements ITestModelUpdater {
 

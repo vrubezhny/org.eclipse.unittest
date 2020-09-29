@@ -8,14 +8,6 @@ import org.eclipse.cdt.testsrunner.internal.launcher.ITestsLaunchConfigurationCo
 import org.eclipse.unittest.cdt.CDTUnitTestPlugin;
 import org.eclipse.unittest.cdt.ui.OpenEditorAtLineAction;
 import org.eclipse.unittest.cdt.ui.OpenTestAction;
-import org.eclipse.unittest.launcher.ITestRunnerClient;
-import org.eclipse.unittest.model.ITestCaseElement;
-import org.eclipse.unittest.model.ITestElement;
-import org.eclipse.unittest.model.ITestRoot;
-import org.eclipse.unittest.model.ITestSuiteElement;
-import org.eclipse.unittest.ui.FailureTraceUIBlock;
-import org.eclipse.unittest.ui.ITestViewSupport;
-import org.eclipse.unittest.ui.TestRunnerViewPart;
 
 import org.eclipse.core.runtime.CoreException;
 
@@ -25,6 +17,14 @@ import org.eclipse.ui.IActionDelegate;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.unittest.launcher.ITestRunnerClient;
+import org.eclipse.debug.unittest.model.ITestCaseElement;
+import org.eclipse.debug.unittest.model.ITestElement;
+import org.eclipse.debug.unittest.model.ITestRoot;
+import org.eclipse.debug.unittest.model.ITestSuiteElement;
+import org.eclipse.debug.unittest.ui.FailureTraceUIBlock;
+import org.eclipse.debug.unittest.ui.ITestViewSupport;
+import org.eclipse.debug.unittest.ui.TestRunnerViewPart;
 
 public class CDTTestViewSupport implements ITestViewSupport {
 	/**

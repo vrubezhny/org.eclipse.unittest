@@ -14,13 +14,14 @@
 package org.eclipse.unittest.junit.ui;
 
 import org.eclipse.jdt.debug.ui.console.JavaStackTraceConsoleFactory;
-import org.eclipse.unittest.model.ITestElement;
-import org.eclipse.unittest.ui.FailureTraceUIBlock;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 
 import org.eclipse.ui.IActionDelegate;
+
+import org.eclipse.debug.unittest.model.ITestElement;
+import org.eclipse.debug.unittest.ui.FailureTraceUIBlock;
 
 /**
  * Action delegate to show the stack trace of a failed test from JUnit view's failure trace in debug's Java

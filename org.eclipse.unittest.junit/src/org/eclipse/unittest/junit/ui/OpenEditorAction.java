@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.unittest.junit.JUnitTestPlugin;
-import org.eclipse.unittest.ui.TestRunnerViewPart;
 
 import org.eclipse.swt.widgets.Shell;
 
@@ -35,6 +34,8 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.ui.texteditor.ITextEditor;
+
+import org.eclipse.debug.unittest.ui.TestRunnerViewPart;
 
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModel;

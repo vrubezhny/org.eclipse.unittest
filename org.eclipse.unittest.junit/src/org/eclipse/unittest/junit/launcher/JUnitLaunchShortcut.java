@@ -24,7 +24,6 @@ import java.util.regex.Pattern;
 import org.eclipse.unittest.junit.JUnitTestPlugin;
 import org.eclipse.unittest.junit.launcher.util.ExceptionHandler;
 import org.eclipse.unittest.junit.launcher.util.JUnitStubUtility;
-import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -52,6 +51,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.unittest.launcher.UnitTestLaunchConfigurationConstants;
 
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;

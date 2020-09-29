@@ -15,7 +15,6 @@ package org.eclipse.unittest.junit.launcher;
 
 import org.eclipse.unittest.junit.launcher.util.LayoutUtil;
 import org.eclipse.unittest.junit.ui.JUnitMessages;
-import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -31,6 +30,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.StatusDialog;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.unittest.launcher.UnitTestLaunchConfigurationConstants;
 
 import org.eclipse.jdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.DialogField;

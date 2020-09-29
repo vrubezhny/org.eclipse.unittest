@@ -15,8 +15,6 @@
  *******************************************************************************/
 package org.eclipse.unittest.junit.ui;
 
-import org.eclipse.unittest.ui.TestRunnerViewPart;
-
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.jface.text.BadLocationException;
@@ -25,6 +23,8 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.ui.texteditor.ITextEditor;
+
+import org.eclipse.debug.unittest.ui.TestRunnerViewPart;
 
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;

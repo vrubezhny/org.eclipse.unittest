@@ -19,12 +19,12 @@ package org.eclipse.unittest.cdt;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
-import org.eclipse.unittest.UnitTestPlugin;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+
+import org.eclipse.debug.unittest.UnitTestPlugin;
 
 /**
  * The plug-in runtime class for the JUnit core plug-in.

@@ -22,7 +22,6 @@ import java.util.Map;
 
 import org.eclipse.unittest.junit.JUnitTestPlugin;
 import org.eclipse.unittest.junit.ui.JUnitMessages;
-import org.eclipse.unittest.ui.BasicElementLabels;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -32,6 +31,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.ResourcesPlugin;
+
+import org.eclipse.debug.unittest.ui.BasicElementLabels;
 
 public class Resources {
 

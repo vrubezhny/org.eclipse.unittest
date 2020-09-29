@@ -18,8 +18,6 @@ import java.net.URI;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.unittest.cdt.CDTUnitTestPlugin;
-import org.eclipse.unittest.model.ITestRunSession;
-import org.eclipse.unittest.ui.TestRunnerViewPart;
 
 import org.eclipse.core.filesystem.URIUtil;
 
@@ -54,6 +52,8 @@ import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
 import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
+import org.eclipse.debug.unittest.model.ITestRunSession;
+import org.eclipse.debug.unittest.ui.TestRunnerViewPart;
 
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
