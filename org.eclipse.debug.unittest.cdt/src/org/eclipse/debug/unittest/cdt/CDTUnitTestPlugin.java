@@ -14,7 +14,7 @@
  * 	 Vincent Massol: vmassol@octo.com
  *     David Saff (saff@mit.edu) - bug 102632: [JUnit] Support for JUnit 4.
  *******************************************************************************/
-package org.eclipse.unittest.cdt;
+package org.eclipse.debug.unittest.cdt;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -36,9 +36,9 @@ public class CDTUnitTestPlugin extends Plugin {
 	 */
 	private static CDTUnitTestPlugin fgPlugin= null;
 
-	public static final String CORE_PLUGIN_ID= "org.eclipse.unittest"; //$NON-NLS-1$
+	public static final String CORE_PLUGIN_ID= "org.eclipse.debug.unittest"; //$NON-NLS-1$
 
-	public static final String PLUGIN_ID= "org.eclipse.unittest.cdt"; //$NON-NLS-1$
+	public static final String PLUGIN_ID= "org.eclipse.debug.unittest.cdt"; //$NON-NLS-1$
 
 	/*
 	public final static String TEST_SUPERCLASS_NAME= "junit.framework.TestCase"; //$NON-NLS-1$
@@ -52,8 +52,8 @@ public class CDTUnitTestPlugin extends Plugin {
 	public static final String SIMPLE_TEST_INTERFACE_NAME= "Test"; //$NON-NLS-1$
 */
 
-	public static final String CDT_TEST_VIEW_SUPPORT_ID= "org.eclipse.unittest.cdt.loader"; //$NON-NLS-1$
-	public static final String CDT_DSF_DBG_TEST_VIEW_SUPPORT_ID= "org.eclipse.unittest.cdt.loader"; //$NON-NLS-1$
+	public static final String CDT_TEST_VIEW_SUPPORT_ID= "org.eclipse.debug.unittest.cdt.loader"; //$NON-NLS-1$
+	public static final String CDT_DSF_DBG_TEST_VIEW_SUPPORT_ID= "org.eclipse.debug.unittest.cdt.loader"; //$NON-NLS-1$
 
 
 	/**

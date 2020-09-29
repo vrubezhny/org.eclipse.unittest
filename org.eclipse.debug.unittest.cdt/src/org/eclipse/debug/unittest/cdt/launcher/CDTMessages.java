@@ -13,12 +13,12 @@
  *     Mirko Raner <mirko@raner.ws> - Expose JUnitModel.exportTestRunSession(...) as API - https://bugs.eclipse.org/316199
  *******************************************************************************/
 
-package org.eclipse.unittest.cdt.launcher;
+package org.eclipse.debug.unittest.cdt.launcher;
 
 import org.eclipse.osgi.util.NLS;
 
 public class CDTMessages extends NLS {
-	private static final String BUNDLE_NAME= "org.eclipse.unittest.cdt.launcher.CDTMessages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME= "org.eclipse.debug.unittest.cdt.launcher.CDTMessages"; //$NON-NLS-1$
 	public static String TestingSession_finished_status;
 	public static String TestingSession_name_format;
 	public static String TestingSession_starting_status;

@@ -11,12 +11,12 @@
  * Contributors:
  *     Anton Gorenkov - initial API and implementation
  *******************************************************************************/
-package org.eclipse.unittest.cdt.internal.launcher;
+package org.eclipse.debug.unittest.cdt.internal.launcher;
 
 import org.eclipse.osgi.util.NLS;
 
 public class LauncherMessages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.unittest.cdt.internal.launcher.LauncherMessages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.debug.unittest.cdt.internal.launcher.LauncherMessages"; //$NON-NLS-1$
 	public static String BaseTestsLaunchDelegate_invalid_tests_runner;
 	public static String BaseTestsLaunchDelegate_tests_runner_load_failed;
 	static {

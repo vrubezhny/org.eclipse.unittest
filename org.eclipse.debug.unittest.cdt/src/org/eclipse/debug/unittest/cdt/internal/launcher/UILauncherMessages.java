@@ -11,12 +11,12 @@
  * Contributors:
  *     Anton Gorenkov - initial API and implementation
  *******************************************************************************/
-package org.eclipse.unittest.cdt.internal.launcher;
+package org.eclipse.debug.unittest.cdt.internal.launcher;
 
 import org.eclipse.osgi.util.NLS;
 
 public class UILauncherMessages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.unittest.cdt.internal.launcher.UILauncherMessages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.debug.unittest.cdt.internal.launcher.UILauncherMessages"; //$NON-NLS-1$
 	public static String CTestingTab_no_tests_runner_error;
 	public static String CTestingTab_no_tests_runner_label;
 	public static String CTestingTab_tab_name;

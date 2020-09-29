@@ -1,15 +1,15 @@
 Manifest-Version: 1.0
-Automatic-Module-Name: org.eclipse.unittest.cdt
+Automatic-Module-Name: org.eclipse.debug.unittest.cdt
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
-Bundle-SymbolicName: org.eclipse.unittest.cdt;singleton:=true
+Bundle-SymbolicName: org.eclipse.debug.unittest.cdt;singleton:=true
 Bundle-Version: 0.1.0.qualifier
-Bundle-Activator: org.eclipse.unittest.cdt.CDTUnitTestPlugin
+Bundle-Activator: org.eclipse.debug.unittest.cdt.CDTUnitTestPlugin
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: 
- org.eclipse.unittest,
+ org.eclipse.debug.unittest,
  org.eclipse.cdt.testsrunner,
  org.eclipse.cdt.debug.core,
  org.eclipse.cdt.debug.ui,

@@ -1,4 +1,4 @@
-package org.eclipse.unittest.cdt.launcher;
+package org.eclipse.debug.unittest.cdt.launcher;
 
 import java.io.InputStream;
 import java.text.MessageFormat;
@@ -14,10 +14,10 @@ import org.eclipse.cdt.testsrunner.model.ITestMessage.Level;
 import org.eclipse.cdt.testsrunner.model.ITestModelUpdater;
 import org.eclipse.cdt.testsrunner.model.ITestSuite;
 import org.eclipse.cdt.testsrunner.model.TestingException;
-import org.eclipse.unittest.cdt.CDTUnitTestPlugin;
 
 import org.eclipse.core.runtime.IStatus;
 
+import org.eclipse.debug.unittest.cdt.CDTUnitTestPlugin;
 import org.eclipse.debug.unittest.launcher.TestRunnerClient;
 import org.eclipse.debug.unittest.model.ITestCaseElement;
 import org.eclipse.debug.unittest.model.ITestElement;

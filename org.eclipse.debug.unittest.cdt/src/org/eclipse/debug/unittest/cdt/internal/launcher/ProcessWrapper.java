@@ -11,7 +11,7 @@
  * Contributors:
  *     Anton Gorenkov - initial API and implementation
  *******************************************************************************/
-package org.eclipse.unittest.cdt.internal.launcher;
+package org.eclipse.debug.unittest.cdt.internal.launcher;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

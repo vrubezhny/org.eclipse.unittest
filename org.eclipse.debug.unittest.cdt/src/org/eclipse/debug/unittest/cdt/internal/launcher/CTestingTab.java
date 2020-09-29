@@ -11,7 +11,7 @@
  * Contributors:
  *     Anton Gorenkov - initial API and implementation
  *******************************************************************************/
-package org.eclipse.unittest.cdt.internal.launcher;
+package org.eclipse.debug.unittest.cdt.internal.launcher;
 
 import org.eclipse.cdt.launch.ui.CLaunchConfigurationTab;
 import org.eclipse.cdt.testsrunner.internal.TestsRunnerPlugin;
@@ -53,7 +53,7 @@ public class CTestingTab extends CLaunchConfigurationTab {
 	 */
 	private static final String TAB_ID = "org.eclipse.cdt.testsrunner.testingTab"; //$NON-NLS-1$
 
-	private static final String TESTING_PROCESS_FACTORY_ID = "org.eclipse.unittest.cdt.testsrunner.TestingProcessFactory"; //$NON-NLS-1$
+	private static final String TESTING_PROCESS_FACTORY_ID = "org.eclipse.debug.unittest.cdt.testsrunner.TestingProcessFactory"; //$NON-NLS-1$
 
 	/** Shows the list of available Tests Runner provider plug-ins. */
 	private Combo testsRunnerProviderCombo;

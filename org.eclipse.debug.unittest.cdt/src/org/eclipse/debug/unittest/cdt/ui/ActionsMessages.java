@@ -11,12 +11,12 @@
  * Contributors:
  *     Anton Gorenkov - initial API and implementation
  *******************************************************************************/
-package org.eclipse.unittest.cdt.ui;
+package org.eclipse.debug.unittest.cdt.ui;
 
 import org.eclipse.osgi.util.NLS;
 
 public class ActionsMessages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.unittest.cdt.ui.ActionsMessages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.debug.unittest.cdt.ui.ActionsMessages"; //$NON-NLS-1$
 	public static String CopySelectedMessagesAction_text;
 	public static String CopySelectedMessagesAction_tooltip;
 	public static String CopySelectedTestsAction_text;

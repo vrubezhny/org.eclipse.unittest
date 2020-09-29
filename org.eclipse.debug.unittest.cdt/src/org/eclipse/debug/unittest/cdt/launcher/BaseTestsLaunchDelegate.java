@@ -11,7 +11,7 @@
  * Contributors:
  *     Anton Gorenkov - initial API and implementation
  *******************************************************************************/
-package org.eclipse.unittest.cdt.launcher;
+package org.eclipse.debug.unittest.cdt.launcher;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,7 +26,6 @@ import org.eclipse.cdt.testsrunner.internal.launcher.TestsRunnerProviderInfo;
 import org.eclipse.cdt.testsrunner.internal.ui.view.TestPathUtils;
 import org.eclipse.cdt.testsrunner.launcher.ITestsRunnerProvider;
 import org.eclipse.cdt.testsrunner.model.TestingException;
-import org.eclipse.unittest.cdt.internal.launcher.LauncherMessages;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -42,6 +41,7 @@ import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
+import org.eclipse.debug.unittest.cdt.internal.launcher.LauncherMessages;
 import org.eclipse.debug.unittest.launcher.UnitTestLaunchConfigurationConstants;
 
 /**

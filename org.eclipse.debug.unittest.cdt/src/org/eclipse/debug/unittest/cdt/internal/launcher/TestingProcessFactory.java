@@ -11,7 +11,7 @@
  * Contributors:
  *     Anton Gorenkov - initial API and implementation
  *******************************************************************************/
-package org.eclipse.unittest.cdt.internal.launcher;
+package org.eclipse.debug.unittest.cdt.internal.launcher;
 
 import java.io.InputStream;
 import java.util.Map;
@@ -22,7 +22,6 @@ import org.eclipse.cdt.dsf.gdb.launching.InferiorRuntimeProcess;
 import org.eclipse.cdt.testsrunner.internal.TestsRunnerPlugin;
 import org.eclipse.cdt.testsrunner.internal.launcher.TestsRunnerProviderInfo;
 import org.eclipse.cdt.testsrunner.internal.launcher.TestsRunnerProvidersManager;
-import org.eclipse.unittest.cdt.launcher.CDTTestRunnerClient;
 
 import org.eclipse.core.runtime.CoreException;
 
@@ -32,6 +31,7 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.RuntimeProcess;
 import org.eclipse.debug.unittest.TestRunListener;
 import org.eclipse.debug.unittest.UnitTestPlugin;
+import org.eclipse.debug.unittest.cdt.launcher.CDTTestRunnerClient;
 import org.eclipse.debug.unittest.launcher.ITestRunnerClient;
 import org.eclipse.debug.unittest.model.ITestRunSession;
 

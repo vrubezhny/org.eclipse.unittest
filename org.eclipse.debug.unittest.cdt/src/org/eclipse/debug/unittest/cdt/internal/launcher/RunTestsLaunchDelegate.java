@@ -11,10 +11,10 @@
  * Contributors:
  *     Anton Gorenkov - initial API and implementation
  *******************************************************************************/
-package org.eclipse.unittest.cdt.internal.launcher;
+package org.eclipse.debug.unittest.cdt.internal.launcher;
 
-import org.eclipse.unittest.cdt.CDTUnitTestPlugin;
-import org.eclipse.unittest.cdt.launcher.BaseTestsLaunchDelegate;
+import org.eclipse.debug.unittest.cdt.CDTUnitTestPlugin;
+import org.eclipse.debug.unittest.cdt.launcher.BaseTestsLaunchDelegate;
 
 /**
  * Launch delegate implementation that is used for Run mode.

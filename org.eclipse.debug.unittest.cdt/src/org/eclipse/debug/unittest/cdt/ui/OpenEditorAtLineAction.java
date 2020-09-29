@@ -11,13 +11,12 @@
  * Contributors:
  *     Anton Gorenkov - initial API and implementation
  *******************************************************************************/
-package org.eclipse.unittest.cdt.ui;
+package org.eclipse.debug.unittest.cdt.ui;
 
 import java.net.URI;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
-import org.eclipse.unittest.cdt.CDTUnitTestPlugin;
 
 import org.eclipse.core.filesystem.URIUtil;
 
@@ -52,6 +51,7 @@ import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
 import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
+import org.eclipse.debug.unittest.cdt.CDTUnitTestPlugin;
 import org.eclipse.debug.unittest.model.ITestRunSession;
 import org.eclipse.debug.unittest.ui.TestRunnerViewPart;
 

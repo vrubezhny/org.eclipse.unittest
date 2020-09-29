@@ -1,13 +1,10 @@
-package org.eclipse.unittest.cdt.launcher;
+package org.eclipse.debug.unittest.cdt.launcher;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.cdt.testsrunner.internal.launcher.ITestsLaunchConfigurationConstants;
-import org.eclipse.unittest.cdt.CDTUnitTestPlugin;
-import org.eclipse.unittest.cdt.ui.OpenEditorAtLineAction;
-import org.eclipse.unittest.cdt.ui.OpenTestAction;
 
 import org.eclipse.core.runtime.CoreException;
 
@@ -17,6 +14,9 @@ import org.eclipse.ui.IActionDelegate;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.unittest.cdt.CDTUnitTestPlugin;
+import org.eclipse.debug.unittest.cdt.ui.OpenEditorAtLineAction;
+import org.eclipse.debug.unittest.cdt.ui.OpenTestAction;
 import org.eclipse.debug.unittest.launcher.ITestRunnerClient;
 import org.eclipse.debug.unittest.model.ITestCaseElement;
 import org.eclipse.debug.unittest.model.ITestElement;
