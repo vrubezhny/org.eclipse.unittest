@@ -165,7 +165,7 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 		fSessionListeners = new ListenerList<>();
 	}
 
-	public TestRunSession(ILaunch launch, int port) {
+	public TestRunSession(ILaunch launch) {
 		super(null, "-1", "<TestRunSession>", null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
 		Assert.isNotNull(launch);
 
@@ -184,11 +184,8 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 		fIdToTest = new HashMap<>();
 
 		if (fTestRunnerSupport != null) {
-			fTestRunnerClient = fTestRunnerSupport.getTestRunnerClient();
+			fTestRunnerClient = fTestRunnerSupport.newTestRunnerClient(this);
 			fTestRunnerClient.setListeners(new ITestRunListener[] { new TestSessionNotifier() });
-			if (port != -1) {
-				fTestRunnerClient.startListening(port);
-			}
 		}
 
 		final ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();

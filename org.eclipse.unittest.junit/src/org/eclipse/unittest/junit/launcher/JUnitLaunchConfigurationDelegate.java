@@ -97,6 +97,10 @@ import org.eclipse.jdt.launching.VMRunnerConfiguration;
 @SuppressWarnings("restriction")
 public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigurationDelegate {
 
+	// This needs to be differnet from JunitLaunchConfigurationConstants.ATTR_PORT
+	// or the "legacy" view handles it first
+	static final String ATTR_PORT = JUnitTestPlugin.PLUGIN_ID + ".PORT"; //$NON-NLS-1$
+
 	private boolean fKeepAlive = false;
 	private int fPort;
 	private IJavaElement[] fTestElements;
@@ -161,7 +165,7 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 			fKeepAlive = mode.equals(ILaunchManager.DEBUG_MODE)
 					&& configuration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_KEEPRUNNING, false);
 			fPort = evaluatePort();
-			launch.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_PORT, String.valueOf(fPort));
+			launch.setAttribute(ATTR_PORT, String.valueOf(fPort));
 
 			JUnitVersion junitVersion = getJUnitVersion(configuration);
 			IJavaProject javaProject = getJavaProject(configuration);

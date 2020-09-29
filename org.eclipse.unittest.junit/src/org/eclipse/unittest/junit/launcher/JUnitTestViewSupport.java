@@ -22,6 +22,7 @@ import org.eclipse.unittest.launcher.ITestRunnerClient;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestRoot;
+import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.unittest.ui.FailureTraceUIBlock;
 import org.eclipse.unittest.ui.ITestViewSupport;
@@ -232,7 +233,8 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 	}
 
 	@Override
-	public ITestRunnerClient getTestRunnerClient() {
-		return new JUnitRemoteTestRunnerClient();
+	public ITestRunnerClient newTestRunnerClient(ITestRunSession session) {
+		String portAsString = session.getLaunch().getAttribute(JUnitLaunchConfigurationDelegate.ATTR_PORT);
+		return new JUnitRemoteTestRunnerClient(portAsString != null ? Integer.parseInt(portAsString) : -1);
 	}
 }

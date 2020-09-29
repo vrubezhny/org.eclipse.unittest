@@ -33,6 +33,10 @@ import org.eclipse.jdt.internal.junit.runner.RemoteTestRunner;
 @SuppressWarnings("restriction")
 public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 
+	public JUnitRemoteTestRunnerClient(int port) {
+		super(port);
+	}
+
 	public abstract class ListenerSafeRunnable implements ISafeRunnable {
 		@Override
 		public void handleException(Throwable exception) {

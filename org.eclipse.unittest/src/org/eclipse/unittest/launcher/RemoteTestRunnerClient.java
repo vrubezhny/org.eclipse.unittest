@@ -49,12 +49,12 @@ public abstract class RemoteTestRunnerClient extends TestRunnerClient {
 		abstract ProcessingState readMessage(String message);
 	}
 
+	private int fPort = -1;
 	/**
 	 * The server socket
 	 */
 	private ServerSocket fServerSocket;
 	private Socket fSocket;
-	private int fPort = -1;
 	protected String fLastLineDelimiter;
 	protected InputStream fInputStream;
 	protected PrintWriter fWriter;
@@ -103,14 +103,16 @@ public abstract class RemoteTestRunnerClient extends TestRunnerClient {
 		}
 	}
 
-	@Override
-	public void startListening(int port) {
-		fPort = port;
-		ServerConnection connection = new ServerConnection(port);
+	public RemoteTestRunnerClient(int port) {
+		this.fPort = port;
+		startListening();
+	}
+
+	private void startListening() {
+		ServerConnection connection = new ServerConnection(fPort);
 		connection.start();
 	}
 
-	@Override
 	abstract public void receiveMessage(String message);
 
 	@Override

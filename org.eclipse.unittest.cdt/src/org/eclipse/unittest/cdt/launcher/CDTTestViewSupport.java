@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2020 Red Hat Inc and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *******************************************************************************/
 package org.eclipse.unittest.cdt.launcher;
 
 import java.util.ArrayList;
@@ -12,6 +22,7 @@ import org.eclipse.unittest.launcher.ITestRunnerClient;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestRoot;
+import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.unittest.ui.FailureTraceUIBlock;
 import org.eclipse.unittest.ui.ITestViewSupport;
@@ -135,7 +146,7 @@ public class CDTTestViewSupport implements ITestViewSupport {
 	}
 
 	@Override
-	public ITestRunnerClient getTestRunnerClient() {
-		return new CDTTestRunnerClient();
+	public ITestRunnerClient newTestRunnerClient(ITestRunSession session) {
+		return new CDTTestRunnerClient(session);
 	}
 }

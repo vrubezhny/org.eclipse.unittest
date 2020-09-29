@@ -16,6 +16,7 @@ package org.eclipse.unittest.ui;
 import org.eclipse.unittest.launcher.ITestRunnerClient;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
+import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestSuiteElement;
 
 import org.eclipse.jface.action.IAction;
@@ -33,9 +34,11 @@ public interface ITestViewSupport {
 	/**
 	 * Returns a Test Runner Client for this this Test View Support
 	 *
+	 * @param session the test session
+	 *
 	 * @return returns a Test Runner Client
 	 */
-	ITestRunnerClient getTestRunnerClient();
+	ITestRunnerClient newTestRunnerClient(ITestRunSession session);
 
 	/**
 	 * Returns a filter patterns array for a stack trace or an error message

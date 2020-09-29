@@ -43,8 +43,6 @@ import org.xml.sax.SAXException;
 import org.eclipse.unittest.TestRunListener;
 import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.internal.UnitTestPreferencesConstants;
-import org.eclipse.unittest.launcher.ITestRunnerClient;
-import org.eclipse.unittest.launcher.RemoteTestRunnerClient;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestRunSessionListener;
@@ -82,19 +80,6 @@ public final class UnitTestModel implements IUnitTestModel {
 
 		@Override
 		public void launchAdded(ILaunch launch) {
-			fTrackedLaunches.add(launch);
-		}
-
-		@Override
-		public void launchRemoved(final ILaunch launch) {
-			fTrackedLaunches.remove(launch);
-		}
-
-		@Override
-		public void launchChanged(final ILaunch launch) {
-			if (!fTrackedLaunches.contains(launch))
-				return;
-
 			ILaunchConfiguration config = launch.getLaunchConfiguration();
 			if (config == null)
 				return;
@@ -108,47 +93,40 @@ public final class UnitTestModel implements IUnitTestModel {
 				return;
 			}
 
-			// This testRunnerViewSupport and testRunnerClient instances are not retained
-			// (just
-			// there for testing)
-			// so it's ok instantiating them.
 			ITestViewSupport testRunnerViewSupport = UnitTestLaunchConfigurationConstants
 					.newTestRunnerViewSupport(config);
-			ITestRunnerClient testRunnerClient = testRunnerViewSupport != null
-					? testRunnerViewSupport.getTestRunnerClient()
-					: null;
+			if (testRunnerViewSupport == null) {
+				return;
+			}
 
-			// If a Remote Test Runner Client exists try to create a new Test Run Session,
-			// connect the Remote Test Runner and listen it
-			// Otherwize, it is expected that the Test Runner Process will be created
-			// through
-			// <pre><code>org.eclipse.debug.core.processFactories</code></pre> extension
-			// point
-			// and the factory will take care of creating the Test Run Session.
-			//
-			if (testRunnerClient instanceof RemoteTestRunnerClient) {
-				String portStr = launch.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_PORT);
-				if (portStr == null)
-					return;
-				try {
-					final int port = Integer.parseInt(portStr);
-					fTrackedLaunches.remove(launch);
-					connectTestRunner(launch, port);
-				} catch (NumberFormatException e) {
-					UnitTestPlugin.log(e);
-					return;
+			fTrackedLaunches.add(launch);
+		}
+
+		@Override
+		public void launchRemoved(final ILaunch launch) {
+			fTrackedLaunches.remove(launch);
+			getTestRunSessions().stream().filter(session -> launch.equals(session.getLaunch()))
+					.forEach(UnitTestModel.this::removeTestRunSession);
+		}
+
+		@Override
+		public void launchChanged(final ILaunch launch) {
+			if (!fTrackedLaunches.contains(launch))
+				return;
+			// Load session on 1st change (usually 1st process added), although it's not
+			// much reliable. Each TestRunnerClient should take care of listening to the
+			// launch to get the right IProcess or stream or whatever else i useful
+			ITestRunSession testRunSession = getTestRunSessions().stream()
+					.filter(session -> launch.equals(session.getLaunch())).findAny().orElse(null);
+			if (testRunSession == null) {
+				testRunSession = new TestRunSession(launch);
+				addTestRunSession(testRunSession);
+				for (TestRunListener listener : UnitTestPlugin.getDefault().getUnitTestRunListeners()) {
+					listener.sessionLaunched(testRunSession);
 				}
 			}
 		}
 
-		private void connectTestRunner(ILaunch launch, int port) {
-			TestRunSession testRunSession = new TestRunSession(launch, port);
-			addTestRunSession(testRunSession);
-
-			for (TestRunListener listener : UnitTestPlugin.getDefault().getUnitTestRunListeners()) {
-				listener.sessionLaunched(testRunSession);
-			}
-		}
 	}
 
 	private final ListenerList<ITestRunSessionListener> fTestRunSessionListeners = new ListenerList<>();
@@ -238,8 +216,7 @@ public final class UnitTestModel implements IUnitTestModel {
 		return new ArrayList<>(fTestRunSessions);
 	}
 
-	@Override
-	public void addTestRunSession(ITestRunSession testRunSession) {
+	private void addTestRunSession(ITestRunSession testRunSession) {
 		Assert.isNotNull(testRunSession);
 		ArrayList<ITestRunSession> toRemove = new ArrayList<>();
 
@@ -266,36 +243,6 @@ public final class UnitTestModel implements IUnitTestModel {
 			notifyTestRunSessionRemoved(oldSession);
 		}
 		notifyTestRunSessionAdded(testRunSession);
-	}
-
-	/**
-	 * Imports a test run session from the given file.
-	 *
-	 * @param file a file containing a test run session transcript
-	 * @return the imported test run session
-	 * @throws CoreException if the import failed
-	 */
-	public static TestRunSession importTestRunSession(File file) throws CoreException {
-		try {
-			SAXParserFactory parserFactory = SAXParserFactory.newInstance();
-//			parserFactory.setValidating(true); // TODO: add DTD and debug flag
-			SAXParser parser = parserFactory.newSAXParser();
-			TestRunHandler handler = new TestRunHandler();
-			parser.parse(file, handler);
-			TestRunSession session = handler.getTestRunSession();
-			UnitTestPlugin.getModel().addTestRunSession(session);
-			return session;
-		} catch (ParserConfigurationException e) {
-			throwImportError(file, e);
-		} catch (SAXException e) {
-			throwImportError(file, e);
-		} catch (IOException e) {
-			throwImportError(file, e);
-		} catch (IllegalArgumentException e) {
-			// Bug in parser: can throw IAE even if file is not null
-			throwImportError(file, e);
-		}
-		return null; // does not happen
 	}
 
 	@Override
@@ -355,7 +302,7 @@ public final class UnitTestModel implements IUnitTestModel {
 			}
 		}
 
-		UnitTestPlugin.getModel().addTestRunSession(session[0]);
+		addTestRunSession(session[0]);
 		monitor.done();
 		return session[0];
 	}
@@ -456,7 +403,7 @@ public final class UnitTestModel implements IUnitTestModel {
 	 *
 	 * @param testRunSession the session to remove
 	 */
-	public void removeTestRunSession(TestRunSession testRunSession) {
+	public void removeTestRunSession(ITestRunSession testRunSession) {
 		boolean existed;
 		synchronized (this) {
 			existed = fTestRunSessions.remove(testRunSession);
@@ -464,7 +411,9 @@ public final class UnitTestModel implements IUnitTestModel {
 		if (existed) {
 			notifyTestRunSessionRemoved(testRunSession);
 		}
-		testRunSession.removeSwapFile();
+		if (testRunSession instanceof TestRunSession) {
+			((TestRunSession) testRunSession).removeSwapFile();
+		}
 	}
 
 	private void notifyTestRunSessionRemoved(ITestRunSession testRunSession) {
@@ -484,11 +433,6 @@ public final class UnitTestModel implements IUnitTestModel {
 		for (ITestRunSessionListener listener : fTestRunSessionListeners) {
 			listener.sessionAdded(testRunSession);
 		}
-	}
-
-	@Override
-	public ITestRunSession createTestRunSession(ILaunch launch, int port) {
-		return new TestRunSession(launch, port);
 	}
 
 	private static final String HISTORY_DIR_NAME = "history"; //$NON-NLS-1$

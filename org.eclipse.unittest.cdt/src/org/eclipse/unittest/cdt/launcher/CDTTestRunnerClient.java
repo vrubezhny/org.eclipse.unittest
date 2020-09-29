@@ -1,9 +1,16 @@
 package org.eclipse.unittest.cdt.launcher;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Stack;
 
+import org.eclipse.cdt.dsf.gdb.launching.InferiorRuntimeProcess;
+import org.eclipse.cdt.testsrunner.internal.launcher.TestsRunnerProvidersManager;
 import org.eclipse.cdt.testsrunner.internal.model.TestCase;
 import org.eclipse.cdt.testsrunner.internal.model.TestSuite;
 import org.eclipse.cdt.testsrunner.launcher.ITestsRunnerProvider;
@@ -21,7 +28,16 @@ import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestSuiteElement;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ICoreRunnable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.jobs.Job;
+
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchListener;
+import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.IStreamMonitor;
 
 public class CDTTestRunnerClient extends TestRunnerClient {
 	private static final String FRAME_PREFIX = org.eclipse.unittest.ui.FailureTraceUIBlock.FRAME_PREFIX;
@@ -225,23 +241,104 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 		}
 	}
 
-	private ITestRunSession fTestRunSession;
+	private final ITestRunSession fTestRunSession;
 	private ITestsRunnerProvider fTestsRunnerProvider;
+	private IProcess process;
+	private final ILaunchListener fFindProcessListener;
 
-	public void setTestRunSession(ITestRunSession testRunSession) {
-		this.fTestRunSession = testRunSession;
+	public CDTTestRunnerClient(ITestRunSession session) {
+		this.fTestRunSession = session;
+		ILaunch launch = session.getLaunch();
+		fFindProcessListener= new ILaunchListener() {
+			@Override
+			public void launchRemoved(ILaunch launch) {}
+
+			@Override
+			public void launchChanged(ILaunch aLaunch) {
+				if (aLaunch.equals(launch) && process == null) {
+					process = connectProcess(launch);
+				}
+			}
+
+			@Override
+			public void launchAdded(ILaunch launch) {}
+		};
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(fFindProcessListener);
+		try {
+			fTestsRunnerProvider = new TestsRunnerProvidersManager().getTestsRunnerProviderInfo(launch.getLaunchConfiguration()).instantiateTestsRunnerProvider();
+			process = connectProcess(launch);
+		} catch (CoreException e) {
+			CDTUnitTestPlugin.log(e);
+		}
 	}
 
-	public void setTestsRunnerProvider(ITestsRunnerProvider testsRunnerProvider) {
-		this.fTestsRunnerProvider = testsRunnerProvider;
+	private IProcess connectProcess(ILaunch launch) {
+		if (this.process != null) {
+			return this.process;
+		}
+		this.process = Arrays.stream(launch.getProcesses()).filter(InferiorRuntimeProcess.class::isInstance).findAny().orElse(null);
+		if (this.process != null) {
+			DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(fFindProcessListener);
+			Job.createSystem("Monitor test process", (ICoreRunnable)monitor -> run(toInputStream(process))).schedule(); //$NON-NLS-1$
+		}
+		return this.process;
 	}
 
-	@Override
-	public void startListening(int port) {
-		// Nothing to do here
+	private static InputStream toInputStream(IProcess process) {
+		IStreamMonitor monitor = process.getStreamsProxy().getOutputStreamMonitor();
+		if (monitor == null) {
+			return null;
+		}
+		List<Integer> content = Collections.synchronizedList(new LinkedList<>());
+		monitor.addListener((text, progresMonitor) -> text.chars().forEach(content::add));
+		byte[] initialContent = monitor.getContents().getBytes();
+		for (int i = initialContent.length - 1; i >= 0; i--) {
+			content.add(0, Integer.valueOf(initialContent[i]));
+		}
+		return new InputStream() {
+			@Override
+			public int read() throws IOException {
+				while (!process.isTerminated() || !content.isEmpty()) {
+					if (!content.isEmpty()) {
+						return content.remove(0).intValue();
+					}
+					try {
+						Thread.sleep(20, 0);
+					} catch (InterruptedException e) {
+						return -1;
+					}
+				}
+				return -1;
+			}
+
+			@Override
+			public int read(byte[] b, int off, int len) throws IOException {
+				if (process.isTerminated() && available() == 0) {
+					return -1;
+				}
+				if (len == 0) {
+					return 0;
+				}
+				int i = 0;
+				do {
+					b[off + i] = (byte)read();
+					i++;
+				} while (available() > 0 && i < len && off + i < b.length);
+				return i;
+			}
+
+			@Override
+			public int available() throws IOException {
+				return content.size();
+			}
+		};
 	}
+
 
 	public void run(InputStream iStream) {
+		if (iStream == null) {
+			return;
+		}
 		notifyTestRunStarted(0);
 		try {
 			fTestsRunnerProvider.run(new TestModelUpdaterAdapter(), iStream);
@@ -269,33 +366,10 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 	}
 
 	@Override
-	public void receiveMessage(String message) {
-		// Does nothing
-	}
-
-	@Override
 	public void stopTest() {
-		// Does nothing
+		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(fFindProcessListener);
 	}
 
-/*
-	private Status convertFromStatus(ITestElement.Status status) {
-		//NotRun, Skipped, Passed, Failed, Aborted;
-		if (status.isNotRun()) {
-			return Status.NotRun;
-		} else if (status.isOK()) {
-			return Status.Passed;
-		} else if (status.isFailure()) {
-			return Status.Failed;
-		} else if (status.isError()) {
-			return Status.Aborted;
-		} else if (status.isDone()) {
-			return Status.Passed;
-		}
-		// TODO Make this conversion more close to the reality
-		return Status.Aborted;
-	}
-*/
 	ITestItem convertFromTestElement(final ITestElement element) {
 		if (element instanceof ITestSuiteElement) {
 			return convertFromTestSuiteElement(((ITestSuiteElement)element));

@@ -24,7 +24,6 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElement.Status;
 import org.eclipse.unittest.model.ITestSuiteElement;
@@ -116,26 +115,16 @@ public class TestRunHandler extends DefaultHandler {
 				String name = attributes.getValue(IXMLTags.ATTR_NAME);
 				String launchConfigName = attributes.getValue(IXMLTags.ATTR_LAUNCH_CONFIG_NAME);
 				ILaunch launch = null;
-				int port = -1;
 				if (launchConfigName != null) {
 					ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 					for (ILaunch l : launchManager.getLaunches()) {
 						if (l.getLaunchConfiguration().getName().equals(name)) {
 							launch = l;
-							String portStr = launch.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_PORT);
-							if (portStr != null) {
-								try {
-									int portNumber = Integer.parseInt(portStr);
-									port = portNumber;
-								} catch (NumberFormatException e) {
-									// Ignore
-								}
-							}
 							break;
 						}
 					}
 				}
-				fTestRunSession = new TestRunSession(launch, port);
+				fTestRunSession = new TestRunSession(launch);
 				String includeTags = attributes.getValue(IXMLTags.ATTR_INCLUDE_TAGS);
 				if (includeTags != null && includeTags.trim().length() > 0) {
 					fTestRunSession.setIncludeTags(includeTags);

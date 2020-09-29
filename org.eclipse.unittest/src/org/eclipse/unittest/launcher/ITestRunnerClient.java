@@ -35,21 +35,6 @@ public interface ITestRunnerClient {
 	void setListeners(ITestRunListener[] listeners);
 
 	/**
-	 * Start listening to a test run. Start a server connection that the
-	 * RemoteTestRunner can connect to.
-	 *
-	 * @param port Port to setup a server connection.
-	 */
-	void startListening(int port);
-
-	/**
-	 * Receives parses a received message from a test runner
-	 *
-	 * @param message a message received from a test runner
-	 */
-	void receiveMessage(String message);
-
-	/**
 	 * Requests to stop the remote test run.
 	 */
 	void stopTest();

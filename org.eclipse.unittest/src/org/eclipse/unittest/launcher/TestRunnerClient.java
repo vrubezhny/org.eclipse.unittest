@@ -92,12 +92,6 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	}
 
 	@Override
-	abstract public void startListening(int port);
-
-	@Override
-	abstract public void receiveMessage(String message);
-
-	@Override
 	abstract public void stopTest();
 
 	@Override

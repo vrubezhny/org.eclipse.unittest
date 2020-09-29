@@ -20,8 +20,6 @@ import org.eclipse.unittest.internal.model.TestRunSession;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import org.eclipse.debug.core.ILaunch;
-
 /**
  * Represents a Unit Test Model element.
  * <p>
@@ -29,14 +27,6 @@ import org.eclipse.debug.core.ILaunch;
  * </p>
  */
 public interface IUnitTestModel {
-
-	/**
-	 * Adds the given {@link ITestRunSession} and notifies all registered
-	 * {@link ITestRunSessionListener}s.
-	 *
-	 * @param testRunSession the session to add
-	 */
-	void addTestRunSession(ITestRunSession testRunSession);
 
 	/**
 	 * @return a list of active {@link TestRunSession}s. The list is a copy of the
@@ -71,13 +61,4 @@ public interface IUnitTestModel {
 	ITestRunSession importTestRunSession(String url, IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException;
 
-	/**
-	 * Creates an {@link ITestRunSession}
-	 *
-	 * @param launch an {@link ILaunch} to start a test run session
-	 * @param port   a port number to listen during the run of remote test runner or
-	 *               <code>-1</code> in case of a local test runner
-	 * @return a created {@link ITestRunSession} instance
-	 */
-	ITestRunSession createTestRunSession(ILaunch launch, int port);
 }
