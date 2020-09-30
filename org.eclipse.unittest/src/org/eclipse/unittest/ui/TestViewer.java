@@ -73,7 +73,11 @@ import org.eclipse.ui.part.PageBook;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 
+/**
+ * A Test Viewer implementation
+ */
 class TestViewer {
+
 	private final class TestSelectionListener implements ISelectionChangedListener {
 		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
@@ -216,6 +220,13 @@ class TestViewer {
 	private LinkedList<ITestSuiteElement> fAutoClose;
 	private HashSet<ITestSuiteElement> fAutoExpand;
 
+	/**
+	 * Constructs a Test Viewer object
+	 *
+	 * @param parent    a parent composite
+	 * @param clipboard a {@link Clipboard} instance
+	 * @param runner    a Test Runner view part
+	 */
 	public TestViewer(Composite parent, Clipboard clipboard, TestRunnerViewPart runner) {
 		fTestRunnerPart = runner;
 		fClipboard = clipboard;
@@ -332,10 +343,20 @@ class TestViewer {
 		}
 	}
 
+	/**
+	 * Returns the tree viewer control
+	 *
+	 * @return tree viewer control object
+	 */
 	public Control getTestViewerControl() {
 		return fViewerbook;
 	}
 
+	/**
+	 * Registers a given active test session
+	 *
+	 * @param testRunSession a test session object
+	 */
 	public synchronized void registerActiveSession(ITestRunSession testRunSession) {
 		fTestRunSession = testRunSession;
 		registerAutoScrollTarget(null);
@@ -363,6 +384,12 @@ class TestViewer {
 			action.run();
 	}
 
+	/**
+	 * Tunes the label providers to show time on the generated labels
+	 *
+	 * @param showTime <code>true</code> in case a time value is to be shown,
+	 *                 otherwise - <code>false</code>
+	 */
 	public synchronized void setShowTime(boolean showTime) {
 		try {
 			fViewerbook.setRedraw(false);
@@ -642,12 +669,21 @@ class TestViewer {
 			fTreeViewer.reveal(current);
 	}
 
+	/**
+	 * Selects the next failure test element
+	 */
 	public void selectFirstFailure() {
 		ITestElement firstFailure = getNextChildFailure(fTestRunSession.getTestRoot(), true);
 		if (firstFailure != null)
 			getActiveViewer().setSelection(new StructuredSelection(firstFailure), true);
 	}
 
+	/**
+	 * Selects a next failure test element
+	 *
+	 * @param showNext <code>true</code> if a next failed element is to be shown,
+	 *                 otherwise - <code>false</code>
+	 */
 	public void selectFailure(boolean showNext) {
 		IStructuredSelection selection = (IStructuredSelection) getActiveViewer().getSelection();
 		ITestElement selected = (ITestElement) selection.getFirstElement();
@@ -720,6 +756,9 @@ class TestViewer {
 		return null;
 	}
 
+	/**
+	 * Initializes a viewers refresh
+	 */
 	public synchronized void registerViewersRefresh() {
 		fTreeNeedsRefresh = true;
 		fTableNeedsRefresh = true;
@@ -733,6 +772,8 @@ class TestViewer {
 	}
 
 	/**
+	 * Registers a test element
+	 *
 	 * @param testElement the added test
 	 */
 	public synchronized void registerTestAdded(ITestElement testElement) {
@@ -741,6 +782,11 @@ class TestViewer {
 		fTableNeedsRefresh = true;
 	}
 
+	/**
+	 * Initializes an update for a test element
+	 *
+	 * @param testElement a test element that needs to be updated
+	 */
 	public synchronized void registerViewerUpdate(final ITestElement testElement) {
 		fNeedUpdate.add(testElement);
 	}
@@ -749,16 +795,29 @@ class TestViewer {
 		fAutoExpand.clear();
 	}
 
+	/**
+	 * Registers an auto-scroll target test case element
+	 *
+	 * @param testCaseElement a test case element
+	 */
 	public void registerAutoScrollTarget(ITestCaseElement testCaseElement) {
 		fAutoScrollTarget = testCaseElement;
 	}
 
+	/**
+	 * Registers a failed test element for an auto-scroll
+	 *
+	 * @param testElement a failed test element
+	 */
 	public synchronized void registerFailedForAutoScroll(ITestElement testElement) {
 		ITestSuiteElement parent = (TestSuiteElement) fTreeContentProvider.getParent(testElement);
 		if (parent != null)
 			fAutoExpand.add(parent);
 	}
 
+	/**
+	 * Expands the test element tree first level
+	 */
 	public void expandFirstLevel() {
 		fTreeViewer.expandToLevel(2);
 	}

@@ -33,6 +33,9 @@ import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 
+/**
+ * A Test Session label provider implementation.
+ */
 class TestSessionLabelProvider extends LabelProvider implements IStyledLabelProvider {
 
 	private final TestRunnerViewPart fTestRunnerPart;
@@ -41,6 +44,14 @@ class TestSessionLabelProvider extends LabelProvider implements IStyledLabelProv
 
 	private boolean fShowTime;
 
+	/**
+	 * Constructs Test Session Provider object.
+	 *
+	 * @param testRunnerPart a test runner view part object
+	 * @param layoutMode     a layout mode, a one of <code>LAYOUT_FLAT</code> or
+	 *                       <code>LAYOUT_HIERARCHICAL</code> constants defined in
+	 *                       {@link TestRunnerViewPart}
+	 */
 	public TestSessionLabelProvider(TestRunnerViewPart testRunnerPart, int layoutMode) {
 		fTestRunnerPart = testRunnerPart;
 		fLayoutMode = layoutMode;
@@ -194,6 +205,12 @@ class TestSessionLabelProvider extends LabelProvider implements IStyledLabelProv
 		}
 	}
 
+	/**
+	 * Makes the label provider to show time on the generated labels
+	 *
+	 * @param showTime <code>true</code> in case a time value is to be shown,
+	 *                 otherwise - <code>false</code>
+	 */
 	public void setShowTime(boolean showTime) {
 		fShowTime = showTime;
 		fireLabelProviderChanged(new LabelProviderChangedEvent(this));

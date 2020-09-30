@@ -46,22 +46,9 @@ import org.eclipse.jface.util.OpenStrategy;
  */
 public class FailureTraceUIBlock implements IMenuListener {
 
-	/*
-	 * Internal property change listener for handling workbench font changes.
-	 *
-	 * private class FontPropertyChangeListener implements IPropertyChangeListener {
-	 *
-	 * @Override public void propertyChange(PropertyChangeEvent event) { if (fTable
-	 * == null) return;
-	 *
-	 * String property= event.getProperty();
-	 *
-	 * if (FAILURE_FONT.equals(property))
-	 * fTable.setFont(JFaceResources.getFont(FAILURE_FONT)); } }
-	 */
-	private static final int MAX_LABEL_LENGTH = 256;
-
 	public static final String FRAME_PREFIX = "at "; //$NON-NLS-1$
+
+	private static final int MAX_LABEL_LENGTH = 256;
 	private Table fTable;
 	private TestRunnerViewPart fTestRunner;
 	private String fInputTrace;
@@ -71,6 +58,14 @@ public class FailureTraceUIBlock implements IMenuListener {
 	private final FailureTableDisplay fFailureTableDisplay;
 	private ShowStackTraceInConsoleViewAction fShowTraceInConsoleAction;
 
+	/**
+	 * Constructs a {@link FailureTraceUIBlock} object
+	 *
+	 * @param parent     a parent composite
+	 * @param clipboard  a {@link Clipboard} instance
+	 * @param testRunner a Test Runner view part
+	 * @param toolBar    a {@link ToolBar} instance
+	 */
 	public FailureTraceUIBlock(Composite parent, Clipboard clipboard, TestRunnerViewPart testRunner, ToolBar toolBar) {
 		Assert.isNotNull(clipboard);
 
@@ -127,6 +122,11 @@ public class FailureTraceUIBlock implements IMenuListener {
 			manager.add(fCompareAction);
 	}
 
+	/**
+	 * Returns the current trace
+	 *
+	 * @return a current trace or <code>null</code>
+	 */
 	public String getTrace() {
 		return fInputTrace;
 	}
@@ -241,19 +241,28 @@ public class FailureTraceUIBlock implements IMenuListener {
 		fInputTrace = null;
 	}
 
+	/**
+	 * Returns a failed test element
+	 *
+	 * @return a failed test element
+	 */
 	public ITestElement getFailedTest() {
 		return fFailure;
 	}
 
+	/**
+	 * Returns a shell object
+	 *
+	 * @return a shell object
+	 */
 	public Shell getShell() {
 		return fTable.getShell();
 	}
 
-	public FailureTableDisplay getFailureTableDisplay() {
-		return fFailureTableDisplay;
-	}
-
+	/**
+	 * Disposes the Failure trace UI Block
+	 */
 	public void dispose() {
-//		JFaceResources.getFontRegistry().removeListener(fFontPropertyChangeListener);
+		// Nothing to dispose
 	}
 }

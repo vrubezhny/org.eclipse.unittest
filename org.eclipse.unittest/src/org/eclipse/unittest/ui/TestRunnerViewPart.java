@@ -161,10 +161,10 @@ public class TestRunnerViewPart extends ViewPart {
 
 //	private boolean fTestIsRunning= false;
 
-	protected UnitTestProgressBar fProgressBar;
-	protected ProgressImages fProgressImages;
+	private UnitTestProgressBar fProgressBar;
+	private ProgressImages fProgressImages;
 	protected Image fViewImage;
-	protected CounterPanel fCounterPanel;
+	private CounterPanel fCounterPanel;
 	protected boolean fShowOnErrorOnly = false;
 	protected Clipboard fClipboard;
 	protected volatile String fInfoMessage;
@@ -976,6 +976,9 @@ public class TestRunnerViewPart extends ViewPart {
 		}
 	}
 
+	/**
+	 * Constructs Test Runner View part object
+	 */
 	public TestRunnerViewPart() {
 		fImagesToDispose = new ArrayList<>();
 
@@ -1164,7 +1167,7 @@ public class TestRunnerViewPart extends ViewPart {
 	}
 
 	/**
-	 * Stops the currently running test and shuts down the RemoteTestRunner
+	 * Re-runs the tests
 	 */
 	public void rerunTestRun() {
 		if (lastLaunchIsKeptAlive()) {
@@ -1204,6 +1207,9 @@ public class TestRunnerViewPart extends ViewPart {
 		return configuration;
 	}
 
+	/**
+	 * Re-runs the tests executing the failed tests first
+	 */
 	public void rerunTestFailedFirst() {
 		if (lastLaunchIsKeptAlive()) {
 			// prompt for terminating the existing run
@@ -1265,22 +1271,43 @@ public class TestRunnerViewPart extends ViewPart {
 		}
 	}
 
+	/**
+	 * Sets auto-scroll enabled value
+	 *
+	 * @param scroll <code>true</code> in case of auto-scroll enabled, otherwise -
+	 *               <code>false</code>
+	 */
 	public void setAutoScroll(boolean scroll) {
 		fAutoScroll = scroll;
 	}
 
+	/**
+	 * Indicates if autoscroll is enabled
+	 *
+	 * @return <code>true</code> if the output scroll and reveal is needed for the
+	 *         tests as they are executed, otherwise returns <code>false</code>
+	 */
 	public boolean isAutoScroll() {
 		return fAutoScroll;
 	}
 
+	/**
+	 * Selects the next failure in the tests tree
+	 */
 	public void selectNextFailure() {
 		fTestViewer.selectFailure(true);
 	}
 
+	/**
+	 * Selects the previous failure in the tests tree
+	 */
 	public void selectPreviousFailure() {
 		fTestViewer.selectFailure(false);
 	}
 
+	/**
+	 * Selects the first failure in the tests tree
+	 */
 	protected void selectFirstFailure() {
 		fTestViewer.selectFirstFailure();
 	}
@@ -1442,6 +1469,8 @@ public class TestRunnerViewPart extends ViewPart {
 	}
 
 	/**
+	 * Returns the display name of the current test run session
+	 *
 	 * @return the display name of the current test run session, or
 	 *         <code>null</code>
 	 */
@@ -1560,6 +1589,9 @@ public class TestRunnerViewPart extends ViewPart {
 		});
 	}
 
+	/**
+	 * Makes the test results view visible
+	 */
 	public void showTestResultsView() {
 		IWorkbenchWindow window = getSite().getWorkbenchWindow();
 		IWorkbenchPage page = window.getActivePage();
@@ -1590,6 +1622,11 @@ public class TestRunnerViewPart extends ViewPart {
 		}
 	}
 
+	/**
+	 * Registers a test information message
+	 *
+	 * @param message an information message to register
+	 */
 	public void registerInfoMessage(String message) {
 		fInfoMessage = message;
 	}
@@ -1902,6 +1939,11 @@ public class TestRunnerViewPart extends ViewPart {
 		return composite;
 	}
 
+	/**
+	 * Handles the test element selection
+	 *
+	 * @param test a selected test element
+	 */
 	public void handleTestSelected(ITestElement test) {
 		showFailure(test);
 		fCopyAction.handleTestSelected(test);
@@ -1915,7 +1957,9 @@ public class TestRunnerViewPart extends ViewPart {
 	}
 
 	/**
-	 * @return the Java project, or <code>null</code>
+	 * Returns a current test run session object
+	 *
+	 * @return the current test run session, or <code>null</code>
 	 */
 	public ITestRunSession getCurrentTestRunSession() {
 		return fTestRunSession;
@@ -1963,12 +2007,21 @@ public class TestRunnerViewPart extends ViewPart {
 		postSyncRunnable(this::processChangesInUI);
 	}
 
+	/**
+	 * Warns on content change
+	 */
 	public void warnOfContentChange() {
 		IWorkbenchSiteProgressService service = getProgressService();
 		if (service != null)
 			service.warnOfContentChange();
 	}
 
+	/**
+	 * Indicates if the last test launch is kept alive
+	 *
+	 * @return <code>true</code> in case of the last test launch is kept alive,
+	 *         otherwise returns <code>false</code>
+	 */
 	public boolean lastLaunchIsKeptAlive() {
 		return fTestRunSession != null && fTestRunSession.isKeptAlive();
 	}
@@ -2010,6 +2063,11 @@ public class TestRunnerViewPart extends ViewPart {
 		}
 	}
 
+	/**
+	 * Returns the Failure Trace UI Block
+	 *
+	 * @return the current failure trace OI block
+	 */
 	public FailureTraceUIBlock getFailureTrace() {
 		return fFailureTrace;
 	}
