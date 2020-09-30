@@ -21,7 +21,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.PushbackReader;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 
@@ -50,11 +49,6 @@ public abstract class RemoteTestRunnerClient extends TestRunnerClient {
 	}
 
 	private int fPort = -1;
-	/**
-	 * The server socket
-	 */
-	private ServerSocket fServerSocket;
-	private Socket fSocket;
 	protected String fLastLineDelimiter;
 	protected InputStream fInputStream;
 	protected PrintWriter fWriter;
@@ -117,13 +111,6 @@ public abstract class RemoteTestRunnerClient extends TestRunnerClient {
 
 	@Override
 	abstract public void stopTest();
-
-	@Override
-	public synchronized void stopWaiting() {
-		if (fServerSocket != null && !fServerSocket.isClosed() && fSocket == null) {
-			shutDown(); // will throw a SocketException in Threads that wait in ServerSocket#accept()
-		}
-	}
 
 	@Override
 	public synchronized void shutDown() {

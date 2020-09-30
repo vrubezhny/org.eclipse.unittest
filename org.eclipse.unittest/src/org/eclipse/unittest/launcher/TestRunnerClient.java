@@ -63,8 +63,8 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	/**
 	 * The server socket
 	 */
-	private ServerSocket fServerSocket;
-	private Socket fSocket;
+	protected ServerSocket fServerSocket;
+	protected Socket fSocket;
 
 	/**
 	 * The failed test that is currently reported from the RemoteTestRunner
