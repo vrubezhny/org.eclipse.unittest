@@ -279,7 +279,8 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 		this.process = Arrays.stream(launch.getProcesses()).filter(InferiorRuntimeProcess.class::isInstance).findAny().orElse(null);
 		if (this.process != null) {
 			DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(fFindProcessListener);
-			Job.createSystem("Monitor test process", (ICoreRunnable)monitor -> run(toInputStream(process))).schedule(); //$NON-NLS-1$
+			InputStream stream = toInputStream(process);
+			Job.createSystem("Monitor test process", (ICoreRunnable)monitor -> run(stream)).schedule(); //$NON-NLS-1$
 		}
 		return this.process;
 	}
