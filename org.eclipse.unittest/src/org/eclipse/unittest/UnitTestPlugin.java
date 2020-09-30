@@ -18,13 +18,7 @@ import org.osgi.framework.BundleContext;
 import org.eclipse.unittest.internal.model.UnitTestModel;
 import org.eclipse.unittest.model.IUnitTestModel;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 
@@ -98,15 +92,7 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 	 * place it into UnitTestCorePlugin
 	 */
 
-	public static final String ID_EXTENSION_POINT_TESTRUN_LISTENERS = PLUGIN_ID + "." + "testRunListeners"; //$NON-NLS-1$ //$NON-NLS-2$
-	public static final String ID_EXTENSION_POINT_TEST_VIEW_SUPPORTS = PLUGIN_ID + "." + "unittestViewSupport"; //$NON-NLS-1$ //$NON-NLS-2$
-
 	private final UnitTestModel fUnitTestModel = new UnitTestModel();
-
-	/**
-	 * List storing the registered test run listeners
-	 */
-	private ListenerList<TestRunListener> fUnitTestRunListeners = new ListenerList<>();
 
 	/**
 	 * Returns a {@link IUnitTestModel} instance
@@ -115,45 +101,6 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 	 */
 	public static IUnitTestModel getModel() {
 		return getDefault().fUnitTestModel;
-	}
-
-	/**
-	 * @return a <code>ListenerList</code> of all <code>TestRunListener</code>s
-	 */
-	public ListenerList<TestRunListener> getUnitTestRunListeners() {
-		loadUnitTestRunListeners();
-		return fUnitTestRunListeners;
-	}
-
-	/**
-	 * Initializes TestRun Listener extensions
-	 */
-	private synchronized void loadUnitTestRunListeners() {
-		if (!fUnitTestRunListeners.isEmpty()) {
-			return;
-		}
-
-		IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
-				.getExtensionPoint(ID_EXTENSION_POINT_TESTRUN_LISTENERS);
-		if (extensionPoint == null) {
-			return;
-		}
-		IConfigurationElement[] configs = extensionPoint.getConfigurationElements();
-		MultiStatus status = new MultiStatus(PLUGIN_ID, IStatus.OK, "Could not load some testRunner extension points", //$NON-NLS-1$
-				null);
-		for (IConfigurationElement config : configs) {
-			try {
-				Object testRunListener = config.createExecutableExtension("class"); //$NON-NLS-1$
-				if (testRunListener instanceof TestRunListener) {
-					fUnitTestRunListeners.add((TestRunListener) testRunListener);
-				}
-			} catch (CoreException e) {
-				status.add(e.getStatus());
-			}
-		}
-		if (!status.isOK()) {
-			log(status);
-		}
 	}
 
 }

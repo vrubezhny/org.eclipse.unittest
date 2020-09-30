@@ -13,10 +13,15 @@
  *******************************************************************************/
 package org.eclipse.unittest.launcher;
 
+import org.eclipse.unittest.internal.model.TestRunSession;
 import org.eclipse.unittest.model.ITestRunListener;
 
 /**
- * An interface to be implemented by a Test Runner Client
+ * An interface to be implemented by a Test Runner Client. Such implementation
+ * takes care of placing the right listeners got a given {@link TestRunSession}
+ * (usually received in the constructor) and to react to the various test engine
+ * events (can be notifications via some network, reading standard output....)
+ * by sending notifications to the ITestRunListeners.
  */
 public interface ITestRunnerClient {
 

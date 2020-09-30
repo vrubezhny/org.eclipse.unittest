@@ -16,15 +16,13 @@ package org.eclipse.unittest.internal.ui;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 
-import org.eclipse.ui.IActionDelegate;
-
 /**
  * Action to show the stack trace of a failed test from Unit Test view's failure
  * trace in debug's Java stack trace console.
  */
 public class ShowStackTraceInConsoleViewAction extends Action {
 
-	private IActionDelegate fDelegate;
+	private Runnable fDelegate;
 
 	public ShowStackTraceInConsoleViewAction() {
 		super(Messages.ShowStackTraceInConsoleViewAction_label, IAction.AS_PUSH_BUTTON);
@@ -41,11 +39,11 @@ public class ShowStackTraceInConsoleViewAction extends Action {
 	@Override
 	public void run() {
 		if (fDelegate != null) {
-			fDelegate.run(this);
+			fDelegate.run();
 		}
 	}
 
-	public void setDelegate(IActionDelegate delegate) {
+	public void setDelegate(Runnable delegate) {
 		fDelegate = delegate;
 	}
 

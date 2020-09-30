@@ -21,8 +21,6 @@ import org.eclipse.unittest.model.ITestSuiteElement;
 
 import org.eclipse.jface.action.IAction;
 
-import org.eclipse.ui.IActionDelegate;
-
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
@@ -32,9 +30,11 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 public interface ITestViewSupport {
 
 	/**
-	 * Returns a Test Runner Client for this this Test View Support
+	 * Returns a Test Runner Client.
 	 *
-	 * @param session the test session
+	 * @param session the test session. ⚠️ The session may not be fully initialized
+	 *                at that point, however {@link ITestRunSession#getLaunch()} is
+	 *                supposed to return the proper launch.
 	 *
 	 * @return returns a Test Runner Client
 	 */
@@ -48,50 +48,48 @@ public interface ITestViewSupport {
 	String[] getFilterPatterns();
 
 	/**
-	 * Returns an Open Test action for a specified test case element
+	 * Returns an action to open a specified test case element
 	 *
 	 * @param testRunnerPart a test runner view part instance
 	 * @param testCase       a test case element
-	 * @return an action implementing org.eclipse.unittest.ui.IOpenEditorAction
-	 *         interface if an action can be created, otherwise - null
+	 * @return an action to open a specified test case element, or <code>null</code>
 	 */
 	IAction getOpenTestAction(TestRunnerViewPart testRunnerPart, ITestCaseElement testCase);
 
 	/**
-	 * Returns an Open Test action for a specified test suite element
+	 * Returns an action to open a specified test suite element
 	 *
 	 * @param testRunnerPart a test runner view part instance
 	 * @param testSuite      a test suite element
-	 * @return an action implementing org.eclipse.unittest.ui.IOpenEditorAction
-	 *         interface if an action can be created, otherwise - null
+	 * @return an action to open a specified test suite element, or
+	 *         <code>null</code>
 	 */
 	IAction getOpenTestAction(TestRunnerViewPart testRunnerPart, ITestSuiteElement testSuite);
 
 	/**
-	 * Returns an Open Editor action for a specified failed test element
+	 * Returns an action to open a failure trace element
 	 *
 	 * @param testRunnerPart a test runner view part instance
 	 * @param failure        a test element that is failed
 	 * @param traceLine      a stack trace or an error message text
-	 * @return an action implementing org.eclipse.unittest.ui.IOpenEditorAction
-	 *         interface if an action can be created, otherwise - null
+	 * @return an action to open a failure trace element, or <code>null</null>
 	 */
 	IAction createOpenEditorAction(TestRunnerViewPart testRunnerPart, ITestElement failure, String traceLine);
 
 	/**
-	 * Returns an action delegate to copy an existing stack trace/error message into
-	 * a console view
+	 * Returns an action to copy an existing stack trace/error message into a
+	 * console view
 	 *
 	 * @param view a test runner view Failure Trace view instance
-	 * @return an action delegate if it can be created, otherwise - null
+	 * @return an {@link Runnable} if it can be created, otherwise -
+	 *         <code>null</code>
 	 */
-	IActionDelegate createShowStackTraceInConsoleViewActionDelegate(FailureTraceUIBlock view);
+	Runnable createShowStackTraceInConsoleViewActionDelegate(FailureTraceUIBlock view);
 
 	/**
-	 * Returns an array of Rerun test actions for a specified Test Suite element
+	 * Returns a Rerun launch configuration for the given element
 	 *
 	 * @param testElement a test suite element
-	 *
 	 * @return a {@link ILaunchConfiguration}, derived from current test session and
 	 *         selected element.
 	 */

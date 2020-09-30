@@ -30,12 +30,15 @@ import org.eclipse.core.runtime.Platform;
  * Test View Support registry
  */
 public class TestViewSupportRegistry {
+	public static final String ID_EXTENSION_POINT_TEST_VIEW_SUPPORTS = UnitTestPlugin.PLUGIN_ID + "." //$NON-NLS-1$
+			+ "unittestViewSupport"; //$NON-NLS-1$
+
 	public static TestViewSupportRegistry getDefault() {
 		if (fgRegistry != null)
 			return fgRegistry;
 
-		fgRegistry = new TestViewSupportRegistry(Platform.getExtensionRegistry()
-				.getExtensionPoint(UnitTestPlugin.ID_EXTENSION_POINT_TEST_VIEW_SUPPORTS));
+		fgRegistry = new TestViewSupportRegistry(
+				Platform.getExtensionRegistry().getExtensionPoint(ID_EXTENSION_POINT_TEST_VIEW_SUPPORTS));
 		return fgRegistry;
 	}
 

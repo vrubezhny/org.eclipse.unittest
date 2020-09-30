@@ -43,6 +43,7 @@ import org.xml.sax.SAXException;
 import org.eclipse.unittest.TestRunListener;
 import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.internal.UnitTestPreferencesConstants;
+import org.eclipse.unittest.internal.launcher.TestListenerRegistry;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestRunSessionListener;
@@ -121,7 +122,7 @@ public final class UnitTestModel implements IUnitTestModel {
 			if (testRunSession == null) {
 				testRunSession = new TestRunSession(launch);
 				addTestRunSession(testRunSession);
-				for (TestRunListener listener : UnitTestPlugin.getDefault().getUnitTestRunListeners()) {
+				for (TestRunListener listener : TestListenerRegistry.getDefault().getUnitTestRunListeners()) {
 					listener.sessionLaunched(testRunSession);
 				}
 			}

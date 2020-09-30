@@ -32,8 +32,6 @@ import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.jface.action.IAction;
 
-import org.eclipse.ui.IActionDelegate;
-
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 
@@ -86,7 +84,7 @@ public class CDTTestViewSupport implements ITestViewSupport {
 	}
 
 	@Override
-	public IActionDelegate createShowStackTraceInConsoleViewActionDelegate(FailureTraceUIBlock view) {
+	public Runnable createShowStackTraceInConsoleViewActionDelegate(FailureTraceUIBlock view) {
 		return null;
 	}
 

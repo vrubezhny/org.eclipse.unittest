@@ -33,8 +33,6 @@ import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.action.IAction;
 
-import org.eclipse.ui.IActionDelegate;
-
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -118,7 +116,7 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 	}
 
 	@Override
-	public IActionDelegate createShowStackTraceInConsoleViewActionDelegate(FailureTraceUIBlock view) {
+	public Runnable createShowStackTraceInConsoleViewActionDelegate(FailureTraceUIBlock view) {
 		return new ShowStackTraceInConsoleViewActionDelegate(view);
 	}
 

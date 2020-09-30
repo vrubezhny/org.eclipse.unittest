@@ -14,7 +14,7 @@
 package org.eclipse.unittest.internal.model;
 
 import org.eclipse.unittest.TestRunListener;
-import org.eclipse.unittest.UnitTestPlugin;
+import org.eclipse.unittest.internal.launcher.TestListenerRegistry;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElement.Status;
@@ -34,7 +34,7 @@ public class TestRunListenerAdapter implements ITestSessionListener {
 	}
 
 	private ListenerList<TestRunListener> getListenerList() {
-		return UnitTestPlugin.getDefault().getUnitTestRunListeners();
+		return TestListenerRegistry.getDefault().getUnitTestRunListeners();
 	}
 
 	private void fireSessionStarted() {

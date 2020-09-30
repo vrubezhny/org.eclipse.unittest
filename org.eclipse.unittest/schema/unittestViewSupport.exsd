@@ -23,7 +23,7 @@
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  a fulli qualified extention point identifier
+                  a fully qualified extention point identifier
                </documentation>
             </annotation>
          </attribute>
@@ -51,13 +51,16 @@
       <annotation>
          <documentation>
             A Test Kind definition that implements org.eclipse.unittest.launcher.ITestViewSupport.
+            This is used by the &lt;i&gt;Unit Test&lt;/i&gt; view to provide support for test engines.
          </documentation>
       </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique test view support ID
+                  a fulli qualified extention point identifier. This identifier is used to load support for the &lt;i&gt;Unit Test&lt;/i&gt;
+                  view when some ILaunch is running, and the underlying launch configuration sets attributes &lt;code&gt;UnitTestLaunchConfigurationConstants.ATTR_UNIT_TEST_VIEW_SUPPORT&lt;/code&gt;
+                  to the given id.
                </documentation>
             </annotation>
          </attribute>

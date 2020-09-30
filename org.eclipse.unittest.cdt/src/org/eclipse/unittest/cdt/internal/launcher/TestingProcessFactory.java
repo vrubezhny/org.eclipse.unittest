@@ -13,23 +13,17 @@
  *******************************************************************************/
 package org.eclipse.unittest.cdt.internal.launcher;
 
-import java.nio.charset.Charset;
-import java.nio.charset.IllegalCharsetNameException;
-import java.nio.charset.UnsupportedCharsetException;
 import java.util.Collections;
 import java.util.Map;
 
 import org.eclipse.cdt.dsf.gdb.IGdbDebugConstants;
 import org.eclipse.cdt.dsf.gdb.launching.GDBProcess;
 import org.eclipse.cdt.dsf.gdb.launching.InferiorRuntimeProcess;
-import org.eclipse.unittest.cdt.CDTUnitTestPlugin;
 
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.IProcessFactory;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.RuntimeProcess;
-import org.eclipse.debug.internal.core.StreamsProxy;
 
 /**
  * Custom testing process factory allows to handle the output stream of the
@@ -37,34 +31,8 @@ import org.eclipse.debug.internal.core.StreamsProxy;
  */
 public class TestingProcessFactory implements IProcessFactory {
 
-	private final class GDBProcessExtension extends GDBProcess {
-		private GDBProcessExtension(ILaunch launch, Process process, String name, Map<String, String> attributes) {
-			super(launch, process, name, attributes);
-		}
-
-		@Override
-		public org.eclipse.debug.core.model.IStreamsProxy getStreamsProxy() {
-			return ((RuntimeProcess)this).getStreamsProxy();
-		}
-
-		@Override
-		protected org.eclipse.debug.core.model.IStreamsProxy createStreamsProxy() {
-			String encoding = getLaunch().getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING);
-			Charset charset = null;
-			if (encoding != null) {
-				try {
-					charset = Charset.forName(encoding);
-				} catch (UnsupportedCharsetException | IllegalCharsetNameException e) {
-					CDTUnitTestPlugin.log(e);
-				}
-			}
-			return new StreamsProxy(getSystemProcess(), charset);
-		}
-	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public IProcess newProcess(ILaunch launch, Process process, String label, Map attributes) {
+	public IProcess newProcess(ILaunch launch, Process process, String label, Map<String, String> attributes) {
 			// Mimic the behavior of DSF GDBProcessFactory.
 		if (attributes != null) {
 			Object processTypeCreationAttrValue = attributes.get(IGdbDebugConstants.PROCESS_TYPE_CREATION_ATTR);
