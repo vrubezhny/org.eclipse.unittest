@@ -27,9 +27,9 @@ import org.eclipse.unittest.junit.JUnitTestPlugin;
 import org.eclipse.unittest.junit.JUnitTestPlugin.JUnitVersion;
 import org.eclipse.unittest.junit.launcher.util.JUnitStubUtility;
 import org.eclipse.unittest.junit.launcher.util.LayoutUtil;
+import org.eclipse.unittest.junit.ui.BasicElementLabels;
 import org.eclipse.unittest.junit.ui.JUnitMessages;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
-import org.eclipse.unittest.ui.BasicElementLabels;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;

@@ -11,7 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.unittest.ui;
+package org.eclipse.unittest.junit.ui;
 
 import java.io.File;
 

@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.unittest.junit.JUnitTestPlugin;
+import org.eclipse.unittest.junit.ui.BasicElementLabels;
 import org.eclipse.unittest.junit.ui.JUnitMessages;
-import org.eclipse.unittest.ui.BasicElementLabels;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;

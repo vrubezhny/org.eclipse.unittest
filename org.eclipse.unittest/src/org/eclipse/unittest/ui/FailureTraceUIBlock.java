@@ -44,6 +44,9 @@ import org.eclipse.jface.util.OpenStrategy;
 
 /**
  * A pane that shows a stack trace of a failed test.
+ *
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class FailureTraceUIBlock implements IMenuListener {
 
