@@ -145,10 +145,10 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 	 * buffer until an end message is read.
 	 */
 	class AppendingProcessingState extends ProcessingState {
-		private final StringBuffer fBuffer;
+		private final StringBuilder fBuffer;
 		private String fEndString;
 
-		AppendingProcessingState(StringBuffer buffer, String endString) {
+		AppendingProcessingState(StringBuilder buffer, String endString) {
 			this.fBuffer = buffer;
 			this.fEndString = endString;
 		}
@@ -203,20 +203,20 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 	/**
 	 * The failed trace that is currently reported from the RemoteTestRunner
 	 */
-//	private final StringBuffer fFailedTrace = new StringBuffer();
+//	private final StringBuilder fFailedTrace = new StringBuilder();
 	/**
 	 * The expected test result
 	 */
-//	private final StringBuffer fExpectedResult = new StringBuffer();
+//	private final StringBuilder fExpectedResult = new StringBuilder();
 	/**
 	 * The actual test result
 	 */
 
-//	private final StringBuffer fActualResult = new StringBuffer();
+//	private final StringBuilder fActualResult = new StringBuilder();
 	/**
 	 * The failed trace of a reran test
 	 */
-//	private final StringBuffer fFailedRerunTrace = new StringBuffer();
+//	private final StringBuilder fFailedRerunTrace = new StringBuilder();
 
 	ProcessingState fDefaultState = new DefaultProcessingState();
 	ProcessingState fTraceState = new TraceProcessingState();
@@ -366,7 +366,7 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 		int index0 = fixedTreeEntry.indexOf(',');
 		String id = fixedTreeEntry.substring(0, index0);
 
-		StringBuffer testNameBuffer = new StringBuffer(100);
+		StringBuilder testNameBuffer = new StringBuilder(100);
 		int index1 = scanTestName(fixedTreeEntry, index0 + 1, testNameBuffer);
 		String testName = testNameBuffer.toString().trim();
 
@@ -377,11 +377,11 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 		boolean isDynamicTest;
 		String parentId;
 		String displayName;
-		StringBuffer displayNameBuffer = new StringBuffer(100);
+		StringBuilder displayNameBuffer = new StringBuilder(100);
 		String[] parameterTypes;
-		StringBuffer parameterTypesBuffer = new StringBuffer(200);
+		StringBuilder parameterTypesBuffer = new StringBuilder(200);
 		String uniqueId;
-		StringBuffer uniqueIdBuffer = new StringBuffer(200);
+		StringBuilder uniqueIdBuffer = new StringBuilder(200);
 		int index3 = fixedTreeEntry.indexOf(',', index2 + 1);
 		if (index3 == -1) {
 			testCount = Integer.parseInt(fixedTreeEntry.substring(index2 + 1));
@@ -437,7 +437,7 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 	 *
 	 * @return the index of the next ','
 	 */
-	private int scanTestName(String s, int start, StringBuffer testName) {
+	private int scanTestName(String s, int start, StringBuilder testName) {
 		boolean inQuote = false;
 		int i = start;
 		for (; i < s.length(); i++) {

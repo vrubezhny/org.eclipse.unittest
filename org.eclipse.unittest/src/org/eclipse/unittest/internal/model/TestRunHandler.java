@@ -48,11 +48,11 @@ public class TestRunHandler extends DefaultHandler {
 	private TestCaseElement fTestCase;
 	private Stack<Boolean> fNotRun = new Stack<>();
 
-	private StringBuffer fFailureBuffer;
+	private StringBuilder fFailureBuffer;
 	private boolean fInExpected;
 	private boolean fInActual;
-	private StringBuffer fExpectedBuffer;
-	private StringBuffer fActualBuffer;
+	private StringBuilder fExpectedBuffer;
+	private StringBuilder fActualBuffer;
 
 	private Locator fLocator;
 
@@ -201,20 +201,20 @@ public class TestRunHandler extends DefaultHandler {
 		case IXMLTags.NODE_ERROR:
 			// TODO: multiple failures: https://bugs.eclipse.org/bugs/show_bug.cgi?id=125296
 			fStatus = Status.ERROR;
-			fFailureBuffer = new StringBuffer();
+			fFailureBuffer = new StringBuilder();
 			break;
 		case IXMLTags.NODE_FAILURE:
 			// TODO: multiple failures: https://bugs.eclipse.org/bugs/show_bug.cgi?id=125296
 			fStatus = Status.FAILURE;
-			fFailureBuffer = new StringBuffer();
+			fFailureBuffer = new StringBuilder();
 			break;
 		case IXMLTags.NODE_EXPECTED:
 			fInExpected = true;
-			fExpectedBuffer = new StringBuffer();
+			fExpectedBuffer = new StringBuilder();
 			break;
 		case IXMLTags.NODE_ACTUAL:
 			fInActual = true;
-			fActualBuffer = new StringBuffer();
+			fActualBuffer = new StringBuilder();
 			break;
 		// not interested
 		case IXMLTags.NODE_SYSTEM_OUT:
@@ -226,7 +226,7 @@ public class TestRunHandler extends DefaultHandler {
 			// later: child of <suite> or <test>, see
 			// https://issues.apache.org/bugzilla/show_bug.cgi?id=43969
 			fStatus = Status.OK;
-			fFailureBuffer = new StringBuffer();
+			fFailureBuffer = new StringBuilder();
 			String message = attributes.getValue(IXMLTags.ATTR_MESSAGE);
 			if (message != null) {
 				fFailureBuffer.append(message).append('\n');
@@ -345,7 +345,7 @@ public class TestRunHandler extends DefaultHandler {
 		}
 	}
 
-	private String toString(StringBuffer buffer) {
+	private String toString(StringBuilder buffer) {
 		return buffer != null ? buffer.toString() : null;
 	}
 

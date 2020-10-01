@@ -41,19 +41,19 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	/**
 	 * The failed trace that is currently reported from the RemoteTestRunner
 	 */
-	protected final StringBuffer fFailedTrace = new StringBuffer();
+	protected final StringBuilder fFailedTrace = new StringBuilder();
 	/**
 	 * The expected test result
 	 */
-	protected final StringBuffer fExpectedResult = new StringBuffer();
+	protected final StringBuilder fExpectedResult = new StringBuilder();
 	/**
 	 * The actual test result
 	 */
-	protected final StringBuffer fActualResult = new StringBuffer();
+	protected final StringBuilder fActualResult = new StringBuilder();
 	/**
 	 * The failed trace of a reran test
 	 */
-	protected final StringBuffer fFailedRerunTrace = new StringBuffer();
+	protected final StringBuilder fFailedRerunTrace = new StringBuilder();
 
 	/**
 	 * An array of listeners that are informed about test events.
@@ -258,7 +258,7 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	 * @param buf the comparison result
 	 * @return the result or <code>null</code> if empty
 	 */
-	private static String nullifyEmpty(StringBuffer buf) {
+	private static String nullifyEmpty(StringBuilder buf) {
 		int length = buf.length();
 		if (length == 0)
 			return null;
