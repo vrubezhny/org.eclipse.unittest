@@ -11,7 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.unittest.launcher;
+package org.eclipse.unittest.junit.internal.launcher;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,6 +25,7 @@ import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 
 import org.eclipse.unittest.UnitTestPlugin;
+import org.eclipse.unittest.launcher.TestRunnerClient;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 

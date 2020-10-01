@@ -18,7 +18,7 @@ package org.eclipse.unittest.junit.launcher;
 import java.util.Arrays;
 
 import org.eclipse.unittest.junit.JUnitTestPlugin;
-import org.eclipse.unittest.launcher.RemoteTestRunnerClient;
+import org.eclipse.unittest.junit.internal.launcher.RemoteTestRunnerClient;
 import org.eclipse.unittest.model.ITestRunListener;
 
 import org.eclipse.core.runtime.ISafeRunnable;

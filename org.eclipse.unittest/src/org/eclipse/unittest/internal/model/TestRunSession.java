@@ -24,7 +24,6 @@ import java.util.List;
 
 import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.launcher.ITestRunnerClient;
-import org.eclipse.unittest.launcher.RemoteTestRunnerClient;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElementContainer;
@@ -530,9 +529,9 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 	}
 
 	/**
-	 * An {@link ITestRunListener} that listens to events from the
-	 * {@link RemoteTestRunnerClient} and translates them into high-level model
-	 * events (broadcasted to {@link ITestSessionListener}s).
+	 * An {@link ITestRunListener} that listens to events from the and translates
+	 * {@link ITestRunnerClient} them into high-level model events (broadcasted to
+	 * {@link ITestSessionListener}s).
 	 */
 	private class TestSessionNotifier implements ITestRunListener {
 
