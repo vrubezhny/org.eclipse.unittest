@@ -11,7 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.unittest;
+package org.eclipse.unittest.internal.launcher;
 
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestRunSession;
