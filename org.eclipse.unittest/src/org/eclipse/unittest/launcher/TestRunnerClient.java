@@ -19,7 +19,7 @@ import java.net.Socket;
 
 import org.osgi.framework.Bundle;
 
-import org.eclipse.unittest.UnitTestPlugin;
+import org.eclipse.unittest.internal.UnitTestPlugin;
 import org.eclipse.unittest.model.ITestRunListener;
 
 import org.eclipse.core.runtime.ISafeRunnable;

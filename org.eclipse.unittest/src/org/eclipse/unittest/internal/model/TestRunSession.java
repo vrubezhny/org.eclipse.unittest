@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.eclipse.unittest.UnitTestPlugin;
+import org.eclipse.unittest.internal.UnitTestPlugin;
 import org.eclipse.unittest.launcher.ITestRunnerClient;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.model.ITestElement;

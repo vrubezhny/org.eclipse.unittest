@@ -24,7 +24,7 @@ import java.net.ServerSocket;
 import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 
-import org.eclipse.unittest.UnitTestPlugin;
+import org.eclipse.unittest.junit.JUnitTestPlugin;
 import org.eclipse.unittest.launcher.TestRunnerClient;
 
 import org.eclipse.core.runtime.ISafeRunnable;
@@ -38,7 +38,7 @@ public abstract class RemoteTestRunnerClient extends TestRunnerClient {
 	public abstract class ListenerSafeRunnable implements ISafeRunnable {
 		@Override
 		public void handleException(Throwable exception) {
-			UnitTestPlugin.log(exception);
+			JUnitTestPlugin.log(exception);
 		}
 	}
 
@@ -91,7 +91,7 @@ public abstract class RemoteTestRunnerClient extends TestRunnerClient {
 			} catch (SocketException e) {
 				notifyTestRunTerminated();
 			} catch (IOException e) {
-				UnitTestPlugin.log(e);
+				JUnitTestPlugin.log(e);
 				// fall through
 			}
 			shutDown();

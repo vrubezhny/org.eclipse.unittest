@@ -27,8 +27,9 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.unittest.UnitTestPlugin;
+import org.eclipse.unittest.internal.UnitTestPlugin;
 import org.eclipse.unittest.internal.UnitTestPreferencesConstants;
+import org.eclipse.unittest.internal.model.UnitTestModel;
 import org.eclipse.unittest.internal.ui.CounterPanel;
 import org.eclipse.unittest.internal.ui.IUnitTestHelpContextIds;
 import org.eclipse.unittest.internal.ui.Images;
@@ -589,7 +590,7 @@ public class TestRunnerViewPart extends ViewPart {
 		public void sessionRemoved(final ITestRunSession testRunSession) {
 			getDisplay().asyncExec(() -> {
 				if (testRunSession.equals(fTestRunSession)) {
-					List<ITestRunSession> testRunSessions = UnitTestPlugin.getModel().getTestRunSessions();
+					List<ITestRunSession> testRunSessions = UnitTestModel.getInstance().getTestRunSessions();
 					ITestRunSession deactivatedSession;
 					if (!testRunSessions.isEmpty()) {
 						deactivatedSession = setActiveTestRunSession(testRunSessions.get(0));
@@ -1493,7 +1494,7 @@ public class TestRunnerViewPart extends ViewPart {
 	public synchronized void dispose() {
 		fIsDisposed = true;
 		if (fTestRunSessionListener != null)
-			UnitTestPlugin.getModel().removeTestRunSessionListener(fTestRunSessionListener);
+			UnitTestModel.getInstance().removeTestRunSessionListener(fTestRunSessionListener);
 
 		IHandlerService handlerService = getSite().getWorkbenchWindow().getService(IHandlerService.class);
 		handlerService.deactivateHandler(fRerunLastActivation);
@@ -1723,11 +1724,11 @@ public class TestRunnerViewPart extends ViewPart {
 		fMemento = null;
 
 		fTestRunSessionListener = new TestRunSessionListener();
-		UnitTestPlugin.getModel().addTestRunSessionListener(fTestRunSessionListener);
+		UnitTestModel.getInstance().addTestRunSessionListener(fTestRunSessionListener);
 
 		// always show youngest test run in view. simulate "sessionAdded" event to do
 		// that
-		List<ITestRunSession> testRunSessions = UnitTestPlugin.getModel().getTestRunSessions();
+		List<ITestRunSession> testRunSessions = UnitTestModel.getInstance().getTestRunSessions();
 		if (!testRunSessions.isEmpty()) {
 			fTestRunSessionListener.sessionAdded(testRunSessions.get(0));
 		}
@@ -2054,7 +2055,7 @@ public class TestRunnerViewPart extends ViewPart {
 	static void importTestRunSession(final String url) {
 		try {
 			PlatformUI.getWorkbench().getProgressService()
-					.busyCursorWhile(monitor -> UnitTestPlugin.getModel().importTestRunSession(url, monitor));
+					.busyCursorWhile(monitor -> UnitTestModel.getInstance().importTestRunSession(url, monitor));
 		} catch (InterruptedException e) {
 			// cancelled
 		} catch (InvocationTargetException e) {

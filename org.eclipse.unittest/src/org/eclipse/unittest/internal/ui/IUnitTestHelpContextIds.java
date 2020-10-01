@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.unittest.internal.ui;
 
-import org.eclipse.unittest.UnitTestPlugin;
+import org.eclipse.unittest.internal.UnitTestPlugin;
 
 /**
  * Help context ids for the Unit Test UI.

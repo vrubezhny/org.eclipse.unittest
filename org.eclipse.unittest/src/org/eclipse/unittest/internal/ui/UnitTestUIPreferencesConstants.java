@@ -15,7 +15,7 @@ package org.eclipse.unittest.internal.ui;
 
 import org.osgi.service.prefs.BackingStoreException;
 
-import org.eclipse.unittest.UnitTestPlugin;
+import org.eclipse.unittest.internal.UnitTestPlugin;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;

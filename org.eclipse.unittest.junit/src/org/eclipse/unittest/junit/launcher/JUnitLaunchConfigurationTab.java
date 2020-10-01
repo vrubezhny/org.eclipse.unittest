@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.unittest.UnitTestPlugin;
 import org.eclipse.unittest.junit.JUnitTestPlugin;
 import org.eclipse.unittest.junit.JUnitTestPlugin.JUnitVersion;
 import org.eclipse.unittest.junit.launcher.util.JUnitStubUtility;
@@ -645,7 +644,7 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 						}
 					});
 		} catch (JavaModelException e) {
-			UnitTestPlugin.log(e);
+			JUnitTestPlugin.log(e);
 			return;
 		}
 
