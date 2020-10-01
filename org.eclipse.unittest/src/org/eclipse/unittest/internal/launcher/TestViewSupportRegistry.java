@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.eclipse.unittest.UnitTestPlugin;
+import org.eclipse.unittest.internal.UnitTestPlugin;
 import org.eclipse.unittest.ui.ITestViewSupport;
 
 import org.eclipse.core.runtime.IConfigurationElement;

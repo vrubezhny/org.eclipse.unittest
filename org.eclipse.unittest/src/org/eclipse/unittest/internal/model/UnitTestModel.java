@@ -40,14 +40,13 @@ import javax.xml.transform.stream.StreamResult;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import org.eclipse.unittest.UnitTestPlugin;
+import org.eclipse.unittest.internal.UnitTestPlugin;
 import org.eclipse.unittest.internal.UnitTestPreferencesConstants;
 import org.eclipse.unittest.internal.launcher.TestListenerRegistry;
 import org.eclipse.unittest.internal.launcher.TestRunListener;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestRunSessionListener;
-import org.eclipse.unittest.model.IUnitTestModel;
 import org.eclipse.unittest.ui.BasicElementLabels;
 import org.eclipse.unittest.ui.ITestViewSupport;
 
@@ -68,7 +67,7 @@ import org.eclipse.debug.core.ILaunchManager;
 /**
  * Central registry for Unit Test test runs.
  */
-public final class UnitTestModel implements IUnitTestModel {
+public final class UnitTestModel {
 
 	private final class UnitTestLaunchListener implements ILaunchListener {
 
@@ -137,6 +136,19 @@ public final class UnitTestModel implements IUnitTestModel {
 	private final LinkedList<ITestRunSession> fTestRunSessions = new LinkedList<>();
 	private final ILaunchListener fLaunchListener = new UnitTestLaunchListener();
 
+	private static UnitTestModel INSTANCE = null;
+
+	private UnitTestModel() {
+
+	}
+
+	public static synchronized UnitTestModel getInstance() {
+		if (INSTANCE == null) {
+			INSTANCE = new UnitTestModel();
+		}
+		return INSTANCE;
+	}
+
 	/**
 	 * Starts the model (called by the {@link UnitTestPlugin} on startup).
 	 */
@@ -202,17 +214,14 @@ public final class UnitTestModel implements IUnitTestModel {
 //		}
 	}
 
-	@Override
 	public void addTestRunSessionListener(ITestRunSessionListener listener) {
 		fTestRunSessionListeners.add(listener);
 	}
 
-	@Override
 	public void removeTestRunSessionListener(ITestRunSessionListener listener) {
 		fTestRunSessionListeners.remove(listener);
 	}
 
-	@Override
 	public synchronized List<ITestRunSession> getTestRunSessions() {
 		return new ArrayList<>(fTestRunSessions);
 	}
@@ -246,7 +255,6 @@ public final class UnitTestModel implements IUnitTestModel {
 		notifyTestRunSessionAdded(testRunSession);
 	}
 
-	@Override
 	public ITestRunSession importTestRunSession(String url, IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException {
 		monitor.beginTask(ModelMessages.UnitTestModel_importing_from_url, IProgressMonitor.UNKNOWN);

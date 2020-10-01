@@ -14,7 +14,7 @@
 package org.eclipse.unittest.internal.ui;
 
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.unittest.UnitTestPlugin;
+import org.eclipse.unittest.internal.UnitTestPlugin;
 
 import org.eclipse.core.runtime.CoreException;
 

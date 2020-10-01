@@ -15,7 +15,7 @@
 
 package org.eclipse.unittest.internal.launcher;
 
-import org.eclipse.unittest.UnitTestPlugin;
+import org.eclipse.unittest.internal.UnitTestPlugin;
 import org.eclipse.unittest.ui.ITestViewSupport;
 
 import org.eclipse.core.runtime.IConfigurationElement;

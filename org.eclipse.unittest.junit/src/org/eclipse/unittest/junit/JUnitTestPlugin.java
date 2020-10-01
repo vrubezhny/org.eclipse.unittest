@@ -23,8 +23,6 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.packageadmin.PackageAdmin;
 
-import org.eclipse.unittest.UnitTestPlugin;
-
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.runtime.IStatus;
@@ -127,7 +125,6 @@ public class JUnitTestPlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		fBundleContext = context;
-		UnitTestPlugin.getDefault();
 	}
 
 	@Override

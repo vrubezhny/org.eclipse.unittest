@@ -11,12 +11,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.unittest;
+package org.eclipse.unittest.internal;
 
 import org.osgi.framework.BundleContext;
 
 import org.eclipse.unittest.internal.model.UnitTestModel;
-import org.eclipse.unittest.model.IUnitTestModel;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -73,7 +72,7 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		fUnitTestModel.start();
+		UnitTestModel.getInstance().start();
 	}
 
 	@Override
@@ -81,26 +80,10 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 		super.stop(context);
 		try {
 			InstanceScope.INSTANCE.getNode(UnitTestPlugin.PLUGIN_ID).flush();
-			fUnitTestModel.stop();
+			UnitTestModel.getInstance().stop();
 		} finally {
 			super.stop(context);
 		}
-	}
-
-	/*
-	 * The following is copied here from JUnitCorePlugin Most likely we need to
-	 * place it into UnitTestCorePlugin
-	 */
-
-	private final UnitTestModel fUnitTestModel = new UnitTestModel();
-
-	/**
-	 * Returns a {@link IUnitTestModel} instance
-	 *
-	 * @return a {@link IUnitTestModel} instance
-	 */
-	public static IUnitTestModel getModel() {
-		return getDefault().fUnitTestModel;
 	}
 
 }
