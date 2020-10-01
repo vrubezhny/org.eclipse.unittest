@@ -21,6 +21,8 @@ import org.eclipse.unittest.model.ITestSuiteElement;
 
 import org.eclipse.jface.action.IAction;
 
+import org.eclipse.ui.IViewPart;
+
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
@@ -54,7 +56,7 @@ public interface ITestViewSupport {
 	 * @param testCase       a test case element
 	 * @return an action to open a specified test case element, or <code>null</code>
 	 */
-	IAction getOpenTestAction(TestRunnerViewPart testRunnerPart, ITestCaseElement testCase);
+	IAction getOpenTestAction(IViewPart testRunnerPart, ITestCaseElement testCase);
 
 	/**
 	 * Returns an action to open a specified test suite element
@@ -64,7 +66,7 @@ public interface ITestViewSupport {
 	 * @return an action to open a specified test suite element, or
 	 *         <code>null</code>
 	 */
-	IAction getOpenTestAction(TestRunnerViewPart testRunnerPart, ITestSuiteElement testSuite);
+	IAction getOpenTestAction(IViewPart testRunnerPart, ITestSuiteElement testSuite);
 
 	/**
 	 * Returns an action to open a failure trace element
@@ -74,7 +76,7 @@ public interface ITestViewSupport {
 	 * @param traceLine      a stack trace or an error message text
 	 * @return an action to open a failure trace element, or <code>null</null>
 	 */
-	IAction createOpenEditorAction(TestRunnerViewPart testRunnerPart, ITestElement failure, String traceLine);
+	IAction createOpenEditorAction(IViewPart testRunnerPart, ITestElement failure, String traceLine);
 
 	/**
 	 * Returns an action to copy an existing stack trace/error message into a

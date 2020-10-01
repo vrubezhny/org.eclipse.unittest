@@ -18,6 +18,7 @@ import org.eclipse.unittest.internal.ui.CompareResultsAction;
 import org.eclipse.unittest.internal.ui.EnableStackFilterAction;
 import org.eclipse.unittest.internal.ui.FailureTableDisplay;
 import org.eclipse.unittest.internal.ui.ShowStackTraceInConsoleViewAction;
+import org.eclipse.unittest.internal.ui.TestRunnerViewPart;
 import org.eclipse.unittest.internal.ui.TextualTrace;
 import org.eclipse.unittest.internal.ui.UnitTestCopyAction;
 import org.eclipse.unittest.model.ITestElement;

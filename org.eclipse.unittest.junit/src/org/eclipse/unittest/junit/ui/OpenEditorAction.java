@@ -18,7 +18,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.unittest.junit.JUnitTestPlugin;
-import org.eclipse.unittest.ui.TestRunnerViewPart;
+import org.eclipse.unittest.model.ITestRunSession;
 
 import org.eclipse.swt.widgets.Shell;
 
@@ -27,11 +27,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -54,28 +54,31 @@ import org.eclipse.jdt.ui.JavaUI;
 /**
  * Abstract Action for opening a Java editor.
  */
-public abstract class OpenEditorAction extends Action implements IAction {
+public abstract class OpenEditorAction extends Action {
+	protected final IViewPart fTestRunner;
+	protected final ITestRunSession testSession;
 	protected String fClassName;
-	protected TestRunnerViewPart fTestRunner;
 	private final boolean fActivate;
 
-	protected OpenEditorAction(TestRunnerViewPart testRunner, String testClassName) {
-		this(testRunner, testClassName, true);
+	protected OpenEditorAction(IViewPart testRunner, String testClassName, ITestRunSession session) {
+		this(testRunner, testClassName, true, session);
 	}
 
-	public OpenEditorAction(TestRunnerViewPart testRunner, String className, boolean activate) {
+	public OpenEditorAction(IViewPart testRunner, String className, boolean activate, ITestRunSession session) {
 		super(JUnitMessages.OpenEditorAction_action_label);
 		fClassName = className;
 		fTestRunner = testRunner;
 		fActivate = activate;
+		this.testSession = session;
 	}
 
 	@Override
 	public void run() {
 		IEditorPart editor = null;
 		try {
-			IJavaElement element = findElement(JUnitLaunchConfigurationConstants.getJavaProject(
-					fTestRunner.getCurrentTestRunSession().getLaunch().getLaunchConfiguration()), fClassName);
+			IJavaElement element = findElement(
+					JUnitLaunchConfigurationConstants.getJavaProject(testSession.getLaunch().getLaunchConfiguration()),
+					fClassName);
 			if (element == null) {
 				MessageDialog.openError(getShell(), JUnitMessages.OpenEditorAction_error_cannotopen_title,
 						JUnitMessages.OpenEditorAction_error_cannotopen_message);
@@ -88,7 +91,8 @@ public abstract class OpenEditorAction extends Action implements IAction {
 			return;
 		}
 		if (!(editor instanceof ITextEditor)) {
-			fTestRunner.registerInfoMessage(JUnitMessages.OpenEditorAction_message_cannotopen);
+			MessageDialog.openError(getShell(), JUnitMessages.OpenEditorAction_error_dialog_title,
+					JUnitMessages.OpenEditorAction_error_dialog_message);
 			return;
 		}
 		reveal((ITextEditor) editor);

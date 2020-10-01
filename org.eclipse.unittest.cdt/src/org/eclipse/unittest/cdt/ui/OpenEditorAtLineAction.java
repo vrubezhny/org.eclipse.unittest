@@ -19,7 +19,6 @@ import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.unittest.cdt.CDTUnitTestPlugin;
 import org.eclipse.unittest.model.ITestRunSession;
-import org.eclipse.unittest.ui.TestRunnerViewPart;
 
 import org.eclipse.core.filesystem.URIUtil;
 
@@ -38,6 +37,7 @@ import org.eclipse.jface.text.IRegion;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -63,22 +63,23 @@ import org.eclipse.debug.ui.sourcelookup.ISourceLookupResult;
  * Opens the editor in place where the currently selected message is pointed to.
  */
 public class OpenEditorAtLineAction extends Action {
-	private TestRunnerViewPart testRunner;
+	private IViewPart testRunner;
 	private String fileName;
 	private int line;
+	private ITestRunSession fTestRunSession;
 
-	public OpenEditorAtLineAction(TestRunnerViewPart testRunner, String fileName, int line) {
+	public OpenEditorAtLineAction(IViewPart testRunner, String fileName, ITestRunSession testRunSession, int line) {
 		super(ActionsMessages.OpenInEditorAction_text);
 		this.testRunner = testRunner;
 		this.fileName = fileName;
+		this.fTestRunSession= testRunSession;
 		this.line = line;
 		setToolTipText(ActionsMessages.OpenInEditorAction_tooltip);
 	}
 
 	@Override
 	public void run() {
-		ITestRunSession testRunSession = testRunner.getCurrentTestRunSession();
-		ILaunch launch= testRunSession != null ? testRunSession.getLaunch() : null;
+		ILaunch launch= fTestRunSession != null ? fTestRunSession.getLaunch() : null;
 		if (launch == null)
 			return;
 		lookupSource(fileName, line, launch);

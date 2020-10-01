@@ -16,7 +16,6 @@ package org.eclipse.unittest.internal.ui;
 import org.eclipse.unittest.internal.UnitTestPlugin;
 import org.eclipse.unittest.internal.launcher.TestRunListener;
 import org.eclipse.unittest.model.ITestRunSession;
-import org.eclipse.unittest.ui.TestRunnerViewPart;
 
 import org.eclipse.swt.widgets.Display;
 
