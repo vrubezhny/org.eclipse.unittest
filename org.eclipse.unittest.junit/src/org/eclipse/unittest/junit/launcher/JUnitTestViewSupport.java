@@ -26,12 +26,13 @@ import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.unittest.ui.FailureTraceUIBlock;
 import org.eclipse.unittest.ui.ITestViewSupport;
-import org.eclipse.unittest.ui.TestRunnerViewPart;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.action.IAction;
+
+import org.eclipse.ui.IViewPart;
 
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -60,12 +61,12 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 	}
 
 	@Override
-	public IAction getOpenTestAction(TestRunnerViewPart testRunnerPart, ITestCaseElement testCase) {
+	public IAction getOpenTestAction(IViewPart testRunnerPart, ITestCaseElement testCase) {
 		return new OpenTestAction(testRunnerPart, testCase, testCase.getParameterTypes());
 	}
 
 	@Override
-	public IAction getOpenTestAction(TestRunnerViewPart testRunnerPart, ITestSuiteElement testSuite) {
+	public IAction getOpenTestAction(IViewPart testRunnerPart, ITestSuiteElement testSuite) {
 		String testName = testSuite.getSuiteTypeName();
 		ITestElement[] children = testSuite.getChildren();
 
@@ -79,16 +80,16 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 		// test factory method
 		if (index > 0) {
 			return new OpenTestAction(testRunnerPart, testSuite.getSuiteTypeName(), testName.substring(0, index),
-					testSuite.getParameterTypes(), true);
+					testSuite.getParameterTypes(), true, testSuite.getTestRunSession());
 		}
 
 		// regular test class
-		return new OpenTestAction(testRunnerPart, testName);
+		return new OpenTestAction(testRunnerPart, testName, testSuite.getTestRunSession());
 
 	}
 
 	@Override
-	public IAction createOpenEditorAction(TestRunnerViewPart testRunnerPart, ITestElement failure, String traceLine) {
+	public IAction createOpenEditorAction(IViewPart testRunnerPart, ITestElement failure, String traceLine) {
 		try {
 			String testName = traceLine;
 			int indexOfFramePrefix = testName.indexOf(FailureTraceUIBlock.FRAME_PREFIX);
@@ -109,7 +110,7 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 			String lineNumber = traceLine;
 			lineNumber = lineNumber.substring(lineNumber.indexOf(':') + 1, lineNumber.lastIndexOf(')'));
 			int line = Integer.valueOf(lineNumber).intValue();
-			return new OpenEditorAtLineAction(testRunnerPart, testName, line);
+			return new OpenEditorAtLineAction(testRunnerPart, testName, line, failure.getTestRunSession());
 		} catch (NumberFormatException | IndexOutOfBoundsException e) {
 		}
 		return null;

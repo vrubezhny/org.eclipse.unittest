@@ -15,13 +15,14 @@
  *******************************************************************************/
 package org.eclipse.unittest.junit.ui;
 
-import org.eclipse.unittest.ui.TestRunnerViewPart;
+import org.eclipse.unittest.model.ITestRunSession;
 
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -36,18 +37,19 @@ public class OpenEditorAtLineAction extends OpenEditorAction {
 
 	private int fLineNumber;
 
-	public OpenEditorAtLineAction(TestRunnerViewPart testRunner, String className, int line) {
-		super(testRunner, className);
+	public OpenEditorAtLineAction(IViewPart testRunner, String className, int line, ITestRunSession session) {
+		super(testRunner, className, session);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IJUnitHelpContextIds.OPENEDITORATLINE_ACTION);
-		fLineNumber= line;
+		fLineNumber = line;
 	}
 
 	@Override
 	protected void reveal(ITextEditor textEditor) {
 		if (fLineNumber >= 0) {
 			try {
-				IDocument document= textEditor.getDocumentProvider().getDocument(textEditor.getEditorInput());
-				textEditor.selectAndReveal(document.getLineOffset(fLineNumber-1), document.getLineLength(fLineNumber-1));
+				IDocument document = textEditor.getDocumentProvider().getDocument(textEditor.getEditorInput());
+				textEditor.selectAndReveal(document.getLineOffset(fLineNumber - 1),
+						document.getLineLength(fLineNumber - 1));
 			} catch (BadLocationException x) {
 				// marker refers to invalid text position -> do nothing
 			}

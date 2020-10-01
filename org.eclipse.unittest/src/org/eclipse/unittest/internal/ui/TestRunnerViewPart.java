@@ -11,7 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.unittest.ui;
+package org.eclipse.unittest.internal.ui;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -30,23 +30,15 @@ import java.util.List;
 import org.eclipse.unittest.internal.UnitTestPlugin;
 import org.eclipse.unittest.internal.UnitTestPreferencesConstants;
 import org.eclipse.unittest.internal.model.UnitTestModel;
-import org.eclipse.unittest.internal.ui.CounterPanel;
-import org.eclipse.unittest.internal.ui.IUnitTestHelpContextIds;
-import org.eclipse.unittest.internal.ui.Images;
-import org.eclipse.unittest.internal.ui.Messages;
-import org.eclipse.unittest.internal.ui.ProgressImages;
-import org.eclipse.unittest.internal.ui.ScrollLockAction;
-import org.eclipse.unittest.internal.ui.ShowNextFailureAction;
-import org.eclipse.unittest.internal.ui.ShowPreviousFailureAction;
-import org.eclipse.unittest.internal.ui.UnitTestCopyAction;
-import org.eclipse.unittest.internal.ui.UnitTestProgressBar;
-import org.eclipse.unittest.internal.ui.UnitTestUIPreferencesConstants;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestRunSessionListener;
 import org.eclipse.unittest.model.ITestSessionListener;
+import org.eclipse.unittest.ui.BasicElementLabels;
+import org.eclipse.unittest.ui.FailureTraceUIBlock;
+import org.eclipse.unittest.ui.ITestViewSupport;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;

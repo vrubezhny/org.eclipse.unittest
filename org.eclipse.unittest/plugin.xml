@@ -3,7 +3,6 @@
 <plugin>
 
    <extension-point id="unittestViewSupport" name="%testViewSupport.name" schema="schema/unittestViewSupport.exsd"/>
-   <extension-point id="testRunListeners" name="%testRunListeners.name" schema="schema/testRunListeners.exsd"/>
 
    <extension
          point="org.eclipse.ui.views">
@@ -12,7 +11,7 @@
             icon="$nl$/icons/full/eview16/unit.png"
             category="org.eclipse.debug.ui"
             fastViewWidthRatio="0.40"
-            class="org.eclipse.unittest.ui.TestRunnerViewPart"
+            class="org.eclipse.unittest.internal.ui.TestRunnerViewPart"
             id="org.eclipse.unittest.ResultView">
       </view>
    </extension>

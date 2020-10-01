@@ -12,7 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.unittest.ui;
+package org.eclipse.unittest.internal.ui;
 
 import java.util.AbstractList;
 import java.util.Arrays;
@@ -26,12 +26,6 @@ import java.util.ListIterator;
 import org.eclipse.unittest.internal.UnitTestPlugin;
 import org.eclipse.unittest.internal.model.TestElement;
 import org.eclipse.unittest.internal.model.TestSuiteElement;
-import org.eclipse.unittest.internal.ui.CopyFailureListAction;
-import org.eclipse.unittest.internal.ui.Messages;
-import org.eclipse.unittest.internal.ui.RerunAction;
-import org.eclipse.unittest.internal.ui.SelectionProviderMediator;
-import org.eclipse.unittest.internal.ui.TestSessionTableContentProvider;
-import org.eclipse.unittest.internal.ui.TestSessionTreeContentProvider;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElement.Result;

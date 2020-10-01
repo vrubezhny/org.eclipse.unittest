@@ -12,7 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.unittest.ui;
+package org.eclipse.unittest.internal.ui;
 
 import java.text.MessageFormat;
 import java.text.NumberFormat;
@@ -20,10 +20,10 @@ import java.text.NumberFormat;
 import org.eclipse.unittest.internal.model.TestCaseElement;
 import org.eclipse.unittest.internal.model.TestElement;
 import org.eclipse.unittest.internal.model.TestSuiteElement;
-import org.eclipse.unittest.internal.ui.Messages;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElement.Status;
 import org.eclipse.unittest.model.ITestRunSession;
+import org.eclipse.unittest.ui.BasicElementLabels;
 
 import org.eclipse.swt.graphics.Image;
 

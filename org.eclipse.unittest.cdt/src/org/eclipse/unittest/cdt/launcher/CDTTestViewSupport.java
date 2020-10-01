@@ -26,11 +26,12 @@ import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.unittest.ui.FailureTraceUIBlock;
 import org.eclipse.unittest.ui.ITestViewSupport;
-import org.eclipse.unittest.ui.TestRunnerViewPart;
 
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.jface.action.IAction;
+
+import org.eclipse.ui.IViewPart;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -50,17 +51,17 @@ public class CDTTestViewSupport implements ITestViewSupport {
 	}
 
 	@Override
-	public IAction getOpenTestAction(TestRunnerViewPart testRunnerPart, ITestCaseElement testCase) {
+	public IAction getOpenTestAction(IViewPart testRunnerPart, ITestCaseElement testCase) {
 		return new OpenTestAction(testRunnerPart, testCase.getParent(), testCase);
 	}
 
 	@Override
-	public IAction getOpenTestAction(TestRunnerViewPart testRunnerPart, ITestSuiteElement testSuite) {
+	public IAction getOpenTestAction(IViewPart testRunnerPart, ITestSuiteElement testSuite) {
 		return new OpenTestAction(testRunnerPart, testSuite);
 	}
 
 	@Override
-	public IAction createOpenEditorAction(TestRunnerViewPart testRunnerPart, ITestElement failure, String traceLine) {
+	public IAction createOpenEditorAction(IViewPart testRunnerPart, ITestElement failure, String traceLine) {
 		try {
 			String testName= traceLine;
 			int indexOfFramePrefix= testName.indexOf(FailureTraceUIBlock.FRAME_PREFIX);
@@ -73,7 +74,7 @@ public class CDTTestViewSupport implements ITestViewSupport {
 			String lineNumber= traceLine;
 			lineNumber= lineNumber.substring(lineNumber.indexOf(':') + 1);
 			int line= Integer.valueOf(lineNumber).intValue();
-			return new OpenEditorAtLineAction(testRunnerPart, testName, line);
+			return new OpenEditorAtLineAction(testRunnerPart, testName, failure.getTestRunSession(), line);
 		} catch(NumberFormatException e) {
 			CDTUnitTestPlugin.log(e);
 		}
