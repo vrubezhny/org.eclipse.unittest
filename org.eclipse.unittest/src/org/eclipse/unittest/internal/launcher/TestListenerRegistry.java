@@ -13,24 +13,14 @@
  *******************************************************************************/
 package org.eclipse.unittest.internal.launcher;
 
-import org.eclipse.unittest.TestRunListener;
-import org.eclipse.unittest.UnitTestPlugin;
+import org.eclipse.unittest.internal.ui.UITestRunListener;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Platform;
 
 /**
  * Test View Support registry
  */
 public class TestListenerRegistry {
-	public static final String ID_EXTENSION_POINT_TESTRUN_LISTENERS = UnitTestPlugin.PLUGIN_ID + "." //$NON-NLS-1$
-			+ "testRunListeners"; //$NON-NLS-1$
-
 	public static TestListenerRegistry getDefault() {
 		if (fgRegistry != null)
 			return fgRegistry;
@@ -64,29 +54,7 @@ public class TestListenerRegistry {
 		if (!fUnitTestRunListeners.isEmpty()) {
 			return;
 		}
-
-		IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
-				.getExtensionPoint(ID_EXTENSION_POINT_TESTRUN_LISTENERS);
-		if (extensionPoint == null) {
-			return;
-		}
-		IConfigurationElement[] configs = extensionPoint.getConfigurationElements();
-		MultiStatus status = new MultiStatus(UnitTestPlugin.PLUGIN_ID, IStatus.OK,
-				"Could not load some testRunner extension points", //$NON-NLS-1$
-				null);
-		for (IConfigurationElement config : configs) {
-			try {
-				Object testRunListener = config.createExecutableExtension("class"); //$NON-NLS-1$
-				if (testRunListener instanceof TestRunListener) {
-					fUnitTestRunListeners.add((TestRunListener) testRunListener);
-				}
-			} catch (CoreException e) {
-				status.add(e.getStatus());
-			}
-		}
-		if (!status.isOK()) {
-			UnitTestPlugin.log(status);
-		}
+		fUnitTestRunListeners.add(new UITestRunListener());
 	}
 
 }
