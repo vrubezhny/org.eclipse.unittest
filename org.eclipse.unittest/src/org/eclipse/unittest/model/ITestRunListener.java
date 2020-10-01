@@ -79,8 +79,7 @@ public interface ITestRunListener {
 	void testRunTerminated();
 
 	/**
-	 * Information about a member of the test suite that is about to be run. The
-	 * format of the string is:
+	 * Information about a member of the test suite that is about to be run.
 	 *
 	 * @param testId         a unique id for the test
 	 * @param testName       the name of the test

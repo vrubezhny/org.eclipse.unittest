@@ -78,6 +78,10 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 		String fCurrentTestCase;
 		String fCurrentTestSuite;
 		int fTestId  = 0;
+		/**
+		 * The failed trace that is currently reported from the RemoteTestRunner
+		 */
+		final StringBuilder fFailedTrace = new StringBuilder();
 
 		@Override
 		public void enterTestSuite(String name) {
@@ -133,8 +137,6 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 
 			this.fCurrentTestCase = cRef.id;
 			fFailedTrace.setLength(0);
-			fExpectedResult.setLength(0);
-			fActualResult.setLength(0);
 
 			notifyTestTreeEntry(cRef.id, cRef.name, cRef.isSuite, 0, true, cRef.parentId,
 					cRef.name, null, null);
@@ -151,13 +153,9 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 			if (status.isError()) {
 				TestElementReference cRef = testElementRefs.isEmpty() ? null : testElementRefs.peek();
 				if (cRef != null) {
-					extractFailure(cRef.id, cRef.name,
-							status == Status.Aborted ? ITestElement.Status.FAILURE.getOldCode() :
-								ITestElement.Status.ERROR.getOldCode(),
-								false);
-
-					notifyTestFailed();
-
+					notifyTestFailed(status == Status.Aborted ? ITestElement.Status.FAILURE.getOldCode() :
+						ITestElement.Status.ERROR.getOldCode(),cRef.id, cRef.name, false, fFailedTrace.toString(),
+						"", ""); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
 					logUnexpectedTest(fCurrentTestCase, null);
 				}
@@ -251,7 +249,9 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 		ILaunch launch = session.getLaunch();
 		fFindProcessListener= new ILaunchListener() {
 			@Override
-			public void launchRemoved(ILaunch launch) {}
+			public void launchRemoved(@SuppressWarnings("hiding") ILaunch launch) {
+				// Nothing to do
+			}
 
 			@Override
 			public void launchChanged(ILaunch aLaunch) {
@@ -261,7 +261,9 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 			}
 
 			@Override
-			public void launchAdded(ILaunch launch) {}
+			public void launchAdded(@SuppressWarnings("hiding") ILaunch launch) {
+				// Nothing to do
+			}
 		};
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(fFindProcessListener);
 		try {
@@ -349,7 +351,7 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 				CDTUnitTestPlugin.log(
 						new org.eclipse.core.runtime.Status(IStatus.WARNING, CDTUnitTestPlugin.PLUGIN_ID,
 						MessageFormat.format(CDTMessages.TestingSession_finished_status,
-								testingTime)));
+								Double.valueOf(testingTime))));
 			}
 
 			notifyTestRunEnded((long)(fTestRunSession.getElapsedTimeInSeconds() * 1000));

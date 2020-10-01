@@ -32,7 +32,6 @@ import org.eclipse.jdt.internal.junit.runner.RemoteTestRunner;
  */
 @SuppressWarnings("restriction")
 public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
-
 	public JUnitRemoteTestRunnerClient(int port) {
 		super(port);
 	}
@@ -55,7 +54,7 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 		@Override
 		ProcessingState readMessage(String message) {
 			if (fDebug) {
-				System.out.println("JUnitRemoteTestRunnerClient.DefaultProcessingState.readMessage: " + message);
+				System.out.println("JUnitRemoteTestRunnerClient.DefaultProcessingState.readMessage: " + message); //$NON-NLS-1$
 			}
 
 			if (message.startsWith(MessageIds.TRACE_START)) {
@@ -169,6 +168,7 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 		 * subclasses can override to do special things when end message is read
 		 */
 		void entireStringRead() {
+			// Nothing to do
 		}
 	}
 
@@ -179,7 +179,8 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 
 		@Override
 		void entireStringRead() {
-			notifyTestFailed();
+			notifyTestFailed(fFailureKind, fFailedTestId, fFailedTest, fFailedAssumption, fFailedTrace.toString(),
+					nullifyEmpty(fExpectedResult), nullifyEmpty(fActualResult));
 			fExpectedResult.setLength(0);
 			fActualResult.setLength(0);
 		}
@@ -187,7 +188,8 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 		@Override
 		ProcessingState readMessage(String message) {
 			if (message.startsWith(MessageIds.TRACE_END)) {
-				notifyTestFailed();
+				notifyTestFailed(fFailureKind, fFailedTestId, fFailedTest, fFailedAssumption, fFailedTrace.toString(),
+						nullifyEmpty(fExpectedResult), nullifyEmpty(fActualResult));
 				fFailedTrace.setLength(0);
 				fActualResult.setLength(0);
 				fExpectedResult.setLength(0);
@@ -201,22 +203,37 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 	}
 
 	/**
+	 * The failed test that is currently reported from the RemoteTestRunner
+	 */
+	private String fFailedTest;
+	/**
+	 * The Id of the failed test
+	 */
+	private String fFailedTestId;
+	/**
+	 * The kind of failure of the test that is currently reported as failed
+	 */
+	private int fFailureKind;
+	/**
+	 * Is Assumption failed on failed test
+	 */
+	private boolean fFailedAssumption;
+	/**
 	 * The failed trace that is currently reported from the RemoteTestRunner
 	 */
-//	private final StringBuilder fFailedTrace = new StringBuilder();
+	private final StringBuilder fFailedTrace = new StringBuilder();
 	/**
 	 * The expected test result
 	 */
-//	private final StringBuilder fExpectedResult = new StringBuilder();
+	private final StringBuilder fExpectedResult = new StringBuilder();
 	/**
 	 * The actual test result
 	 */
-
-//	private final StringBuilder fActualResult = new StringBuilder();
+	private final StringBuilder fActualResult = new StringBuilder();
 	/**
 	 * The failed trace of a reran test
 	 */
-//	private final StringBuilder fFailedRerunTrace = new StringBuilder();
+	private final StringBuilder fFailedRerunTrace = new StringBuilder();
 
 	ProcessingState fDefaultState = new DefaultProcessingState();
 	ProcessingState fTraceState = new TraceProcessingState();
@@ -242,18 +259,6 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 	 * The protocol version
 	 */
 //	private String fVersion;
-	/**
-	 * The failed test that is currently reported from the RemoteTestRunner
-	 */
-//	private String fFailedTest;
-	/**
-	 * The Id of the failed test
-	 */
-//	private String fFailedTestId;
-	/**
-	 * The kind of failure of the test that is currently reported as failed
-	 */
-//	private int fFailureKind;
 
 //	private boolean fDebug= false;
 
@@ -463,4 +468,25 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 		return testName + "," + treeEntry; //$NON-NLS-1$
 	}
 
+	private void extractFailure(String testId, String testName, int status, boolean isAssumptionFailed) {
+		fFailedTestId = testId;
+		fFailedTest = testName;
+		fFailureKind = status;
+		fFailedAssumption = isAssumptionFailed;
+	}
+
+	private void notifyTestReran(String testId, String className, String testName, String status) {
+		int statusCode = ITestRunListener.STATUS_OK;
+		if (status.equals("FAILURE")) //$NON-NLS-1$
+			statusCode = ITestRunListener.STATUS_FAILURE;
+		else if (status.equals("ERROR")) //$NON-NLS-1$
+			statusCode = ITestRunListener.STATUS_ERROR;
+
+		String trace = ""; //$NON-NLS-1$
+		if (statusCode != ITestRunListener.STATUS_OK)
+			trace = fFailedRerunTrace.toString();
+		// assumption a rerun trace was sent before
+		notifyTestReran(testId, className, testName, statusCode, trace, nullifyEmpty(fExpectedResult),
+				nullifyEmpty(fActualResult));
+	}
 }
