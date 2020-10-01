@@ -44,10 +44,10 @@ import org.eclipse.unittest.internal.UnitTestPlugin;
 import org.eclipse.unittest.internal.UnitTestPreferencesConstants;
 import org.eclipse.unittest.internal.launcher.TestListenerRegistry;
 import org.eclipse.unittest.internal.launcher.TestRunListener;
+import org.eclipse.unittest.internal.ui.BasicElementLabels;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestRunSessionListener;
-import org.eclipse.unittest.ui.BasicElementLabels;
 import org.eclipse.unittest.ui.ITestViewSupport;
 
 import org.eclipse.core.runtime.Assert;

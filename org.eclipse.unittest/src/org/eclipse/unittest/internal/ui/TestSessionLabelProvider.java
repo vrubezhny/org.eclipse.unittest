@@ -23,7 +23,6 @@ import org.eclipse.unittest.internal.model.TestSuiteElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElement.Status;
 import org.eclipse.unittest.model.ITestRunSession;
-import org.eclipse.unittest.ui.BasicElementLabels;
 
 import org.eclipse.swt.graphics.Image;
 
