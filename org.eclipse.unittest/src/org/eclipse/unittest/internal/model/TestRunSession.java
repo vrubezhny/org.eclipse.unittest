@@ -624,11 +624,11 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 			TestCaseElement testCaseElement = (TestCaseElement) testElement;
 			setStatus(testCaseElement, Status.RUNNING);
 
+			fStartedCount++;
 			if (testCaseElement.isDynamicTest()) {
 				fTotalCount++;
 			}
-
-			fStartedCount++;
+			fTotalCount = Math.max(fStartedCount, fTotalCount);
 
 			for (ITestSessionListener listener : fSessionListeners) {
 				listener.testStarted(testCaseElement);
