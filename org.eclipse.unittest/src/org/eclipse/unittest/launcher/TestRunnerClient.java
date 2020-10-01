@@ -39,23 +39,6 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	}
 
 	/**
-	 * The failed trace that is currently reported from the RemoteTestRunner
-	 */
-	protected final StringBuilder fFailedTrace = new StringBuilder();
-	/**
-	 * The expected test result
-	 */
-	protected final StringBuilder fExpectedResult = new StringBuilder();
-	/**
-	 * The actual test result
-	 */
-	protected final StringBuilder fActualResult = new StringBuilder();
-	/**
-	 * The failed trace of a reran test
-	 */
-	protected final StringBuilder fFailedRerunTrace = new StringBuilder();
-
-	/**
 	 * An array of listeners that are informed about test events.
 	 */
 	protected ITestRunListener[] fListeners;
@@ -65,24 +48,6 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	 */
 	protected ServerSocket fServerSocket;
 	protected Socket fSocket;
-
-	/**
-	 * The failed test that is currently reported from the RemoteTestRunner
-	 */
-	protected String fFailedTest;
-	/**
-	 * The Id of the failed test
-	 */
-	protected String fFailedTestId;
-	/**
-	 * The kind of failure of the test that is currently reported as failed
-	 */
-	protected int fFailureKind;
-
-	/*
-	 * Is Assumption failed on failed test
-	 */
-	protected boolean fFailedAssumption;
 
 	protected boolean fDebug = false;
 
@@ -129,49 +94,64 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 		return fSocket != null;
 	}
 
-	protected void notifyTestReran(String testId, String className, String testName, String status) {
-		int statusCode = ITestRunListener.STATUS_OK;
-		if (status.equals("FAILURE")) //$NON-NLS-1$
-			statusCode = ITestRunListener.STATUS_FAILURE;
-		else if (status.equals("ERROR")) //$NON-NLS-1$
-			statusCode = ITestRunListener.STATUS_ERROR;
-
-		String trace = ""; //$NON-NLS-1$
-		if (statusCode != ITestRunListener.STATUS_OK)
-			trace = fFailedRerunTrace.toString();
-		// assumption a rerun trace was sent before
-		notifyTestReran(testId, className, testName, statusCode, trace);
-	}
-
-	protected void extractFailure(String testId, String testName, int status, boolean isAssumptionFailed) {
-		fFailedTestId = testId;
-		fFailedTest = testName;
-		fFailureKind = status;
-		fFailedAssumption = isAssumptionFailed;
-	}
-
-	protected void notifyTestReran(final String testId, final String className, final String testName,
-			final int statusCode, final String trace) {
+	/**
+	 * Notifies on an individual test re-run.
+	 *
+	 * @param testId     a unique Id identifying the test
+	 * @param className  the name of the test class that was rerun
+	 * @param testName   the name of the test that was rerun
+	 * @param statusCode the outcome of the test that was rerun; one of
+	 *                   {@link ITestRunListener#STATUS_OK},
+	 *                   {@link ITestRunListener#STATUS_ERROR}, or
+	 *                   {@link ITestRunListener#STATUS_FAILURE}
+	 * @param trace      the stack trace in the case of abnormal termination, or the
+	 *                   empty string if none
+	 * @param expected   the expected value in case of abnormal termination, or the
+	 *                   empty string if none
+	 * @param actual     the actual value in case of abnormal termination, or the
+	 *                   empty string if none
+	 */
+	protected void notifyTestReran(String testId, String className, String testName, int statusCode, String trace,
+			String expected, String actual) {
 		for (ITestRunListener listener : fListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
 				@Override
 				public void run() {
-					listener.testReran(testId, className, testName, statusCode, trace, nullifyEmpty(fExpectedResult),
-							nullifyEmpty(fActualResult));
+					listener.testReran(testId, className, testName, statusCode, trace, expected, actual);
 				}
 			});
 		}
 	}
 
-	protected void notifyTestTreeEntry(final String testId, final String testName, final boolean isSuite,
-			final int testCount, final boolean isDynamicTest, final String parentId, final String displayName,
-			final String[] parameterTypes, final String uniqueId) {
+	/**
+	 * Notifies on a member of the test suite that is about to be run.
+	 *
+	 * @param testId         a unique id for the test
+	 * @param testName       the name of the test
+	 * @param isSuite        true or false depending on whether the test is a suite
+	 * @param testCount      an integer indicating the number of tests
+	 * @param isDynamicTest  true or false
+	 * @param parentId       the unique testId of its parent if it is a dynamic
+	 *                       test, otherwise can be "-1"
+	 * @param displayName    the display name of the test
+	 * @param parameterTypes comma-separated list of method parameter types if
+	 *                       applicable, otherwise an empty string
+	 * @param uniqueId       the unique ID of the test provided, otherwise an empty
+	 *                       string
+	 */
+	protected void notifyTestTreeEntry(String testId, String testName, boolean isSuite, int testCount,
+			boolean isDynamicTest, String parentId, String displayName, String[] parameterTypes, String uniqueId) {
 		for (ITestRunListener listener : fListeners) {
 			listener.testTreeEntry(testId, testName, isSuite, testCount, isDynamicTest, parentId, displayName,
 					parameterTypes, uniqueId);
 		}
 	}
 
+	/**
+	 * Notifies on a test run stopped.
+	 *
+	 * @param elapsedTime the total elapsed time of the test run
+	 */
 	protected void notifyTestRunStopped(final long elapsedTime) {
 		if (isStopped())
 			return;
@@ -185,6 +165,11 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 		}
 	}
 
+	/**
+	 * Notifies on a test run ended.
+	 *
+	 * @param elapsedTime the total elapsed time of the test run
+	 */
 	protected void notifyTestRunEnded(final long elapsedTime) {
 		if (isStopped())
 			return;
@@ -198,7 +183,15 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 		}
 	}
 
-	protected void notifyTestEnded(final String testId, final String testName, boolean isIgnored) {
+	/**
+	 * Notifies on an individual test ended.
+	 *
+	 * @param testId    a unique Id identifying the test
+	 * @param testName  the name of the test that failed
+	 * @param isIgnored <code>true</code> indicates that the specified test was
+	 *                  ignored, otherwise - <code>false</code>
+	 */
+	protected void notifyTestEnded(String testId, String testName, boolean isIgnored) {
 		if (isStopped())
 			return;
 		for (ITestRunListener listener : fListeners) {
@@ -211,6 +204,12 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 		}
 	}
 
+	/**
+	 * Notifies on an individual test started.
+	 *
+	 * @param testId   a unique Id identifying the test
+	 * @param testName the name of the test that started
+	 */
 	protected void notifyTestStarted(final String testId, final String testName) {
 		if (isStopped())
 			return;
@@ -224,6 +223,11 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 		}
 	}
 
+	/**
+	 * Notifies on a test run started.
+	 *
+	 * @param count the number of individual tests that will be run
+	 */
 	protected void notifyTestRunStarted(final int count) {
 		if (isStopped())
 			return;
@@ -237,15 +241,29 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 		}
 	}
 
-	protected void notifyTestFailed() {
+	/**
+	 * Notifies on an individual test failed with a stack trace.
+	 *
+	 * @param status             the outcome of the test; one of
+	 *                           {@link ITestRunListener#STATUS_ERROR STATUS_ERROR}
+	 *                           or {@link ITestRunListener#STATUS_FAILURE
+	 *                           STATUS_FAILURE}
+	 * @param testId             a unique Id identifying the test
+	 * @param testName           the name of the test that failed
+	 * @param isAssumptionFailed indicates that an assumption is failed
+	 * @param trace              the stack trace
+	 * @param expected           the expected value
+	 * @param actual             the actual value
+	 */
+	protected void notifyTestFailed(int status, String testId, String testName, boolean isAssumptionFailed,
+			String trace, String expected, String actual) {
 		if (isStopped())
 			return;
 		for (ITestRunListener listener : fListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
 				@Override
 				public void run() {
-					listener.testFailed(fFailureKind, fFailedTestId, fFailedTest, fFailedAssumption,
-							fFailedTrace.toString(), nullifyEmpty(fExpectedResult), nullifyEmpty(fActualResult));
+					listener.testFailed(status, testId, testName, isAssumptionFailed, trace, expected, actual);
 				}
 			});
 		}
@@ -258,7 +276,7 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	 * @param buf the comparison result
 	 * @return the result or <code>null</code> if empty
 	 */
-	private static String nullifyEmpty(StringBuilder buf) {
+	public static String nullifyEmpty(StringBuilder buf) {
 		int length = buf.length();
 		if (length == 0)
 			return null;
@@ -275,6 +293,9 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 		return buf.toString();
 	}
 
+	/**
+	 * Notifies on a test run terminated.
+	 */
 	protected void notifyTestRunTerminated() {
 		if (isStopped())
 			return;
