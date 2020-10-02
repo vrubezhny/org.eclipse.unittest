@@ -14,6 +14,7 @@
 
 package org.eclipse.unittest.internal.model;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Stack;
 
@@ -238,12 +239,15 @@ public class TestRunHandler extends DefaultHandler {
 	}
 
 	private void readTime(ITestElement testElement, Attributes attributes) {
-		String timeString = attributes.getValue(IXMLTags.ATTR_TIME);
-		if (timeString != null) {
-			try {
-				testElement.setElapsedTimeInSeconds(Double.parseDouble(timeString));
-			} catch (NumberFormatException e) {
-				// Ignore
+		if (testElement instanceof TestElement) {
+			TestElement element = (TestElement) testElement;
+			String timeString = attributes.getValue(IXMLTags.ATTR_TIME);
+			if (timeString != null) {
+				try {
+					element.setDuration(Duration.parse(timeString));
+				} catch (NumberFormatException e) {
+					// Ignore
+				}
 			}
 		}
 	}

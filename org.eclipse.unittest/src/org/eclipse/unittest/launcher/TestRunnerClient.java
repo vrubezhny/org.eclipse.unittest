@@ -16,6 +16,7 @@ package org.eclipse.unittest.launcher;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.time.Duration;
 
 import org.osgi.framework.Bundle;
 
@@ -150,16 +151,16 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	/**
 	 * Notifies on a test run stopped.
 	 *
-	 * @param elapsedTime the total elapsed time of the test run
+	 * @param duration the total elapsed time of the test run
 	 */
-	protected void notifyTestRunStopped(final long elapsedTime) {
+	protected void notifyTestRunStopped(final Duration duration) {
 		if (isStopped())
 			return;
 		for (ITestRunListener listener : fListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
 				@Override
 				public void run() {
-					listener.testRunStopped(elapsedTime);
+					listener.testRunStopped(duration);
 				}
 			});
 		}
@@ -168,16 +169,16 @@ public abstract class TestRunnerClient implements ITestRunnerClient {
 	/**
 	 * Notifies on a test run ended.
 	 *
-	 * @param elapsedTime the total elapsed time of the test run
+	 * @param duration the total elapsed time of the test run
 	 */
-	protected void notifyTestRunEnded(final long elapsedTime) {
+	protected void notifyTestRunEnded(final Duration duration) {
 		if (isStopped())
 			return;
 		for (ITestRunListener listener : fListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
 				@Override
 				public void run() {
-					listener.testRunEnded(elapsedTime);
+					listener.testRunEnded(duration);
 				}
 			});
 		}

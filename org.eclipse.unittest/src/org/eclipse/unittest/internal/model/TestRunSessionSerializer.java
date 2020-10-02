@@ -120,8 +120,9 @@ public class TestRunSessionSerializer implements XMLReader {
 			// Need to store the full #getTestName instead of only the #getSuiteTypeName for
 			// test factory methods
 			addCDATA(atts, IXMLTags.ATTR_NAME, testSuiteElement.getTestName());
-			if (!Double.isNaN(testSuiteElement.getElapsedTimeInSeconds()))
-				addCDATA(atts, IXMLTags.ATTR_TIME, timeFormat.format(testSuiteElement.getElapsedTimeInSeconds()));
+			if (testSuiteElement.getDuration() != null) {
+				addCDATA(atts, IXMLTags.ATTR_TIME, timeFormat.format(testSuiteElement.getDuration().toString()));
+			}
 			if (testElement.getProgressState() != ProgressState.COMPLETED
 					|| testElement.getTestResult(false) != Result.UNDEFINED)
 				addCDATA(atts, IXMLTags.ATTR_INCOMPLETE, Boolean.TRUE.toString());
@@ -151,8 +152,9 @@ public class TestRunSessionSerializer implements XMLReader {
 			AttributesImpl atts = new AttributesImpl();
 			addCDATA(atts, IXMLTags.ATTR_NAME, testCaseElement.getTestMethodName());
 			addCDATA(atts, IXMLTags.ATTR_CLASSNAME, testCaseElement.getClassName());
-			if (!Double.isNaN(testCaseElement.getElapsedTimeInSeconds()))
-				addCDATA(atts, IXMLTags.ATTR_TIME, timeFormat.format(testCaseElement.getElapsedTimeInSeconds()));
+			if (testCaseElement.getDuration() != null) {
+				addCDATA(atts, IXMLTags.ATTR_TIME, timeFormat.format(testCaseElement.getDuration().toString()));
+			}
 			if (testElement.getProgressState() != ProgressState.COMPLETED)
 				addCDATA(atts, IXMLTags.ATTR_INCOMPLETE, Boolean.TRUE.toString());
 			if (testCaseElement.isIgnored())

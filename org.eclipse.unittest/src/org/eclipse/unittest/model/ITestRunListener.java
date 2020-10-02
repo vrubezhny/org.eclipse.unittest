@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.unittest.model;
 
+import java.time.Duration;
+
 /**
  * An interface to listen to the events from the
  * {@link org.eclipse.unittest.launcher.ITestRunnerClient} and translates them
@@ -45,16 +47,16 @@ public interface ITestRunListener {
 	/**
 	 * A test run has ended.
 	 *
-	 * @param elapsedTime the total elapsed time of the test run
+	 * @param duration the total elapsed time of the test run
 	 */
-	void testRunEnded(long elapsedTime);
+	void testRunEnded(Duration duration);
 
 	/**
 	 * A test run has been stopped prematurely.
 	 *
-	 * @param elapsedTime the time elapsed before the test run was stopped
+	 * @param duration the time elapsed before the test run was stopped
 	 */
-	void testRunStopped(long elapsedTime);
+	void testRunStopped(Duration duration);
 
 	/**
 	 * An individual test has started.

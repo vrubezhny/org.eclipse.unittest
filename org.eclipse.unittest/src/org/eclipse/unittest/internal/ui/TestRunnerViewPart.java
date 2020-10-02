@@ -23,7 +23,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
-import java.text.NumberFormat;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -607,13 +607,12 @@ public class TestRunnerViewPart extends ViewPart {
 		}
 
 		@Override
-		public void sessionEnded(long elapsedTime) {
+		public void sessionEnded(Duration duration) {
 			deregisterTestSessionListener(false);
 
 			fTestViewer.registerAutoScrollTarget(null);
 
-			String msg = MessageFormat.format(Messages.TestRunnerViewPart_message_finish,
-					elapsedTimeAsString(elapsedTime));
+			String msg = MessageFormat.format(Messages.TestRunnerViewPart_message_finish, duration);
 			registerInfoMessage(msg);
 
 			postSyncRunnable(() -> {
@@ -636,7 +635,7 @@ public class TestRunnerViewPart extends ViewPart {
 		}
 
 		@Override
-		public void sessionStopped(final long elapsedTime) {
+		public void sessionStopped(Duration duration) {
 			deregisterTestSessionListener(false);
 
 			fTestViewer.registerAutoScrollTarget(null);
@@ -1312,10 +1311,6 @@ public class TestRunnerViewPart extends ViewPart {
 			return 0;
 		else
 			return fTestRunSession.getErrorCount() + fTestRunSession.getFailureCount();
-	}
-
-	private String elapsedTimeAsString(long runTime) {
-		return NumberFormat.getInstance().format((double) runTime / 1000);
 	}
 
 	private void handleStopped() {

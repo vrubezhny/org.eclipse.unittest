@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.unittest.model;
 
+import java.time.Duration;
+
 /**
  * Common protocol for test elements. This set consists of
  * {@link ITestCaseElement} , {@link ITestSuiteElement} and
@@ -355,20 +357,20 @@ public interface ITestElement {
 	ITestRunSession getTestRunSession();
 
 	/**
-	 * Returns the estimated total time elapsed in seconds while executing this test
-	 * element. The total time for a test suite includes the time used for all tests
-	 * in that suite. The total time for a test session includes the time used for
-	 * all tests in that session.
+	 * Returns the estimated total time elapsed while executing this test element.
+	 * The total time for a test suite includes the time used for all tests in that
+	 * suite. The total time for a test session includes the time used for all tests
+	 * in that session.
 	 * <p>
 	 * <strong>Note:</strong> The elapsed time is only valid for
 	 * {@link ITestElement.ProgressState#COMPLETED} test elements.
 	 * </p>
 	 *
-	 * @return total execution time for the test element in seconds, or
-	 *         {@link Double#NaN} if the state of the element is not
+	 * @return total execution duration for the test element, or <code>null</code>
+	 *         if the state of the element is not
 	 *         {@link ITestElement.ProgressState#COMPLETED}
 	 */
-	double getElapsedTimeInSeconds();
+	Duration getDuration();
 
 	/**
 	 * Returns parent test suite element of this test element
@@ -494,13 +496,6 @@ public interface ITestElement {
 	 * @return true if there was a comparison failure, otherwise return false
 	 */
 	boolean isAssumptionFailure();
-
-	/**
-	 * Sets up the elapsted time ib seconds for this test element
-	 *
-	 * @param time in seconds
-	 */
-	void setElapsedTimeInSeconds(double time);
 
 	/**
 	 * Extracts and returns a raw class name from a test element name

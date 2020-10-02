@@ -14,6 +14,9 @@
 
 package org.eclipse.unittest.internal.model;
 
+import java.time.Duration;
+import java.time.Instant;
+
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElementContainer;
 import org.eclipse.unittest.model.ITestRoot;
@@ -51,21 +54,8 @@ public abstract class TestElement implements ITestElement {
 
 	private boolean fAssumptionFailed;
 
-	/**
-	 * Running time in seconds. Contents depend on the current
-	 * {@link #getProgressState()}:
-	 * <ul>
-	 * <li>{@link org.eclipse.unittest.model.ITestElement.ProgressState#NOT_STARTED}:
-	 * {@link Double#NaN}</li>
-	 * <li>{@link org.eclipse.unittest.model.ITestElement.ProgressState#RUNNING}:
-	 * negated start time</li>
-	 * <li>{@link org.eclipse.unittest.model.ITestElement.ProgressState#STOPPED}:
-	 * elapsed time</li>
-	 * <li>{@link org.eclipse.unittest.model.ITestElement.ProgressState#COMPLETED}:
-	 * elapsed time</li>
-	 * </ul>
-	 */
-	/* default */ double fTime = Double.NaN;
+	protected Instant testStartedInstant = null;
+	protected Duration duration = null;
 
 	/**
 	 * Constructs the test element object
@@ -152,12 +142,9 @@ public abstract class TestElement implements ITestElement {
 	@Override
 	public void setStatus(Status status) {
 		if (status == Status.RUNNING) {
-			fTime = -System.currentTimeMillis() / 1000d;
-		} else if (status.convertToProgressState() == ProgressState.COMPLETED) {
-			if (fTime < 0) { // assert ! Double.isNaN(fTime)
-				double endTime = System.currentTimeMillis() / 1000.0d;
-				fTime = endTime + fTime;
-			}
+			testStartedInstant = Instant.now();
+		} else if (status.convertToProgressState() == ProgressState.COMPLETED && testStartedInstant != null) {
+			this.duration = Duration.between(testStartedInstant, Instant.now());
 		}
 
 		fStatus = status;
@@ -235,18 +222,13 @@ public abstract class TestElement implements ITestElement {
 		return getParent().getRoot();
 	}
 
-	@Override
-	public void setElapsedTimeInSeconds(double time) {
-		fTime = time;
+	public void setDuration(Duration duration) {
+		this.duration = duration;
 	}
 
 	@Override
-	public double getElapsedTimeInSeconds() {
-		if (Double.isNaN(fTime) || fTime < 0.0d) {
-			return Double.NaN;
-		}
-
-		return fTime;
+	public Duration getDuration() {
+		return this.duration;
 	}
 
 	@Override

@@ -348,14 +348,13 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 			fTestsRunnerProvider.run(new TestModelUpdaterAdapter(), iStream);
 			// If testing session was stopped, the status is set in stop()
 			if (isRunning()) {
-				double testingTime = fTestRunSession.getElapsedTimeInSeconds();
 				CDTUnitTestPlugin.log(
 						new org.eclipse.core.runtime.Status(IStatus.WARNING, CDTUnitTestPlugin.PLUGIN_ID,
 						MessageFormat.format(CDTMessages.TestingSession_finished_status,
-								Double.valueOf(testingTime))));
+								fTestRunSession.getDuration())));
 			}
 
-			notifyTestRunEnded((long)(fTestRunSession.getElapsedTimeInSeconds() * 1000));
+			notifyTestRunEnded(fTestRunSession.getDuration());
 		} catch (TestingException e) {
 			// If testing session was stopped, the status is set in stop()
 			if (isRunning()) {

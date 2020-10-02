@@ -15,6 +15,7 @@
  *******************************************************************************/
 package org.eclipse.unittest.junit.launcher;
 
+import java.time.Duration;
 import java.util.Arrays;
 
 import org.eclipse.unittest.junit.JUnitTestPlugin;
@@ -114,13 +115,11 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 				return this;
 			}
 			if (message.startsWith(MessageIds.TEST_RUN_END)) {
-				long elapsedTime = Long.parseLong(arg);
-				notifyTestRunEnded(elapsedTime);
+				notifyTestRunEnded(Duration.ofMillis(Long.parseLong(arg)));
 				return this;
 			}
 			if (message.startsWith(MessageIds.TEST_STOPPED)) {
-				long elapsedTime = Long.parseLong(arg);
-				notifyTestRunStopped(elapsedTime);
+				notifyTestRunStopped(Duration.ofMillis(Long.parseLong(arg)));
 				shutDown();
 				return this;
 			}

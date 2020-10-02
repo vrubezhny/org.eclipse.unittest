@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.unittest.internal.model;
 
+import java.time.Duration;
+
 import org.eclipse.unittest.internal.launcher.TestListenerRegistry;
 import org.eclipse.unittest.internal.launcher.TestRunListener;
 import org.eclipse.unittest.model.ITestCaseElement;
@@ -67,13 +69,13 @@ public class TestRunListenerAdapter implements ITestSessionListener {
 	}
 
 	@Override
-	public void sessionEnded(long elapsedTime) {
+	public void sessionEnded(Duration duration) {
 		fireSessionFinished();
 		fSession.swapOut();
 	}
 
 	@Override
-	public void sessionStopped(long elapsedTime) {
+	public void sessionStopped(Duration duration) {
 		fireSessionFinished();
 		fSession.swapOut();
 	}

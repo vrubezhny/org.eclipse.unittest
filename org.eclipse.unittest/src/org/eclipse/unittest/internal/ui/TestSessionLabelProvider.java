@@ -15,7 +15,7 @@
 package org.eclipse.unittest.internal.ui;
 
 import java.text.MessageFormat;
-import java.text.NumberFormat;
+import java.time.Duration;
 
 import org.eclipse.unittest.internal.model.TestCaseElement;
 import org.eclipse.unittest.internal.model.TestElement;
@@ -39,7 +39,6 @@ class TestSessionLabelProvider extends LabelProvider implements IStyledLabelProv
 
 	private final TestRunnerViewPart fTestRunnerPart;
 	private final int fLayoutMode;
-	private final NumberFormat timeFormat;
 
 	private boolean fShowTime;
 
@@ -55,12 +54,6 @@ class TestSessionLabelProvider extends LabelProvider implements IStyledLabelProv
 		fTestRunnerPart = testRunnerPart;
 		fLayoutMode = layoutMode;
 		fShowTime = true;
-
-		timeFormat = NumberFormat.getNumberInstance();
-		timeFormat.setGroupingUsed(true);
-		timeFormat.setMinimumFractionDigits(3);
-		timeFormat.setMaximumFractionDigits(3);
-		timeFormat.setMinimumIntegerDigits(1);
 	}
 
 	@Override
@@ -88,7 +81,7 @@ class TestSessionLabelProvider extends LabelProvider implements IStyledLabelProv
 				text = StyledCellLabelProvider.styleDecoratedString(decorated, StyledString.QUALIFIER_STYLER, text);
 			}
 		}
-		return addElapsedTime(text, testElement.getElapsedTimeInSeconds());
+		return addElapsedTime(text, testElement.getDuration());
 	}
 
 	private String getTextForFlatLayout(TestCaseElement testCaseElement, String label) {
@@ -107,19 +100,17 @@ class TestSessionLabelProvider extends LabelProvider implements IStyledLabelProv
 				BasicElementLabels.getJavaElementName(parentName));
 	}
 
-	private StyledString addElapsedTime(StyledString styledString, double time) {
+	private StyledString addElapsedTime(StyledString styledString, Duration duration) {
 		String string = styledString.getString();
-		String decorated = addElapsedTime(string, time);
+		String decorated = addElapsedTime(string, duration);
 		return StyledCellLabelProvider.styleDecoratedString(decorated, StyledString.COUNTER_STYLER, styledString);
 	}
 
-	private String addElapsedTime(String string, double time) {
-		if (!fShowTime || Double.isNaN(time)) {
+	private String addElapsedTime(String string, Duration duration) {
+		if (!fShowTime || duration == null) {
 			return string;
 		}
-		String formattedTime = timeFormat.format(time);
-		return MessageFormat.format(Messages.TestSessionLabelProvider_testName_elapsedTimeInSeconds, string,
-				formattedTime);
+		return MessageFormat.format(Messages.TestSessionLabelProvider_testName_elapsedTimeInSeconds, string, duration);
 	}
 
 	private String getSimpleLabel(Object element) {
@@ -157,7 +148,7 @@ class TestSessionLabelProvider extends LabelProvider implements IStyledLabelProv
 				label = getTextForFlatLayout((TestCaseElement) testElement, label);
 			}
 		}
-		return addElapsedTime(label, testElement.getElapsedTimeInSeconds());
+		return addElapsedTime(label, testElement.getDuration());
 	}
 
 	@Override

@@ -14,6 +14,8 @@
 
 package org.eclipse.unittest.model;
 
+import java.time.Duration;
+
 import org.eclipse.unittest.model.ITestElement.Status;
 
 /**
@@ -29,16 +31,16 @@ public interface ITestSessionListener {
 	/**
 	 * A test run has ended.
 	 *
-	 * @param elapsedTime the total elapsed time of the test run
+	 * @param duration the total elapsed time of the test run
 	 */
-	void sessionEnded(long elapsedTime);
+	void sessionEnded(Duration duration);
 
 	/**
 	 * A test run has been stopped prematurely.
 	 *
-	 * @param elapsedTime the time elapsed before the test run was stopped
+	 * @param duration the time elapsed before the test run was stopped
 	 */
-	void sessionStopped(long elapsedTime);
+	void sessionStopped(Duration duration);
 
 	/**
 	 * The VM instance performing the tests has terminated.

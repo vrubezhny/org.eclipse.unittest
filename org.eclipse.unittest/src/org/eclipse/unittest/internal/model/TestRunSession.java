@@ -16,6 +16,7 @@ package org.eclipse.unittest.internal.model;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -556,21 +557,21 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 		}
 
 		@Override
-		public void testRunEnded(long elapsedTime) {
+		public void testRunEnded(Duration duration) {
 			fIsRunning = false;
 
 			for (ITestSessionListener listener : fSessionListeners) {
-				listener.sessionEnded(elapsedTime);
+				listener.sessionEnded(duration);
 			}
 		}
 
 		@Override
-		public void testRunStopped(long elapsedTime) {
+		public void testRunStopped(Duration duration) {
 			fIsRunning = false;
 			fIsStopped = true;
 
 			for (ITestSessionListener listener : fSessionListeners) {
-				listener.sessionStopped(elapsedTime);
+				listener.sessionStopped(duration);
 			}
 		}
 
@@ -782,11 +783,11 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 	}
 
 	@Override
-	public double getElapsedTimeInSeconds() {
-		if (fTestRoot == null)
-			return Double.NaN;
-
-		return fTestRoot.getElapsedTimeInSeconds();
+	public Duration getDuration() {
+		if (fTestRoot == null) {
+			return null;
+		}
+		return fTestRoot.getDuration();
 	}
 
 	public String getIncludeTags() {
@@ -877,8 +878,4 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 		return false;
 	}
 
-	@Override
-	public void setElapsedTimeInSeconds(double time) {
-		// not used
-	}
 }
