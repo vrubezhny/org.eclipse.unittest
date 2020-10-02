@@ -118,7 +118,7 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 
 	@Override
 	public Runnable createShowStackTraceInConsoleViewActionDelegate(FailureTraceUIBlock view) {
-		return new ShowStackTraceInConsoleViewActionDelegate(view);
+		return new ShowStackTraceInConsoleViewActionDelegate(view.getFailedTest());
 	}
 
 	@Override

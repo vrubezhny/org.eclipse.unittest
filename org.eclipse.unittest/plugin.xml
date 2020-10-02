@@ -81,11 +81,4 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
    </extension>
 
-   <extension
-         point="org.eclipse.unittest.testRunListeners">
-      <testRunListener
-            class="org.eclipse.unittest.internal.ui.UITestRunListener">
-      </testRunListener>
-   </extension>
-
 </plugin>
