@@ -32,6 +32,15 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 public interface ITestViewSupport {
 
 	/**
+	 * The prefix used by default when generating frame lines.
+	 *
+	 * @deprecated This is probably something that should be language specific an
+	 *             not provided as API. So it's likely to be removed.
+	 */
+	@Deprecated
+	String FRAME_LINE_PREFIX = "at "; //$NON-NLS-1$
+
+	/**
 	 * Returns a Test Runner Client.
 	 *
 	 * @param session the test session. ⚠️ The session may not be fully initialized
@@ -82,11 +91,11 @@ public interface ITestViewSupport {
 	 * Returns an action to copy an existing stack trace/error message into a
 	 * console view
 	 *
-	 * @param view a test runner view Failure Trace view instance
+	 * @param failedTest the failed test
 	 * @return an {@link Runnable} if it can be created, otherwise -
 	 *         <code>null</code>
 	 */
-	Runnable createShowStackTraceInConsoleViewActionDelegate(FailureTraceUIBlock view);
+	Runnable createShowStackTraceInConsoleViewActionDelegate(ITestElement failedTest);
 
 	/**
 	 * Returns a Rerun launch configuration for the given element

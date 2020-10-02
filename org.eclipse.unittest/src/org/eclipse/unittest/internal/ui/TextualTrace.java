@@ -22,7 +22,7 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 
-import org.eclipse.unittest.ui.FailureTraceUIBlock;
+import org.eclipse.unittest.ui.ITestViewSupport;
 
 public class TextualTrace {
 	public static final int LINE_TYPE_EXCEPTION = 1;
@@ -49,13 +49,11 @@ public class TextualTrace {
 			if (line == null)
 				return;
 
-			displayWrappedLine(display, maxLabelLength, line,
-					LINE_TYPE_EXCEPTION);
+			displayWrappedLine(display, maxLabelLength, line, LINE_TYPE_EXCEPTION);
 
 			// the stack frames of the trace
 			while ((line = readLine(bufferedReader)) != null) {
-				int type = isAStackFrame(line) ? LINE_TYPE_STACKFRAME
-						: LINE_TYPE_NORMAL;
+				int type = isAStackFrame(line) ? LINE_TYPE_STACKFRAME : LINE_TYPE_NORMAL;
 				displayWrappedLine(display, maxLabelLength, line, type);
 			}
 		} catch (IOException e) {
@@ -63,8 +61,7 @@ public class TextualTrace {
 		}
 	}
 
-	private void displayWrappedLine(ITraceDisplay display, int maxLabelLength,
-			String line, int type) {
+	private void displayWrappedLine(ITraceDisplay display, int maxLabelLength, String line, int type) {
 		final int labelLength = line.length();
 		if (labelLength < maxLabelLength) {
 			display.addTraceLine(type, line);
@@ -73,8 +70,7 @@ public class TextualTrace {
 			int offset = maxLabelLength;
 			while (offset < labelLength) {
 				int nextOffset = Math.min(labelLength, offset + maxLabelLength);
-				display.addTraceLine(LINE_TYPE_NORMAL, line.substring(offset,
-						nextOffset));
+				display.addTraceLine(LINE_TYPE_NORMAL, line.substring(offset, nextOffset));
 				offset = nextOffset;
 			}
 		}
@@ -91,13 +87,12 @@ public class TextualTrace {
 				pattern = pattern.substring(0, len);
 			} else if (Character.isUpperCase(pattern.charAt(0))) {
 				// class in the default package
-				pattern = FailureTraceUIBlock.FRAME_PREFIX + pattern + '.';
+				pattern = ITestViewSupport.FRAME_LINE_PREFIX + pattern + '.';
 			} else {
 				// class names start w/ an uppercase letter after the .
 				final int lastDotIndex = pattern.lastIndexOf('.');
-				if ((lastDotIndex != -1)
-					&& (lastDotIndex != len)
-					&& Character.isUpperCase(pattern.charAt(lastDotIndex + 1)))
+				if ((lastDotIndex != -1) && (lastDotIndex != len)
+						&& Character.isUpperCase(pattern.charAt(lastDotIndex + 1)))
 					pattern += '.'; // append . to a class filter
 			}
 
@@ -118,12 +113,12 @@ public class TextualTrace {
 
 		String line;
 		String[] patterns = filterPatterns;
-		boolean firstLine= true;
+		boolean firstLine = true;
 		try {
-			while ((line= bufferedReader.readLine()) != null) {
+			while ((line = bufferedReader.readLine()) != null) {
 				if (firstLine || !filterLine(patterns, line))
 					printWriter.println(line);
-				firstLine= false;
+				firstLine = false;
 			}
 		} catch (IOException e) {
 			return stackTrace; // return the stack unfiltered

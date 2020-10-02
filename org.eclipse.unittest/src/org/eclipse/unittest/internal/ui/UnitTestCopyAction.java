@@ -20,7 +20,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 
 import org.eclipse.unittest.model.ITestElement;
-import org.eclipse.unittest.ui.FailureTraceUIBlock;
 
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.dnd.Clipboard;

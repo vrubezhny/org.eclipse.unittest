@@ -11,18 +11,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.unittest.ui;
+package org.eclipse.unittest.internal.ui;
 
 import org.eclipse.unittest.internal.UnitTestPreferencesConstants;
-import org.eclipse.unittest.internal.ui.CompareResultsAction;
-import org.eclipse.unittest.internal.ui.EnableStackFilterAction;
-import org.eclipse.unittest.internal.ui.FailureTableDisplay;
-import org.eclipse.unittest.internal.ui.ShowStackTraceInConsoleViewAction;
-import org.eclipse.unittest.internal.ui.TestRunnerViewPart;
-import org.eclipse.unittest.internal.ui.TextualTrace;
-import org.eclipse.unittest.internal.ui.UnitTestCopyAction;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestRunSession;
+import org.eclipse.unittest.ui.ITestViewSupport;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
@@ -49,8 +43,6 @@ import org.eclipse.jface.util.OpenStrategy;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class FailureTraceUIBlock implements IMenuListener {
-
-	public static final String FRAME_PREFIX = "at "; //$NON-NLS-1$
 
 	private static final int MAX_LABEL_LENGTH = 256;
 	private Table fTable;
@@ -180,8 +172,9 @@ public class FailureTraceUIBlock implements IMenuListener {
 
 	private void updateActions(ITestElement test) {
 		ITestViewSupport testViewSupport = test != null ? fFailure.getTestRunSession().getTestViewSupport() : null;
-		fShowTraceInConsoleAction.setDelegate(
-				testViewSupport != null ? testViewSupport.createShowStackTraceInConsoleViewActionDelegate(this) : null);
+		fShowTraceInConsoleAction.setDelegate(testViewSupport != null && test.getFailureTrace() != null
+				? testViewSupport.createShowStackTraceInConsoleViewActionDelegate(test)
+				: null);
 	}
 
 	private void updateEnablement(ITestElement test) {

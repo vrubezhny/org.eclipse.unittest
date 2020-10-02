@@ -24,7 +24,6 @@ import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestRoot;
 import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestSuiteElement;
-import org.eclipse.unittest.ui.FailureTraceUIBlock;
 import org.eclipse.unittest.ui.ITestViewSupport;
 
 import org.eclipse.core.runtime.CoreException;
@@ -64,12 +63,12 @@ public class CDTTestViewSupport implements ITestViewSupport {
 	public IAction createOpenEditorAction(IViewPart testRunnerPart, ITestElement failure, String traceLine) {
 		try {
 			String testName= traceLine;
-			int indexOfFramePrefix= testName.indexOf(FailureTraceUIBlock.FRAME_PREFIX);
+			int indexOfFramePrefix= testName.indexOf(ITestViewSupport.FRAME_LINE_PREFIX);
 			if (indexOfFramePrefix == -1) {
 				return null;
 			}
 			testName= testName.substring(indexOfFramePrefix);
-			testName= testName.substring(FailureTraceUIBlock.FRAME_PREFIX.length(), testName.lastIndexOf(':')).trim();
+			testName= testName.substring(ITestViewSupport.FRAME_LINE_PREFIX.length(), testName.lastIndexOf(':')).trim();
 
 			String lineNumber= traceLine;
 			lineNumber= lineNumber.substring(lineNumber.indexOf(':') + 1);
@@ -85,7 +84,7 @@ public class CDTTestViewSupport implements ITestViewSupport {
 	}
 
 	@Override
-	public Runnable createShowStackTraceInConsoleViewActionDelegate(FailureTraceUIBlock view) {
+	public Runnable createShowStackTraceInConsoleViewActionDelegate(ITestElement failedTest) {
 		return null;
 	}
 

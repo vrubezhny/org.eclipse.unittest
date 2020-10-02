@@ -36,7 +36,6 @@ import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestRunSessionListener;
 import org.eclipse.unittest.model.ITestSessionListener;
-import org.eclipse.unittest.ui.FailureTraceUIBlock;
 import org.eclipse.unittest.ui.ITestViewSupport;
 
 import org.eclipse.swt.SWT;

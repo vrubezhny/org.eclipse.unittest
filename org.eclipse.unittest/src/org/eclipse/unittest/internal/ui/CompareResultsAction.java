@@ -14,7 +14,6 @@
 package org.eclipse.unittest.internal.ui;
 
 import org.eclipse.unittest.model.ITestElement;
-import org.eclipse.unittest.ui.FailureTraceUIBlock;
 
 import org.eclipse.jface.action.Action;
 
