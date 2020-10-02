@@ -22,7 +22,7 @@ import org.eclipse.cdt.testsrunner.model.ITestModelUpdater;
 import org.eclipse.cdt.testsrunner.model.ITestSuite;
 import org.eclipse.cdt.testsrunner.model.TestingException;
 import org.eclipse.unittest.cdt.CDTUnitTestPlugin;
-import org.eclipse.unittest.launcher.TestRunnerClient;
+import org.eclipse.unittest.launcher.ITestRunnerClient;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestRunSession;
@@ -40,7 +40,7 @@ import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamMonitor;
 
-public class CDTTestRunnerClient extends TestRunnerClient {
+public class CDTTestRunnerClient implements ITestRunnerClient {
 	private static final String FRAME_PREFIX = ITestViewSupport.FRAME_LINE_PREFIX;
 
 	class TestModelUpdaterAdapter implements ITestModelUpdater {
@@ -100,7 +100,7 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 
 			this.fCurrentTestSuite = cRef.id;
 
-			notifyTestTreeEntry(cRef.id, cRef.name, cRef.isSuite, 0, true, cRef.parentId,
+			fTestRunSession.notifyTestTreeEntry(cRef.id, cRef.name, cRef.isSuite, 0, true, cRef.parentId,
 					cRef.name, null, null);
 		}
 
@@ -139,10 +139,10 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 			this.fCurrentTestCase = cRef.id;
 			fFailedTrace.setLength(0);
 
-			notifyTestTreeEntry(cRef.id, cRef.name, cRef.isSuite, 0, true, cRef.parentId,
+			fTestRunSession.notifyTestTreeEntry(cRef.id, cRef.name, cRef.isSuite, 0, true, cRef.parentId,
 					cRef.name, null, null);
 
-			notifyTestStarted(cRef.id, cRef.name);
+			fTestRunSession.notifyTestStarted(cRef.id, cRef.name);
 		}
 
 		@Override
@@ -154,7 +154,7 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 			if (status.isError()) {
 				TestElementReference cRef = testElementRefs.isEmpty() ? null : testElementRefs.peek();
 				if (cRef != null) {
-					notifyTestFailed(status == Status.Aborted ? ITestElement.Status.FAILURE.getOldCode() :
+					fTestRunSession.notifyTestFailed(status == Status.Aborted ? ITestElement.Status.FAILURE.getOldCode() :
 						ITestElement.Status.ERROR.getOldCode(),cRef.id, cRef.name, false, fFailedTrace.toString(),
 						"", ""); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
@@ -188,7 +188,7 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 			if (cRef != null && !cRef.isSuite) {
 				testElementRefs.pop(); // Renove test case ref
 
-				notifyTestEnded(cRef.id, cRef.name, false);
+				fTestRunSession.notifyTestEnded(cRef.id, cRef.name, false);
 			} else {
 				logUnexpectedTest(cRef == null ? "null" : cRef.id, cRef); //$NON-NLS-1$
 			}
@@ -244,6 +244,7 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 	private ITestsRunnerProvider fTestsRunnerProvider;
 	private IProcess process;
 	private final ILaunchListener fFindProcessListener;
+	protected boolean fDebug = false;
 
 	public CDTTestRunnerClient(ITestRunSession session) {
 		this.fTestRunSession = session;
@@ -343,7 +344,7 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 		if (iStream == null) {
 			return;
 		}
-		notifyTestRunStarted(0);
+		fTestRunSession.notifyTestRunStarted(0);
 		try {
 			fTestsRunnerProvider.run(new TestModelUpdaterAdapter(), iStream);
 			// If testing session was stopped, the status is set in stop()
@@ -354,7 +355,7 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 								fTestRunSession.getDuration())));
 			}
 
-			notifyTestRunEnded(fTestRunSession.getDuration());
+			fTestRunSession.notifyTestRunEnded(fTestRunSession.getDuration());
 		} catch (TestingException e) {
 			// If testing session was stopped, the status is set in stop()
 			if (isRunning()) {
@@ -363,7 +364,7 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 								CDTUnitTestPlugin.PLUGIN_ID,
 						e.getLocalizedMessage()));
 			}
-			notifyTestRunTerminated();
+			fTestRunSession.notifyTestRunTerminated();
 		}
 		shutDown();
 	}
@@ -395,6 +396,24 @@ public class CDTTestRunnerClient extends TestRunnerClient {
 			return null;
 		}
 		return new TestSuite(testSuiteElement.getTestName(), (TestSuite)convertFromTestSuiteElement(testSuiteElement.getParent()));
+	}
+
+	@Override
+	public boolean isRunning() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void stopWaiting() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void shutDown() {
+		// TODO Auto-generated method stub
+
 	}
 
 }

@@ -21,11 +21,13 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.PushbackReader;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 
 import org.eclipse.unittest.junit.JUnitTestPlugin;
-import org.eclipse.unittest.launcher.TestRunnerClient;
+import org.eclipse.unittest.launcher.ITestRunnerClient;
+import org.eclipse.unittest.model.ITestRunSession;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 
@@ -33,7 +35,7 @@ import org.eclipse.core.runtime.ISafeRunnable;
  * The client side of the RemoteTestRunner. Handles the marshaling of the
  * different messages.
  */
-public abstract class RemoteTestRunnerClient extends TestRunnerClient {
+public abstract class RemoteTestRunnerClient implements ITestRunnerClient {
 
 	public abstract class ListenerSafeRunnable implements ISafeRunnable {
 		@Override
@@ -62,6 +64,7 @@ public abstract class RemoteTestRunnerClient extends TestRunnerClient {
 
 	@SuppressWarnings("hiding")
 	protected boolean fDebug = false;
+	protected final ITestRunSession fTestRunSession;
 
 	/**
 	 * Reads the message stream from the RemoteTestRunner
@@ -89,7 +92,7 @@ public abstract class RemoteTestRunnerClient extends TestRunnerClient {
 				while (fPushbackReader != null && (message = readMessage(fPushbackReader)) != null)
 					receiveMessage(message);
 			} catch (SocketException e) {
-				notifyTestRunTerminated();
+				fTestRunSession.notifyTestRunTerminated();
 			} catch (IOException e) {
 				JUnitTestPlugin.log(e);
 				// fall through
@@ -98,8 +101,9 @@ public abstract class RemoteTestRunnerClient extends TestRunnerClient {
 		}
 	}
 
-	public RemoteTestRunnerClient(int port) {
+	protected RemoteTestRunnerClient(int port, ITestRunSession testRunSession) {
 		this.fPort = port;
+		fTestRunSession = testRunSession;
 		startListening();
 	}
 
@@ -130,7 +134,25 @@ public abstract class RemoteTestRunnerClient extends TestRunnerClient {
 		} catch (IOException e) {
 			// Ignore
 		}
-		super.shutDown();
+		if (fDebug)
+			System.out.println("shutdown"); //$NON-NLS-1$
+
+		try {
+			if (fSocket != null) {
+				fSocket.close();
+				fSocket = null;
+			}
+		} catch (IOException e) {
+			// Ignore
+		}
+		try {
+			if (fServerSocket != null) {
+				fServerSocket.close();
+				fServerSocket = null;
+			}
+		} catch (IOException e) {
+			// Ignore
+		}
 	}
 
 	@Override
@@ -165,4 +187,18 @@ public abstract class RemoteTestRunnerClient extends TestRunnerClient {
 			return null;
 		return buf.toString();
 	}
+
+	/**
+	 * The server socket
+	 */
+	protected ServerSocket fServerSocket;
+	protected Socket fSocket;
+
+	@Override
+	public synchronized void stopWaiting() {
+		if (fServerSocket != null && !fServerSocket.isClosed() && fSocket == null) {
+			shutDown(); // will throw a SocketException in Threads that wait in ServerSocket#accept()
+		}
+	}
+
 }

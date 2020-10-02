@@ -21,6 +21,7 @@ import java.util.Arrays;
 import org.eclipse.unittest.junit.JUnitTestPlugin;
 import org.eclipse.unittest.junit.internal.launcher.RemoteTestRunnerClient;
 import org.eclipse.unittest.model.ITestRunListener;
+import org.eclipse.unittest.model.ITestRunSession;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 
@@ -33,8 +34,8 @@ import org.eclipse.jdt.internal.junit.runner.RemoteTestRunner;
  */
 @SuppressWarnings("restriction")
 public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
-	public JUnitRemoteTestRunnerClient(int port) {
-		super(port);
+	public JUnitRemoteTestRunnerClient(int port, ITestRunSession session) {
+		super(port, session);
 	}
 
 	public abstract class ListenerSafeRunnable implements ISafeRunnable {
@@ -88,18 +89,18 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 					String sc = arg.substring(0, v);
 					count = Integer.parseInt(sc);
 				}
-				notifyTestRunStarted(count);
+				fTestRunSession.notifyTestRunStarted(count);
 				return this;
 			}
 			if (message.startsWith(MessageIds.TEST_START)) {
 				String s[] = extractTestId(arg);
-				notifyTestStarted(s[0], s[1]);
+				fTestRunSession.notifyTestStarted(s[0], s[1]);
 				return this;
 			}
 			if (message.startsWith(MessageIds.TEST_END)) {
 				String s[] = extractTestId(arg);
 				boolean isIgnored = s[1].startsWith(MessageIds.IGNORED_TEST_PREFIX);
-				notifyTestEnded(s[0], s[1], isIgnored);
+				fTestRunSession.notifyTestEnded(s[0], s[1], isIgnored);
 				return this;
 			}
 			if (message.startsWith(MessageIds.TEST_ERROR)) {
@@ -115,11 +116,11 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 				return this;
 			}
 			if (message.startsWith(MessageIds.TEST_RUN_END)) {
-				notifyTestRunEnded(Duration.ofMillis(Long.parseLong(arg)));
+				fTestRunSession.notifyTestRunEnded(Duration.ofMillis(Long.parseLong(arg)));
 				return this;
 			}
 			if (message.startsWith(MessageIds.TEST_STOPPED)) {
-				notifyTestRunStopped(Duration.ofMillis(Long.parseLong(arg)));
+				fTestRunSession.notifyTestRunStopped(Duration.ofMillis(Long.parseLong(arg)));
 				shutDown();
 				return this;
 			}
@@ -178,8 +179,8 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 
 		@Override
 		void entireStringRead() {
-			notifyTestFailed(fFailureKind, fFailedTestId, fFailedTest, fFailedAssumption, fFailedTrace.toString(),
-					nullifyEmpty(fExpectedResult), nullifyEmpty(fActualResult));
+			fTestRunSession.notifyTestFailed(fFailureKind, fFailedTestId, fFailedTest, fFailedAssumption,
+					fFailedTrace.toString(), nullifyEmpty(fExpectedResult), nullifyEmpty(fActualResult));
 			fExpectedResult.setLength(0);
 			fActualResult.setLength(0);
 		}
@@ -187,8 +188,8 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 		@Override
 		ProcessingState readMessage(String message) {
 			if (message.startsWith(MessageIds.TRACE_END)) {
-				notifyTestFailed(fFailureKind, fFailedTestId, fFailedTest, fFailedAssumption, fFailedTrace.toString(),
-						nullifyEmpty(fExpectedResult), nullifyEmpty(fActualResult));
+				fTestRunSession.notifyTestFailed(fFailureKind, fFailedTestId, fFailedTest, fFailedAssumption,
+						fFailedTrace.toString(), nullifyEmpty(fExpectedResult), nullifyEmpty(fActualResult));
 				fFailedTrace.setLength(0);
 				fActualResult.setLength(0);
 				fExpectedResult.setLength(0);
@@ -199,6 +200,14 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 				fFailedTrace.append(fLastLineDelimiter);
 			return this;
 		}
+
+		/**
+		 * Returns a comparison result from the given buffer. Removes the terminating
+		 * line delimiter.
+		 *
+		 * @param buf the comparison result
+		 * @return the result or <code>null</code> if empty
+		 */
 	}
 
 	/**
@@ -428,8 +437,8 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 			}
 		}
 
-		notifyTestTreeEntry(id, testName, isSuite, testCount, isDynamicTest, parentId, displayName, parameterTypes,
-				uniqueId);
+		fTestRunSession.notifyTestTreeEntry(id, testName, isSuite, testCount, isDynamicTest, parentId, displayName,
+				parameterTypes, uniqueId);
 	}
 
 	/**
@@ -485,7 +494,24 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 		if (statusCode != ITestRunListener.STATUS_OK)
 			trace = fFailedRerunTrace.toString();
 		// assumption a rerun trace was sent before
-		notifyTestReran(testId, className, testName, statusCode, trace, nullifyEmpty(fExpectedResult),
+		fTestRunSession.notifyTestReran(testId, className, testName, statusCode, trace, nullifyEmpty(fExpectedResult),
 				nullifyEmpty(fActualResult));
+	}
+
+	private static String nullifyEmpty(StringBuilder buf) {
+		int length = buf.length();
+		if (length == 0)
+			return null;
+
+		char last = buf.charAt(length - 1);
+		if (last == '\n') {
+			if (length > 1 && buf.charAt(length - 2) == '\r')
+				return buf.substring(0, length - 2);
+			else
+				return buf.substring(0, length - 1);
+		} else if (last == '\r') {
+			return buf.substring(0, length - 1);
+		}
+		return buf.toString();
 	}
 }

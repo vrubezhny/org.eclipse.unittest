@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +38,9 @@ import org.eclipse.unittest.ui.ITestViewSupport;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.SafeRunner;
 
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -64,6 +67,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	private ITestRunnerClient fTestRunnerClient;
 
 	private final ListenerList<ITestSessionListener> fSessionListeners;
+	private final List<ITestRunListener> testRunListeners = Collections.singletonList(new TestSessionNotifier());
 
 	/**
 	 * The model root, or <code>null</code> if swapped to disk.
@@ -185,7 +189,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 
 		if (fTestRunnerSupport != null) {
 			fTestRunnerClient = fTestRunnerSupport.newTestRunnerClient(this);
-			fTestRunnerClient.setListeners(new ITestRunListener[] { new TestSessionNotifier() });
 		}
 
 		final ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
@@ -738,7 +741,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	}
 
 	private static class IncompleteTestSuite {
-		public TestSuiteElement fTestSuiteElement;
+		public final TestSuiteElement fTestSuiteElement;
 		public int fOutstandingChildren;
 
 		public IncompleteTestSuite(TestSuiteElement testSuiteElement, int outstandingChildren) {
@@ -899,4 +902,210 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		return false;
 	}
 
+	public abstract class ListenerSafeRunnable implements ISafeRunnable {
+		@Override
+		public void handleException(Throwable exception) {
+			UnitTestPlugin.log(exception);
+		}
+	}
+
+	/**
+	 * Notifies on an individual test re-run.
+	 *
+	 * @param testId     a unique Id identifying the test
+	 * @param className  the name of the test class that was rerun
+	 * @param testName   the name of the test that was rerun
+	 * @param statusCode the outcome of the test that was rerun; one of
+	 *                   {@link ITestRunListener#STATUS_OK},
+	 *                   {@link ITestRunListener#STATUS_ERROR}, or
+	 *                   {@link ITestRunListener#STATUS_FAILURE}
+	 * @param trace      the stack trace in the case of abnormal termination, or the
+	 *                   empty string if none
+	 * @param expected   the expected value in case of abnormal termination, or the
+	 *                   empty string if none
+	 * @param actual     the actual value in case of abnormal termination, or the
+	 *                   empty string if none
+	 */
+	@Override
+	public void notifyTestReran(String testId, String className, String testName, int statusCode, String trace,
+			String expected, String actual) {
+		for (ITestRunListener listener : testRunListeners) {
+			SafeRunner.run(new ListenerSafeRunnable() {
+				@Override
+				public void run() {
+					listener.testReran(testId, className, testName, statusCode, trace, expected, actual);
+				}
+			});
+		}
+	}
+
+	/**
+	 * Notifies on a member of the test suite that is about to be run.
+	 *
+	 * @param testId         a unique id for the test
+	 * @param testName       the name of the test
+	 * @param isSuite        true or false depending on whether the test is a suite
+	 * @param testCount      an integer indicating the number of tests
+	 * @param isDynamicTest  true or false
+	 * @param parentId       the unique testId of its parent if it is a dynamic
+	 *                       test, otherwise can be "-1"
+	 * @param displayName    the display name of the test
+	 * @param parameterTypes comma-separated list of method parameter types if
+	 *                       applicable, otherwise an empty string
+	 * @param uniqueId       the unique ID of the test provided, otherwise an empty
+	 *                       string
+	 */
+	@Override
+	public void notifyTestTreeEntry(String testId, String testName, boolean isSuite, int testCount,
+			boolean isDynamicTest, String parentId, String displayName, String[] parameterTypes, String uniqueId) {
+		for (ITestRunListener listener : testRunListeners) {
+			listener.testTreeEntry(testId, testName, isSuite, testCount, isDynamicTest, parentId, displayName,
+					parameterTypes, uniqueId);
+		}
+	}
+
+	/**
+	 * Notifies on a test run stopped.
+	 *
+	 * @param duration the total elapsed time of the test run
+	 */
+	@Override
+	public void notifyTestRunStopped(final Duration duration) {
+		if (isStopped())
+			return;
+		for (ITestRunListener listener : testRunListeners) {
+			SafeRunner.run(new ListenerSafeRunnable() {
+				@Override
+				public void run() {
+					listener.testRunStopped(duration);
+				}
+			});
+		}
+	}
+
+	/**
+	 * Notifies on a test run ended.
+	 *
+	 * @param duration the total elapsed time of the test run
+	 */
+	@Override
+	public void notifyTestRunEnded(final Duration duration) {
+		if (isStopped())
+			return;
+		for (ITestRunListener listener : testRunListeners) {
+			SafeRunner.run(new ListenerSafeRunnable() {
+				@Override
+				public void run() {
+					listener.testRunEnded(duration);
+				}
+			});
+		}
+	}
+
+	/**
+	 * Notifies on an individual test ended.
+	 *
+	 * @param testId    a unique Id identifying the test
+	 * @param testName  the name of the test that failed
+	 * @param isIgnored <code>true</code> indicates that the specified test was
+	 *                  ignored, otherwise - <code>false</code>
+	 */
+	@Override
+	public void notifyTestEnded(String testId, String testName, boolean isIgnored) {
+		if (isStopped())
+			return;
+		for (ITestRunListener listener : testRunListeners) {
+			SafeRunner.run(new ListenerSafeRunnable() {
+				@Override
+				public void run() {
+					listener.testEnded(testId, testName, isIgnored);
+				}
+			});
+		}
+	}
+
+	/**
+	 * Notifies on an individual test started.
+	 *
+	 * @param testId   a unique Id identifying the test
+	 * @param testName the name of the test that started
+	 */
+	@Override
+	public void notifyTestStarted(final String testId, final String testName) {
+		if (isStopped())
+			return;
+		for (ITestRunListener listener : testRunListeners) {
+			SafeRunner.run(new ListenerSafeRunnable() {
+				@Override
+				public void run() {
+					listener.testStarted(testId, testName);
+				}
+			});
+		}
+	}
+
+	/**
+	 * Notifies on a test run started.
+	 *
+	 * @param count the number of individual tests that will be run
+	 */
+	@Override
+	public void notifyTestRunStarted(final int count) {
+		if (isStopped())
+			return;
+		for (ITestRunListener listener : testRunListeners) {
+			SafeRunner.run(new ListenerSafeRunnable() {
+				@Override
+				public void run() {
+					listener.testRunStarted(count);
+				}
+			});
+		}
+	}
+
+	/**
+	 * Notifies on an individual test failed with a stack trace.
+	 *
+	 * @param status             the outcome of the test; one of
+	 *                           {@link ITestRunListener#STATUS_ERROR STATUS_ERROR}
+	 *                           or {@link ITestRunListener#STATUS_FAILURE
+	 *                           STATUS_FAILURE}
+	 * @param testId             a unique Id identifying the test
+	 * @param testName           the name of the test that failed
+	 * @param isAssumptionFailed indicates that an assumption is failed
+	 * @param trace              the stack trace
+	 * @param expected           the expected value
+	 * @param actual             the actual value
+	 */
+	@Override
+	public void notifyTestFailed(int status, String testId, String testName, boolean isAssumptionFailed, String trace,
+			String expected, String actual) {
+		if (isStopped())
+			return;
+		for (ITestRunListener listener : testRunListeners) {
+			SafeRunner.run(new ListenerSafeRunnable() {
+				@Override
+				public void run() {
+					listener.testFailed(status, testId, testName, isAssumptionFailed, trace, expected, actual);
+				}
+			});
+		}
+	}
+
+	/**
+	 * Notifies on a test run terminated.
+	 */
+	@Override
+	public void notifyTestRunTerminated() {
+		if (isStopped())
+			return;
+		for (ITestRunListener listener : testRunListeners) {
+			SafeRunner.run(new ListenerSafeRunnable() {
+				@Override
+				public void run() {
+					listener.testRunTerminated();
+				}
+			});
+		}
+	}
 }

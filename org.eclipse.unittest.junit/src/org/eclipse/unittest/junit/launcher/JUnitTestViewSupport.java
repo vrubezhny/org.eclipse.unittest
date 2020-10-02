@@ -234,6 +234,6 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 	@Override
 	public ITestRunnerClient newTestRunnerClient(ITestRunSession session) {
 		String portAsString = session.getLaunch().getAttribute(JUnitLaunchConfigurationDelegate.ATTR_PORT);
-		return new JUnitRemoteTestRunnerClient(portAsString != null ? Integer.parseInt(portAsString) : -1);
+		return new JUnitRemoteTestRunnerClient(portAsString != null ? Integer.parseInt(portAsString) : -1, session);
 	}
 }

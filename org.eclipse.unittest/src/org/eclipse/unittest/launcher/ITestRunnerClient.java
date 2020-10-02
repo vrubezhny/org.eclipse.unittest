@@ -14,7 +14,6 @@
 package org.eclipse.unittest.launcher;
 
 import org.eclipse.unittest.internal.model.TestRunSession;
-import org.eclipse.unittest.model.ITestRunListener;
 
 /**
  * An interface to be implemented by a Test Runner Client. Such implementation
@@ -31,13 +30,6 @@ public interface ITestRunnerClient {
 	 * @return returns true in case of a test run in progress, otherwise false
 	 */
 	boolean isRunning();
-
-	/**
-	 * Setup listeners for a test run.
-	 *
-	 * @param listeners listeners to inform
-	 */
-	void setListeners(ITestRunListener[] listeners);
 
 	/**
 	 * Requests to stop the remote test run.
