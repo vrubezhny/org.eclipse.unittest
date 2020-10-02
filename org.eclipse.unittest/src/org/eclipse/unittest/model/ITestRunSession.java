@@ -27,14 +27,6 @@ import org.eclipse.debug.core.ILaunch;
 public interface ITestRunSession extends ITestElementContainer {
 
 	/**
-	 * Returns the name of the test run. The name is the name of the launch
-	 * configuration use to run this test.
-	 *
-	 * @return returns the test run name
-	 */
-	String getTestRunName();
-
-	/**
 	 * Returns the Java project from which this test run session has been launched,
 	 * or <code>null</code> if not available.
 	 *

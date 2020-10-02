@@ -121,7 +121,7 @@ public class TestRunSessionSerializer implements XMLReader {
 			// test factory methods
 			addCDATA(atts, IXMLTags.ATTR_NAME, testSuiteElement.getTestName());
 			if (testSuiteElement.getDuration() != null) {
-				addCDATA(atts, IXMLTags.ATTR_TIME, timeFormat.format(testSuiteElement.getDuration().toString()));
+				addCDATA(atts, IXMLTags.ATTR_TIME, testSuiteElement.getDuration().toString());
 			}
 			if (testElement.getProgressState() != ProgressState.COMPLETED
 					|| testElement.getTestResult(false) != Result.UNDEFINED)
@@ -153,7 +153,7 @@ public class TestRunSessionSerializer implements XMLReader {
 			addCDATA(atts, IXMLTags.ATTR_NAME, testCaseElement.getTestMethodName());
 			addCDATA(atts, IXMLTags.ATTR_CLASSNAME, testCaseElement.getClassName());
 			if (testCaseElement.getDuration() != null) {
-				addCDATA(atts, IXMLTags.ATTR_TIME, timeFormat.format(testCaseElement.getDuration().toString()));
+				addCDATA(atts, IXMLTags.ATTR_TIME, testCaseElement.getDuration().toString());
 			}
 			if (testElement.getProgressState() != ProgressState.COMPLETED)
 				addCDATA(atts, IXMLTags.ATTR_INCOMPLETE, Boolean.TRUE.toString());

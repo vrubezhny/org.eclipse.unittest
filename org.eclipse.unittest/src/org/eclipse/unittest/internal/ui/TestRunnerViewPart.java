@@ -560,7 +560,8 @@ public class TestRunnerViewPart extends ViewPart {
 				if (UnitTestUIPreferencesConstants.getShowInAllViews()
 						|| getSite().getWorkbenchWindow() == PlatformUI.getWorkbench().getActiveWorkbenchWindow()) {
 					if (fInfoMessage == null) {
-						String testRunLabel = BasicElementLabels.getJavaElementName(testRunSession.getTestRunName());
+						String testRunLabel = BasicElementLabels
+								.getJavaElementName(((TestRunSession) testRunSession).getTestRunName());
 						String msg;
 						if (testRunSession.getLaunch() != null) {
 							msg = MessageFormat.format(Messages.TestRunnerViewPart_Launching, testRunLabel);

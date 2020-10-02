@@ -14,6 +14,15 @@ import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestRoot;
 
 public interface ITestRunSessionReport {
+
+	/**
+	 * Returns the name of the test run. The name is the name of the launch
+	 * configuration use to run this test.
+	 *
+	 * @return returns the test run name
+	 */
+	String getTestRunName();
+
 	/**
 	 * Returns an array of all failed {@link ITestElement}s
 	 *
