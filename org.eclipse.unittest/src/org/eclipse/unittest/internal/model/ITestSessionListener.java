@@ -12,10 +12,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.unittest.model;
+package org.eclipse.unittest.internal.model;
 
 import java.time.Duration;
 
+import org.eclipse.unittest.model.ITestCaseElement;
+import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElement.Status;
 
 /**

@@ -15,6 +15,8 @@ package org.eclipse.unittest.model;
 
 import java.time.Duration;
 
+import org.eclipse.unittest.internal.model.ITestSessionListener;
+
 /**
  * An interface to listen to the events from the
  * {@link org.eclipse.unittest.launcher.ITestRunnerClient} and translates them

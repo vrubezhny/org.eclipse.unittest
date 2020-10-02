@@ -29,13 +29,13 @@ import java.util.List;
 
 import org.eclipse.unittest.internal.UnitTestPlugin;
 import org.eclipse.unittest.internal.UnitTestPreferencesConstants;
+import org.eclipse.unittest.internal.model.ITestRunSessionListener;
+import org.eclipse.unittest.internal.model.ITestSessionListener;
 import org.eclipse.unittest.internal.model.UnitTestModel;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestRunSession;
-import org.eclipse.unittest.model.ITestRunSessionListener;
-import org.eclipse.unittest.model.ITestSessionListener;
 import org.eclipse.unittest.ui.ITestViewSupport;
 
 import org.eclipse.swt.SWT;

@@ -12,7 +12,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.unittest.model;
+package org.eclipse.unittest.internal.model;
+
+import org.eclipse.unittest.model.ITestRunSession;
 
 /**
  * An interface to listen to the events from the on added/removed

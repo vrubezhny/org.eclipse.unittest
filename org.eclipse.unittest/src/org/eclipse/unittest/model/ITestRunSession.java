@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.unittest.model;
 
+import org.eclipse.unittest.internal.model.ITestSessionListener;
 import org.eclipse.unittest.launcher.ITestRunnerClient;
 import org.eclipse.unittest.ui.ITestViewSupport;
 

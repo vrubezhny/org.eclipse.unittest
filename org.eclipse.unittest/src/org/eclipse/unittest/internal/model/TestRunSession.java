@@ -31,7 +31,6 @@ import org.eclipse.unittest.model.ITestElementContainer;
 import org.eclipse.unittest.model.ITestRoot;
 import org.eclipse.unittest.model.ITestRunListener;
 import org.eclipse.unittest.model.ITestRunSession;
-import org.eclipse.unittest.model.ITestSessionListener;
 import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.unittest.ui.ITestViewSupport;
 
