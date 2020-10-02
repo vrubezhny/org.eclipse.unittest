@@ -26,6 +26,7 @@ import java.util.List;
 import org.eclipse.unittest.internal.UnitTestPlugin;
 import org.eclipse.unittest.launcher.ITestRunnerClient;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
+import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElementContainer;
 import org.eclipse.unittest.model.ITestRoot;
@@ -48,7 +49,7 @@ import org.eclipse.debug.core.ILaunchesListener2;
  * A test run session holds all information about a test run, i.e. launch
  * configuration, launch, test tree (including results).
  */
-public class TestRunSession extends TestElement implements ITestRunSession {
+public class TestRunSession extends TestElement implements ITestRunSession, ITestRunSessionReport {
 
 	/**
 	 * The launch, or <code>null</code> iff this session was run externally.
@@ -224,11 +225,6 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 		addTestSessionListener(new TestRunListenerAdapter(this));
 	}
 
-	@Override
-	public ITestRunnerClient getTestRunnerClient() {
-		return this.fTestRunnerClient;
-	}
-
 	void reset() {
 		fStartedCount = 0;
 		fFailureCount = 0;
@@ -340,23 +336,26 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 		return fStartTime;
 	}
 
+	/**
+	 * Indicates if the test run session has been stopped or terminated
+	 *
+	 * @return <code>true</code> if the session has been stopped or terminated,
+	 *         otherwise returns <code>false</code>
+	 */
 	@Override
 	public boolean isStopped() {
 		return fIsStopped;
 	}
 
-	@Override
 	public synchronized void addTestSessionListener(ITestSessionListener listener) {
 		swapIn();
 		fSessionListeners.add(listener);
 	}
 
-	@Override
 	public void removeTestSessionListener(ITestSessionListener listener) {
 		fSessionListeners.remove(listener);
 	}
 
-	@Override
 	public synchronized void swapOut() {
 		if (fTestRoot == null)
 			return;
@@ -405,7 +404,6 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 		return new File(historyDir, swapFileName);
 	}
 
-	@Override
 	public synchronized void swapIn() {
 		if (fTestRoot != null)
 			return;
@@ -462,11 +460,11 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 	}
 
 	@Override
-	public ITestElement getTestElement(String id) {
+	public TestElement getTestElement(String id) {
 		return fIdToTest.get(id);
 	}
 
-	private ITestElement addTreeEntry(String id, String testName, boolean isSuite, int testCount, boolean isDynamicTest,
+	private TestElement addTreeEntry(String id, String testName, boolean isSuite, int testCount, boolean isDynamicTest,
 			String parentId, String displayName, String[] parameterTypes, String uniqueId) {
 		if (isDynamicTest) {
 			if (parentId != null) {
@@ -495,8 +493,27 @@ public class TestRunSession extends TestElement implements ITestRunSession {
 		}
 	}
 
-	@Override
-	public ITestElement createTestElement(ITestSuiteElement parent, String id, String testName, boolean isSuite,
+	/**
+	 * Creates a test element, either {@link ITestSuiteElement} or
+	 * {@link ITestCaseElement} instance, depending on the arguments.
+	 *
+	 * @param parent         a parent test suite element
+	 * @param id             an identifier of the test element
+	 * @param testName       a name of the test element
+	 * @param isSuite        a flag indicating if the test element should be
+	 *                       represented by a test suite element
+	 * @param testCount      a number of predefined test cases in case of test suite
+	 *                       element
+	 * @param isDynamicTest  a flag indicating that test suite is dynamic (that
+	 *                       doesn't have predefined tests)
+	 * @param displayName    a display name for the test element
+	 * @param parameterTypes an array of parameter types, or <code>null</code>
+	 * @param uniqueId       a unique identifier for the test element or
+	 *                       <code>null</code>
+	 * @return a created {@link ITestSuiteElement} or {@link ITestCaseElement}
+	 *         instance
+	 */
+	public TestElement createTestElement(ITestSuiteElement parent, String id, String testName, boolean isSuite,
 			int testCount, boolean isDynamicTest, String displayName, String[] parameterTypes, String uniqueId) {
 		TestElement testElement;
 		if (parameterTypes != null && parameterTypes.length > 1) {

@@ -22,7 +22,7 @@ public class TestRoot extends TestSuiteElement implements ITestRoot {
 
 	public TestRoot(ITestRunSession session) {
 		super(null, "-1", session.getTestRunName(), 1, session.getTestRunName(), null, null); //$NON-NLS-1$
-		fSession= session;
+		fSession = session;
 	}
 
 	@Override

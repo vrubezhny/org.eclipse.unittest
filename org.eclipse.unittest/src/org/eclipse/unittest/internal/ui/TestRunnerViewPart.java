@@ -31,6 +31,7 @@ import org.eclipse.unittest.internal.UnitTestPlugin;
 import org.eclipse.unittest.internal.UnitTestPreferencesConstants;
 import org.eclipse.unittest.internal.model.ITestRunSessionListener;
 import org.eclipse.unittest.internal.model.ITestSessionListener;
+import org.eclipse.unittest.internal.model.TestRunSession;
 import org.eclipse.unittest.internal.model.UnitTestModel;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.model.ITestCaseElement;
@@ -192,7 +193,7 @@ public class TestRunnerViewPart extends ViewPart {
 	private ActivateOnErrorAction fActivateOnErrorAction;
 	private IMenuListener fViewMenuListener;
 
-	private ITestRunSession fTestRunSession;
+	private TestRunSession fTestRunSession;
 	private TestSessionListener fTestSessionListener;
 
 //	private RunnerViewHistory fViewHistory;
@@ -569,9 +570,10 @@ public class TestRunnerViewPart extends ViewPart {
 						registerInfoMessage(msg);
 					}
 
-					ITestRunSession deactivatedSession = setActiveTestRunSession(testRunSession);
-					if (deactivatedSession != null)
+					TestRunSession deactivatedSession = setActiveTestRunSession((TestRunSession) testRunSession);
+					if (deactivatedSession != null) {
 						deactivatedSession.swapOut();
+					}
 				}
 			});
 		}
@@ -580,15 +582,16 @@ public class TestRunnerViewPart extends ViewPart {
 		public void sessionRemoved(final ITestRunSession testRunSession) {
 			getDisplay().asyncExec(() -> {
 				if (testRunSession.equals(fTestRunSession)) {
-					List<ITestRunSession> testRunSessions = UnitTestModel.getInstance().getTestRunSessions();
+					List<TestRunSession> testRunSessions = UnitTestModel.getInstance().getTestRunSessions();
 					ITestRunSession deactivatedSession;
 					if (!testRunSessions.isEmpty()) {
 						deactivatedSession = setActiveTestRunSession(testRunSessions.get(0));
 					} else {
 						deactivatedSession = setActiveTestRunSession(null);
 					}
-					if (deactivatedSession != null)
-						deactivatedSession.swapOut();
+					if (deactivatedSession != null && deactivatedSession instanceof TestRunSession) {
+						((TestRunSession) deactivatedSession).swapOut();
+					}
 				}
 			});
 		}
@@ -1373,7 +1376,7 @@ public class TestRunnerViewPart extends ViewPart {
 	 * @return deactivated session, or <code>null</code> iff no session got
 	 *         deactivated
 	 */
-	private ITestRunSession setActiveTestRunSession(ITestRunSession testRunSession) {
+	private TestRunSession setActiveTestRunSession(TestRunSession testRunSession) {
 		/*
 		 * - State: fTestRunSession fTestSessionListener Jobs
 		 * fTestViewer.processChangesInUI(); - UI: fCounterPanel fProgressBar
@@ -1387,7 +1390,7 @@ public class TestRunnerViewPart extends ViewPart {
 
 		deregisterTestSessionListener(true);
 
-		ITestRunSession deactivatedSession = fTestRunSession;
+		TestRunSession deactivatedSession = fTestRunSession;
 
 		fTestRunSession = testRunSession;
 		fTestViewer.registerActiveSession(testRunSession);
@@ -1713,7 +1716,7 @@ public class TestRunnerViewPart extends ViewPart {
 
 		// always show youngest test run in view. simulate "sessionAdded" event to do
 		// that
-		List<ITestRunSession> testRunSessions = UnitTestModel.getInstance().getTestRunSessions();
+		List<TestRunSession> testRunSessions = UnitTestModel.getInstance().getTestRunSessions();
 		if (!testRunSessions.isEmpty()) {
 			fTestRunSessionListener.sessionAdded(testRunSessions.get(0));
 		}
@@ -1947,7 +1950,7 @@ public class TestRunnerViewPart extends ViewPart {
 	 *
 	 * @return the current test run session, or <code>null</code>
 	 */
-	public ITestRunSession getCurrentTestRunSession() {
+	public TestRunSession getCurrentTestRunSession() {
 		return fTestRunSession;
 	}
 

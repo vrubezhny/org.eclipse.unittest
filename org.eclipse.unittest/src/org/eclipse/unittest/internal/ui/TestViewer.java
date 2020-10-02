@@ -24,14 +24,15 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.eclipse.unittest.internal.UnitTestPlugin;
+import org.eclipse.unittest.internal.model.TestCaseElement;
 import org.eclipse.unittest.internal.model.TestElement;
+import org.eclipse.unittest.internal.model.TestRunSession;
 import org.eclipse.unittest.internal.model.TestSuiteElement;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElement.Result;
 import org.eclipse.unittest.model.ITestElement.Status;
 import org.eclipse.unittest.model.ITestRoot;
-import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestSuiteElement;
 
 import org.eclipse.swt.SWT;
@@ -204,7 +205,7 @@ class TestViewer {
 	private boolean fTreeHasFilter;
 	private boolean fTableHasFilter;
 
-	private ITestRunSession fTestRunSession;
+	private TestRunSession fTestRunSession;
 
 	private boolean fTreeNeedsRefresh;
 	private boolean fTableNeedsRefresh;
@@ -278,10 +279,10 @@ class TestViewer {
 	void handleMenuAboutToShow(IMenuManager manager) {
 		IStructuredSelection selection = (IStructuredSelection) fSelectionProvider.getSelection();
 		if (!selection.isEmpty()) {
-			ITestElement testElement = (ITestElement) selection.getFirstElement();
+			TestElement testElement = (TestElement) selection.getFirstElement();
 
-			if (testElement instanceof ITestSuiteElement) {
-				ITestSuiteElement testSuiteElement = (ITestSuiteElement) testElement;
+			if (testElement instanceof TestSuiteElement) {
+				TestSuiteElement testSuiteElement = (TestSuiteElement) testElement;
 				IAction openTestAction = testSuiteElement.getTestRunSession().getTestViewSupport()
 						.getOpenTestAction(fTestRunnerPart, testSuiteElement);
 				if (openTestAction != null) {
@@ -292,7 +293,7 @@ class TestViewer {
 					addRerunActions(manager, testSuiteElement);
 				}
 			} else {
-				ITestCaseElement testCaseElement = (ITestCaseElement) testElement;
+				TestCaseElement testCaseElement = (TestCaseElement) testElement;
 				IAction openTestAction = testElement.getTestRunSession().getTestViewSupport()
 						.getOpenTestAction(fTestRunnerPart, testCaseElement);
 				if (openTestAction != null) {
@@ -317,7 +318,7 @@ class TestViewer {
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "-end")); //$NON-NLS-1$
 	}
 
-	private void addRerunActions(IMenuManager manager, ITestElement testCaseElement) {
+	private void addRerunActions(IMenuManager manager, TestElement testCaseElement) {
 		ILaunchConfiguration rerunLaunchConfiguration = testCaseElement.getTestRunSession().getTestViewSupport()
 				.getRerunLaunchConfiguration(testCaseElement);
 		if (rerunLaunchConfiguration == null) {
@@ -351,7 +352,7 @@ class TestViewer {
 	 *
 	 * @param testRunSession a test session object
 	 */
-	public synchronized void registerActiveSession(ITestRunSession testRunSession) {
+	public synchronized void registerActiveSession(TestRunSession testRunSession) {
 		fTestRunSession = testRunSession;
 		registerAutoScrollTarget(null);
 		registerViewersRefresh();

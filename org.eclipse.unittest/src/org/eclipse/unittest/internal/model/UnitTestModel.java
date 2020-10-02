@@ -115,10 +115,8 @@ public final class UnitTestModel {
 			// Load session on 1st change (usually 1st process added), although it's not
 			// much reliable. Each TestRunnerClient should take care of listening to the
 			// launch to get the right IProcess or stream or whatever else i useful
-			ITestRunSession testRunSession = getTestRunSessions().stream()
-					.filter(session -> launch.equals(session.getLaunch())).findAny().orElse(null);
-			if (testRunSession == null) {
-				testRunSession = new TestRunSession(launch);
+			if (getTestRunSessions().stream().noneMatch(session -> launch.equals(session.getLaunch()))) {
+				TestRunSession testRunSession = new TestRunSession(launch);
 				addTestRunSession(testRunSession);
 				for (TestRunListener listener : TestListenerRegistry.getDefault().getUnitTestRunListeners()) {
 					listener.sessionLaunched(testRunSession);
@@ -132,7 +130,7 @@ public final class UnitTestModel {
 	/**
 	 * Active test run sessions, youngest first.
 	 */
-	private final LinkedList<ITestRunSession> fTestRunSessions = new LinkedList<>();
+	private final LinkedList<TestRunSession> fTestRunSessions = new LinkedList<>();
 	private final ILaunchListener fLaunchListener = new UnitTestLaunchListener();
 
 	private static UnitTestModel INSTANCE = null;
@@ -221,13 +219,13 @@ public final class UnitTestModel {
 		fTestRunSessionListeners.remove(listener);
 	}
 
-	public synchronized List<ITestRunSession> getTestRunSessions() {
+	public synchronized List<TestRunSession> getTestRunSessions() {
 		return new ArrayList<>(fTestRunSessions);
 	}
 
-	private void addTestRunSession(ITestRunSession testRunSession) {
+	private void addTestRunSession(TestRunSession testRunSession) {
 		Assert.isNotNull(testRunSession);
-		ArrayList<ITestRunSession> toRemove = new ArrayList<>();
+		ArrayList<TestRunSession> toRemove = new ArrayList<>();
 
 		synchronized (this) {
 			Assert.isLegal(!fTestRunSessions.contains(testRunSession));
@@ -237,9 +235,9 @@ public final class UnitTestModel {
 					UnitTestPreferencesConstants.MAX_TEST_RUNS, 10, null);
 			int size = fTestRunSessions.size();
 			if (size > maxCount) {
-				List<ITestRunSession> excess = fTestRunSessions.subList(maxCount, size);
-				for (Iterator<ITestRunSession> iter = excess.iterator(); iter.hasNext();) {
-					ITestRunSession oldSession = iter.next();
+				List<TestRunSession> excess = fTestRunSessions.subList(maxCount, size);
+				for (Iterator<TestRunSession> iter = excess.iterator(); iter.hasNext();) {
+					TestRunSession oldSession = iter.next();
 					if (!(oldSession.isStarting() || oldSession.isRunning() || oldSession.isKeptAlive())) {
 						toRemove.add(oldSession);
 						iter.remove();
@@ -248,9 +246,7 @@ public final class UnitTestModel {
 			}
 		}
 
-		for (ITestRunSession oldSession : toRemove) {
-			notifyTestRunSessionRemoved(oldSession);
-		}
+		toRemove.forEach(this::notifyTestRunSessionRemoved);
 		notifyTestRunSessionAdded(testRunSession);
 	}
 
@@ -411,7 +407,7 @@ public final class UnitTestModel {
 	 *
 	 * @param testRunSession the session to remove
 	 */
-	public void removeTestRunSession(ITestRunSession testRunSession) {
+	public void removeTestRunSession(TestRunSession testRunSession) {
 		boolean existed;
 		synchronized (this) {
 			existed = fTestRunSessions.remove(testRunSession);
@@ -419,12 +415,10 @@ public final class UnitTestModel {
 		if (existed) {
 			notifyTestRunSessionRemoved(testRunSession);
 		}
-		if (testRunSession instanceof TestRunSession) {
-			((TestRunSession) testRunSession).removeSwapFile();
-		}
+		testRunSession.removeSwapFile();
 	}
 
-	private void notifyTestRunSessionRemoved(ITestRunSession testRunSession) {
+	private void notifyTestRunSessionRemoved(TestRunSession testRunSession) {
 		testRunSession.stopTestRun();
 		ILaunch launch = testRunSession.getLaunch();
 		if (launch != null) {
