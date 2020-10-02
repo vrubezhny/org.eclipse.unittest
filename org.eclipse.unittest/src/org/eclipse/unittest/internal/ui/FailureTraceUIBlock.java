@@ -14,6 +14,8 @@
 package org.eclipse.unittest.internal.ui;
 
 import org.eclipse.unittest.internal.UnitTestPreferencesConstants;
+import org.eclipse.unittest.internal.model.TestElement;
+import org.eclipse.unittest.internal.model.TestRunSession;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.ui.ITestViewSupport;
@@ -132,8 +134,8 @@ public class FailureTraceUIBlock implements IMenuListener {
 	}
 
 	private IAction createOpenEditorAction(String traceLine) {
-		return fFailure.getTestRunSession().getTestViewSupport().createOpenEditorAction(fTestRunner, fFailure,
-				traceLine);
+		return ((TestElement) fFailure).getTestRunSession().getTestViewSupport().createOpenEditorAction(fTestRunner,
+				fFailure, traceLine);
 	}
 
 	/**
@@ -171,7 +173,11 @@ public class FailureTraceUIBlock implements IMenuListener {
 	}
 
 	private void updateActions(ITestElement test) {
-		ITestViewSupport testViewSupport = test != null ? fFailure.getTestRunSession().getTestViewSupport() : null;
+		if (!(test instanceof TestElement)) {
+			return;
+		}
+		TestElement testElement = (TestElement) test;
+		ITestViewSupport testViewSupport = test != null ? testElement.getTestRunSession().getTestViewSupport() : null;
 		fShowTraceInConsoleAction.setDelegate(testViewSupport != null && test.getFailureTrace() != null
 				? testViewSupport.createShowStackTraceInConsoleViewActionDelegate(test)
 				: null);
@@ -213,8 +219,12 @@ public class FailureTraceUIBlock implements IMenuListener {
 	 * @return an array of filter patterns
 	 */
 	public String[] getFilterPatterns(ITestRunSession session) {
-		if (session != null && session.getTestViewSupport() != null) {
-			return session.getTestViewSupport().getFilterPatterns();
+		if (session == null) {
+			return new String[0];
+		}
+		ITestViewSupport viewSupport = ((TestRunSession) session).getTestViewSupport();
+		if (viewSupport != null) {
+			return viewSupport.getFilterPatterns();
 		}
 		return new String[0];
 	}

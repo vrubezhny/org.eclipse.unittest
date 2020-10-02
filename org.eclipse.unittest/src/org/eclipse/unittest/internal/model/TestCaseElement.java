@@ -15,7 +15,6 @@
 package org.eclipse.unittest.internal.model;
 
 import org.eclipse.unittest.model.ITestCaseElement;
-import org.eclipse.unittest.model.ITestSuiteElement;
 
 import org.eclipse.core.runtime.Assert;
 
@@ -24,7 +23,7 @@ public class TestCaseElement extends TestElement implements ITestCaseElement {
 	private boolean fIgnored;
 	private boolean fIsDynamicTest;
 
-	public TestCaseElement(ITestSuiteElement parent, String id, String testName, String displayName,
+	public TestCaseElement(TestSuiteElement parent, String id, String testName, String displayName,
 			boolean isDynamicTest, String[] parameterTypes, String uniqueId) {
 		super(parent, id, testName, displayName, parameterTypes, uniqueId);
 		Assert.isNotNull(parent);

@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.unittest.model;
 
-import org.eclipse.unittest.ui.ITestViewSupport;
-
 import org.eclipse.debug.core.ILaunch;
 
 /**
@@ -43,14 +41,6 @@ public interface ITestRunSession extends ITestElementContainer {
 	 * @return the launched project, or <code>null</code> is not available.
 	 */
 	ILaunch getLaunch();
-
-	/**
-	 * Returns the Test Runner View Support for which this test run session has been
-	 * launched, or <code>null</code> if not available.
-	 *
-	 * @return the test runner view support, or <code>null</code> is not available.
-	 */
-	ITestViewSupport getTestViewSupport();
 
 	/**
 	 * Returns a test element by its identifier

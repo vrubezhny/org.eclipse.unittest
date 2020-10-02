@@ -19,14 +19,12 @@ import java.time.Instant;
 
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElementContainer;
-import org.eclipse.unittest.model.ITestRoot;
-import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestSuiteElement;
 
 import org.eclipse.core.runtime.Assert;
 
 public abstract class TestElement implements ITestElement {
-	private final ITestSuiteElement fParent;
+	private final TestSuiteElement fParent;
 	private final String fId;
 	private String fTestName;
 
@@ -69,8 +67,8 @@ public abstract class TestElement implements ITestElement {
 	 * @param uniqueId       the unique ID of the test element, can be
 	 *                       <code>null</code>
 	 */
-	public TestElement(ITestSuiteElement parent, String id, String testName, String displayName,
-			String[] parameterTypes, String uniqueId) {
+	public TestElement(TestSuiteElement parent, String id, String testName, String displayName, String[] parameterTypes,
+			String uniqueId) {
 		Assert.isNotNull(id);
 		Assert.isNotNull(testName);
 		fParent = parent;
@@ -98,7 +96,7 @@ public abstract class TestElement implements ITestElement {
 	}
 
 	@Override
-	public ITestRunSession getTestRunSession() {
+	public TestRunSession getTestRunSession() {
 		return getRoot().getTestRunSession();
 	}
 
@@ -121,7 +119,7 @@ public abstract class TestElement implements ITestElement {
 	}
 
 	@Override
-	public ITestSuiteElement getParent() {
+	public TestSuiteElement getParent() {
 		return fParent;
 	}
 
@@ -218,7 +216,7 @@ public abstract class TestElement implements ITestElement {
 	}
 
 	@Override
-	public ITestRoot getRoot() {
+	public TestRoot getRoot() {
 		return getParent().getRoot();
 	}
 

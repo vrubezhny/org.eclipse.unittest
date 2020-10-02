@@ -274,7 +274,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	}
 
 	@Override
-	public ITestRunSession getTestRunSession() {
+	public TestRunSession getTestRunSession() {
 		return this;
 	}
 
@@ -284,7 +284,12 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		return fTestRoot;
 	}
 
-	@Override
+	/**
+	 * Returns the Test Runner View Support for which this test run session has been
+	 * launched, or <code>null</code> if not available.
+	 *
+	 * @return the test runner view support, or <code>null</code> is not available.
+	 */
 	public ITestViewSupport getTestViewSupport() {
 		return fTestRunnerSupport;
 	}
@@ -520,8 +525,8 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			parameterTypes = Arrays.stream(parameterTypes).map(String::trim).toArray(String[]::new);
 		}
 		if (isSuite) {
-			TestSuiteElement testSuiteElement = new TestSuiteElement(parent, id, testName, testCount, displayName,
-					parameterTypes, uniqueId);
+			TestSuiteElement testSuiteElement = new TestSuiteElement((TestSuiteElement) parent, id, testName, testCount,
+					displayName, parameterTypes, uniqueId);
 			testElement = testSuiteElement;
 			if (testCount > 0) {
 				fIncompleteTestSuites.add(new IncompleteTestSuite(testSuiteElement, testCount));
@@ -529,8 +534,8 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 				fFactoryTestSuites.add(new IncompleteTestSuite(testSuiteElement, testCount));
 			}
 		} else {
-			testElement = new TestCaseElement(parent, id, testName, displayName, isDynamicTest, parameterTypes,
-					uniqueId);
+			testElement = new TestCaseElement((TestSuiteElement) parent, id, testName, displayName, isDynamicTest,
+					parameterTypes, uniqueId);
 		}
 		fIdToTest.put(id, testElement);
 		return testElement;
@@ -860,7 +865,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	}
 
 	@Override
-	public ITestSuiteElement getParent() {
+	public TestSuiteElement getParent() {
 		return null;
 	}
 

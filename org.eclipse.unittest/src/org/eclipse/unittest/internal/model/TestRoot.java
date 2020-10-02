@@ -14,13 +14,12 @@
 package org.eclipse.unittest.internal.model;
 
 import org.eclipse.unittest.model.ITestRoot;
-import org.eclipse.unittest.model.ITestRunSession;
 
 public class TestRoot extends TestSuiteElement implements ITestRoot {
 
-	private final ITestRunSession fSession;
+	private final TestRunSession fSession;
 
-	public TestRoot(ITestRunSession session) {
+	public TestRoot(TestRunSession session) {
 		super(null, "-1", session.getTestRunName(), 1, session.getTestRunName(), null, null); //$NON-NLS-1$
 		fSession = session;
 	}
@@ -31,7 +30,7 @@ public class TestRoot extends TestSuiteElement implements ITestRoot {
 	}
 
 	@Override
-	public ITestRunSession getTestRunSession() {
+	public TestRunSession getTestRunSession() {
 		return fSession;
 	}
 }

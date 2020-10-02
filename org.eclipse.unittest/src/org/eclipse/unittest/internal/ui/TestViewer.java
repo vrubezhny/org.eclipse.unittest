@@ -77,9 +77,9 @@ class TestViewer {
 		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			IStructuredSelection selection = (IStructuredSelection) fSelectionProvider.getSelection();
-			ITestElement testElement = null;
+			TestElement testElement = null;
 			if (selection.size() == 1) {
-				testElement = (ITestElement) selection.getFirstElement();
+				testElement = (TestElement) selection.getFirstElement();
 			}
 			fTestRunnerPart.handleTestSelected(testElement);
 		}
@@ -363,7 +363,7 @@ class TestViewer {
 		if (selection.size() != 1)
 			return;
 
-		ITestElement testElement = (ITestElement) selection.getFirstElement();
+		TestElement testElement = (TestElement) selection.getFirstElement();
 		IAction action;
 		if (testElement instanceof ITestSuiteElement) {
 			action = testElement.getTestRunSession().getTestViewSupport().getOpenTestAction(fTestRunnerPart,
