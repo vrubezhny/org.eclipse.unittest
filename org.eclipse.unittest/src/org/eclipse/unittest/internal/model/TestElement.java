@@ -24,18 +24,17 @@ import org.eclipse.core.runtime.Assert;
 public abstract class TestElement implements ITestElement {
 	private final TestSuiteElement fParent;
 	private final String fId;
-	private String fTestName;
+	private final String fTestName;
+	/**
+	 * The unique ID of the test element which can be <code>null</code>
+	 */
+	private final String fUniqueId;
 
 	/**
 	 * The display name of the test element, can be <code>null</code>. In that case,
 	 * use {@link TestElement#fTestName fTestName}.
 	 */
-	private String fDisplayName;
-
-	/**
-	 * The unique ID of the test element which can be <code>null</code>
-	 */
-	private String fUniqueId;
+	private final String fDisplayName;
 
 	private Status fStatus;
 	protected FailureTrace fTrace;
@@ -48,14 +47,12 @@ public abstract class TestElement implements ITestElement {
 	/**
 	 * Constructs the test element object
 	 *
-	 * @param parent         the parent, can be <code>null</code>
-	 * @param id             the test id
-	 * @param testName       the test name
-	 * @param displayName    the test display name, can be <code>null</code>
-	 * @param parameterTypes the array of method parameter types if applicable,
-	 *                       otherwise <code>null</code>
-	 * @param uniqueId       the unique ID of the test element, can be
-	 *                       <code>null</code>
+	 * @param parent      the parent, can be <code>null</code>
+	 * @param id          the test id
+	 * @param testName    the test name
+	 * @param displayName the test display name, can be <code>null</code>
+	 * @param uniqueId    the unique ID of the test element, can be
+	 *                    <code>null</code>
 	 */
 	public TestElement(TestSuiteElement parent, String id, String testName, String displayName, String uniqueId) {
 		Assert.isNotNull(id);
@@ -168,10 +165,6 @@ public abstract class TestElement implements ITestElement {
 		return fTestName;
 	}
 
-	public void setName(String name) {
-		fTestName = name;
-	}
-
 	/**
 	 * Sets the current test element status
 	 *
@@ -269,7 +262,7 @@ public abstract class TestElement implements ITestElement {
 
 	@Override
 	public String getDisplayName() {
-		return fDisplayName;
+		return fDisplayName != null ? fDisplayName : getTestName();
 	}
 
 	@Override
