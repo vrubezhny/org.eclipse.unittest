@@ -25,20 +25,6 @@ package org.eclipse.unittest.model;
 public interface ITestCaseElement extends ITestElement {
 
 	/**
-	 * Returns the name of the test method.
-	 *
-	 * @return returns the name of the test method.
-	 */
-	String getTestMethodName();
-
-	/**
-	 * Returns the qualified type name of the class the test is contained in.
-	 *
-	 * @return the qualified type name of the class the test is contained in.
-	 */
-	String getTestClassName();
-
-	/**
 	 * Sets ignored flag on the test case
 	 *
 	 * @param ignored an ignored flag value

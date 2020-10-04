@@ -102,7 +102,7 @@ public class CDTTestRunnerClient implements ITestRunnerClient {
 			this.fCurrentTestSuite = cRef.id;
 
 			fTestRunSession.notifyTestTreeEntry(cRef.id, cRef.name, cRef.isSuite, 0, true, cRef.parentId,
-					cRef.name, null, null);
+					cRef.name, null);
 		}
 
 		@Override
@@ -141,7 +141,7 @@ public class CDTTestRunnerClient implements ITestRunnerClient {
 			fFailedTrace.setLength(0);
 
 			fTestRunSession.notifyTestTreeEntry(cRef.id, cRef.name, cRef.isSuite, 0, true, cRef.parentId,
-					cRef.name, null, null);
+					cRef.name,  null);
 
 			fTestRunSession.notifyTestStarted(cRef.id, cRef.name);
 		}

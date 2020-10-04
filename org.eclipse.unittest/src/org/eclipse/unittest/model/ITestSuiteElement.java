@@ -21,12 +21,5 @@ package org.eclipse.unittest.model;
  */
 public interface ITestSuiteElement extends ITestElementContainer {
 
-	/**
-	 * Returns the name of the suite. This is either the qualified type name of the
-	 * suite class, or a custom name if one has been set.
-	 *
-	 * @return the name of the suite
-	 */
-	String getSuiteTypeName();
-
+	// nothing specific to add
 }

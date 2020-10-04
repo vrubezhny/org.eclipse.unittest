@@ -57,19 +57,17 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 	public String[] getFilterPatterns() {
 		return JUnitPreferencesConstants.parseList(Platform.getPreferencesService().getString(
 				JUnitCorePlugin.CORE_PLUGIN_ID, JUnitPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, null, null));
-
 	}
 
 	@Override
 	public IAction getOpenTestAction(IViewPart testRunnerPart, ITestCaseElement testCase) {
-		return new OpenTestAction(testRunnerPart, testCase, testCase.getParameterTypes());
+		return new OpenTestAction(testRunnerPart, testCase, getParameterTypes(testCase));
 	}
 
 	@Override
 	public IAction getOpenTestAction(IViewPart testRunnerPart, ITestSuiteElement testSuite) {
-		String testName = testSuite.getSuiteTypeName();
+		String testName = testSuite.getTestName();
 		List<? extends ITestElement> children = testSuite.getChildren();
-
 		if (testName.startsWith("[") && testName.endsWith("]") && !children.isEmpty() //$NON-NLS-1$ //$NON-NLS-2$
 				&& children.get(0) instanceof ITestCaseElement) {
 			// a group of parameterized tests
@@ -79,8 +77,8 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 		int index = testName.indexOf('(');
 		// test factory method
 		if (index > 0) {
-			return new OpenTestAction(testRunnerPart, testSuite.getSuiteTypeName(), testName.substring(0, index),
-					testSuite.getParameterTypes(), true, testSuite.getTestRunSession());
+			return new OpenTestAction(testRunnerPart, testSuite.getTestName(), testName.substring(0, index),
+					getParameterTypes(testSuite), true, testSuite.getTestRunSession());
 		}
 
 		// regular test class
@@ -156,7 +154,7 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 					testMethodName = testName.substring(0, index);
 				}
 			}
-			String[] parameterTypes = testSuite.getParameterTypes();
+			String[] parameterTypes = getParameterTypes(testSuite);
 			if (testMethodName != null && parameterTypes != null) {
 				String paramTypesStr = Arrays.stream(parameterTypes).collect(Collectors.joining(",")); //$NON-NLS-1$
 				testMethodName = testMethodName + "(" + paramTypesStr + ")"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -167,7 +165,7 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 			if (testType != null && testSuite instanceof ITestSuiteElement) {
 				qualifiedName = testType.getFullyQualifiedName();
 
-				String className = ((ITestSuiteElement) testSuite).getSuiteTypeName();
+				String className = getClassName(testSuite);
 				if (!qualifiedName.equals(className)) {
 					testMethodName = testName;
 				}
@@ -206,7 +204,7 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 						}
 					}
 				} else {
-					className = current.getClassName();
+					className = getClassName(current);
 				}
 
 				if (className != null) {
@@ -237,4 +235,73 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 		String portAsString = session.getLaunch().getAttribute(JUnitLaunchConfigurationDelegate.ATTR_PORT);
 		return new JUnitRemoteTestRunnerClient(portAsString != null ? Integer.parseInt(portAsString) : -1, session);
 	}
+
+	/**
+	 * Returns the parameter types specified for this test element
+	 *
+	 * @param test test
+	 * @return a parameter type array
+	 */
+	private String[] getParameterTypes(ITestElement test) {
+		String testName = test.getUniqueId();
+		int index = testName.lastIndexOf("method:"); //$NON-NLS-1$
+		index = testName.indexOf('(', index);
+		if (index > 0) {
+			int closeIndex = testName.indexOf(')', index);
+			if (closeIndex > 0) {
+				String params = testName.substring(index + 1, closeIndex);
+				return params.split(","); //$NON-NLS-1$
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the type/class of the test element
+	 *
+	 * @param test test
+	 * @return return the type/class name
+	 */
+	public static String getClassName(ITestElement test) {
+		return extractClassName(test.getTestName());
+	}
+
+	private static String extractClassName(String testNameString) {
+		testNameString = extractRawClassName(testNameString);
+		testNameString = testNameString.replace('$', '.'); // see bug 178503
+		return testNameString;
+	}
+
+	/**
+	 * Extracts and returns a raw class name from a test element name
+	 *
+	 * @param testNameString a test element name
+	 *
+	 * @return an extracted raw class name
+	 */
+	public static String extractRawClassName(String testNameString) {
+		if (testNameString.startsWith("[") && testNameString.endsWith("]")) { //$NON-NLS-1$ //$NON-NLS-2$
+			// a group of parameterized tests, see
+			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=102512
+			return testNameString;
+		}
+		int index = testNameString.lastIndexOf('(');
+		if (index < 0)
+			return testNameString;
+		int end = testNameString.lastIndexOf(')');
+		testNameString = testNameString.substring(index + 1, end > index ? end : testNameString.length());
+		return testNameString;
+	}
+
+	public static String getTestMethodName(ITestElement test) {
+		String testName = test.getTestName();
+		int index = testName.lastIndexOf('(');
+		if (index > 0)
+			return testName.substring(0, index);
+		index = testName.indexOf('@');
+		if (index > 0)
+			return testName.substring(0, index);
+		return testName;
+	}
+
 }

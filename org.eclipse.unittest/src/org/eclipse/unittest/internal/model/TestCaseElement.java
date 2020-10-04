@@ -24,27 +24,10 @@ public class TestCaseElement extends TestElement implements ITestCaseElement {
 	private boolean fIsDynamicTest;
 
 	public TestCaseElement(TestSuiteElement parent, String id, String testName, String displayName,
-			boolean isDynamicTest, String[] parameterTypes, String uniqueId) {
-		super(parent, id, testName, displayName, parameterTypes, uniqueId);
+			boolean isDynamicTest, String uniqueId) {
+		super(parent, id, testName, displayName, uniqueId);
 		Assert.isNotNull(parent);
 		fIsDynamicTest = isDynamicTest;
-	}
-
-	@Override
-	public String getTestMethodName() {
-		String testName = getTestName();
-		int index = testName.lastIndexOf('(');
-		if (index > 0)
-			return testName.substring(0, index);
-		index = testName.indexOf('@');
-		if (index > 0)
-			return testName.substring(0, index);
-		return testName;
-	}
-
-	@Override
-	public String getTestClassName() {
-		return getClassName();
 	}
 
 	@Override
@@ -67,7 +50,7 @@ public class TestCaseElement extends TestElement implements ITestCaseElement {
 
 	@Override
 	public String toString() {
-		return "TestCase: " + getTestClassName() + "." + getTestMethodName() + " : " + super.toString(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return "TestCase: " + super.toString(); //$NON-NLS-1$
 	}
 
 	@Override

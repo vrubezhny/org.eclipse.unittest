@@ -647,7 +647,7 @@ class TestViewer {
 				if (previousAutoOpened.equals(parent))
 					break;
 
-				if (((TestCaseElement) previousAutoOpened).getStatus() == Status.OK) {
+				if (((TestElement) previousAutoOpened).getStatus() == Status.OK) {
 					// auto-opened the element, and all children are OK -> auto close
 					iter.remove();
 					fTreeViewer.collapseToLevel(previousAutoOpened, AbstractTreeViewer.ALL_LEVELS);

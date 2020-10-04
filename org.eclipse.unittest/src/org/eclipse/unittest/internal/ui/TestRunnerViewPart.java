@@ -671,11 +671,7 @@ public class TestRunnerViewPart extends ViewPart {
 		public void testStarted(ITestCaseElement testCaseElement) {
 			fTestViewer.registerAutoScrollTarget(testCaseElement);
 			fTestViewer.registerViewerUpdate(testCaseElement);
-
-			String className = BasicElementLabels.getJavaElementName(testCaseElement.getTestClassName());
-			String method = BasicElementLabels.getJavaElementName(testCaseElement.getTestMethodName());
-			String status = MessageFormat.format(Messages.TestRunnerViewPart_message_started, className, method);
-			registerInfoMessage(status);
+			registerInfoMessage(testCaseElement.getDisplayName());
 		}
 
 		@Override

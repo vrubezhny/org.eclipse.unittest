@@ -86,22 +86,21 @@ public interface ITestRunListener {
 	/**
 	 * Information about a member of the test suite that is about to be run.
 	 *
-	 * @param testId         a unique id for the test
-	 * @param testName       the name of the test
-	 * @param isSuite        true or false depending on whether the test is a suite
-	 * @param testCount      an integer indicating the number of tests
-	 * @param isDynamicTest  true or false
-	 * @param parentId       the unique testId of its parent if it is a dynamic
-	 *                       test, otherwise can be "-1"
-	 * @param displayName    the display name of the test
-	 * @param parameterTypes comma-separated list of method parameter types if
-	 *                       applicable, otherwise an empty string
-	 * @param uniqueId       the unique ID of the test provided, otherwise an empty
-	 *                       string
+	 * @param testId        a unique id for the test
+	 * @param testName      the name of the test
+	 * @param isSuite       true or false depending on whether the test is a suite
+	 * @param testCount     an integer indicating the number of tests
+	 * @param isDynamicTest true or false
+	 * @param parentId      the unique testId of its parent if it is a dynamic test,
+	 *                      otherwise can be "-1"
+	 * @param displayName   the display name of the test applicable, otherwise an
+	 *                      empty string
+	 * @param uniqueId      the unique ID of the test provided, otherwise an empty
+	 *                      string
 	 */
 
 	void testTreeEntry(String testId, String testName, boolean isSuite, int testCount, boolean isDynamicTest,
-			String parentId, String displayName, String[] parameterTypes, String uniqueId);
+			String parentId, String displayName, String uniqueId);
 
 	/**
 	 * An individual test has failed with a stack trace.

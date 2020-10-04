@@ -168,7 +168,7 @@ public class FailureTraceUIBlock implements IMenuListener {
 		String trace = ""; //$NON-NLS-1$
 		updateActions(test);
 		updateEnablement(test);
-		if (test != null) {
+		if (test != null && test.getFailureTrace() != null) {
 			trace = test.getFailureTrace().getTrace();
 		}
 		if (Objects.equals(fInputTrace, trace)) {

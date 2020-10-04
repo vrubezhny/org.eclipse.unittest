@@ -29,8 +29,8 @@ public class TestSuiteElement extends TestElement implements ITestSuiteElement {
 	private Status fChildrenStatus;
 
 	public TestSuiteElement(TestSuiteElement parent, String id, String testName, int childrenCount, String displayName,
-			String[] parameterTypes, String uniqueId) {
-		super(parent, id, testName, displayName, parameterTypes, uniqueId);
+			String uniqueId) {
+		super(parent, id, testName, displayName, uniqueId);
 		fChildren = new ArrayList<>(childrenCount);
 	}
 
@@ -41,11 +41,6 @@ public class TestSuiteElement extends TestElement implements ITestSuiteElement {
 		} else {
 			return super.getStatus().convertToResult();
 		}
-	}
-
-	@Override
-	public String getSuiteTypeName() {
-		return getClassName();
 	}
 
 	@Override

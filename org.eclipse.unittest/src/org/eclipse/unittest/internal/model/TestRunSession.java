@@ -150,7 +150,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	 * @param testRunName name of the test run
 	 */
 	public TestRunSession(String testRunName) {
-		super(null, "-1", testRunName, null, null, null); //$NON-NLS-1$
+		super(null, "-1", testRunName, null, null); //$NON-NLS-1$
 		// TODO: check assumptions about non-null fields
 
 		fLaunch = null;
@@ -169,7 +169,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	}
 
 	public TestRunSession(ILaunch launch) {
-		super(null, "-1", "<TestRunSession>", null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
+		super(null, "-1", "<TestRunSession>", null, null); //$NON-NLS-1$ //$NON-NLS-2$
 		Assert.isNotNull(launch);
 
 		fLaunch = launch;
@@ -476,22 +476,22 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	}
 
 	private TestElement addTreeEntry(String id, String testName, boolean isSuite, int testCount, boolean isDynamicTest,
-			String parentId, String displayName, String[] parameterTypes, String uniqueId) {
+			String parentId, String displayName, String uniqueId) {
 		if (isDynamicTest) {
 			if (parentId != null) {
 				for (IncompleteTestSuite suite : fFactoryTestSuites) {
 					if (parentId.equals(suite.fTestSuiteElement.getId())) {
 						return createTestElement(suite.fTestSuiteElement, id, testName, isSuite, testCount,
-								isDynamicTest, displayName, parameterTypes, uniqueId);
+								isDynamicTest, displayName, uniqueId);
 					}
 				}
 			}
 			return createTestElement(getUnrootedSuite(), id, testName, isSuite, testCount, isDynamicTest, displayName,
-					parameterTypes, uniqueId); // should not reach here
+					uniqueId); // should not reach here
 		} else {
 			if (fIncompleteTestSuites.isEmpty()) {
 				return createTestElement(fTestRoot, id, testName, isSuite, testCount, isDynamicTest, displayName,
-						parameterTypes, uniqueId);
+						uniqueId);
 			} else {
 				int suiteIndex = fIncompleteTestSuites.size() - 1;
 				IncompleteTestSuite openSuite = fIncompleteTestSuites.get(suiteIndex);
@@ -499,7 +499,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 				if (openSuite.fOutstandingChildren <= 0)
 					fIncompleteTestSuites.remove(suiteIndex);
 				return createTestElement(openSuite.fTestSuiteElement, id, testName, isSuite, testCount, isDynamicTest,
-						displayName, parameterTypes, uniqueId);
+						displayName, uniqueId);
 			}
 		}
 	}
@@ -525,14 +525,11 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	 *         instance
 	 */
 	public TestElement createTestElement(ITestSuiteElement parent, String id, String testName, boolean isSuite,
-			int testCount, boolean isDynamicTest, String displayName, String[] parameterTypes, String uniqueId) {
+			int testCount, boolean isDynamicTest, String displayName, String uniqueId) {
 		TestElement testElement;
-		if (parameterTypes != null && parameterTypes.length > 1) {
-			parameterTypes = Arrays.stream(parameterTypes).map(String::trim).toArray(String[]::new);
-		}
 		if (isSuite) {
 			TestSuiteElement testSuiteElement = new TestSuiteElement((TestSuiteElement) parent, id, testName, testCount,
-					displayName, parameterTypes, uniqueId);
+					displayName, uniqueId);
 			testElement = testSuiteElement;
 			if (testCount > 0) {
 				fIncompleteTestSuites.add(new IncompleteTestSuite(testSuiteElement, testCount));
@@ -541,7 +538,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			}
 		} else {
 			testElement = new TestCaseElement((TestSuiteElement) parent, id, testName, displayName, isDynamicTest,
-					parameterTypes, uniqueId);
+					uniqueId);
 		}
 		fIdToTest.put(id, testElement);
 		return testElement;
@@ -551,7 +548,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		if (fUnrootedSuite == null) {
 			fUnrootedSuite = (TestSuiteElement) createTestElement(fTestRoot, "-2", //$NON-NLS-1$
 					ModelMessages.TestRunSession_unrootedTests, true, 0, false,
-					ModelMessages.TestRunSession_unrootedTests, null, null);
+					ModelMessages.TestRunSession_unrootedTests, null);
 		}
 		return fUnrootedSuite;
 	}
@@ -614,9 +611,9 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 
 		@Override
 		public void testTreeEntry(String testId, String testName, boolean isSuite, int testCount, boolean isDynamicTest,
-				String parentId, String displayName, String[] parameterTypes, String uniqueId) {
+				String parentId, String displayName, String uniqueId) {
 			ITestElement testElement = addTreeEntry(testId, testName, isSuite, testCount, isDynamicTest, parentId,
-					displayName, parameterTypes, uniqueId);
+					displayName, uniqueId);
 
 			for (ITestSessionListener listener : fSessionListeners) {
 				listener.testAdded(testElement);
@@ -626,7 +623,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		private ITestElement createUnrootedTestElement(String testId, String testName) {
 			ITestSuiteElement unrootedSuite = getUnrootedSuite();
 			ITestElement testElement = createTestElement(unrootedSuite, testId, testName, false, 1, false, testName,
-					null, null);
+					null);
 
 			for (ITestSessionListener listener : fSessionListeners) {
 				listener.testAdded(testElement);
@@ -874,11 +871,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	}
 
 	@Override
-	public String[] getParameterTypes() {
-		return null;
-	}
-
-	@Override
 	public String getTestName() {
 		return getTestRunName();
 	}
@@ -903,28 +895,12 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		}
 	}
 
-	/**
-	 * Notifies on a member of the test suite that is about to be run.
-	 *
-	 * @param testId         a unique id for the test
-	 * @param testName       the name of the test
-	 * @param isSuite        true or false depending on whether the test is a suite
-	 * @param testCount      an integer indicating the number of tests
-	 * @param isDynamicTest  true or false
-	 * @param parentId       the unique testId of its parent if it is a dynamic
-	 *                       test, otherwise can be "-1"
-	 * @param displayName    the display name of the test
-	 * @param parameterTypes comma-separated list of method parameter types if
-	 *                       applicable, otherwise an empty string
-	 * @param uniqueId       the unique ID of the test provided, otherwise an empty
-	 *                       string
-	 */
 	@Override
 	public void notifyTestTreeEntry(String testId, String testName, boolean isSuite, int testCount,
-			boolean isDynamicTest, String parentId, String displayName, String[] parameterTypes, String uniqueId) {
+			boolean isDynamicTest, String parentId, String displayName, String uniqueId) {
 		for (ITestRunListener listener : testRunListeners) {
 			listener.testTreeEntry(testId, testName, isSuite, testCount, isDynamicTest, parentId, displayName,
-					parameterTypes, uniqueId);
+					uniqueId);
 		}
 	}
 

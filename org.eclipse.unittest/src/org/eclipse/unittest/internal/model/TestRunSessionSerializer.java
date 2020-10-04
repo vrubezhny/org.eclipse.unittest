@@ -15,12 +15,6 @@
 package org.eclipse.unittest.internal.model;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.stream.Collectors;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -50,13 +44,6 @@ public class TestRunSessionSerializer implements XMLReader {
 	private final TestRunSession fTestRunSession;
 	private ContentHandler fHandler;
 	private ErrorHandler fErrorHandler;
-
-	private final NumberFormat timeFormat = new DecimalFormat("0.0##", new DecimalFormatSymbols(Locale.US)); //$NON-NLS-1$ //
-																												// not
-																												// localized,
-																												// parseable
-																												// by
-																												// Double.parseDouble(..)
 
 	/**
 	 * @param testRunSession the test run session to serialize
@@ -127,11 +114,6 @@ public class TestRunSessionSerializer implements XMLReader {
 			if (testSuiteElement.getDisplayName() != null) {
 				addCDATA(atts, IXMLTags.ATTR_DISPLAY_NAME, testSuiteElement.getDisplayName());
 			}
-			String[] paramTypes = testSuiteElement.getParameterTypes();
-			if (paramTypes != null) {
-				String paramTypesStr = Arrays.stream(paramTypes).collect(Collectors.joining(",")); //$NON-NLS-1$
-				addCDATA(atts, IXMLTags.ATTR_PARAMETER_TYPES, paramTypesStr);
-			}
 			if (testSuiteElement.getUniqueId() != null) {
 				addCDATA(atts, IXMLTags.ATTR_UNIQUE_ID, testSuiteElement.getUniqueId());
 			}
@@ -147,8 +129,6 @@ public class TestRunSessionSerializer implements XMLReader {
 			TestCaseElement testCaseElement = (TestCaseElement) testElement;
 
 			AttributesImpl atts = new AttributesImpl();
-			addCDATA(atts, IXMLTags.ATTR_NAME, testCaseElement.getTestMethodName());
-			addCDATA(atts, IXMLTags.ATTR_CLASSNAME, testCaseElement.getClassName());
 			if (testCaseElement.getDuration() != null) {
 				addCDATA(atts, IXMLTags.ATTR_TIME, testCaseElement.getDuration().toString());
 			}
@@ -161,11 +141,6 @@ public class TestRunSessionSerializer implements XMLReader {
 			}
 			if (testCaseElement.getDisplayName() != null) {
 				addCDATA(atts, IXMLTags.ATTR_DISPLAY_NAME, testCaseElement.getDisplayName());
-			}
-			String[] paramTypes = testCaseElement.getParameterTypes();
-			if (paramTypes != null) {
-				String paramTypesStr = Arrays.stream(paramTypes).collect(Collectors.joining(",")); //$NON-NLS-1$
-				addCDATA(atts, IXMLTags.ATTR_PARAMETER_TYPES, paramTypesStr);
 			}
 			if (testCaseElement.getUniqueId() != null) {
 				addCDATA(atts, IXMLTags.ATTR_UNIQUE_ID, testCaseElement.getUniqueId());

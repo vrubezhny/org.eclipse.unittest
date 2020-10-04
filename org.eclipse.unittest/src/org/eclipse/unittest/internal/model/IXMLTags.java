@@ -93,10 +93,6 @@ public interface IXMLTags {
 	/**
 	 * value: String
 	 */
-	String ATTR_PARAMETER_TYPES = "parameters"; //$NON-NLS-1$
-	/**
-	 * value: String
-	 */
 	String ATTR_UNIQUE_ID = "uniqueid"; //$NON-NLS-1$
 
 	/**

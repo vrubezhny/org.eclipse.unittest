@@ -21,6 +21,7 @@ import org.eclipse.unittest.internal.model.Status;
 import org.eclipse.unittest.internal.model.TestCaseElement;
 import org.eclipse.unittest.internal.model.TestElement;
 import org.eclipse.unittest.internal.model.TestSuiteElement;
+import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestRunSession;
 
 import org.eclipse.swt.graphics.Image;
@@ -57,26 +58,24 @@ class TestSessionLabelProvider extends LabelProvider implements IStyledLabelProv
 
 	@Override
 	public StyledString getStyledText(Object element) {
-		String label = getSimpleLabel(element);
-		if (label == null) {
+		if (!(element instanceof ITestElement)) {
 			return new StyledString(element.toString());
 		}
-		StyledString text = new StyledString(label);
-
 		TestElement testElement = (TestElement) element;
+		StyledString text = new StyledString(testElement.getDisplayName());
 		if (fLayoutMode == TestRunnerViewPart.LAYOUT_HIERARCHICAL) {
 			if (testElement.getParentContainer() instanceof ITestRunSession) {
 				String displayName = fTestRunnerPart.getDisplayName();
 				if (displayName != null) {
 					String decorated = MessageFormat.format(Messages.TestSessionLabelProvider_testName_RunnerVersion,
-							label, displayName);
+							text.getString(), displayName);
 					text = StyledCellLabelProvider.styleDecoratedString(decorated, StyledString.QUALIFIER_STYLER, text);
 				}
 			}
 
 		} else {
 			if (element instanceof TestCaseElement) {
-				String decorated = getTextForFlatLayout((TestCaseElement) testElement, label);
+				String decorated = getTextForFlatLayout((TestCaseElement) testElement, text.getString());
 				text = StyledCellLabelProvider.styleDecoratedString(decorated, StyledString.QUALIFIER_STYLER, text);
 			}
 		}
@@ -89,11 +88,7 @@ class TestSessionLabelProvider extends LabelProvider implements IStyledLabelProv
 		if (parentDisplayName != null) {
 			parentName = parentDisplayName;
 		} else {
-			if (testCaseElement.isDynamicTest()) {
-				parentName = testCaseElement.getTestMethodName();
-			} else {
-				parentName = testCaseElement.getTestClassName();
-			}
+			parentName = testCaseElement.getTestName();
 		}
 		return MessageFormat.format(Messages.TestSessionLabelProvider_testMethodName_className, label,
 				BasicElementLabels.getJavaElementName(parentName));
@@ -112,28 +107,13 @@ class TestSessionLabelProvider extends LabelProvider implements IStyledLabelProv
 		return MessageFormat.format(Messages.TestSessionLabelProvider_testName_elapsedTimeInSeconds, string, duration);
 	}
 
-	private String getSimpleLabel(Object element) {
-		if (element instanceof TestCaseElement) {
-			TestCaseElement testCaseElement = (TestCaseElement) element;
-			String displayName = testCaseElement.getDisplayName();
-			return BasicElementLabels
-					.getJavaElementName(displayName != null ? displayName : testCaseElement.getTestMethodName());
-		} else if (element instanceof TestSuiteElement) {
-			TestSuiteElement testSuiteElement = (TestSuiteElement) element;
-			String displayName = testSuiteElement.getDisplayName();
-			return BasicElementLabels
-					.getJavaElementName(displayName != null ? displayName : testSuiteElement.getSuiteTypeName());
-		}
-		return null;
-	}
-
 	@Override
 	public String getText(Object element) {
-		String label = getSimpleLabel(element);
-		if (label == null) {
+		if (!(element instanceof ITestElement)) {
 			return element.toString();
 		}
 		TestElement testElement = (TestElement) element;
+		String label = testElement.getDisplayName();
 		if (fLayoutMode == TestRunnerViewPart.LAYOUT_HIERARCHICAL) {
 			if (testElement.getParentContainer() instanceof ITestRunSession) {
 				String displayName = fTestRunnerPart.getDisplayName();

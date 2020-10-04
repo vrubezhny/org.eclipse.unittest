@@ -20,7 +20,7 @@ public class TestRoot extends TestSuiteElement implements ITestRoot {
 	private final TestRunSession fSession;
 
 	public TestRoot(TestRunSession session) {
-		super(null, "-1", session.getTestRunName(), 1, session.getTestRunName(), null, null); //$NON-NLS-1$
+		super(null, "-1", session.getTestRunName(), 1, session.getTestRunName(), null); //$NON-NLS-1$
 		fSession = session;
 	}
 

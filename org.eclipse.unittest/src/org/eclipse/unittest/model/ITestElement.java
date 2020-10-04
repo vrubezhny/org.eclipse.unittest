@@ -156,25 +156,11 @@ public interface ITestElement {
 	ITestSuiteElement getParent();
 
 	/**
-	 * Returns the parameter types specified for this test element
-	 *
-	 * @return a parameter type array
-	 */
-	String[] getParameterTypes();
-
-	/**
 	 * Returns the name of the test element
 	 *
 	 * @return a name of test element
 	 */
 	String getTestName();
-
-	/**
-	 * Returns the type/class of the test element
-	 *
-	 * @return return the type/class name
-	 */
-	String getClassName();
 
 	/**
 	 * Returns the display name of the test. Can be <code>null</code>. In that case,
@@ -183,14 +169,5 @@ public interface ITestElement {
 	 * @return the test display name, can be <code>null</code>
 	 */
 	String getDisplayName();
-
-	/**
-	 * Extracts and returns a raw class name from a test element name
-	 *
-	 * @param testNameString a test element name
-	 *
-	 * @return an extracted raw class name
-	 */
-	String extractRawClassName(String testNameString);
 
 }

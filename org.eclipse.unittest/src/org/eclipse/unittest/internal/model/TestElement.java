@@ -33,12 +33,6 @@ public abstract class TestElement implements ITestElement {
 	private String fDisplayName;
 
 	/**
-	 * The array of method parameter types if applicable, otherwise
-	 * <code>null</code>.
-	 */
-	private String[] fParameterTypes;
-
-	/**
 	 * The unique ID of the test element which can be <code>null</code>
 	 */
 	private String fUniqueId;
@@ -63,15 +57,13 @@ public abstract class TestElement implements ITestElement {
 	 * @param uniqueId       the unique ID of the test element, can be
 	 *                       <code>null</code>
 	 */
-	public TestElement(TestSuiteElement parent, String id, String testName, String displayName, String[] parameterTypes,
-			String uniqueId) {
+	public TestElement(TestSuiteElement parent, String id, String testName, String displayName, String uniqueId) {
 		Assert.isNotNull(id);
 		Assert.isNotNull(testName);
 		fParent = parent;
 		fId = id;
 		fTestName = testName;
 		fDisplayName = displayName;
-		fParameterTypes = parameterTypes;
 		fUniqueId = uniqueId;
 		fStatus = Status.NOT_RUN;
 		if (parent != null) {
@@ -234,32 +226,6 @@ public abstract class TestElement implements ITestElement {
 		return fStatus;
 	}
 
-	@Override
-	public String getClassName() {
-		return extractClassName(getTestName());
-	}
-
-	private String extractClassName(String testNameString) {
-		testNameString = extractRawClassName(testNameString);
-		testNameString = testNameString.replace('$', '.'); // see bug 178503
-		return testNameString;
-	}
-
-	@Override
-	public String extractRawClassName(String testNameString) {
-		if (testNameString.startsWith("[") && testNameString.endsWith("]")) { //$NON-NLS-1$ //$NON-NLS-2$
-			// a group of parameterized tests, see
-			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=102512
-			return testNameString;
-		}
-		int index = testNameString.lastIndexOf('(');
-		if (index < 0)
-			return testNameString;
-		int end = testNameString.lastIndexOf(')');
-		testNameString = testNameString.substring(index + 1, end > index ? end : testNameString.length());
-		return testNameString;
-	}
-
 	/**
 	 * Returns the root test element
 	 *
@@ -298,17 +264,12 @@ public abstract class TestElement implements ITestElement {
 
 	@Override
 	public String toString() {
-		return getProgressState() + " - " + getTestResult(true); //$NON-NLS-1$
+		return getTestName() + '[' + getProgressState() + " - " + getTestResult(true) + ']'; //$NON-NLS-1$
 	}
 
 	@Override
 	public String getDisplayName() {
 		return fDisplayName;
-	}
-
-	@Override
-	public String[] getParameterTypes() {
-		return fParameterTypes;
 	}
 
 	@Override

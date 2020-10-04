@@ -436,7 +436,7 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 		}
 
 		fTestRunSession.notifyTestTreeEntry(id, testName, isSuite, testCount, isDynamicTest, parentId, displayName,
-				parameterTypes, uniqueId);
+				uniqueId);
 	}
 
 	/**

@@ -89,7 +89,6 @@ public final class Messages extends NLS {
 	public static String TestRunnerViewPart_label_failure;
 	public static String TestRunnerViewPart_Launching;
 	public static String TestRunnerViewPart_message_finish;
-	public static String TestRunnerViewPart_message_started;
 	public static String TestRunnerViewPart_message_stopped;
 	public static String TestRunnerViewPart_message_terminated;
 	public static String TestRunnerViewPart_rerunaction_label;
