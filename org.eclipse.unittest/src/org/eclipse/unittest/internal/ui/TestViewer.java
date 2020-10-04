@@ -14,10 +14,9 @@
 
 package org.eclipse.unittest.internal.ui;
 
-import java.util.ArrayList;
+import java.util.AbstractList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -143,6 +142,24 @@ class TestViewer {
 			}
 
 			return testElement.getTestResult(false) == Result.IGNORED;
+		}
+	}
+
+	private static class ReverseList<E> extends AbstractList<E> {
+		private final List<E> fList;
+
+		public ReverseList(List<E> list) {
+			fList = list;
+		}
+
+		@Override
+		public E get(int index) {
+			return fList.get(fList.size() - index - 1);
+		}
+
+		@Override
+		public int size() {
+			return fList.size();
 		}
 	}
 
@@ -692,10 +709,8 @@ class TestViewer {
 			return null;
 
 		List<TestElement> siblings = parent.getChildren();
-		if (!showNext) {
-			siblings = new ArrayList<>(siblings);
-			Collections.reverse(siblings);
-		}
+		if (!showNext)
+			siblings = new ReverseList<>(siblings);
 
 		int nextIndex = siblings.indexOf(current) + 1;
 		for (int i = nextIndex; i < siblings.size(); i++) {
@@ -717,10 +732,8 @@ class TestViewer {
 
 	private TestElement getNextChildFailure(TestSuiteElement root, boolean showNext) {
 		List<TestElement> children = root.getChildren();
-		if (!showNext) {
-			children = new ArrayList<>(children);
-			Collections.reverse(children);
-		}
+		if (!showNext)
+			children = new ReverseList<>(children);
 		for (TestElement child : children) {
 			if (child.getStatus().isErrorOrFailure()) {
 				if (child instanceof ITestCaseElement) {
