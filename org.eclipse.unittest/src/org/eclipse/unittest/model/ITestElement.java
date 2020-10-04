@@ -14,6 +14,7 @@
 package org.eclipse.unittest.model;
 
 import java.time.Duration;
+import java.util.Objects;
 
 import org.eclipse.unittest.internal.model.ProgressState;
 
@@ -97,6 +98,10 @@ public interface ITestElement {
 		public String getActual() {
 			return fActual;
 		}
+
+		public boolean isComparisonFailure() {
+			return !Objects.equals(fActual, fExpected);
+		}
 	}
 
 	/**
@@ -178,27 +183,6 @@ public interface ITestElement {
 	 * @return the test display name, can be <code>null</code>
 	 */
 	String getDisplayName();
-
-	/**
-	 * Indicates if there was a comparison failure
-	 *
-	 * @return true if there was a comparison failure, otherwise return false
-	 */
-	boolean isComparisonFailure();
-
-	/**
-	 * Sets up the assumption failure flag for this test
-	 *
-	 * @param assumptionFailed a flag indicating the assumption failure
-	 */
-	void setAssumptionFailed(boolean assumptionFailed);
-
-	/**
-	 * Indicates if there was an assumption failure
-	 *
-	 * @return true if there was a comparison failure, otherwise return false
-	 */
-	boolean isAssumptionFailure();
 
 	/**
 	 * Extracts and returns a raw class name from a test element name

@@ -28,7 +28,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElement.FailureTrace;
 import org.eclipse.unittest.model.ITestElement.Result;
-import org.eclipse.unittest.model.ITestSuiteElement;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -46,7 +45,7 @@ public class TestRunHandler extends DefaultHandler {
 	private int fId;
 
 	private TestRunSession fTestRunSession;
-	private ITestSuiteElement fTestSuite;
+	private TestSuiteElement fTestSuite;
 	private TestCaseElement fTestCase;
 	private Stack<Boolean> fNotRun = new Stack<>();
 
@@ -315,7 +314,7 @@ public class TestRunHandler extends DefaultHandler {
 		case IXMLTags.NODE_SYSTEM_ERR:
 			break;
 		case IXMLTags.NODE_SKIPPED: {
-			ITestElement testElement = fTestCase;
+			TestElement testElement = fTestCase;
 			if (testElement == null)
 				testElement = fTestSuite;
 			if (fFailureBuffer != null && fFailureBuffer.length() > 0) {
@@ -335,8 +334,8 @@ public class TestRunHandler extends DefaultHandler {
 	}
 
 	private void handleTestElementEnd(ITestElement testElement) {
-		boolean completed = fNotRun.pop() != Boolean.TRUE;
-		fTestRunSession.registerTestEnded(testElement, completed);
+		boolean completed = !fNotRun.pop().booleanValue();
+		fTestRunSession.registerTestEnded((TestElement) testElement, completed);
 	}
 
 	private void handleFailure(ITestElement testElement) {

@@ -670,7 +670,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			}
 			if (!(testElement instanceof TestCaseElement)) {
 				if (isIgnored) {
-					testElement.setAssumptionFailed(true);
+					((TestElement) testElement).setAssumptionFailed(true);
 					fAssumptionFailureCount++;
 					setStatus(testElement, Status.OK);
 				} else {
@@ -700,7 +700,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			}
 
 			if (isAssumptionFailed) {
-				testElement.setAssumptionFailed(true);
+				((TestElement) testElement).setAssumptionFailed(true);
 				fAssumptionFailureCount++;
 				status = Result.OK;
 			}
@@ -759,7 +759,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		}
 	}
 
-	public void registerTestEnded(ITestElement testElement, boolean completed) {
+	public void registerTestEnded(TestElement testElement, boolean completed) {
 		if (testElement instanceof TestCaseElement) {
 			fTotalCount++;
 			if (!completed) {
@@ -881,11 +881,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	@Override
 	public String getTestName() {
 		return getTestRunName();
-	}
-
-	@Override
-	public boolean isComparisonFailure() {
-		return false;
 	}
 
 	public abstract class ListenerSafeRunnable implements ISafeRunnable {

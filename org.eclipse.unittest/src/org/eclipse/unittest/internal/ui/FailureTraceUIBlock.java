@@ -85,7 +85,8 @@ public class FailureTraceUIBlock implements IMenuListener {
 
 		OpenStrategy handler = new OpenStrategy(fTable);
 		handler.addOpenListener(e -> {
-			if (fTable.getSelectionIndex() == 0 && fFailure.isComparisonFailure()) {
+			if (fTable.getSelectionIndex() == 0 && fFailure.getFailureTrace() != null
+					&& fFailure.getFailureTrace().isComparisonFailure()) {
 				fCompareAction.run();
 			}
 			if (fTable.getSelection().length != 0) {
@@ -117,8 +118,10 @@ public class FailureTraceUIBlock implements IMenuListener {
 			manager.add(new UnitTestCopyAction(FailureTraceUIBlock.this, fClipboard));
 		}
 		// fix for bug 68058
-		if (fFailure != null && fFailure.isComparisonFailure())
+		if (fFailure != null && fFailure.getFailureTrace() != null
+				&& fFailure.getFailureTrace().isComparisonFailure()) {
 			manager.add(fCompareAction);
+		}
 	}
 
 	/**
@@ -183,7 +186,8 @@ public class FailureTraceUIBlock implements IMenuListener {
 	}
 
 	private void updateEnablement(TestElement test) {
-		boolean enableCompare = test != null && test.isComparisonFailure();
+		boolean enableCompare = test != null && test.getFailureTrace() != null
+				&& test.getFailureTrace().isComparisonFailure();
 		fCompareAction.setEnabled(enableCompare);
 		if (enableCompare) {
 			fCompareAction.updateOpenDialog(test);

@@ -235,11 +235,6 @@ public abstract class TestElement implements ITestElement {
 	}
 
 	@Override
-	public boolean isComparisonFailure() {
-		return getFailureTrace().getExpected() != null && getFailureTrace().getActual() != null;
-	}
-
-	@Override
 	public String getClassName() {
 		return extractClassName(getTestName());
 	}
@@ -283,12 +278,20 @@ public abstract class TestElement implements ITestElement {
 		return this.duration;
 	}
 
-	@Override
+	/**
+	 * Sets up the assumption failure flag for this test
+	 *
+	 * @param assumptionFailed a flag indicating the assumption failure
+	 */
 	public void setAssumptionFailed(boolean assumptionFailed) {
 		fAssumptionFailed = assumptionFailed;
 	}
 
-	@Override
+	/**
+	 * Indicates if there was an assumption failure
+	 *
+	 * @return true if there was a comparison failure, otherwise return false
+	 */
 	public boolean isAssumptionFailure() {
 		return fAssumptionFailed;
 	}
