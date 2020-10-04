@@ -51,10 +51,10 @@ public interface ITestRunSession extends ITestElementContainer {
 	 * @param className the name of the test class that was rerun
 	 * @param testName  the name of the test that was rerun
 	 * @param status    the outcome of the test that was rerun; one of
-	 *                  {@link org.eclipse.unittest.model.ITestElement.Status#OK},
-	 *                  {@link org.eclipse.unittest.model.ITestElement.Status#ERROR},
+	 *                  {@link org.eclipse.unittest.model.ITestElement.Result#OK},
+	 *                  {@link org.eclipse.unittest.model.ITestElement.Result#ERROR},
 	 *                  or
-	 *                  {@link org.eclipse.unittest.model.ITestElement.Status#FAILURE}
+	 *                  {@link org.eclipse.unittest.model.ITestElement.Result#FAILURE}
 	 * @param trace     the stack trace in the case of abnormal termination, or the
 	 *                  empty string if none
 	 * @param expected  the expected value in case of abnormal termination, or the
@@ -62,7 +62,7 @@ public interface ITestRunSession extends ITestElementContainer {
 	 * @param actual    the actual value in case of abnormal termination, or the
 	 *                  empty string if none
 	 */
-	void notifyTestReran(String testId, String className, String testName, Status status, String trace, String expected,
+	void notifyTestReran(String testId, String className, String testName, Result status, String trace, String expected,
 			String actual);
 
 	/**
@@ -128,9 +128,9 @@ public interface ITestRunSession extends ITestElementContainer {
 	 *
 	 * @param test               the test
 	 * @param status             the outcome of the test; one of
-	 *                           {@link org.eclipse.unittest.model.ITestElement.Status#ERROR}
+	 *                           {@link org.eclipse.unittest.model.ITestElement.Result#ERROR}
 	 *                           or
-	 *                           {@link org.eclipse.unittest.model.ITestElement.Status#FAILURE}.
+	 *                           {@link org.eclipse.unittest.model.ITestElement.Result#FAILURE}.
 	 *                           An exception is thrown otherwise
 	 * @param isAssumptionFailed indicates that an assumption is failed
 	 * @param trace              the stack trace
@@ -138,7 +138,7 @@ public interface ITestRunSession extends ITestElementContainer {
 	 * @param actual             the actual value
 	 * @throws IllegalArgumentException if status doesn't indicate ERROR or FAILURE.
 	 */
-	void notifyTestFailed(ITestElement test, Status status, boolean isAssumptionFailed, String trace, String expected,
+	void notifyTestFailed(ITestElement test, Result status, boolean isAssumptionFailed, String trace, String expected,
 			String actual) throws IllegalArgumentException;
 
 	/**

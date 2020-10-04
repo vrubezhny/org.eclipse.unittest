@@ -16,6 +16,7 @@ package org.eclipse.unittest.internal.model;
 import java.time.Duration;
 
 import org.eclipse.unittest.model.ITestElement;
+import org.eclipse.unittest.model.ITestElement.Result;
 import org.eclipse.unittest.model.ITestElement.Status;
 
 /**
@@ -113,7 +114,7 @@ public interface ITestRunListener {
 	 * @param expected           the expected value
 	 * @param actual             the actual value
 	 */
-	void testFailed(ITestElement test, Status status, boolean isAssumptionFailed, String trace, String expected,
+	void testFailed(ITestElement test, Result status, boolean isAssumptionFailed, String trace, String expected,
 			String actual);
 
 	/**
@@ -132,7 +133,7 @@ public interface ITestRunListener {
 	 * @param actual    the actual value in case of abnormal termination, or the
 	 *                  empty string if none
 	 */
-	void testReran(String testId, String testClass, String testName, Status status, String trace, String expected,
+	void testReran(String testId, String testClass, String testName, Result status, String trace, String expected,
 			String actual);
 
 }

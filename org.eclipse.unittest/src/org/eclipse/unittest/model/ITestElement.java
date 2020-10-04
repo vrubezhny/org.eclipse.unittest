@@ -29,28 +29,22 @@ import org.eclipse.unittest.internal.model.ITestRunListener;
  */
 public interface ITestElement {
 
-	public final static class Status {
-		public static final Status RUNNING_ERROR = new Status("RUNNING_ERROR", 5); //$NON-NLS-1$
-		public static final Status RUNNING_FAILURE = new Status("RUNNING_FAILURE", 6); //$NON-NLS-1$
-		public static final Status RUNNING = new Status("RUNNING", 3); //$NON-NLS-1$
+	public static final class Status {
+		public static final Status RUNNING_ERROR = new Status("RUNNING_ERROR"); //$NON-NLS-1$
+		public static final Status RUNNING_FAILURE = new Status("RUNNING_FAILURE"); //$NON-NLS-1$
+		public static final Status RUNNING = new Status("RUNNING"); //$NON-NLS-1$
 
-		public static final Status ERROR = new Status("ERROR", /* 1 */ITestRunListener.STATUS_ERROR); //$NON-NLS-1$
-		public static final Status FAILURE = new Status("FAILURE", /* 2 */ITestRunListener.STATUS_FAILURE); //$NON-NLS-1$
-		public static final Status OK = new Status("OK", /* 0 */ITestRunListener.STATUS_OK); //$NON-NLS-1$
-		public static final Status NOT_RUN = new Status("NOT_RUN", 4); //$NON-NLS-1$
+		public static final Status ERROR = new Status("ERROR"); //$NON-NLS-1$
+		public static final Status FAILURE = new Status("FAILURE"); //$NON-NLS-1$
+		public static final Status OK = new Status("OK"); //$NON-NLS-1$
+		public static final Status NOT_RUN = new Status("NOT_RUN"); //$NON-NLS-1$
 
 		private static final Status[] OLD_CODE = { OK, ERROR, FAILURE };
 
 		private final String fName;
-		private final int fOldCode;
 
-		private Status(String name, int oldCode) {
+		private Status(String name) {
 			fName = name;
-			fOldCode = oldCode;
-		}
-
-		public int getOldCode() {
-			return fOldCode;
 		}
 
 		@Override
@@ -90,55 +84,6 @@ public interface ITestElement {
 			return this == OK || this == FAILURE || this == ERROR;
 		}
 
-		public static Status combineStatus(Status one, Status two) {
-			Status progress = combineProgress(one, two);
-			Status error = combineError(one, two);
-			return combineProgressAndErrorStatus(progress, error);
-		}
-
-		private static Status combineProgress(Status one, Status two) {
-			if (one.isNotRun() && two.isNotRun())
-				return NOT_RUN;
-			else if (one.isDone() && two.isDone())
-				return OK;
-			else if (!one.isRunning() && !two.isRunning())
-				return OK; // one done, one not-run -> a parent failed and its children are not run
-			else
-				return RUNNING;
-		}
-
-		private static Status combineError(Status one, Status two) {
-			if (one.isError() || two.isError())
-				return ERROR;
-			else if (one.isFailure() || two.isFailure())
-				return FAILURE;
-			else
-				return OK;
-		}
-
-		private static Status combineProgressAndErrorStatus(Status progress, Status error) {
-			if (progress.isDone()) {
-				if (error.isError())
-					return ERROR;
-				if (error.isFailure())
-					return FAILURE;
-				return OK;
-			}
-
-			if (progress.isNotRun()) {
-//				Assert.isTrue(!error.isErrorOrFailure());
-				return NOT_RUN;
-			}
-
-//			Assert.isTrue(progress.isRunning());
-			if (error.isError())
-				return RUNNING_ERROR;
-			if (error.isFailure())
-				return RUNNING_FAILURE;
-//			Assert.isTrue(error.isOK());
-			return RUNNING;
-		}
-
 		/**
 		 * @param oldStatus one of {@link ITestRunListener}'s STATUS_* constants
 		 * @return the Status
@@ -168,6 +113,23 @@ public interface ITestElement {
 				return ProgressState.COMPLETED;
 			}
 			return ProgressState.NOT_STARTED;
+		}
+
+		public static Status fromResult(Result status) {
+			switch (status) {
+			case ERROR:
+				return Status.ERROR;
+			case FAILURE:
+				return Status.FAILURE;
+			case OK:
+				return Status.OK;
+			case IGNORED:
+				return Status.OK;
+			case UNDEFINED:
+				return Status.NOT_RUN;
+			default:
+				return Status.NOT_RUN;
+			}
 		}
 
 	}
@@ -203,17 +165,12 @@ public interface ITestElement {
 	/**
 	 * Result states of a test.
 	 */
-	public static final class Result {
-		/** state that describes that the test result is undefined */
-		public static final Result UNDEFINED = new Result("Undefined"); //$NON-NLS-1$
-		/** state that describes that the test result is 'OK' */
-		public static final Result OK = new Result("OK"); //$NON-NLS-1$
-		/** state that describes that the test result is 'Error' */
-		public static final Result ERROR = new Result("Error"); //$NON-NLS-1$
-		/** state that describes that the test result is 'Failure' */
-		public static final Result FAILURE = new Result("Failure"); //$NON-NLS-1$
-		/** state that describes that the test result is 'Ignored' */
-		public static final Result IGNORED = new Result("Ignored"); //$NON-NLS-1$
+	public enum Result {
+		UNDEFINED("Undefined"), //$NON-NLS-1$
+		OK("OK"), //$NON-NLS-1$
+		ERROR("Error"), //$NON-NLS-1$
+		FAILURE("Failure"), //$NON-NLS-1$
+		IGNORED("Ignored"); //$NON-NLS-1$
 
 		private String fName;
 

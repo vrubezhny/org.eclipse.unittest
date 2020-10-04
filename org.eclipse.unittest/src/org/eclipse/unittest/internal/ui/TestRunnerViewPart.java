@@ -676,7 +676,7 @@ public class TestRunnerViewPart extends ViewPart {
 		}
 
 		@Override
-		public void testFailed(ITestElement testElement, ITestElement.Status status, String trace, String expected,
+		public void testFailed(ITestElement testElement, ITestElement.Result status, String trace, String expected,
 				String actual) {
 			if (isAutoScroll()) {
 				fTestViewer.registerFailedForAutoScroll(testElement);
@@ -694,7 +694,7 @@ public class TestRunnerViewPart extends ViewPart {
 		}
 
 		@Override
-		public void testReran(ITestCaseElement testCaseElement, ITestElement.Status status, String trace,
+		public void testReran(ITestCaseElement testCaseElement, ITestElement.Result status, String trace,
 				String expectedResult, String actualResult) {
 			fTestViewer.registerViewerUpdate(testCaseElement); // TODO: autoExpand?
 			postSyncProcessChanges();

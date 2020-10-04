@@ -154,9 +154,11 @@ public class CDTTestRunnerClient implements ITestRunnerClient {
 			if (status.isError()) {
 				TestElementReference cRef = testElementRefs.isEmpty() ? null : testElementRefs.peek();
 				if (cRef != null) {
-					fTestRunSession.notifyTestFailed(status == Status.Aborted ? ITestElement.Status.FAILURE.getOldCode() :
-						ITestElement.Status.ERROR.getOldCode(),cRef.id, cRef.name, false, fFailedTrace.toString(),
-						"", ""); //$NON-NLS-1$ //$NON-NLS-2$
+					ITestElement test = fTestRunSession.getTestElement(cRef.id);
+					if (test != null) {
+						fTestRunSession.notifyTestFailed(test, status == Status.Aborted ? ITestElement.Result.FAILURE :	ITestElement.Result.ERROR,false, fFailedTrace.toString(),
+							"", ""); //$NON-NLS-1$ //$NON-NLS-2$
+					}
 				} else {
 					logUnexpectedTest(fCurrentTestCase, null);
 				}
@@ -187,8 +189,8 @@ public class CDTTestRunnerClient implements ITestRunnerClient {
 
 			if (cRef != null && !cRef.isSuite) {
 				testElementRefs.pop(); // Renove test case ref
-
-				fTestRunSession.notifyTestEnded(cRef.id, cRef.name, false);
+				ITestElement testElement = fTestRunSession.getTestElement(cRef.id);
+				fTestRunSession.notifyTestEnded(testElement, false);
 			} else {
 				logUnexpectedTest(cRef == null ? "null" : cRef.id, cRef); //$NON-NLS-1$
 			}

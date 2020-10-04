@@ -18,7 +18,7 @@ import java.time.Duration;
 
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
-import org.eclipse.unittest.model.ITestElement.Status;
+import org.eclipse.unittest.model.ITestElement.Result;
 
 /**
  * A listener interface for observing the execution of a test session (initial
@@ -80,28 +80,30 @@ public interface ITestSessionListener {
 	 *
 	 * @param testElement the test
 	 * @param status      the outcome of the test; one of
-	 *                    {@link ITestElement.Status#ERROR} or
-	 *                    {@link ITestElement.Status#FAILURE}
+	 *                    {@link org.eclipse.unittest.model.ITestElement.Result#ERROR}
+	 *                    or
+	 *                    {@link org.eclipse.unittest.model.ITestElement.Result#FAILURE}
 	 * @param trace       the stack trace
 	 * @param expected    expected value
 	 * @param actual      actual value
 	 */
-	void testFailed(ITestElement testElement, Status status, String trace, String expected, String actual);
+	void testFailed(ITestElement testElement, Result status, String trace, String expected, String actual);
 
 	/**
 	 * An individual test has been rerun.
 	 *
 	 * @param testCaseElement the test
 	 * @param status          the outcome of the test that was rerun; one of
-	 *                        {@link ITestElement.Status#OK},
-	 *                        {@link ITestElement.Status#ERROR}, or
-	 *                        {@link ITestElement.Status#FAILURE}
+	 *                        {@link org.eclipse.unittest.model.ITestElement.Result#OK},
+	 *                        {@link org.eclipse.unittest.model.ITestElement.Result#ERROR},
+	 *                        or
+	 *                        {@link org.eclipse.unittest.model.ITestElement.Result#FAILURE}
 	 * @param trace           the stack trace in the case of abnormal termination,
 	 *                        or the empty string if none
 	 * @param expectedResult  expected value
 	 * @param actualResult    actual value
 	 */
-	void testReran(ITestCaseElement testCaseElement, Status status, String trace, String expectedResult,
+	void testReran(ITestCaseElement testCaseElement, Result status, String trace, String expectedResult,
 			String actualResult);
 
 	/**

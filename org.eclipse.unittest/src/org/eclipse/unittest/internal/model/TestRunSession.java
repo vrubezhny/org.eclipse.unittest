@@ -689,7 +689,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		}
 
 		@Override
-		public void testFailed(ITestElement testElement, Status status, boolean isAssumptionFailed, String trace,
+		public void testFailed(ITestElement testElement, Result status, boolean isAssumptionFailed, String trace,
 				String expected, String actual) {
 			if (testElement == null) {
 				return;
@@ -698,7 +698,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			if (isAssumptionFailed) {
 				testElement.setAssumptionFailed(true);
 				fAssumptionFailureCount++;
-				status = Status.OK;
+				status = Result.OK;
 			}
 
 			registerTestFailureStatus(testElement, status, trace, expected, actual);
@@ -709,7 +709,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		}
 
 		@Override
-		public void testReran(String testId, String className, String testName, Status status, String trace,
+		public void testReran(String testId, String className, String testName, Result status, String trace,
 				String expectedResult, String actualResult) {
 			ITestElement testElement = getTestElement(testId);
 			if (testElement == null) {
@@ -744,13 +744,13 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		}
 	}
 
-	public void registerTestFailureStatus(ITestElement testElement, Status status, String trace, String expected,
+	public void registerTestFailureStatus(ITestElement testElement, Result status, String trace, String expected,
 			String actual) {
-		testElement.setStatus(status, trace, expected, actual);
+		testElement.setStatus(Status.fromResult(status), trace, expected, actual);
 		if (!testElement.isAssumptionFailure()) {
-			if (status.isError()) {
+			if (status == Result.ERROR) {
 				fErrorCount++;
-			} else if (status.isFailure()) {
+			} else if (status == Result.FAILURE) {
 				fFailureCount++;
 			}
 		}
@@ -921,7 +921,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	 *                   empty string if none
 	 */
 	@Override
-	public void notifyTestReran(String testId, String className, String testName, Status status, String trace,
+	public void notifyTestReran(String testId, String className, String testName, Result status, String trace,
 			String expected, String actual) {
 		for (ITestRunListener listener : testRunListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
@@ -1053,11 +1053,11 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	}
 
 	@Override
-	public void notifyTestFailed(ITestElement test, Status status, boolean isAssumptionFailed, String trace,
+	public void notifyTestFailed(ITestElement test, Result status, boolean isAssumptionFailed, String trace,
 			String expected, String actual) {
 		if (isStopped())
 			return;
-		if (status != Status.FAILURE && status != Status.ERROR) {
+		if (status != Result.FAILURE && status != Result.ERROR) {
 			throw new IllegalArgumentException("Status has to be FAILURE or ERROR");
 		}
 		for (ITestRunListener listener : testRunListeners) {

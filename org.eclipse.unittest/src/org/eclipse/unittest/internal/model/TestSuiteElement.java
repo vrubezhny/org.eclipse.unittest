@@ -67,7 +67,7 @@ public class TestSuiteElement extends TestElement implements ITestSuiteElement {
 		if (fChildrenStatus != null) {
 			// must combine children and suite status here, since failures can occur e.g. in
 			// @AfterClass
-			return Status.combineStatus(fChildrenStatus, suiteStatus);
+			return combineStatus(fChildrenStatus, suiteStatus);
 		} else {
 			return suiteStatus;
 		}
@@ -83,7 +83,7 @@ public class TestSuiteElement extends TestElement implements ITestSuiteElement {
 
 		for (int i = 1; i < children.length; i++) {
 			Status childStatus = children[i].getStatus();
-			cumulated = Status.combineStatus(cumulated, childStatus);
+			cumulated = combineStatus(cumulated, childStatus);
 		}
 		// not necessary, see special code in Status.combineProgress()
 //		if (suiteStatus.isErrorOrFailure() && cumulated.isNotRun())
@@ -159,6 +159,55 @@ public class TestSuiteElement extends TestElement implements ITestSuiteElement {
 	@Override
 	public String toString() {
 		return "TestSuite: " + getTestName() + " : " + super.toString() + " (" + fChildren.size() + ")"; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	}
+
+	public static Status combineStatus(Status one, Status two) {
+		Status progress = combineProgress(one, two);
+		Status error = combineError(one, two);
+		return combineProgressAndErrorStatus(progress, error);
+	}
+
+	private static Status combineProgress(Status one, Status two) {
+		if (one.isNotRun() && two.isNotRun())
+			return Status.NOT_RUN;
+		else if (one.isDone() && two.isDone())
+			return Status.OK;
+		else if (!one.isRunning() && !two.isRunning())
+			return Status.OK; // one done, one not-run -> a parent failed and its children are not run
+		else
+			return Status.RUNNING;
+	}
+
+	private static Status combineError(Status one, Status two) {
+		if (one.isError() || two.isError())
+			return Status.ERROR;
+		else if (one.isFailure() || two.isFailure())
+			return Status.FAILURE;
+		else
+			return Status.OK;
+	}
+
+	private static Status combineProgressAndErrorStatus(Status progress, Status error) {
+		if (progress.isDone()) {
+			if (error.isError())
+				return Status.ERROR;
+			if (error.isFailure())
+				return Status.FAILURE;
+			return Status.OK;
+		}
+
+		if (progress.isNotRun()) {
+//			Assert.isTrue(!error.isErrorOrFailure());
+			return Status.NOT_RUN;
+		}
+
+//		Assert.isTrue(progress.isRunning());
+		if (error.isError())
+			return Status.RUNNING_ERROR;
+		if (error.isFailure())
+			return Status.RUNNING_FAILURE;
+//		Assert.isTrue(error.isOK());
+		return Status.RUNNING;
 	}
 
 }

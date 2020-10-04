@@ -26,7 +26,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.unittest.model.ITestElement;
-import org.eclipse.unittest.model.ITestElement.Status;
+import org.eclipse.unittest.model.ITestElement.Result;
 import org.eclipse.unittest.model.ITestSuiteElement;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -57,7 +57,7 @@ public class TestRunHandler extends DefaultHandler {
 
 	private Locator fLocator;
 
-	private Status fStatus;
+	private Result fStatus;
 
 	private IProgressMonitor fMonitor;
 	private int fLastReportedLine;
@@ -201,12 +201,12 @@ public class TestRunHandler extends DefaultHandler {
 		}
 		case IXMLTags.NODE_ERROR:
 			// TODO: multiple failures: https://bugs.eclipse.org/bugs/show_bug.cgi?id=125296
-			fStatus = Status.ERROR;
+			fStatus = Result.ERROR;
 			fFailureBuffer = new StringBuilder();
 			break;
 		case IXMLTags.NODE_FAILURE:
 			// TODO: multiple failures: https://bugs.eclipse.org/bugs/show_bug.cgi?id=125296
-			fStatus = Status.FAILURE;
+			fStatus = Result.FAILURE;
 			fFailureBuffer = new StringBuilder();
 			break;
 		case IXMLTags.NODE_EXPECTED:
@@ -226,7 +226,7 @@ public class TestRunHandler extends DefaultHandler {
 			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=276068
 			// later: child of <suite> or <test>, see
 			// https://issues.apache.org/bugzilla/show_bug.cgi?id=43969
-			fStatus = Status.OK;
+			fStatus = Result.OK;
 			fFailureBuffer = new StringBuilder();
 			String message = attributes.getValue(IXMLTags.ATTR_MESSAGE);
 			if (message != null) {

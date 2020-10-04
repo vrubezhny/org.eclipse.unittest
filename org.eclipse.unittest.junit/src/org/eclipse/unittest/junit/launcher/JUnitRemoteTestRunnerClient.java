@@ -20,7 +20,8 @@ import java.util.Arrays;
 
 import org.eclipse.unittest.junit.JUnitTestPlugin;
 import org.eclipse.unittest.junit.internal.launcher.RemoteTestRunnerClient;
-import org.eclipse.unittest.model.ITestRunListener;
+import org.eclipse.unittest.model.ITestElement;
+import org.eclipse.unittest.model.ITestElement.Result;
 import org.eclipse.unittest.model.ITestRunSession;
 
 import org.eclipse.core.runtime.ISafeRunnable;
@@ -100,19 +101,22 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 			if (message.startsWith(MessageIds.TEST_END)) {
 				String s[] = extractTestId(arg);
 				boolean isIgnored = s[1].startsWith(MessageIds.IGNORED_TEST_PREFIX);
-				fTestRunSession.notifyTestEnded(s[0], s[1], isIgnored);
+				ITestElement testElement = fTestRunSession.getTestElement(s[0]);
+				fTestRunSession.notifyTestEnded(testElement, isIgnored);
 				return this;
 			}
 			if (message.startsWith(MessageIds.TEST_ERROR)) {
 				String s[] = extractTestId(arg);
+				ITestElement testElement = fTestRunSession.getTestElement(s[0]);
 				boolean isAssumptionFailed = s[1].startsWith(MessageIds.ASSUMPTION_FAILED_TEST_PREFIX);
-				extractFailure(s[0], s[1], ITestRunListener.STATUS_ERROR, isAssumptionFailed);
+				extractFailure(testElement, Result.ERROR, isAssumptionFailed);
 				return this;
 			}
 			if (message.startsWith(MessageIds.TEST_FAILED)) {
 				String s[] = extractTestId(arg);
+				ITestElement testElement = fTestRunSession.getTestElement(s[0]);
 				boolean isAssumptionFailed = s[1].startsWith(MessageIds.ASSUMPTION_FAILED_TEST_PREFIX);
-				extractFailure(s[0], s[1], ITestRunListener.STATUS_FAILURE, isAssumptionFailed);
+				extractFailure(testElement, Result.FAILURE, isAssumptionFailed);
 				return this;
 			}
 			if (message.startsWith(MessageIds.TEST_RUN_END)) {
@@ -179,8 +183,8 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 
 		@Override
 		void entireStringRead() {
-			fTestRunSession.notifyTestFailed(fFailureKind, fFailedTestId, fFailedTest, fFailedAssumption,
-					fFailedTrace.toString(), nullifyEmpty(fExpectedResult), nullifyEmpty(fActualResult));
+			fTestRunSession.notifyTestFailed(fFailedTest, fFailureKind, fFailedAssumption, fFailedTrace.toString(),
+					nullifyEmpty(fExpectedResult), nullifyEmpty(fActualResult));
 			fExpectedResult.setLength(0);
 			fActualResult.setLength(0);
 		}
@@ -188,8 +192,8 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 		@Override
 		ProcessingState readMessage(String message) {
 			if (message.startsWith(MessageIds.TRACE_END)) {
-				fTestRunSession.notifyTestFailed(fFailureKind, fFailedTestId, fFailedTest, fFailedAssumption,
-						fFailedTrace.toString(), nullifyEmpty(fExpectedResult), nullifyEmpty(fActualResult));
+				fTestRunSession.notifyTestFailed(fFailedTest, fFailureKind, fFailedAssumption, fFailedTrace.toString(),
+						nullifyEmpty(fExpectedResult), nullifyEmpty(fActualResult));
 				fFailedTrace.setLength(0);
 				fActualResult.setLength(0);
 				fExpectedResult.setLength(0);
@@ -210,18 +214,11 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 		 */
 	}
 
-	/**
-	 * The failed test that is currently reported from the RemoteTestRunner
-	 */
-	private String fFailedTest;
-	/**
-	 * The Id of the failed test
-	 */
-	private String fFailedTestId;
+	private ITestElement fFailedTest;
 	/**
 	 * The kind of failure of the test that is currently reported as failed
 	 */
-	private int fFailureKind;
+	private Result fFailureKind;
 	/**
 	 * Is Assumption failed on failed test
 	 */
@@ -476,22 +473,22 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 		return testName + "," + treeEntry; //$NON-NLS-1$
 	}
 
-	private void extractFailure(String testId, String testName, int status, boolean isAssumptionFailed) {
-		fFailedTestId = testId;
-		fFailedTest = testName;
+	private void extractFailure(ITestElement failedTest, Result status, boolean isAssumptionFailed) {
+		fFailedTest = failedTest;
 		fFailureKind = status;
 		fFailedAssumption = isAssumptionFailed;
 	}
 
 	private void notifyTestReran(String testId, String className, String testName, String status) {
-		int statusCode = ITestRunListener.STATUS_OK;
-		if (status.equals("FAILURE")) //$NON-NLS-1$
-			statusCode = ITestRunListener.STATUS_FAILURE;
-		else if (status.equals("ERROR")) //$NON-NLS-1$
-			statusCode = ITestRunListener.STATUS_ERROR;
+		Result statusCode = Result.OK;
+		if (status.equals("FAILURE")) { //$NON-NLS-1$
+			statusCode = Result.FAILURE;
+		} else if (status.equals("ERROR")) { //$NON-NLS-1$
+			statusCode = Result.ERROR;
+		}
 
 		String trace = ""; //$NON-NLS-1$
-		if (statusCode != ITestRunListener.STATUS_OK)
+		if (statusCode != Result.OK)
 			trace = fFailedRerunTrace.toString();
 		// assumption a rerun trace was sent before
 		fTestRunSession.notifyTestReran(testId, className, testName, statusCode, trace, nullifyEmpty(fExpectedResult),
