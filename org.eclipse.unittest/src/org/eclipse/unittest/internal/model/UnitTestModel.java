@@ -44,7 +44,10 @@ import org.eclipse.unittest.internal.UnitTestPlugin;
 import org.eclipse.unittest.internal.UnitTestPreferencesConstants;
 import org.eclipse.unittest.internal.launcher.TestListenerRegistry;
 import org.eclipse.unittest.internal.launcher.TestRunListener;
+import org.eclipse.unittest.internal.launcher.TestViewSupportRegistry;
 import org.eclipse.unittest.internal.ui.BasicElementLabels;
+import org.eclipse.unittest.internal.xml.TestRunHandler;
+import org.eclipse.unittest.internal.xml.TestRunSessionSerializer;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.ui.ITestViewSupport;
@@ -92,7 +95,7 @@ public final class UnitTestModel {
 				return;
 			}
 
-			ITestViewSupport testRunnerViewSupport = UnitTestLaunchConfigurationConstants
+			ITestViewSupport testRunnerViewSupport = UnitTestModel
 					.newTestRunnerViewSupport(config);
 			if (testRunnerViewSupport == null) {
 				return;
@@ -435,6 +438,22 @@ public final class UnitTestModel {
 		for (ITestRunSessionListener listener : fTestRunSessionListeners) {
 			listener.sessionAdded(testRunSession);
 		}
+	}
+
+	/**
+	 * Returns {@link ITestViewSupport} instance from the given launch configuration
+	 *
+	 * @param launchConfiguration a launch configuration
+	 * @return a test runner view support instance if exists or <code>null</code>.
+	 */
+	public static ITestViewSupport newTestRunnerViewSupport(ILaunchConfiguration launchConfiguration) {
+		try {
+			return TestViewSupportRegistry.getDefault().getTestViewSupportInstance(launchConfiguration
+					.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_UNIT_TEST_VIEW_SUPPORT, (String) null));
+		} catch (CoreException e) {
+			// Ignore
+		}
+		return null;
 	}
 
 	private static final String HISTORY_DIR_NAME = "history"; //$NON-NLS-1$

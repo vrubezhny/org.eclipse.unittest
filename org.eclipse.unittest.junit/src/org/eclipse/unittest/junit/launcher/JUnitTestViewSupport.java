@@ -243,7 +243,7 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 	 * @return a parameter type array
 	 */
 	private String[] getParameterTypes(ITestElement test) {
-		String testName = test.getUniqueId();
+		String testName = test.getData();
 		int index = testName.lastIndexOf("method:"); //$NON-NLS-1$
 		index = testName.indexOf('(', index);
 		if (index > 0) {

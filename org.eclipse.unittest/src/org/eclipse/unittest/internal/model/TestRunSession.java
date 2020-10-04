@@ -177,7 +177,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
 		if (launchConfiguration != null) {
 			fTestRunName = launchConfiguration.getName();
-			fTestRunnerSupport = UnitTestLaunchConfigurationConstants.newTestRunnerViewSupport(launchConfiguration);
+			fTestRunnerSupport = UnitTestModel.newTestRunnerViewSupport(launchConfiguration);
 		} else {
 			fTestRunName = "<TestRunSession>"; //$NON-NLS-1$
 			fTestRunnerSupport = null;
@@ -227,7 +227,8 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		addTestSessionListener(new TestRunListenerAdapter(this));
 	}
 
-	void reset() {
+	// TODO Consider removal as it's only use in XML parsing
+	public void reset() {
 		fStartedCount = 0;
 		fFailureCount = 0;
 		fAssumptionFailureCount = 0;
@@ -508,28 +509,26 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	 * Creates a test element, either {@link ITestSuiteElement} or
 	 * {@link ITestCaseElement} instance, depending on the arguments.
 	 *
-	 * @param parent         a parent test suite element
-	 * @param id             an identifier of the test element
-	 * @param testName       a name of the test element
-	 * @param isSuite        a flag indicating if the test element should be
-	 *                       represented by a test suite element
-	 * @param testCount      a number of predefined test cases in case of test suite
-	 *                       element
-	 * @param isDynamicTest  a flag indicating that test suite is dynamic (that
-	 *                       doesn't have predefined tests)
-	 * @param displayName    a display name for the test element
-	 * @param parameterTypes an array of parameter types, or <code>null</code>
-	 * @param uniqueId       a unique identifier for the test element or
-	 *                       <code>null</code>
+	 * @param parent        a parent test suite element
+	 * @param id            an identifier of the test element
+	 * @param testName      a name of the test element
+	 * @param isSuite       a flag indicating if the test element should be
+	 *                      represented by a test suite element
+	 * @param testCount     a number of predefined test cases in case of test suite
+	 *                      element
+	 * @param isDynamicTest a flag indicating that test suite is dynamic (that
+	 *                      doesn't have predefined tests)
+	 * @param displayName   a display name for the test element
+	 * @param data          some test runner specific data, can be <code>null</code>
 	 * @return a created {@link ITestSuiteElement} or {@link ITestCaseElement}
 	 *         instance
 	 */
 	public TestElement createTestElement(ITestSuiteElement parent, String id, String testName, boolean isSuite,
-			int testCount, boolean isDynamicTest, String displayName, String uniqueId) {
+			int testCount, boolean isDynamicTest, String displayName, String data) {
 		TestElement testElement;
 		if (isSuite) {
 			TestSuiteElement testSuiteElement = new TestSuiteElement((TestSuiteElement) parent, id, testName, testCount,
-					displayName, uniqueId);
+					displayName, data);
 			testElement = testSuiteElement;
 			if (testCount > 0) {
 				fIncompleteTestSuites.add(new IncompleteTestSuite(testSuiteElement, testCount));
@@ -538,7 +537,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			}
 		} else {
 			testElement = new TestCaseElement((TestSuiteElement) parent, id, testName, displayName, isDynamicTest,
-					uniqueId);
+					data);
 		}
 		fIdToTest.put(id, testElement);
 		return testElement;

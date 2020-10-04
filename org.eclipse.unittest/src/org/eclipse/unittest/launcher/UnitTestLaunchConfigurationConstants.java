@@ -14,12 +14,6 @@
 package org.eclipse.unittest.launcher;
 
 import org.eclipse.unittest.internal.UnitTestPlugin;
-import org.eclipse.unittest.internal.launcher.TestViewSupportRegistry;
-import org.eclipse.unittest.ui.ITestViewSupport;
-
-import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
  * Attribute keys used by the UnitTest LaunchConfiguration. Note that these
@@ -45,22 +39,6 @@ public class UnitTestLaunchConfigurationConstants {
 	 * The unique ID of test to run or "" if not available
 	 */
 	public static final String ATTR_TEST_UNIQUE_ID = UnitTestPlugin.PLUGIN_ID + ".TEST_UNIQUE_ID"; //$NON-NLS-1$
-
-	/**
-	 * Returns {@link ITestViewSupport} instance from the given launch configuration
-	 *
-	 * @param launchConfiguration a launch configuration
-	 * @return a test runner view support instance if exists or <code>null</code>.
-	 */
-	public static ITestViewSupport newTestRunnerViewSupport(ILaunchConfiguration launchConfiguration) {
-		try {
-			return TestViewSupportRegistry.getDefault().getTestViewSupportInstance(launchConfiguration
-					.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_UNIT_TEST_VIEW_SUPPORT, (String) null));
-		} catch (CoreException e) {
-			// Ignore
-		}
-		return null;
-	}
 
 	private UnitTestLaunchConfigurationConstants() {
 		// No instance allowed

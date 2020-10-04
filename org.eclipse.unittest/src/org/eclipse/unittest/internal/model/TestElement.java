@@ -26,9 +26,9 @@ public abstract class TestElement implements ITestElement {
 	private final String fId;
 	private final String fTestName;
 	/**
-	 * The unique ID of the test element which can be <code>null</code>
+	 * Extra (runner-specific) data, can be <code>null</code>
 	 */
-	private final String fUniqueId;
+	private final String fData;
 
 	/**
 	 * The display name of the test element, can be <code>null</code>. In that case,
@@ -51,17 +51,16 @@ public abstract class TestElement implements ITestElement {
 	 * @param id          the test id
 	 * @param testName    the test name
 	 * @param displayName the test display name, can be <code>null</code>
-	 * @param uniqueId    the unique ID of the test element, can be
-	 *                    <code>null</code>
+	 * @param data        some runner-specific data, can be <code>null</code>
 	 */
-	public TestElement(TestSuiteElement parent, String id, String testName, String displayName, String uniqueId) {
+	public TestElement(TestSuiteElement parent, String id, String testName, String displayName, String data) {
 		Assert.isNotNull(id);
 		Assert.isNotNull(testName);
 		fParent = parent;
 		fId = id;
 		fTestName = testName;
 		fDisplayName = displayName;
-		fUniqueId = uniqueId;
+		fData = data;
 		fStatus = Status.NOT_RUN;
 		if (parent != null) {
 			parent.addChild(this);
@@ -266,8 +265,8 @@ public abstract class TestElement implements ITestElement {
 	}
 
 	@Override
-	public String getUniqueId() {
-		return fUniqueId;
+	public String getData() {
+		return fData;
 	}
 
 }

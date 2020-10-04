@@ -112,11 +112,14 @@ public interface ITestElement {
 	String getId();
 
 	/**
-	 * Returns an unique identifier of the test element
+	 * Returns some runner-specific data, such as complete test description or other
+	 * data allowing further operations not covered by the generic test model.
 	 *
-	 * @return a test element unique identifier if exists, otherwise null
+	 * @return some runner-specific data, such as complete test description or other
+	 *         data allowing further operations not covered by the generic test
+	 *         model.
 	 */
-	String getUniqueId();
+	String getData();
 
 	/**
 	 * Returns the test run session.

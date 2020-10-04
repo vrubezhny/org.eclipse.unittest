@@ -12,7 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.unittest.internal.model;
+package org.eclipse.unittest.internal.xml;
 
 public interface IXMLTags {
 
@@ -93,7 +93,7 @@ public interface IXMLTags {
 	/**
 	 * value: String
 	 */
-	String ATTR_UNIQUE_ID = "uniqueid"; //$NON-NLS-1$
+	String ATTR_DATA = "data"; //$NON-NLS-1$
 
 	/**
 	 * value: String

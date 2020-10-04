@@ -29,8 +29,8 @@ public class TestSuiteElement extends TestElement implements ITestSuiteElement {
 	private Status fChildrenStatus;
 
 	public TestSuiteElement(TestSuiteElement parent, String id, String testName, int childrenCount, String displayName,
-			String uniqueId) {
-		super(parent, id, testName, displayName, uniqueId);
+			String data) {
+		super(parent, id, testName, displayName, data);
 		fChildren = new ArrayList<>(childrenCount);
 	}
 

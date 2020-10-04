@@ -12,7 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.unittest.internal.model;
+package org.eclipse.unittest.internal.xml;
 
 import java.time.Duration;
 import java.util.Stack;
@@ -24,6 +24,11 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.unittest.internal.model.ModelMessages;
+import org.eclipse.unittest.internal.model.TestCaseElement;
+import org.eclipse.unittest.internal.model.TestElement;
+import org.eclipse.unittest.internal.model.TestRunSession;
+import org.eclipse.unittest.internal.model.TestSuiteElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElement.FailureTrace;
 import org.eclipse.unittest.model.ITestElement.Result;
@@ -151,12 +156,12 @@ public class TestRunHandler extends DefaultHandler {
 			String pack = attributes.getValue(IXMLTags.ATTR_PACKAGE);
 			String suiteName = pack == null ? name : pack + "." + name; //$NON-NLS-1$
 			String displayName = attributes.getValue(IXMLTags.ATTR_DISPLAY_NAME);
-			String uniqueId = attributes.getValue(IXMLTags.ATTR_UNIQUE_ID);
-			if (uniqueId != null && uniqueId.trim().isEmpty()) {
-				uniqueId = null;
+			String data = attributes.getValue(IXMLTags.ATTR_DATA);
+			if (data != null && data.isBlank()) {
+				data = null;
 			}
 			fTestSuite = (TestSuiteElement) fTestRunSession.createTestElement(fTestSuite, getNextId(), suiteName, true,
-					0, false, displayName, uniqueId);
+					0, false, displayName, data);
 			readTime(fTestSuite, attributes);
 			fNotRun.push(Boolean.valueOf(attributes.getValue(IXMLTags.ATTR_INCOMPLETE)));
 			break;
@@ -171,12 +176,12 @@ public class TestRunHandler extends DefaultHandler {
 			String testName = name + '(' + classname + ')';
 			boolean isDynamicTest = Boolean.valueOf(attributes.getValue(IXMLTags.ATTR_DYNAMIC_TEST)).booleanValue();
 			String displayName = attributes.getValue(IXMLTags.ATTR_DISPLAY_NAME);
-			String uniqueId = attributes.getValue(IXMLTags.ATTR_UNIQUE_ID);
-			if (uniqueId != null && uniqueId.trim().isEmpty()) {
-				uniqueId = null;
+			String data = attributes.getValue(IXMLTags.ATTR_DATA);
+			if (data != null && data.isBlank()) {
+				data = null;
 			}
 			fTestCase = (TestCaseElement) fTestRunSession.createTestElement(fTestSuite, getNextId(), testName, false, 0,
-					isDynamicTest, displayName, uniqueId);
+					isDynamicTest, displayName, data);
 			fNotRun.push(Boolean.valueOf(attributes.getValue(IXMLTags.ATTR_INCOMPLETE)));
 			fTestCase.setIgnored(Boolean.valueOf(attributes.getValue(IXMLTags.ATTR_IGNORED)).booleanValue());
 			readTime(fTestCase, attributes);

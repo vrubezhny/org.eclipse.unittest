@@ -12,7 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.unittest.internal.model;
+package org.eclipse.unittest.internal.xml;
 
 import java.io.IOException;
 
@@ -26,6 +26,11 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.AttributesImpl;
 
+import org.eclipse.unittest.internal.model.ProgressState;
+import org.eclipse.unittest.internal.model.TestCaseElement;
+import org.eclipse.unittest.internal.model.TestElement;
+import org.eclipse.unittest.internal.model.TestRunSession;
+import org.eclipse.unittest.internal.model.TestSuiteElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElement.FailureTrace;
 import org.eclipse.unittest.model.ITestElement.Result;
@@ -114,8 +119,8 @@ public class TestRunSessionSerializer implements XMLReader {
 			if (testSuiteElement.getDisplayName() != null) {
 				addCDATA(atts, IXMLTags.ATTR_DISPLAY_NAME, testSuiteElement.getDisplayName());
 			}
-			if (testSuiteElement.getUniqueId() != null) {
-				addCDATA(atts, IXMLTags.ATTR_UNIQUE_ID, testSuiteElement.getUniqueId());
+			if (testSuiteElement.getData() != null) {
+				addCDATA(atts, IXMLTags.ATTR_DATA, testSuiteElement.getData());
 			}
 			startElement(IXMLTags.NODE_TESTSUITE, atts);
 			addFailure(testSuiteElement);
@@ -142,8 +147,8 @@ public class TestRunSessionSerializer implements XMLReader {
 			if (testCaseElement.getDisplayName() != null) {
 				addCDATA(atts, IXMLTags.ATTR_DISPLAY_NAME, testCaseElement.getDisplayName());
 			}
-			if (testCaseElement.getUniqueId() != null) {
-				addCDATA(atts, IXMLTags.ATTR_UNIQUE_ID, testCaseElement.getUniqueId());
+			if (testCaseElement.getData() != null) {
+				addCDATA(atts, IXMLTags.ATTR_DATA, testCaseElement.getData());
 			}
 			startElement(IXMLTags.NODE_TESTCASE, atts);
 			addFailure(testCaseElement);
