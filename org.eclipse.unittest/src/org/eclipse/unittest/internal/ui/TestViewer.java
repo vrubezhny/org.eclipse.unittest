@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.eclipse.unittest.internal.UnitTestPlugin;
+import org.eclipse.unittest.internal.model.Status;
 import org.eclipse.unittest.internal.model.TestCaseElement;
 import org.eclipse.unittest.internal.model.TestElement;
 import org.eclipse.unittest.internal.model.TestRunSession;
@@ -31,7 +32,6 @@ import org.eclipse.unittest.internal.model.TestSuiteElement;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElement.Result;
-import org.eclipse.unittest.model.ITestElement.Status;
 import org.eclipse.unittest.model.ITestRoot;
 import org.eclipse.unittest.model.ITestSuiteElement;
 
@@ -95,10 +95,10 @@ class TestViewer {
 	private final class FailuresOnlyFilter extends ViewerFilter {
 		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			return select(((ITestElement) element));
+			return select(((TestElement) element));
 		}
 
-		public boolean select(ITestElement testElement) {
+		public boolean select(TestElement testElement) {
 			Status status = testElement.getStatus();
 			if (status.isErrorOrFailure())
 				return true;
@@ -110,10 +110,10 @@ class TestViewer {
 	private final class IgnoredOnlyFilter extends ViewerFilter {
 		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			return select(((ITestElement) element));
+			return select(((TestElement) element));
 		}
 
-		public boolean select(ITestElement testElement) {
+		public boolean select(TestElement testElement) {
 			if (hasIgnoredInTestResult(testElement))
 				return true;
 			else
@@ -129,10 +129,10 @@ class TestViewer {
 		 * @return <code>true</code> if the test element or any of its children has
 		 *         {@link Result#IGNORED} test result
 		 */
-		private boolean hasIgnoredInTestResult(ITestElement testElement) {
-			if (testElement instanceof ITestSuiteElement) {
-				ITestElement[] children = ((ITestSuiteElement) testElement).getChildren();
-				for (ITestElement child : children) {
+		private boolean hasIgnoredInTestResult(TestElement testElement) {
+			if (testElement instanceof TestSuiteElement) {
+				List<TestElement> children = ((TestSuiteElement) testElement).getChildren();
+				for (TestElement child : children) {
 					boolean hasIgnoredTestResult = hasIgnoredInTestResult(child);
 					if (hasIgnoredTestResult) {
 						return true;
@@ -535,7 +535,7 @@ class TestViewer {
 			if (!fTreeNeedsRefresh && toUpdate.length > 0) {
 				if (fTreeHasFilter)
 					for (Object element : toUpdate)
-						updateElementInTree((ITestElement) element);
+						updateElementInTree((TestElement) element);
 				else {
 					HashSet<Object> toUpdateWithParents = new HashSet<>();
 					toUpdateWithParents.addAll(Arrays.asList(toUpdate));
@@ -552,7 +552,7 @@ class TestViewer {
 			if (!fTableNeedsRefresh && toUpdate.length > 0) {
 				if (fTableHasFilter)
 					for (Object element : toUpdate)
-						updateElementInTable((ITestElement) element);
+						updateElementInTable((TestElement) element);
 				else
 					fTableViewer.update(toUpdate, null);
 			}
@@ -560,11 +560,11 @@ class TestViewer {
 		autoScrollInUI();
 	}
 
-	private void updateElementInTree(final ITestElement testElement) {
+	private void updateElementInTree(final TestElement testElement) {
 		if (isShown(testElement)) {
 			updateShownElementInTree(testElement);
 		} else {
-			ITestElement current = testElement;
+			TestElement current = testElement;
 			do {
 				if (fTreeViewer.testFindItem(current) != null)
 					fTreeViewer.remove(current);
@@ -592,10 +592,10 @@ class TestViewer {
 		}
 	}
 
-	private void updateElementInTable(ITestElement element) {
+	private void updateElementInTable(TestElement element) {
 		if (isShown(element)) {
 			if (fTableViewer.testFindItem(element) == null) {
-				ITestElement previous = getNextFailure(element, false);
+				TestElement previous = getNextFailure(element, false);
 				int insertionIndex = -1;
 				if (previous != null) {
 					TableItem item = (TableItem) fTableViewer.testFindItem(previous);
@@ -611,7 +611,7 @@ class TestViewer {
 		}
 	}
 
-	private boolean isShown(ITestElement current) {
+	private boolean isShown(TestElement current) {
 		return fFailuresOnlyFilter.select(current);
 	}
 
@@ -647,7 +647,7 @@ class TestViewer {
 				if (previousAutoOpened.equals(parent))
 					break;
 
-				if (previousAutoOpened.getStatus() == TestElement.Status.OK) {
+				if (((TestCaseElement) previousAutoOpened).getStatus() == Status.OK) {
 					// auto-opened the element, and all children are OK -> auto close
 					iter.remove();
 					fTreeViewer.collapseToLevel(previousAutoOpened, AbstractTreeViewer.ALL_LEVELS);
@@ -681,7 +681,7 @@ class TestViewer {
 	 */
 	public void selectFailure(boolean showNext) {
 		IStructuredSelection selection = (IStructuredSelection) getActiveViewer().getSelection();
-		ITestElement selected = (ITestElement) selection.getFirstElement();
+		TestElement selected = (TestElement) selection.getFirstElement();
 		ITestElement next;
 
 		if (selected == null) {
@@ -694,33 +694,33 @@ class TestViewer {
 			getActiveViewer().setSelection(new StructuredSelection(next), true);
 	}
 
-	private ITestElement getNextFailure(ITestElement selected, boolean showNext) {
-		if (selected instanceof ITestSuiteElement) {
-			ITestElement nextChild = getNextChildFailure((ITestSuiteElement) selected, showNext);
+	private TestElement getNextFailure(TestElement selected, boolean showNext) {
+		if (selected instanceof TestSuiteElement) {
+			TestElement nextChild = getNextChildFailure((TestSuiteElement) selected, showNext);
 			if (nextChild != null)
 				return nextChild;
 		}
 		return getNextFailureSibling(selected, showNext);
 	}
 
-	private ITestElement getNextFailureSibling(ITestElement current, boolean showNext) {
-		ITestSuiteElement parent = current.getParent();
+	private TestElement getNextFailureSibling(TestElement current, boolean showNext) {
+		TestSuiteElement parent = current.getParent();
 		if (parent == null)
 			return null;
 
-		List<ITestElement> siblings = Arrays.asList(parent.getChildren());
+		List<TestElement> siblings = parent.getChildren();
 		if (!showNext)
 			siblings = new ReverseList<>(siblings);
 
 		int nextIndex = siblings.indexOf(current) + 1;
 		for (int i = nextIndex; i < siblings.size(); i++) {
-			ITestElement sibling = siblings.get(i);
+			TestElement sibling = siblings.get(i);
 			if (sibling.getStatus().isErrorOrFailure()) {
 				if (sibling instanceof ITestCaseElement) {
 					return sibling;
 				} else {
-					ITestSuiteElement testSuiteElement = (ITestSuiteElement) sibling;
-					if (testSuiteElement.getChildren().length == 0) {
+					TestSuiteElement testSuiteElement = (TestSuiteElement) sibling;
+					if (testSuiteElement.getChildren().isEmpty()) {
 						return testSuiteElement;
 					}
 					return getNextChildFailure(testSuiteElement, showNext);
@@ -730,18 +730,17 @@ class TestViewer {
 		return getNextFailureSibling(parent, showNext);
 	}
 
-	private ITestElement getNextChildFailure(ITestSuiteElement root, boolean showNext) {
-		List<ITestElement> children = Arrays.asList(root.getChildren());
+	private TestElement getNextChildFailure(TestSuiteElement root, boolean showNext) {
+		List<TestElement> children = root.getChildren();
 		if (!showNext)
 			children = new ReverseList<>(children);
-		for (ITestElement element : children) {
-			ITestElement child = element;
+		for (TestElement child : children) {
 			if (child.getStatus().isErrorOrFailure()) {
 				if (child instanceof ITestCaseElement) {
 					return child;
 				} else {
-					ITestSuiteElement testSuiteElement = (ITestSuiteElement) child;
-					if (testSuiteElement.getChildren().length == 0) {
+					TestSuiteElement testSuiteElement = (TestSuiteElement) child;
+					if (testSuiteElement.getChildren().isEmpty()) {
 						return testSuiteElement;
 					}
 					return getNextChildFailure(testSuiteElement, showNext);

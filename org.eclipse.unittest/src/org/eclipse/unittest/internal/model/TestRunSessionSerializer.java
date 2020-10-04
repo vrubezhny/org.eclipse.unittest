@@ -34,7 +34,6 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElement.FailureTrace;
-import org.eclipse.unittest.model.ITestElement.ProgressState;
 import org.eclipse.unittest.model.ITestElement.Result;
 import org.eclipse.unittest.model.ITestRoot;
 
@@ -104,8 +103,7 @@ public class TestRunSessionSerializer implements XMLReader {
 		startElement(IXMLTags.NODE_TESTRUN, atts);
 
 		ITestRoot testRoot = fTestRunSession.getTestRoot();
-		ITestElement[] topSuites = testRoot.getChildren();
-		for (ITestElement topSuite : topSuites) {
+		for (ITestElement topSuite : testRoot.getChildren()) {
 			handleTestElement(topSuite);
 		}
 
@@ -123,8 +121,8 @@ public class TestRunSessionSerializer implements XMLReader {
 			if (testSuiteElement.getDuration() != null) {
 				addCDATA(atts, IXMLTags.ATTR_TIME, testSuiteElement.getDuration().toString());
 			}
-			if (testElement.getProgressState() != ProgressState.COMPLETED
-					|| testElement.getTestResult(false) != Result.UNDEFINED)
+			if (testSuiteElement.getProgressState() != ProgressState.COMPLETED
+					|| testSuiteElement.getTestResult(false) != Result.UNDEFINED)
 				addCDATA(atts, IXMLTags.ATTR_INCOMPLETE, Boolean.TRUE.toString());
 			if (testSuiteElement.getDisplayName() != null) {
 				addCDATA(atts, IXMLTags.ATTR_DISPLAY_NAME, testSuiteElement.getDisplayName());
@@ -140,8 +138,7 @@ public class TestRunSessionSerializer implements XMLReader {
 			startElement(IXMLTags.NODE_TESTSUITE, atts);
 			addFailure(testSuiteElement);
 
-			ITestElement[] children = testSuiteElement.getChildren();
-			for (ITestElement child : children) {
+			for (ITestElement child : testSuiteElement.getChildren()) {
 				handleTestElement(child);
 			}
 			endElement(IXMLTags.NODE_TESTSUITE);
@@ -155,7 +152,7 @@ public class TestRunSessionSerializer implements XMLReader {
 			if (testCaseElement.getDuration() != null) {
 				addCDATA(atts, IXMLTags.ATTR_TIME, testCaseElement.getDuration().toString());
 			}
-			if (testElement.getProgressState() != ProgressState.COMPLETED)
+			if (testCaseElement.getProgressState() != ProgressState.COMPLETED)
 				addCDATA(atts, IXMLTags.ATTR_INCOMPLETE, Boolean.TRUE.toString());
 			if (testCaseElement.isIgnored())
 				addCDATA(atts, IXMLTags.ATTR_IGNORED, Boolean.TRUE.toString());

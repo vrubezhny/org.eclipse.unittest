@@ -15,7 +15,7 @@ package org.eclipse.unittest.model;
 
 import java.time.Duration;
 
-import org.eclipse.unittest.internal.model.ITestRunListener;
+import org.eclipse.unittest.internal.model.ProgressState;
 
 /**
  * Common protocol for test elements. This set consists of
@@ -28,139 +28,6 @@ import org.eclipse.unittest.internal.model.ITestRunListener;
  *
  */
 public interface ITestElement {
-
-	public static final class Status {
-		public static final Status RUNNING_ERROR = new Status("RUNNING_ERROR"); //$NON-NLS-1$
-		public static final Status RUNNING_FAILURE = new Status("RUNNING_FAILURE"); //$NON-NLS-1$
-		public static final Status RUNNING = new Status("RUNNING"); //$NON-NLS-1$
-
-		public static final Status ERROR = new Status("ERROR"); //$NON-NLS-1$
-		public static final Status FAILURE = new Status("FAILURE"); //$NON-NLS-1$
-		public static final Status OK = new Status("OK"); //$NON-NLS-1$
-		public static final Status NOT_RUN = new Status("NOT_RUN"); //$NON-NLS-1$
-
-		private static final Status[] OLD_CODE = { OK, ERROR, FAILURE };
-
-		private final String fName;
-
-		private Status(String name) {
-			fName = name;
-		}
-
-		@Override
-		public String toString() {
-			return fName;
-		}
-
-		/* error state predicates */
-
-		public boolean isOK() {
-			return this == OK || this == RUNNING || this == NOT_RUN;
-		}
-
-		public boolean isFailure() {
-			return this == FAILURE || this == RUNNING_FAILURE;
-		}
-
-		public boolean isError() {
-			return this == ERROR || this == RUNNING_ERROR;
-		}
-
-		public boolean isErrorOrFailure() {
-			return isError() || isFailure();
-		}
-
-		/* progress state predicates */
-
-		public boolean isNotRun() {
-			return this == NOT_RUN;
-		}
-
-		public boolean isRunning() {
-			return this == RUNNING || this == RUNNING_FAILURE || this == RUNNING_ERROR;
-		}
-
-		public boolean isDone() {
-			return this == OK || this == FAILURE || this == ERROR;
-		}
-
-		/**
-		 * @param oldStatus one of {@link ITestRunListener}'s STATUS_* constants
-		 * @return the Status
-		 */
-		public static Status convert(int oldStatus) {
-			return OLD_CODE[oldStatus];
-		}
-
-		public Result convertToResult() {
-			if (isNotRun())
-				return Result.UNDEFINED;
-			if (isError())
-				return Result.ERROR;
-			if (isFailure())
-				return Result.FAILURE;
-			if (isRunning()) {
-				return Result.UNDEFINED;
-			}
-			return Result.OK;
-		}
-
-		public ProgressState convertToProgressState() {
-			if (isRunning()) {
-				return ProgressState.RUNNING;
-			}
-			if (isDone()) {
-				return ProgressState.COMPLETED;
-			}
-			return ProgressState.NOT_STARTED;
-		}
-
-		public static Status fromResult(Result status) {
-			switch (status) {
-			case ERROR:
-				return Status.ERROR;
-			case FAILURE:
-				return Status.FAILURE;
-			case OK:
-				return Status.OK;
-			case IGNORED:
-				return Status.OK;
-			case UNDEFINED:
-				return Status.NOT_RUN;
-			default:
-				return Status.NOT_RUN;
-			}
-		}
-
-	}
-
-	/**
-	 * Running states of a test.
-	 */
-	public static final class ProgressState {
-		/** state that describes that the test element has not started */
-		public static final ProgressState NOT_STARTED = new ProgressState("Not Started"); //$NON-NLS-1$
-		/** state that describes that the test element has is running */
-		public static final ProgressState RUNNING = new ProgressState("Running"); //$NON-NLS-1$
-		/**
-		 * state that describes that the test element has been stopped before being
-		 * completed
-		 */
-		public static final ProgressState STOPPED = new ProgressState("Stopped"); //$NON-NLS-1$
-		/** state that describes that the test element has completed */
-		public static final ProgressState COMPLETED = new ProgressState("Completed"); //$NON-NLS-1$
-
-		private String fName;
-
-		private ProgressState(String name) {
-			fName = name;
-		}
-
-		@Override
-		public String toString() {
-			return fName;
-		}
-	}
 
 	/**
 	 * Result states of a test.
@@ -247,68 +114,6 @@ public interface ITestElement {
 	String getUniqueId();
 
 	/**
-	 * Returns the progress state of this test element.
-	 * <ul>
-	 * <li>{@link ITestElement.ProgressState#NOT_STARTED}: the test has not yet
-	 * started</li>
-	 * <li>{@link ITestElement.ProgressState#RUNNING}: the test is currently
-	 * running</li>
-	 * <li>{@link ITestElement.ProgressState#STOPPED}: the test has stopped before
-	 * being completed</li>
-	 * <li>{@link ITestElement.ProgressState#COMPLETED}: the test (and all its
-	 * children) has completed</li>
-	 * </ul>
-	 *
-	 * @return returns one of {@link ITestElement.ProgressState#NOT_STARTED},
-	 *         {@link ITestElement.ProgressState#RUNNING},
-	 *         {@link ITestElement.ProgressState#STOPPED} or
-	 *         {@link ITestElement.ProgressState#COMPLETED}.
-	 */
-	ProgressState getProgressState();
-
-	/**
-	 * Returns the result of the test element.
-	 * <ul>
-	 * <li>{@link ITestElement.Result#UNDEFINED}: the result is not yet
-	 * evaluated</li>
-	 * <li>{@link ITestElement.Result#OK}: the test has succeeded</li>
-	 * <li>{@link ITestElement.Result#ERROR}: the test has returned an error</li>
-	 * <li>{@link ITestElement.Result#FAILURE}: the test has returned an
-	 * failure</li>
-	 * <li>{@link ITestElement.Result#IGNORED}: the test has been ignored
-	 * (skipped)</li>
-	 * </ul>
-	 *
-	 * @param includeChildren if <code>true</code>, the returned result is the
-	 *                        combined result of the test and its children (if it
-	 *                        has any). If <code>false</code>, only the test's
-	 *                        result is returned.
-	 *
-	 * @return returns one of {@link ITestElement.Result#UNDEFINED},
-	 *         {@link ITestElement.Result#OK}, {@link ITestElement.Result#ERROR},
-	 *         {@link ITestElement.Result#FAILURE} or
-	 *         {@link ITestElement.Result#IGNORED}. Clients should also prepare for
-	 *         other, new values.
-	 */
-	Result getTestResult(boolean includeChildren);
-
-	/**
-	 * Returns the failure trace of this test element or <code>null</code> if the
-	 * test has not resulted in an error or failure.
-	 *
-	 * @return the failure trace of this test or <code>null</code>.
-	 */
-	FailureTrace getFailureTrace();
-
-	/**
-	 * Returns the parent test element container or <code>null</code> if the test
-	 * element is the test run session.
-	 *
-	 * @return the parent test suite
-	 */
-	ITestElementContainer getParentContainer();
-
-	/**
 	 * Returns the test run session.
 	 *
 	 * @return the parent test run session.
@@ -322,12 +127,11 @@ public interface ITestElement {
 	 * in that session.
 	 * <p>
 	 * <strong>Note:</strong> The elapsed time is only valid for
-	 * {@link ITestElement.ProgressState#COMPLETED} test elements.
+	 * {@link ProgressState#COMPLETED} test elements.
 	 * </p>
 	 *
 	 * @return total execution duration for the test element, or <code>null</code>
-	 *         if the state of the element is not
-	 *         {@link ITestElement.ProgressState#COMPLETED}
+	 *         if the state of the element is not {@link ProgressState#COMPLETED}
 	 */
 	Duration getDuration();
 
@@ -337,13 +141,6 @@ public interface ITestElement {
 	 * @return a parent test suite element
 	 */
 	ITestSuiteElement getParent();
-
-	/**
-	 * Returns the root test element
-	 *
-	 * @return a root test element
-	 */
-	ITestRoot getRoot();
 
 	/**
 	 * Returns the parameter types specified for this test element
@@ -373,45 +170,6 @@ public interface ITestElement {
 	 * @return the test display name, can be <code>null</code>
 	 */
 	String getDisplayName();
-
-	/**
-	 * Returns the status of this test element
-	 * <ul>
-	 * <li>{@link ITestElement.Status#NOT_RUN}: the test has not executed</li>
-	 * <li>{@link ITestElement.Status#OK}: the test is successful</li>
-	 * <li>{@link ITestElement.Status#ERROR}: the test had an error</li>
-	 * <li>{@link ITestElement.Status#FAILURE}: the test had an assertion
-	 * failure</li>
-	 * </ul>
-	 *
-	 * @return returns one of {@link ITestElement.Status#NOT_RUN},
-	 *         {@link ITestElement.Status#OK}, {@link ITestElement.Status#ERROR} or
-	 *         {@link ITestElement.Status#FAILURE}.
-	 */
-	Status getStatus();
-
-	/**
-	 * Sets the current test element status
-	 *
-	 * @param status one of {@link ITestElement.Status#NOT_RUN},
-	 *               {@link ITestElement.Status#OK},
-	 *               {@link ITestElement.Status#ERROR} or
-	 *               {@link ITestElement.Status#FAILURE}.
-	 */
-	void setStatus(Status status);
-
-	/**
-	 * Sets the extended status for this test element
-	 *
-	 * @param status   one of {@link ITestElement.Status#NOT_RUN},
-	 *                 {@link ITestElement.Status#OK},
-	 *                 {@link ITestElement.Status#ERROR} or
-	 *                 {@link ITestElement.Status#FAILURE}.
-	 * @param trace    stacktracee/error message or null
-	 * @param expected expected result value or null
-	 * @param actual   actual result value or null
-	 */
-	void setStatus(Status status, String trace, String expected, String actual);
 
 	/**
 	 * Returns the stacktrace/error message of this test element or

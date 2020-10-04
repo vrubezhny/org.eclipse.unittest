@@ -23,7 +23,7 @@ import org.eclipse.jface.viewers.Viewer;
 
 public class TestSessionTreeContentProvider implements ITreeContentProvider {
 
-	private final Object[] NO_CHILDREN= new Object[0];
+	private final Object[] NO_CHILDREN = new Object[0];
 
 	@Override
 	public void dispose() {
@@ -31,15 +31,16 @@ public class TestSessionTreeContentProvider implements ITreeContentProvider {
 
 	@Override
 	public Object[] getChildren(Object parentElement) {
-		if (parentElement instanceof TestSuiteElement)
-			return ((TestSuiteElement) parentElement).getChildren();
-		else
+		if (parentElement instanceof TestSuiteElement) {
+			return ((TestSuiteElement) parentElement).getChildren().toArray(Object[]::new);
+		} else {
 			return NO_CHILDREN;
+		}
 	}
 
 	@Override
 	public Object[] getElements(Object inputElement) {
-		return ((TestRoot) inputElement).getChildren();
+		return ((TestRoot) inputElement).getChildren().toArray(Object[]::new);
 	}
 
 	@Override
@@ -49,10 +50,11 @@ public class TestSessionTreeContentProvider implements ITreeContentProvider {
 
 	@Override
 	public boolean hasChildren(Object element) {
-		if (element instanceof TestSuiteElement)
-			return ((TestSuiteElement) element).getChildren().length != 0;
-		else
+		if (element instanceof TestSuiteElement) {
+			return !((TestSuiteElement) element).getChildren().isEmpty();
+		} else {
 			return false;
+		}
 	}
 
 	@Override

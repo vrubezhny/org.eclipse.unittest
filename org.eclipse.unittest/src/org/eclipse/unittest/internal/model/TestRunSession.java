@@ -30,7 +30,6 @@ import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElementContainer;
-import org.eclipse.unittest.model.ITestRoot;
 import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.unittest.ui.ITestViewSupport;
@@ -261,7 +260,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	}
 
 	@Override
-	public ITestElement[] getChildren() {
+	public List<TestElement> getChildren() {
 		return getTestRoot().getChildren();
 	}
 
@@ -280,8 +279,12 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		return this;
 	}
 
-	@Override
-	public synchronized ITestRoot getTestRoot() {
+	/**
+	 * Returns the root test element of this test run session
+	 *
+	 * @return a root test element
+	 */
+	public synchronized TestRoot getTestRoot() {
 		swapIn(); // TODO: TestRoot should stay (e.g. for getTestRoot().getStatus())
 		return fTestRoot;
 	}
@@ -701,7 +704,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 				status = Result.OK;
 			}
 
-			registerTestFailureStatus(testElement, status, trace, expected, actual);
+			registerTestFailureStatus((TestElement) testElement, status, trace, expected, actual);
 
 			for (ITestSessionListener listener : fSessionListeners) {
 				listener.testFailed(testElement, status, trace, expected, actual);
@@ -720,7 +723,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			}
 			TestCaseElement testCaseElement = (TestCaseElement) testElement;
 
-			registerTestFailureStatus(testElement, status, trace, expectedResult, actualResult);
+			registerTestFailureStatus(testCaseElement, status, trace, expectedResult, actualResult);
 
 			for (ITestSessionListener listener : fSessionListeners) {
 				// TODO: post old & new status?
@@ -744,7 +747,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		}
 	}
 
-	public void registerTestFailureStatus(ITestElement testElement, Result status, String trace, String expected,
+	public void registerTestFailureStatus(TestElement testElement, Result status, String trace, String expected,
 			String actual) {
 		testElement.setStatus(Status.fromResult(status), trace, expected, actual);
 		if (!testElement.isAssumptionFailure()) {
@@ -763,10 +766,11 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 				return;
 			}
 			fStartedCount++;
-			if (((TestCaseElement) testElement).isIgnored()) {
+			TestCaseElement testCaseElement = (TestCaseElement) testElement;
+			if (testCaseElement.isIgnored()) {
 				fIgnoredCount++;
 			}
-			if (!testElement.getStatus().isErrorOrFailure())
+			if (!testCaseElement.getStatus().isErrorOrFailure())
 				setStatus(testElement, Status.OK);
 		}
 
@@ -776,7 +780,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	}
 
 	private void setStatus(ITestElement testElement, Status status) {
-		testElement.setStatus(status);
+		((TestElement) testElement).setStatus(status);
 	}
 
 	@Override
@@ -786,15 +790,14 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		return failures.toArray(new TestElement[failures.size()]);
 	}
 
-	private void addFailures(ArrayList<ITestElement> failures, ITestElement testElement) {
+	private void addFailures(ArrayList<ITestElement> failures, TestElement testElement) {
 		Result testResult = testElement.getTestResult(true);
 		if (testResult == Result.ERROR || testResult == Result.FAILURE) {
 			failures.add(testElement);
 		}
 		if (testElement instanceof TestSuiteElement) {
 			TestSuiteElement testSuiteElement = (TestSuiteElement) testElement;
-			ITestElement[] children = testSuiteElement.getChildren();
-			for (ITestElement child : children) {
+			for (TestElement child : testSuiteElement.getChildren()) {
 				addFailures(failures, child);
 			}
 		}

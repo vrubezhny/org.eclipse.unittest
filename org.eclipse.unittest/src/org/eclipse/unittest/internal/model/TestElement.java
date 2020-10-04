@@ -11,7 +11,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.unittest.internal.model;
 
 import java.time.Duration;
@@ -19,7 +18,6 @@ import java.time.Instant;
 
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElementContainer;
-import org.eclipse.unittest.model.ITestSuiteElement;
 
 import org.eclipse.core.runtime.Assert;
 
@@ -78,16 +76,58 @@ public abstract class TestElement implements ITestElement {
 		fParameterTypes = parameterTypes;
 		fUniqueId = uniqueId;
 		fStatus = Status.NOT_RUN;
-		if (parent != null)
+		if (parent != null) {
 			parent.addChild(this);
+		}
 	}
 
-	@Override
+	/**
+	 * Returns the progress state of this test element.
+	 * <ul>
+	 * <li>{@link ProgressState#NOT_STARTED}: the test has not yet started</li>
+	 * <li>{@link ProgressState#RUNNING}: the test is currently running</li>
+	 * <li>{@link ProgressState#STOPPED}: the test has stopped before being
+	 * completed</li>
+	 * <li>{@link ProgressState#COMPLETED}: the test (and all its children) has
+	 * completed</li>
+	 * </ul>
+	 *
+	 * @return returns one of {@link ProgressState#NOT_STARTED},
+	 *         {@link ProgressState#RUNNING}, {@link ProgressState#STOPPED} or
+	 *         {@link ProgressState#COMPLETED}.
+	 */
 	public ProgressState getProgressState() {
 		return getStatus().convertToProgressState();
 	}
 
-	@Override
+	/**
+	 * Returns the result of the test element.
+	 * <ul>
+	 * <li>{@link org.eclipse.unittest.model.ITestElement.Result#UNDEFINED}: the
+	 * result is not yet evaluated</li>
+	 * <li>{@link org.eclipse.unittest.model.ITestElement.Result#OK}: the test has
+	 * succeeded</li>
+	 * <li>{@link org.eclipse.unittest.model.ITestElement.Result#ERROR}: the test
+	 * has returned an error</li>
+	 * <li>{@link org.eclipse.unittest.model.ITestElement.Result#FAILURE}: the test
+	 * has returned an failure</li>
+	 * <li>{@link org.eclipse.unittest.model.ITestElement.Result#IGNORED}: the test
+	 * has been ignored (skipped)</li>
+	 * </ul>
+	 *
+	 * @param includeChildren if <code>true</code>, the returned result is the
+	 *                        combined result of the test and its children (if it
+	 *                        has any). If <code>false</code>, only the test's
+	 *                        result is returned.
+	 *
+	 * @return returns one of
+	 *         {@link org.eclipse.unittest.model.ITestElement.Result#UNDEFINED},
+	 *         {@link org.eclipse.unittest.model.ITestElement.Result#OK},
+	 *         {@link org.eclipse.unittest.model.ITestElement.Result#ERROR},
+	 *         {@link org.eclipse.unittest.model.ITestElement.Result#FAILURE} or
+	 *         {@link org.eclipse.unittest.model.ITestElement.Result#IGNORED}.
+	 *         Clients should also prepare for other, new values.
+	 */
 	public Result getTestResult(boolean includeChildren) {
 		if (fAssumptionFailed) {
 			return Result.IGNORED;
@@ -100,7 +140,12 @@ public abstract class TestElement implements ITestElement {
 		return getRoot().getTestRunSession();
 	}
 
-	@Override
+	/**
+	 * Returns the parent test element container or <code>null</code> if the test
+	 * element is the test run session.
+	 *
+	 * @return the parent test suite
+	 */
 	public ITestElementContainer getParentContainer() {
 		if (fParent instanceof TestRoot) {
 			return getTestRunSession();
@@ -108,7 +153,12 @@ public abstract class TestElement implements ITestElement {
 		return fParent;
 	}
 
-	@Override
+	/**
+	 * Returns the failure trace of this test element or <code>null</code> if the
+	 * test has not resulted in an error or failure.
+	 *
+	 * @return the failure trace of this test or <code>null</code>.
+	 */
 	public FailureTrace getFailureTrace() {
 		Result testResult = getTestResult(false);
 		if (testResult == Result.ERROR || testResult == Result.FAILURE
@@ -137,7 +187,12 @@ public abstract class TestElement implements ITestElement {
 		fTestName = name;
 	}
 
-	@Override
+	/**
+	 * Sets the current test element status
+	 *
+	 * @param status one of {@link Status#NOT_RUN}, {@link Status#OK},
+	 *               {@link Status#ERROR} or {@link Status#FAILURE}.
+	 */
 	public void setStatus(Status status) {
 		if (status == Status.RUNNING) {
 			testStartedInstant = Instant.now();
@@ -146,12 +201,21 @@ public abstract class TestElement implements ITestElement {
 		}
 
 		fStatus = status;
-		ITestSuiteElement parent = getParent();
-		if (parent != null)
+		TestSuiteElement parent = getParent();
+		if (parent != null) {
 			parent.childChangedStatus(this, status);
+		}
 	}
 
-	@Override
+	/**
+	 * Sets the extended status for this test element
+	 *
+	 * @param status   one of {@link Status#NOT_RUN}, {@link Status#OK},
+	 *                 {@link Status#ERROR} or {@link Status#FAILURE}.
+	 * @param trace    stacktracee/error message or null
+	 * @param expected expected result value or null
+	 * @param actual   actual result value or null
+	 */
 	public void setStatus(Status status, String trace, String expected, String actual) {
 		if (trace != null && fTrace != null) {
 			// don't overwrite first trace if same test run logs multiple errors
@@ -164,7 +228,18 @@ public abstract class TestElement implements ITestElement {
 		setStatus(status);
 	}
 
-	@Override
+	/**
+	 * Returns the status of this test element
+	 * <ul>
+	 * <li>{@link Status#NOT_RUN}: the test has not executed</li>
+	 * <li>{@link Status#OK}: the test is successful</li>
+	 * <li>{@link Status#ERROR}: the test had an error</li>
+	 * <li>{@link Status#FAILURE}: the test had an assertion failure</li>
+	 * </ul>
+	 *
+	 * @return returns one of {@link Status#NOT_RUN}, {@link Status#OK},
+	 *         {@link Status#ERROR} or {@link Status#FAILURE}.
+	 */
 	public Status getStatus() {
 		return fStatus;
 	}
@@ -215,7 +290,11 @@ public abstract class TestElement implements ITestElement {
 		return testNameString;
 	}
 
-	@Override
+	/**
+	 * Returns the root test element
+	 *
+	 * @return a root test element
+	 */
 	public TestRoot getRoot() {
 		return getParent().getRoot();
 	}

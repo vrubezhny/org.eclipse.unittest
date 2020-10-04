@@ -31,6 +31,8 @@ import org.eclipse.unittest.internal.UnitTestPlugin;
 import org.eclipse.unittest.internal.UnitTestPreferencesConstants;
 import org.eclipse.unittest.internal.model.ITestRunSessionListener;
 import org.eclipse.unittest.internal.model.ITestSessionListener;
+import org.eclipse.unittest.internal.model.TestCaseElement;
+import org.eclipse.unittest.internal.model.TestElement;
 import org.eclipse.unittest.internal.model.TestRunSession;
 import org.eclipse.unittest.internal.model.UnitTestModel;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
@@ -698,7 +700,7 @@ public class TestRunnerViewPart extends ViewPart {
 				String expectedResult, String actualResult) {
 			fTestViewer.registerViewerUpdate(testCaseElement); // TODO: autoExpand?
 			postSyncProcessChanges();
-			showFailure(testCaseElement);
+			showFailure((TestCaseElement) testCaseElement);
 		}
 
 		@Override
@@ -1934,15 +1936,16 @@ public class TestRunnerViewPart extends ViewPart {
 	 *
 	 * @param test a selected test element
 	 */
-	public void handleTestSelected(ITestElement test) {
+	public void handleTestSelected(TestElement test) {
 		showFailure(test);
 		fCopyAction.handleTestSelected(test);
 	}
 
-	private void showFailure(final ITestElement test) {
+	private void showFailure(final TestElement test) {
 		postSyncRunnable(() -> {
-			if (!isDisposed())
+			if (!isDisposed()) {
 				fFailureTrace.showFailure(test);
+			}
 		});
 	}
 

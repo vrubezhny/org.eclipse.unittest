@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.unittest.internal.ui;
 
+import java.util.Objects;
+
 import org.eclipse.unittest.internal.UnitTestPreferencesConstants;
 import org.eclipse.unittest.internal.model.TestElement;
 import org.eclipse.unittest.internal.model.TestRunSession;
@@ -159,31 +161,28 @@ public class FailureTraceUIBlock implements IMenuListener {
 	 *
 	 * @param test the failed test
 	 */
-	public void showFailure(ITestElement test) {
+	public void showFailure(TestElement test) {
 		fFailure = test;
 		String trace = ""; //$NON-NLS-1$
 		updateActions(test);
 		updateEnablement(test);
 		if (test != null)
 			trace = test.getTrace();
-		if (fInputTrace == trace)
+		if (Objects.equals(fInputTrace, trace)) {
 			return;
+		}
 		fInputTrace = trace;
 		updateTable(trace);
 	}
 
-	private void updateActions(ITestElement test) {
-		if (!(test instanceof TestElement)) {
-			return;
-		}
-		TestElement testElement = (TestElement) test;
-		ITestViewSupport testViewSupport = test != null ? testElement.getTestRunSession().getTestViewSupport() : null;
+	private void updateActions(TestElement test) {
+		ITestViewSupport testViewSupport = test != null ? test.getTestRunSession().getTestViewSupport() : null;
 		fShowTraceInConsoleAction.setDelegate(testViewSupport != null && test.getFailureTrace() != null
 				? testViewSupport.createShowStackTraceInConsoleViewActionDelegate(test)
 				: null);
 	}
 
-	private void updateEnablement(ITestElement test) {
+	private void updateEnablement(TestElement test) {
 		boolean enableCompare = test != null && test.isComparisonFailure();
 		fCompareAction.setEnabled(enableCompare);
 		if (enableCompare) {

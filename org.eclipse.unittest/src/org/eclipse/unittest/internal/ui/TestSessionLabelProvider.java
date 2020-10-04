@@ -17,11 +17,10 @@ package org.eclipse.unittest.internal.ui;
 import java.text.MessageFormat;
 import java.time.Duration;
 
+import org.eclipse.unittest.internal.model.Status;
 import org.eclipse.unittest.internal.model.TestCaseElement;
 import org.eclipse.unittest.internal.model.TestElement;
 import org.eclipse.unittest.internal.model.TestSuiteElement;
-import org.eclipse.unittest.model.ITestElement;
-import org.eclipse.unittest.model.ITestElement.Status;
 import org.eclipse.unittest.model.ITestRunSession;
 
 import org.eclipse.swt.graphics.Image;
@@ -64,7 +63,7 @@ class TestSessionLabelProvider extends LabelProvider implements IStyledLabelProv
 		}
 		StyledString text = new StyledString(label);
 
-		ITestElement testElement = (ITestElement) element;
+		TestElement testElement = (TestElement) element;
 		if (fLayoutMode == TestRunnerViewPart.LAYOUT_HIERARCHICAL) {
 			if (testElement.getParentContainer() instanceof ITestRunSession) {
 				String displayName = fTestRunnerPart.getDisplayName();
@@ -134,7 +133,7 @@ class TestSessionLabelProvider extends LabelProvider implements IStyledLabelProv
 		if (label == null) {
 			return element.toString();
 		}
-		ITestElement testElement = (ITestElement) element;
+		TestElement testElement = (TestElement) element;
 		if (fLayoutMode == TestRunnerViewPart.LAYOUT_HIERARCHICAL) {
 			if (testElement.getParentContainer() instanceof ITestRunSession) {
 				String displayName = fTestRunnerPart.getDisplayName();

@@ -11,7 +11,6 @@
 package org.eclipse.unittest.internal.model;
 
 import org.eclipse.unittest.model.ITestElement;
-import org.eclipse.unittest.model.ITestRoot;
 
 public interface ITestRunSessionReport {
 
@@ -103,13 +102,6 @@ public interface ITestRunSessionReport {
 	 *         otherwise returns <code>false</code>
 	 */
 	boolean isStopped();
-
-	/**
-	 * Returns the root test element of this test run session
-	 *
-	 * @return a root test element
-	 */
-	ITestRoot getTestRoot();
 
 	/**
 	 * Stops the test run

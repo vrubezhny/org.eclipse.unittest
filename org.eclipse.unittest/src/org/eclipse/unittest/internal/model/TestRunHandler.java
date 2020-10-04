@@ -340,7 +340,7 @@ public class TestRunHandler extends DefaultHandler {
 
 	private void handleFailure(ITestElement testElement) {
 		if (fFailureBuffer != null) {
-			fTestRunSession.registerTestFailureStatus(testElement, fStatus, fFailureBuffer.toString(),
+			fTestRunSession.registerTestFailureStatus((TestElement) testElement, fStatus, fFailureBuffer.toString(),
 					toString(fExpectedBuffer), toString(fActualBuffer));
 			fFailureBuffer = null;
 			fExpectedBuffer = null;

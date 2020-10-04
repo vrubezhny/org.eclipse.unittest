@@ -15,6 +15,7 @@
 package org.eclipse.unittest.internal.ui;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.unittest.internal.model.TestCaseElement;
 import org.eclipse.unittest.internal.model.TestRoot;
@@ -32,14 +33,13 @@ public class TestSessionTableContentProvider implements IStructuredContentProvid
 
 	@Override
 	public Object[] getElements(Object inputElement) {
-		ArrayList<ITestElement> all= new ArrayList<>();
+		ArrayList<ITestElement> all = new ArrayList<>();
 		addAll(all, (TestRoot) inputElement);
 		return all.toArray();
 	}
 
-	private void addAll(ArrayList<ITestElement> all, TestSuiteElement suite) {
-		ITestElement[] children= suite.getChildren();
-		for (ITestElement element : children) {
+	private void addAll(List<ITestElement> all, TestSuiteElement suite) {
+		for (ITestElement element : suite.getChildren()) {
 			if (element instanceof TestSuiteElement) {
 				if (((TestSuiteElement) element).getSuiteStatus().isErrorOrFailure())
 					all.add(element); // add failed suite to flat list too

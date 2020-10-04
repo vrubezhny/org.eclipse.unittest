@@ -17,7 +17,6 @@ import java.time.Duration;
 
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElement.Result;
-import org.eclipse.unittest.model.ITestElement.Status;
 
 /**
  * An interface to listen to the events from the

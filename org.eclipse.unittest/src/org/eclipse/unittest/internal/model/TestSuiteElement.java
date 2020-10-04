@@ -17,6 +17,7 @@ package org.eclipse.unittest.internal.model;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.unittest.model.ITestElement;
@@ -24,7 +25,7 @@ import org.eclipse.unittest.model.ITestSuiteElement;
 
 public class TestSuiteElement extends TestElement implements ITestSuiteElement {
 
-	private List<ITestElement> fChildren;
+	private List<TestElement> fChildren;
 	private Status fChildrenStatus;
 
 	public TestSuiteElement(TestSuiteElement parent, String id, String testName, int childrenCount, String displayName,
@@ -48,12 +49,16 @@ public class TestSuiteElement extends TestElement implements ITestSuiteElement {
 	}
 
 	@Override
-	public ITestElement[] getChildren() {
-		return fChildren.toArray(new ITestElement[fChildren.size()]);
+	public List<TestElement> getChildren() {
+		return Collections.unmodifiableList(fChildren);
 	}
 
-	@Override
-	public void addChild(ITestElement child) {
+	/**
+	 * Adds a child {@link ITestElement} to this test suite element
+	 *
+	 * @param child a child {@link ITestElement}
+	 */
+	public void addChild(TestElement child) {
 		fChildren.add(child);
 	}
 
@@ -95,7 +100,13 @@ public class TestSuiteElement extends TestElement implements ITestSuiteElement {
 		return super.getStatus();
 	}
 
-	@Override
+	/**
+	 * Notifies on the status changes in a specified child {@link ITestElement}
+	 * element
+	 *
+	 * @param child       a child {@link ITestElement} element
+	 * @param childStatus a new status value
+	 */
 	public void childChangedStatus(ITestElement child, Status childStatus) {
 		int childCount = fChildren.size();
 		if (child == fChildren.get(0) && childStatus.isRunning()) {
@@ -103,7 +114,7 @@ public class TestSuiteElement extends TestElement implements ITestSuiteElement {
 			internalSetChildrenStatus(childStatus);
 			return;
 		}
-		ITestElement lastChild = fChildren.get(childCount - 1);
+		TestElement lastChild = fChildren.get(childCount - 1);
 		if (child == lastChild) {
 			if (childStatus.isDone()) {
 				// all children done, collect cumulative status
@@ -151,9 +162,10 @@ public class TestSuiteElement extends TestElement implements ITestSuiteElement {
 		}
 
 		fChildrenStatus = status;
-		ITestSuiteElement parent = getParent();
-		if (parent != null)
+		TestSuiteElement parent = getParent();
+		if (parent != null) {
 			parent.childChangedStatus(this, getStatus());
+		}
 	}
 
 	@Override

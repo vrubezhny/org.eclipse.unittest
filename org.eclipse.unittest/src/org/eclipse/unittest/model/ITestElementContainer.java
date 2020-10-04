@@ -13,9 +13,11 @@
  *******************************************************************************/
 package org.eclipse.unittest.model;
 
+import java.util.List;
+
 /**
- * Common protocol for test elements containers.
- * This set consists of {@link ITestSuiteElement} and {@link ITestRunSession}
+ * Common protocol for test elements containers. This set consists of
+ * {@link ITestSuiteElement} and {@link ITestRunSession}
  *
  * <p>
  * This interface is not intended to be implemented by clients.
@@ -28,6 +30,6 @@ public interface ITestElementContainer extends ITestElement {
 	 *
 	 * @return returns all tests (and test suites) contained in the suite.
 	 */
-	public ITestElement[] getChildren();
+	List<? extends ITestElement> getChildren();
 
 }

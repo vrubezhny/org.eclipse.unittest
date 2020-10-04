@@ -11,6 +11,7 @@
 package org.eclipse.unittest.junit.launcher;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.unittest.junit.JUnitTestPlugin;
@@ -67,12 +68,12 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 	@Override
 	public IAction getOpenTestAction(IViewPart testRunnerPart, ITestSuiteElement testSuite) {
 		String testName = testSuite.getSuiteTypeName();
-		ITestElement[] children = testSuite.getChildren();
+		List<? extends ITestElement> children = testSuite.getChildren();
 
-		if (testName.startsWith("[") && testName.endsWith("]") && children.length > 0 //$NON-NLS-1$ //$NON-NLS-2$
-				&& children[0] instanceof ITestCaseElement) {
+		if (testName.startsWith("[") && testName.endsWith("]") && !children.isEmpty() //$NON-NLS-1$ //$NON-NLS-2$
+				&& children.get(0) instanceof ITestCaseElement) {
 			// a group of parameterized tests
-			return new OpenTestAction(testRunnerPart, (ITestCaseElement) children[0], null);
+			return new OpenTestAction(testRunnerPart, (ITestCaseElement) children.get(0), null);
 		}
 
 		int index = testName.indexOf('(');
