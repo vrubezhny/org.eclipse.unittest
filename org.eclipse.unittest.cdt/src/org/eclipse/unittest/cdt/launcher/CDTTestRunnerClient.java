@@ -25,6 +25,7 @@ import org.eclipse.unittest.cdt.CDTUnitTestPlugin;
 import org.eclipse.unittest.launcher.ITestRunnerClient;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
+import org.eclipse.unittest.model.ITestElement.FailureTrace;
 import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.unittest.ui.ITestViewSupport;
@@ -156,8 +157,8 @@ public class CDTTestRunnerClient implements ITestRunnerClient {
 				if (cRef != null) {
 					ITestElement test = fTestRunSession.getTestElement(cRef.id);
 					if (test != null) {
-						fTestRunSession.notifyTestFailed(test, status == Status.Aborted ? ITestElement.Result.FAILURE :	ITestElement.Result.ERROR,false, fFailedTrace.toString(),
-							"", ""); //$NON-NLS-1$ //$NON-NLS-2$
+						fTestRunSession.notifyTestFailed(test, status == Status.Aborted ? ITestElement.Result.FAILURE :	ITestElement.Result.ERROR,false, new FailureTrace(fFailedTrace.toString(),
+							"", "")); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				} else {
 					logUnexpectedTest(fCurrentTestCase, null);

@@ -18,7 +18,6 @@ import java.util.Objects;
 import org.eclipse.unittest.internal.UnitTestPreferencesConstants;
 import org.eclipse.unittest.internal.model.TestElement;
 import org.eclipse.unittest.internal.model.TestRunSession;
-import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.ui.ITestViewSupport;
 
@@ -53,7 +52,7 @@ public class FailureTraceUIBlock implements IMenuListener {
 	private TestRunnerViewPart fTestRunner;
 	private String fInputTrace;
 	private final Clipboard fClipboard;
-	private ITestElement fFailure;
+	private TestElement fFailure;
 	private CompareResultsAction fCompareAction;
 	private final FailureTableDisplay fFailureTableDisplay;
 	private ShowStackTraceInConsoleViewAction fShowTraceInConsoleAction;
@@ -136,8 +135,8 @@ public class FailureTraceUIBlock implements IMenuListener {
 	}
 
 	private IAction createOpenEditorAction(String traceLine) {
-		return ((TestElement) fFailure).getTestRunSession().getTestViewSupport().createOpenEditorAction(fTestRunner,
-				fFailure, traceLine);
+		return fFailure.getTestRunSession().getTestViewSupport().createOpenEditorAction(fTestRunner, fFailure,
+				traceLine);
 	}
 
 	/**
@@ -166,8 +165,9 @@ public class FailureTraceUIBlock implements IMenuListener {
 		String trace = ""; //$NON-NLS-1$
 		updateActions(test);
 		updateEnablement(test);
-		if (test != null)
-			trace = test.getTrace();
+		if (test != null) {
+			trace = test.getFailureTrace().getTrace();
+		}
 		if (Objects.equals(fInputTrace, trace)) {
 			return;
 		}
@@ -252,7 +252,7 @@ public class FailureTraceUIBlock implements IMenuListener {
 	 *
 	 * @return a failed test element
 	 */
-	public ITestElement getFailedTest() {
+	public TestElement getFailedTest() {
 		return fFailure;
 	}
 

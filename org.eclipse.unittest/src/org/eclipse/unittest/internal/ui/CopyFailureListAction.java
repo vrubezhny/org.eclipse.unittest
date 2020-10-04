@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.unittest.internal.ui;
 
-import org.eclipse.unittest.model.ITestElement;
+import org.eclipse.unittest.internal.model.TestElement;
 
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.dnd.Clipboard;
@@ -64,12 +64,10 @@ public class CopyFailureListAction extends Action {
 	 */
 	public String getAllFailureTraces() {
 		StringBuilder buf = new StringBuilder();
-		ITestElement[] failures = fRunner.getCurrentTestRunSession().getAllFailedTestElements();
-
 		String lineDelim = System.getProperty("line.separator", "\n"); //$NON-NLS-1$//$NON-NLS-2$
-		for (ITestElement failure : failures) {
+		for (TestElement failure : fRunner.getCurrentTestRunSession().getAllFailedTestElements()) {
 			buf.append(failure.getTestName()).append(lineDelim);
-			String failureTrace = failure.getTrace();
+			String failureTrace = failure.getFailureTrace().getTrace();
 			if (failureTrace != null) {
 				int start = 0;
 				while (start < failureTrace.length()) {

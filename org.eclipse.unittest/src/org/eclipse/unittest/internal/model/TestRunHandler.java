@@ -26,6 +26,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.unittest.model.ITestElement;
+import org.eclipse.unittest.model.ITestElement.FailureTrace;
 import org.eclipse.unittest.model.ITestElement.Result;
 import org.eclipse.unittest.model.ITestSuiteElement;
 
@@ -340,8 +341,8 @@ public class TestRunHandler extends DefaultHandler {
 
 	private void handleFailure(ITestElement testElement) {
 		if (fFailureBuffer != null) {
-			fTestRunSession.registerTestFailureStatus((TestElement) testElement, fStatus, fFailureBuffer.toString(),
-					toString(fExpectedBuffer), toString(fActualBuffer));
+			fTestRunSession.registerTestFailureStatus((TestElement) testElement, fStatus,
+					new FailureTrace(fFailureBuffer.toString(), toString(fExpectedBuffer), toString(fActualBuffer)));
 			fFailureBuffer = null;
 			fExpectedBuffer = null;
 			fActualBuffer = null;

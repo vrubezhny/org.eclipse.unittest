@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -692,8 +693,8 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		}
 
 		@Override
-		public void testFailed(ITestElement testElement, Result status, boolean isAssumptionFailed, String trace,
-				String expected, String actual) {
+		public void testFailed(ITestElement testElement, Result status, boolean isAssumptionFailed,
+				FailureTrace trace) {
 			if (testElement == null) {
 				return;
 			}
@@ -704,16 +705,16 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 				status = Result.OK;
 			}
 
-			registerTestFailureStatus((TestElement) testElement, status, trace, expected, actual);
+			registerTestFailureStatus((TestElement) testElement, status, trace);
 
 			for (ITestSessionListener listener : fSessionListeners) {
-				listener.testFailed(testElement, status, trace, expected, actual);
+				listener.testFailed(testElement, status, trace);
 			}
 		}
 
 		@Override
-		public void testReran(String testId, String className, String testName, Result status, String trace,
-				String expectedResult, String actualResult) {
+		public void testReran(String testId, String className, String testName, Result status,
+				FailureTrace failureTrace) {
 			ITestElement testElement = getTestElement(testId);
 			if (testElement == null) {
 				testElement = createUnrootedTestElement(testId, testName);
@@ -723,11 +724,11 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			}
 			TestCaseElement testCaseElement = (TestCaseElement) testElement;
 
-			registerTestFailureStatus(testCaseElement, status, trace, expectedResult, actualResult);
+			registerTestFailureStatus(testCaseElement, status, failureTrace);
 
 			for (ITestSessionListener listener : fSessionListeners) {
 				// TODO: post old & new status?
-				listener.testReran(testCaseElement, status, trace, expectedResult, actualResult);
+				listener.testReran(testCaseElement, status, failureTrace);
 			}
 		}
 
@@ -747,9 +748,8 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		}
 	}
 
-	public void registerTestFailureStatus(TestElement testElement, Result status, String trace, String expected,
-			String actual) {
-		testElement.setStatus(Status.fromResult(status), trace, expected, actual);
+	public void registerTestFailureStatus(TestElement testElement, Result status, FailureTrace failureTrace) {
+		testElement.setStatus(Status.fromResult(status), failureTrace);
 		if (!testElement.isAssumptionFailure()) {
 			if (status == Result.ERROR) {
 				fErrorCount++;
@@ -783,14 +783,18 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		((TestElement) testElement).setStatus(status);
 	}
 
-	@Override
-	public ITestElement[] getAllFailedTestElements() {
-		ArrayList<ITestElement> failures = new ArrayList<>();
+	/**
+	 * Returns an array of all failed {@link ITestElement}s
+	 *
+	 * @return an array of failed {@link ITestElement}s
+	 */
+	public List<TestElement> getAllFailedTestElements() {
+		List<TestElement> failures = new ArrayList<>();
 		addFailures(failures, getTestRoot());
-		return failures.toArray(new TestElement[failures.size()]);
+		return Collections.unmodifiableList(failures);
 	}
 
-	private void addFailures(ArrayList<ITestElement> failures, TestElement testElement) {
+	private void addFailures(Collection<TestElement> failures, TestElement testElement) {
 		Result testResult = testElement.getTestResult(true);
 		if (testResult == Result.ERROR || testResult == Result.FAILURE) {
 			failures.add(testElement);
@@ -880,21 +884,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	}
 
 	@Override
-	public String getTrace() {
-		return null;
-	}
-
-	@Override
-	public String getExpected() {
-		return null;
-	}
-
-	@Override
-	public String getActual() {
-		return null;
-	}
-
-	@Override
 	public boolean isComparisonFailure() {
 		return false;
 	}
@@ -906,31 +895,14 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		}
 	}
 
-	/**
-	 * Notifies on an individual test re-run.
-	 *
-	 * @param testId     a unique Id identifying the test
-	 * @param className  the name of the test class that was rerun
-	 * @param testName   the name of the test that was rerun
-	 * @param statusCode the outcome of the test that was rerun; one of
-	 *                   {@link ITestRunListener#STATUS_OK},
-	 *                   {@link ITestRunListener#STATUS_ERROR}, or
-	 *                   {@link ITestRunListener#STATUS_FAILURE}
-	 * @param trace      the stack trace in the case of abnormal termination, or the
-	 *                   empty string if none
-	 * @param expected   the expected value in case of abnormal termination, or the
-	 *                   empty string if none
-	 * @param actual     the actual value in case of abnormal termination, or the
-	 *                   empty string if none
-	 */
 	@Override
-	public void notifyTestReran(String testId, String className, String testName, Result status, String trace,
-			String expected, String actual) {
+	public void notifyTestReran(String testId, String className, String testName, Result status,
+			FailureTrace failureTrace) {
 		for (ITestRunListener listener : testRunListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
 				@Override
 				public void run() {
-					listener.testReran(testId, className, testName, status, trace, expected, actual);
+					listener.testReran(testId, className, testName, status, failureTrace);
 				}
 			});
 		}
@@ -1056,8 +1028,8 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	}
 
 	@Override
-	public void notifyTestFailed(ITestElement test, Result status, boolean isAssumptionFailed, String trace,
-			String expected, String actual) {
+	public void notifyTestFailed(ITestElement test, Result status, boolean isAssumptionFailed,
+			FailureTrace failureTrace) {
 		if (isStopped())
 			return;
 		if (status != Result.FAILURE && status != Result.ERROR) {
@@ -1067,7 +1039,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			SafeRunner.run(new ListenerSafeRunnable() {
 				@Override
 				public void run() {
-					listener.testFailed(test, status, isAssumptionFailed, trace, expected, actual);
+					listener.testFailed(test, status, isAssumptionFailed, failureTrace);
 				}
 			});
 		}

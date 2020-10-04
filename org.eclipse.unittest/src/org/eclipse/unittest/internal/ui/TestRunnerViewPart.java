@@ -38,6 +38,7 @@ import org.eclipse.unittest.internal.model.UnitTestModel;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
+import org.eclipse.unittest.model.ITestElement.FailureTrace;
 import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.ui.ITestViewSupport;
 
@@ -678,8 +679,7 @@ public class TestRunnerViewPart extends ViewPart {
 		}
 
 		@Override
-		public void testFailed(ITestElement testElement, ITestElement.Result status, String trace, String expected,
-				String actual) {
+		public void testFailed(ITestElement testElement, ITestElement.Result status, FailureTrace trace) {
 			if (isAutoScroll()) {
 				fTestViewer.registerFailedForAutoScroll(testElement);
 			}
@@ -696,8 +696,7 @@ public class TestRunnerViewPart extends ViewPart {
 		}
 
 		@Override
-		public void testReran(ITestCaseElement testCaseElement, ITestElement.Result status, String trace,
-				String expectedResult, String actualResult) {
+		public void testReran(ITestCaseElement testCaseElement, ITestElement.Result status, FailureTrace trace) {
 			fTestViewer.registerViewerUpdate(testCaseElement); // TODO: autoExpand?
 			postSyncProcessChanges();
 			showFailure((TestCaseElement) testCaseElement);
@@ -1253,10 +1252,9 @@ public class TestRunnerViewPart extends ViewPart {
 		try {
 			File file = File.createTempFile("testFailures", ".txt"); //$NON-NLS-1$ //$NON-NLS-2$
 			file.deleteOnExit();
-			ITestElement[] failures = fTestRunSession.getAllFailedTestElements();
 			try (BufferedWriter bw = new BufferedWriter(
 					new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))) {
-				for (ITestElement testElement : failures) {
+				for (ITestElement testElement : fTestRunSession.getAllFailedTestElements()) {
 					bw.write(testElement.getTestName());
 					bw.newLine();
 				}
@@ -2090,9 +2088,5 @@ public class TestRunnerViewPart extends ViewPart {
 		fTestViewer.setShowTime(showTime);
 		fShowTimeAction.setChecked(showTime);
 
-	}
-
-	ITestElement[] getAllFailures() {
-		return fTestRunSession.getAllFailedTestElements();
 	}
 }

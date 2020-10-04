@@ -15,6 +15,7 @@ package org.eclipse.unittest.junit.ui;
 
 import org.eclipse.jdt.debug.ui.console.JavaStackTraceConsoleFactory;
 import org.eclipse.unittest.model.ITestElement;
+import org.eclipse.unittest.model.ITestElement.FailureTrace;
 
 /**
  * Action delegate to show the stack trace of a failed test from JUnit view's
@@ -31,12 +32,12 @@ public class ShowStackTraceInConsoleViewActionDelegate implements Runnable {
 
 	@Override
 	public void run() {
-		String stackTrace = failedTest.getTrace();
+		FailureTrace stackTrace = failedTest.getFailureTrace();
 		if (stackTrace != null) {
 			if (fFactory == null) {
 				fFactory = new JavaStackTraceConsoleFactory();
 			}
-			fFactory.openConsole(stackTrace);
+			fFactory.openConsole(stackTrace.getTrace());
 		}
 	}
 

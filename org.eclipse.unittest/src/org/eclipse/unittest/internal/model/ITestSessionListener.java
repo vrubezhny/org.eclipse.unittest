@@ -18,6 +18,7 @@ import java.time.Duration;
 
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
+import org.eclipse.unittest.model.ITestElement.FailureTrace;
 import org.eclipse.unittest.model.ITestElement.Result;
 
 /**
@@ -84,10 +85,8 @@ public interface ITestSessionListener {
 	 *                    or
 	 *                    {@link org.eclipse.unittest.model.ITestElement.Result#FAILURE}
 	 * @param trace       the stack trace
-	 * @param expected    expected value
-	 * @param actual      actual value
 	 */
-	void testFailed(ITestElement testElement, Result status, String trace, String expected, String actual);
+	void testFailed(ITestElement testElement, Result status, FailureTrace trace);
 
 	/**
 	 * An individual test has been rerun.
@@ -100,11 +99,8 @@ public interface ITestSessionListener {
 	 *                        {@link org.eclipse.unittest.model.ITestElement.Result#FAILURE}
 	 * @param trace           the stack trace in the case of abnormal termination,
 	 *                        or the empty string if none
-	 * @param expectedResult  expected value
-	 * @param actualResult    actual value
 	 */
-	void testReran(ITestCaseElement testCaseElement, Result status, String trace, String expectedResult,
-			String actualResult);
+	void testReran(ITestCaseElement testCaseElement, Result status, FailureTrace trace);
 
 	/**
 	 * @return <code>true</code> if the test run session can be swapped to disk

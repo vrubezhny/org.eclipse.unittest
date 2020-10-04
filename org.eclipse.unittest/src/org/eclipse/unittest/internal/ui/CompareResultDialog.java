@@ -18,7 +18,9 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import org.eclipse.unittest.internal.UnitTestPlugin;
+import org.eclipse.unittest.internal.model.TestElement;
 import org.eclipse.unittest.model.ITestElement;
+import org.eclipse.unittest.model.ITestElement.FailureTrace;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
@@ -170,8 +172,7 @@ public class CompareResultDialog extends TrayDialog {
 	}
 
 	private TextMergeViewer fViewer;
-	private String fExpected;
-	private String fActual;
+	private FailureTrace trace;
 	private String fTestName;
 
 	/**
@@ -182,7 +183,7 @@ public class CompareResultDialog extends TrayDialog {
 
 	private CompareViewerPane fCompareViewerPane;
 
-	public CompareResultDialog(Shell parentShell, ITestElement element) {
+	public CompareResultDialog(Shell parentShell, TestElement element) {
 		super(parentShell);
 		setShellStyle((getShellStyle() & ~SWT.APPLICATION_MODAL) | SWT.TOOL);
 		setFailedTest(element);
@@ -193,10 +194,9 @@ public class CompareResultDialog extends TrayDialog {
 		return true;
 	}
 
-	private void setFailedTest(ITestElement failedTest) {
+	private void setFailedTest(TestElement failedTest) {
 		fTestName = failedTest.getTestName();
-		fExpected = failedTest.getExpected();
-		fActual = failedTest.getActual();
+		trace = failedTest.getFailureTrace();
 		computePrefixSuffix();
 	}
 
@@ -221,18 +221,20 @@ public class CompareResultDialog extends TrayDialog {
 	}
 
 	private void computePrefixSuffix() {
-		int end = Math.min(fExpected.length(), fActual.length());
+		String expected = trace.getExpected();
+		String actual = trace.getActual();
+		int end = Math.min(expected.length(), actual.length());
 		int i = 0;
 		for (; i < end; i++)
-			if (fExpected.charAt(i) != fActual.charAt(i))
+			if (expected.charAt(i) != actual.charAt(i))
 				break;
 		fPrefixSuffix[0] = i;
 
-		int j = fExpected.length() - 1;
-		int k = fActual.length() - 1;
+		int j = expected.length() - 1;
+		int k = actual.length() - 1;
 		int l = 0;
 		for (; k >= i && j >= i; k--, j--) {
-			if (fExpected.charAt(j) != fActual.charAt(k))
+			if (expected.charAt(j) != actual.charAt(k))
 				break;
 			l++;
 		}
@@ -291,7 +293,8 @@ public class CompareResultDialog extends TrayDialog {
 
 	private void setCompareViewerInput() {
 		if (!fViewer.getControl().isDisposed()) {
-			fViewer.setInput(new DiffNode(new CompareElement(fExpected), new CompareElement(fActual)));
+			fViewer.setInput(
+					new DiffNode(new CompareElement(trace.getExpected()), new CompareElement(trace.getActual())));
 			fCompareViewerPane.setText(fTestName);
 		}
 	}
@@ -301,7 +304,7 @@ public class CompareResultDialog extends TrayDialog {
 	 *
 	 * @param failedTest a failed test element
 	 */
-	public void setInput(ITestElement failedTest) {
+	public void setInput(TestElement failedTest) {
 		setFailedTest(failedTest);
 		setCompareViewerInput();
 	}

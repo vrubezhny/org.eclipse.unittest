@@ -19,6 +19,7 @@ import org.eclipse.unittest.internal.launcher.TestListenerRegistry;
 import org.eclipse.unittest.internal.launcher.TestRunListener;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
+import org.eclipse.unittest.model.ITestElement.FailureTrace;
 import org.eclipse.unittest.model.ITestElement.Result;
 
 import org.eclipse.core.runtime.ListenerList;
@@ -105,13 +106,12 @@ public class TestRunListenerAdapter implements ITestSessionListener {
 	}
 
 	@Override
-	public void testFailed(ITestElement testElement, Result status, String trace, String expected, String actual) {
+	public void testFailed(ITestElement testElement, Result status, FailureTrace trace) {
 		// ignore
 	}
 
 	@Override
-	public void testReran(ITestCaseElement testCaseElement, Result status, String trace, String expectedResult,
-			String actualResult) {
+	public void testReran(ITestCaseElement testCaseElement, Result status, FailureTrace trace) {
 		// ignore
 	}
 

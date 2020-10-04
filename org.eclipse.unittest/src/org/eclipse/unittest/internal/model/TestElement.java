@@ -44,9 +44,7 @@ public abstract class TestElement implements ITestElement {
 	private String fUniqueId;
 
 	private Status fStatus;
-	private String fTrace;
-	private String fExpected;
-	private String fActual;
+	protected FailureTrace fTrace;
 
 	private boolean fAssumptionFailed;
 
@@ -153,17 +151,12 @@ public abstract class TestElement implements ITestElement {
 		return fParent;
 	}
 
-	/**
-	 * Returns the failure trace of this test element or <code>null</code> if the
-	 * test has not resulted in an error or failure.
-	 *
-	 * @return the failure trace of this test or <code>null</code>.
-	 */
+	@Override
 	public FailureTrace getFailureTrace() {
 		Result testResult = getTestResult(false);
-		if (testResult == Result.ERROR || testResult == Result.FAILURE
-				|| (testResult == Result.IGNORED && fTrace != null)) {
-			return new FailureTrace(fTrace, fExpected, fActual);
+		if ((testResult == Result.ERROR || testResult == Result.FAILURE
+				|| (testResult == Result.IGNORED) && fTrace != null)) {
+			return fTrace;
 		}
 		return null;
 	}
@@ -210,20 +203,17 @@ public abstract class TestElement implements ITestElement {
 	/**
 	 * Sets the extended status for this test element
 	 *
-	 * @param status   one of {@link Status#NOT_RUN}, {@link Status#OK},
-	 *                 {@link Status#ERROR} or {@link Status#FAILURE}.
-	 * @param trace    stacktracee/error message or null
-	 * @param expected expected result value or null
-	 * @param actual   actual result value or null
+	 * @param status       one of {@link Status#NOT_RUN}, {@link Status#OK},
+	 *                     {@link Status#ERROR} or {@link Status#FAILURE}.
+	 * @param failureTrace stacktracee/error message or null
 	 */
-	public void setStatus(Status status, String trace, String expected, String actual) {
-		if (trace != null && fTrace != null) {
+	public void setStatus(Status status, FailureTrace failureTrace) {
+		if (failureTrace != null && fTrace != null) {
 			// don't overwrite first trace if same test run logs multiple errors
-			fTrace = fTrace + trace;
+			fTrace = new FailureTrace(fTrace.getTrace() + failureTrace.getTrace(), fTrace.getExpected(),
+					fTrace.getActual());
 		} else {
-			fTrace = trace;
-			fExpected = expected;
-			fActual = actual;
+			fTrace = failureTrace;
 		}
 		setStatus(status);
 	}
@@ -245,23 +235,8 @@ public abstract class TestElement implements ITestElement {
 	}
 
 	@Override
-	public String getTrace() {
-		return fTrace;
-	}
-
-	@Override
-	public String getExpected() {
-		return fExpected;
-	}
-
-	@Override
-	public String getActual() {
-		return fActual;
-	}
-
-	@Override
 	public boolean isComparisonFailure() {
-		return fExpected != null && fActual != null;
+		return getFailureTrace().getExpected() != null && getFailureTrace().getActual() != null;
 	}
 
 	@Override

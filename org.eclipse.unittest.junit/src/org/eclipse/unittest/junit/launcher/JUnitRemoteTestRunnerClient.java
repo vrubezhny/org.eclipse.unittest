@@ -21,6 +21,7 @@ import java.util.Arrays;
 import org.eclipse.unittest.junit.JUnitTestPlugin;
 import org.eclipse.unittest.junit.internal.launcher.RemoteTestRunnerClient;
 import org.eclipse.unittest.model.ITestElement;
+import org.eclipse.unittest.model.ITestElement.FailureTrace;
 import org.eclipse.unittest.model.ITestElement.Result;
 import org.eclipse.unittest.model.ITestRunSession;
 
@@ -183,8 +184,8 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 
 		@Override
 		void entireStringRead() {
-			fTestRunSession.notifyTestFailed(fFailedTest, fFailureKind, fFailedAssumption, fFailedTrace.toString(),
-					nullifyEmpty(fExpectedResult), nullifyEmpty(fActualResult));
+			fTestRunSession.notifyTestFailed(fFailedTest, fFailureKind, fFailedAssumption, new FailureTrace(
+					fFailedTrace.toString(), nullifyEmpty(fExpectedResult), nullifyEmpty(fActualResult)));
 			fExpectedResult.setLength(0);
 			fActualResult.setLength(0);
 		}
@@ -192,8 +193,8 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 		@Override
 		ProcessingState readMessage(String message) {
 			if (message.startsWith(MessageIds.TRACE_END)) {
-				fTestRunSession.notifyTestFailed(fFailedTest, fFailureKind, fFailedAssumption, fFailedTrace.toString(),
-						nullifyEmpty(fExpectedResult), nullifyEmpty(fActualResult));
+				fTestRunSession.notifyTestFailed(fFailedTest, fFailureKind, fFailedAssumption, new FailureTrace(
+						fFailedTrace.toString(), nullifyEmpty(fExpectedResult), nullifyEmpty(fActualResult)));
 				fFailedTrace.setLength(0);
 				fActualResult.setLength(0);
 				fExpectedResult.setLength(0);
@@ -491,8 +492,8 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 		if (statusCode != Result.OK)
 			trace = fFailedRerunTrace.toString();
 		// assumption a rerun trace was sent before
-		fTestRunSession.notifyTestReran(testId, className, testName, statusCode, trace, nullifyEmpty(fExpectedResult),
-				nullifyEmpty(fActualResult));
+		fTestRunSession.notifyTestReran(testId, className, testName, statusCode,
+				new FailureTrace(trace, nullifyEmpty(fExpectedResult), nullifyEmpty(fActualResult)));
 	}
 
 	private static String nullifyEmpty(StringBuilder buf) {

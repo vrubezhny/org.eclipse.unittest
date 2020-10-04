@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.unittest.internal.model;
 
-import org.eclipse.unittest.model.ITestElement;
-
 public interface ITestRunSessionReport {
 
 	/**
@@ -21,13 +19,6 @@ public interface ITestRunSessionReport {
 	 * @return returns the test run name
 	 */
 	String getTestRunName();
-
-	/**
-	 * Returns an array of all failed {@link ITestElement}s
-	 *
-	 * @return an array of failed {@link ITestElement}s
-	 */
-	ITestElement[] getAllFailedTestElements();
 
 	/**
 	 * Returns the number of started test case elements

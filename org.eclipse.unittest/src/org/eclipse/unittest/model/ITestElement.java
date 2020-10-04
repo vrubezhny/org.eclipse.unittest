@@ -136,6 +136,14 @@ public interface ITestElement {
 	Duration getDuration();
 
 	/**
+	 * Returns the failure trace of this test element or <code>null</code> if the
+	 * test has not resulted in an error or failure.
+	 *
+	 * @return the failure trace of this test or <code>null</code>.
+	 */
+	FailureTrace getFailureTrace();
+
+	/**
 	 * Returns parent test suite element of this test element
 	 *
 	 * @return a parent test suite element
@@ -170,28 +178,6 @@ public interface ITestElement {
 	 * @return the test display name, can be <code>null</code>
 	 */
 	String getDisplayName();
-
-	/**
-	 * Returns the stacktrace/error message of this test element or
-	 * <code>null</code> if the test has not resulted in an error or failure.
-	 *
-	 * @return the stacktrace/error message of this test or <code>null</code>.
-	 */
-	String getTrace();
-
-	/**
-	 * Returns an expected value for this test element
-	 *
-	 * @return an expected result value or null
-	 */
-	String getExpected();
-
-	/**
-	 * Returns an actual value for this test element
-	 *
-	 * @return an actual result value or null
-	 */
-	String getActual();
 
 	/**
 	 * Indicates if there was a comparison failure

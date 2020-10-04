@@ -16,6 +16,7 @@ package org.eclipse.unittest.internal.model;
 import java.time.Duration;
 
 import org.eclipse.unittest.model.ITestElement;
+import org.eclipse.unittest.model.ITestElement.FailureTrace;
 import org.eclipse.unittest.model.ITestElement.Result;
 
 /**
@@ -109,30 +110,21 @@ public interface ITestRunListener {
 	 * @param status             the outcome of the test; one of
 	 *                           {@link Status#ERROR} or {@link Status#FAILURE}
 	 * @param isAssumptionFailed indicates that an assumption is failed
-	 * @param trace              the stack trace
-	 * @param expected           the expected value
-	 * @param actual             the actual value
+	 * @param failureTrace       the stack trace
 	 */
-	void testFailed(ITestElement test, Result status, boolean isAssumptionFailed, String trace, String expected,
-			String actual);
+	void testFailed(ITestElement test, Result status, boolean isAssumptionFailed, FailureTrace failureTrace);
 
 	/**
 	 * An individual test has been rerun.
 	 *
-	 * @param testId    a unique Id identifying the test
-	 * @param testClass the name of the test class that was rerun
-	 * @param testName  the name of the test that was rerun
-	 * @param status    the outcome of the test that was rerun; one of
-	 *                  {@link Status#OK}, {@link Status#ERROR}, or
-	 *                  {@link Status#FAILURE}
-	 * @param trace     the stack trace in the case of abnormal termination, or the
-	 *                  empty string if none
-	 * @param expected  the expected value in case of abnormal termination, or the
-	 *                  empty string if none
-	 * @param actual    the actual value in case of abnormal termination, or the
-	 *                  empty string if none
+	 * @param testId       a unique Id identifying the test
+	 * @param testClass    the name of the test class that was rerun
+	 * @param testName     the name of the test that was rerun
+	 * @param status       the outcome of the test that was rerun; one of
+	 *                     {@link Status#OK}, {@link Status#ERROR}, or
+	 *                     {@link Status#FAILURE}
+	 * @param failureTrace the failure trace
 	 */
-	void testReran(String testId, String testClass, String testName, Result status, String trace, String expected,
-			String actual);
+	void testReran(String testId, String testClass, String testName, Result status, FailureTrace failureTrace);
 
 }

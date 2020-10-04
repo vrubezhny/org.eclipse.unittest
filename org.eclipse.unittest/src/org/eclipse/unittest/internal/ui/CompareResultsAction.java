@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.unittest.internal.ui;
 
+import org.eclipse.unittest.internal.model.TestElement;
 import org.eclipse.unittest.model.ITestElement;
 
 import org.eclipse.jface.action.Action;
@@ -41,7 +42,7 @@ public class CompareResultsAction extends Action {
 
 	@Override
 	public void run() {
-		ITestElement failedTest = fView.getFailedTest();
+		TestElement failedTest = fView.getFailedTest();
 		if (fOpenDialog != null) {
 			fOpenDialog.setInput(failedTest);
 			fOpenDialog.getShell().setActive();
@@ -60,7 +61,7 @@ public class CompareResultsAction extends Action {
 	 *
 	 * @param failedTest a failed test element
 	 */
-	public void updateOpenDialog(ITestElement failedTest) {
+	public void updateOpenDialog(TestElement failedTest) {
 		if (fOpenDialog != null) {
 			fOpenDialog.setInput(failedTest);
 		}

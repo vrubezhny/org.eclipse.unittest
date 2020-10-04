@@ -47,23 +47,17 @@ public interface ITestRunSession extends ITestElementContainer {
 	/**
 	 * Notifies on an individual test re-run.
 	 *
-	 * @param testId    a unique Id identifying the test
-	 * @param className the name of the test class that was rerun
-	 * @param testName  the name of the test that was rerun
-	 * @param status    the outcome of the test that was rerun; one of
-	 *                  {@link org.eclipse.unittest.model.ITestElement.Result#OK},
-	 *                  {@link org.eclipse.unittest.model.ITestElement.Result#ERROR},
-	 *                  or
-	 *                  {@link org.eclipse.unittest.model.ITestElement.Result#FAILURE}
-	 * @param trace     the stack trace in the case of abnormal termination, or the
-	 *                  empty string if none
-	 * @param expected  the expected value in case of abnormal termination, or the
-	 *                  empty string if none
-	 * @param actual    the actual value in case of abnormal termination, or the
-	 *                  empty string if none
+	 * @param testId       a unique Id identifying the test
+	 * @param className    the name of the test class that was rerun
+	 * @param testName     the name of the test that was rerun
+	 * @param status       the outcome of the test that was rerun; one of
+	 *                     {@link org.eclipse.unittest.model.ITestElement.Result#OK},
+	 *                     {@link org.eclipse.unittest.model.ITestElement.Result#ERROR},
+	 *                     or
+	 *                     {@link org.eclipse.unittest.model.ITestElement.Result#FAILURE}
+	 * @param failureTrace the failure trace
 	 */
-	void notifyTestReran(String testId, String className, String testName, Result status, String trace, String expected,
-			String actual);
+	void notifyTestReran(String testId, String className, String testName, Result status, FailureTrace failureTrace);
 
 	/**
 	 * Notifies on a member of the test suite that is about to be run.
@@ -133,13 +127,11 @@ public interface ITestRunSession extends ITestElementContainer {
 	 *                           {@link org.eclipse.unittest.model.ITestElement.Result#FAILURE}.
 	 *                           An exception is thrown otherwise
 	 * @param isAssumptionFailed indicates that an assumption is failed
-	 * @param trace              the stack trace
-	 * @param expected           the expected value
-	 * @param actual             the actual value
+	 * @param failureTrace       The failure trace
 	 * @throws IllegalArgumentException if status doesn't indicate ERROR or FAILURE.
 	 */
-	void notifyTestFailed(ITestElement test, Result status, boolean isAssumptionFailed, String trace, String expected,
-			String actual) throws IllegalArgumentException;
+	void notifyTestFailed(ITestElement test, Result status, boolean isAssumptionFailed, FailureTrace failureTrace)
+			throws IllegalArgumentException;
 
 	/**
 	 * Notifies on a test run terminated.
