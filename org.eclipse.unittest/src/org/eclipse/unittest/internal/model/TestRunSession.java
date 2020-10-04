@@ -31,7 +31,6 @@ import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElementContainer;
 import org.eclipse.unittest.model.ITestRoot;
-import org.eclipse.unittest.model.ITestRunListener;
 import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.unittest.ui.ITestViewSupport;
@@ -661,17 +660,17 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		}
 
 		@Override
-		public void testEnded(String testId, String testName, boolean isIgnored) {
-			ITestElement testElement = getTestElement(testId);
+		public void testEnded(ITestElement testElement, boolean isIgnored) {
 			if (testElement == null) {
-				testElement = createUnrootedTestElement(testId, testName);
-			} else if (!(testElement instanceof TestCaseElement)) {
+				return;
+			}
+			if (!(testElement instanceof TestCaseElement)) {
 				if (isIgnored) {
 					testElement.setAssumptionFailed(true);
 					fAssumptionFailureCount++;
 					setStatus(testElement, Status.OK);
 				} else {
-					logUnexpectedTest(testId, testElement);
+					logUnexpectedTest(testElement.getId(), testElement);
 				}
 				return;
 			}
@@ -690,20 +689,16 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		}
 
 		@Override
-		public void testFailed(int statusCode, String testId, String testName, boolean isAssumptionFailed, String trace,
+		public void testFailed(ITestElement testElement, Status status, boolean isAssumptionFailed, String trace,
 				String expected, String actual) {
-			ITestElement testElement = getTestElement(testId);
 			if (testElement == null) {
-				testElement = createUnrootedTestElement(testId, testName);
+				return;
 			}
 
-			Status status;
 			if (isAssumptionFailed) {
 				testElement.setAssumptionFailed(true);
 				fAssumptionFailureCount++;
 				status = Status.OK;
-			} else {
-				status = Status.convert(statusCode);
 			}
 
 			registerTestFailureStatus(testElement, status, trace, expected, actual);
@@ -714,7 +709,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		}
 
 		@Override
-		public void testReran(String testId, String className, String testName, int statusCode, String trace,
+		public void testReran(String testId, String className, String testName, Status status, String trace,
 				String expectedResult, String actualResult) {
 			ITestElement testElement = getTestElement(testId);
 			if (testElement == null) {
@@ -725,7 +720,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			}
 			TestCaseElement testCaseElement = (TestCaseElement) testElement;
 
-			Status status = Status.convert(statusCode);
 			registerTestFailureStatus(testElement, status, trace, expectedResult, actualResult);
 
 			for (ITestSessionListener listener : fSessionListeners) {
@@ -927,13 +921,13 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	 *                   empty string if none
 	 */
 	@Override
-	public void notifyTestReran(String testId, String className, String testName, int statusCode, String trace,
+	public void notifyTestReran(String testId, String className, String testName, Status status, String trace,
 			String expected, String actual) {
 		for (ITestRunListener listener : testRunListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
 				@Override
 				public void run() {
-					listener.testReran(testId, className, testName, statusCode, trace, expected, actual);
+					listener.testReran(testId, className, testName, status, trace, expected, actual);
 				}
 			});
 		}
@@ -1011,29 +1005,23 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	 *                  ignored, otherwise - <code>false</code>
 	 */
 	@Override
-	public void notifyTestEnded(String testId, String testName, boolean isIgnored) {
+	public void notifyTestEnded(ITestElement test, boolean isIgnored) {
 		if (isStopped())
 			return;
 		for (ITestRunListener listener : testRunListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
 				@Override
 				public void run() {
-					listener.testEnded(testId, testName, isIgnored);
+					listener.testEnded(test, isIgnored);
 				}
 			});
 		}
 	}
 
-	/**
-	 * Notifies on an individual test started.
-	 *
-	 * @param testId   a unique Id identifying the test
-	 * @param testName the name of the test that started
-	 */
 	@Override
-	public void notifyTestStarted(final String testId, final String testName) {
+	public ITestElement notifyTestStarted(final String testId, final String testName) {
 		if (isStopped())
-			return;
+			return null;
 		for (ITestRunListener listener : testRunListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
 				@Override
@@ -1042,6 +1030,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 				}
 			});
 		}
+		return getTestElement(testId);
 	}
 
 	/**
@@ -1063,30 +1052,19 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		}
 	}
 
-	/**
-	 * Notifies on an individual test failed with a stack trace.
-	 *
-	 * @param status             the outcome of the test; one of
-	 *                           {@link ITestRunListener#STATUS_ERROR STATUS_ERROR}
-	 *                           or {@link ITestRunListener#STATUS_FAILURE
-	 *                           STATUS_FAILURE}
-	 * @param testId             a unique Id identifying the test
-	 * @param testName           the name of the test that failed
-	 * @param isAssumptionFailed indicates that an assumption is failed
-	 * @param trace              the stack trace
-	 * @param expected           the expected value
-	 * @param actual             the actual value
-	 */
 	@Override
-	public void notifyTestFailed(int status, String testId, String testName, boolean isAssumptionFailed, String trace,
+	public void notifyTestFailed(ITestElement test, Status status, boolean isAssumptionFailed, String trace,
 			String expected, String actual) {
 		if (isStopped())
 			return;
+		if (status != Status.FAILURE && status != Status.ERROR) {
+			throw new IllegalArgumentException("Status has to be FAILURE or ERROR");
+		}
 		for (ITestRunListener listener : testRunListeners) {
 			SafeRunner.run(new ListenerSafeRunnable() {
 				@Override
 				public void run() {
-					listener.testFailed(status, testId, testName, isAssumptionFailed, trace, expected, actual);
+					listener.testFailed(test, status, isAssumptionFailed, trace, expected, actual);
 				}
 			});
 		}

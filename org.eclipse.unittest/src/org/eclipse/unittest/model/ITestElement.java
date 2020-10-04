@@ -15,6 +15,8 @@ package org.eclipse.unittest.model;
 
 import java.time.Duration;
 
+import org.eclipse.unittest.internal.model.ITestRunListener;
+
 /**
  * Common protocol for test elements. This set consists of
  * {@link ITestCaseElement} , {@link ITestSuiteElement} and

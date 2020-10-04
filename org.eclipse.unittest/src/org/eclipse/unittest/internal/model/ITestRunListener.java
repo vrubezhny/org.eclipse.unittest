@@ -11,11 +11,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.unittest.model;
+package org.eclipse.unittest.internal.model;
 
 import java.time.Duration;
 
-import org.eclipse.unittest.internal.model.ITestSessionListener;
+import org.eclipse.unittest.model.ITestElement;
+import org.eclipse.unittest.model.ITestElement.Status;
 
 /**
  * An interface to listen to the events from the
@@ -71,11 +72,10 @@ public interface ITestRunListener {
 	/**
 	 * An individual test has ended.
 	 *
-	 * @param testId    a unique Id identifying the test
-	 * @param testName  the name of the test that ended
+	 * @param test      the test
 	 * @param isIgnored indicates that test case was ignored
 	 */
-	void testEnded(String testId, String testName, boolean isIgnored);
+	void testEnded(ITestElement test, boolean isIgnored);
 
 	/**
 	 * The VM instance performing the tests has terminated.
@@ -105,18 +105,16 @@ public interface ITestRunListener {
 	/**
 	 * An individual test has failed with a stack trace.
 	 *
+	 * @param test               the test
 	 * @param status             the outcome of the test; one of
-	 *                           {@link #STATUS_ERROR STATUS_ERROR} or
-	 *                           {@link #STATUS_FAILURE STATUS_FAILURE}
-	 * @param testId             a unique Id identifying the test
-	 * @param testName           the name of the test that failed
+	 *                           {@link Status#ERROR} or {@link Status#FAILURE}
 	 * @param isAssumptionFailed indicates that an assumption is failed
 	 * @param trace              the stack trace
 	 * @param expected           the expected value
 	 * @param actual             the actual value
 	 */
-	void testFailed(int status, String testId, String testName, boolean isAssumptionFailed, String trace,
-			String expected, String actual);
+	void testFailed(ITestElement test, Status status, boolean isAssumptionFailed, String trace, String expected,
+			String actual);
 
 	/**
 	 * An individual test has been rerun.
@@ -125,8 +123,8 @@ public interface ITestRunListener {
 	 * @param testClass the name of the test class that was rerun
 	 * @param testName  the name of the test that was rerun
 	 * @param status    the outcome of the test that was rerun; one of
-	 *                  {@link #STATUS_OK}, {@link #STATUS_ERROR}, or
-	 *                  {@link #STATUS_FAILURE}
+	 *                  {@link Status#OK}, {@link Status#ERROR}, or
+	 *                  {@link Status#FAILURE}
 	 * @param trace     the stack trace in the case of abnormal termination, or the
 	 *                  empty string if none
 	 * @param expected  the expected value in case of abnormal termination, or the
@@ -134,7 +132,7 @@ public interface ITestRunListener {
 	 * @param actual    the actual value in case of abnormal termination, or the
 	 *                  empty string if none
 	 */
-	void testReran(String testId, String testClass, String testName, int status, String trace, String expected,
+	void testReran(String testId, String testClass, String testName, Status status, String trace, String expected,
 			String actual);
 
 }
