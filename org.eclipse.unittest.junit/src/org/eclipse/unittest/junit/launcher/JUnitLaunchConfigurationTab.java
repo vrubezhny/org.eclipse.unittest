@@ -1275,13 +1275,13 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 		if (dialog.open() == Window.OK) {
 			try {
 				ILaunchConfigurationWorkingCopy workingCopy = fLaunchConfiguration.getWorkingCopy();
-				workingCopy.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_HAS_INCLUDE_TAGS,
+				workingCopy.setAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_HAS_INCLUDE_TAGS,
 						dialog.hasIncludeTags());
-				workingCopy.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_HAS_EXCLUDE_TAGS,
+				workingCopy.setAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_HAS_EXCLUDE_TAGS,
 						dialog.hasExcludeTags());
-				workingCopy.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_INCLUDE_TAGS,
+				workingCopy.setAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_INCLUDE_TAGS,
 						dialog.getIncludeTags());
-				workingCopy.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_EXCLUDE_TAGS,
+				workingCopy.setAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_EXCLUDE_TAGS,
 						dialog.getExcludeTags());
 				workingCopy.doSave();
 				validatePage();

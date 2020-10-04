@@ -130,14 +130,6 @@ public class TestRunHandler extends DefaultHandler {
 					}
 				}
 				fTestRunSession = new TestRunSession(launch);
-				String includeTags = attributes.getValue(IXMLTags.ATTR_INCLUDE_TAGS);
-				if (includeTags != null && includeTags.trim().length() > 0) {
-					fTestRunSession.setIncludeTags(includeTags);
-				}
-				String excludeTags = attributes.getValue(IXMLTags.ATTR_EXCLUDE_TAGS);
-				if (excludeTags != null && excludeTags.trim().length() > 0) {
-					fTestRunSession.setExcludeTags(excludeTags);
-				}
 				// TODO: read counts?
 
 			} else {

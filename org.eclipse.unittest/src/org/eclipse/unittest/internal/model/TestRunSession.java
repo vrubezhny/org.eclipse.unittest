@@ -811,54 +811,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		return fTestRoot.getDuration();
 	}
 
-	public String getIncludeTags() {
-		if (fLaunch != null) {
-			try {
-				ILaunchConfiguration launchConfig = fLaunch.getLaunchConfiguration();
-				if (launchConfig != null) {
-					boolean hasIncludeTags = launchConfig
-							.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_HAS_INCLUDE_TAGS, false);
-					if (hasIncludeTags) {
-						return launchConfig.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_INCLUDE_TAGS,
-								EMPTY_STRING);
-					}
-				}
-			} catch (CoreException e) {
-				// ignore
-			}
-			return EMPTY_STRING;
-		}
-		return fIncludeTags;
-	}
-
-	public String getExcludeTags() {
-		if (fLaunch != null) {
-			try {
-				ILaunchConfiguration launchConfig = fLaunch.getLaunchConfiguration();
-				if (launchConfig != null) {
-					boolean hasExcludeTags = launchConfig
-							.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_HAS_EXCLUDE_TAGS, false);
-					if (hasExcludeTags) {
-						return launchConfig.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_EXCLUDE_TAGS,
-								EMPTY_STRING);
-					}
-				}
-			} catch (CoreException e) {
-				// ignore
-			}
-			return EMPTY_STRING;
-		}
-		return fExcludeTags;
-	}
-
-	public void setIncludeTags(String includeTags) {
-		fIncludeTags = includeTags;
-	}
-
-	public void setExcludeTags(String excludeTags) {
-		fExcludeTags = excludeTags;
-	}
-
 	@Override
 	public String toString() {
 		return fTestRunName + " " + DateFormat.getDateTimeInstance().format(new Date(fStartTime)); //$NON-NLS-1$

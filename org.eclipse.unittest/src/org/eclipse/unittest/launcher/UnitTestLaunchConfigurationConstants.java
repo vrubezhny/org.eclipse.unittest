@@ -27,19 +27,6 @@ public class UnitTestLaunchConfigurationConstants {
 
 	public static final String ATTR_UNIT_TEST_VIEW_SUPPORT = UnitTestPlugin.PLUGIN_ID + ".TEST_VIEW_SUPPPORT"; //$NON-NLS-1$
 
-	public static final String ATTR_TEST_HAS_INCLUDE_TAGS = UnitTestPlugin.PLUGIN_ID + ".HAS_INCLUDE_TAGS"; //$NON-NLS-1$
-
-	public static final String ATTR_TEST_HAS_EXCLUDE_TAGS = UnitTestPlugin.PLUGIN_ID + ".HAS_EXCLUDE_TAGS"; //$NON-NLS-1$
-
-	public static final String ATTR_TEST_INCLUDE_TAGS = UnitTestPlugin.PLUGIN_ID + ".INCLUDE_TAGS"; //$NON-NLS-1$
-
-	public static final String ATTR_TEST_EXCLUDE_TAGS = UnitTestPlugin.PLUGIN_ID + ".EXCLUDE_TAGS"; //$NON-NLS-1$
-
-	/**
-	 * The unique ID of test to run or "" if not available
-	 */
-	public static final String ATTR_TEST_UNIQUE_ID = UnitTestPlugin.PLUGIN_ID + ".TEST_UNIQUE_ID"; //$NON-NLS-1$
-
 	private UnitTestLaunchConfigurationConstants() {
 		// No instance allowed
 	}

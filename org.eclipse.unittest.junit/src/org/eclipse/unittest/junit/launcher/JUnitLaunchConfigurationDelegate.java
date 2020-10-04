@@ -526,16 +526,16 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 			programArguments.add(testFailureNames);
 		}
 
-		String uniqueId = configuration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_UNIQUE_ID, ""); //$NON-NLS-1$
+		String uniqueId = configuration.getAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_UNIQUE_ID, ""); //$NON-NLS-1$
 		if (!uniqueId.trim().isEmpty()) {
 			programArguments.add("-uniqueId"); //$NON-NLS-1$
 			programArguments.add(uniqueId);
 		}
 
 		boolean hasIncludeTags = configuration
-				.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_HAS_INCLUDE_TAGS, false);
+				.getAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_HAS_INCLUDE_TAGS, false);
 		if (hasIncludeTags) {
-			String includeTags = configuration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_INCLUDE_TAGS,
+			String includeTags = configuration.getAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_INCLUDE_TAGS,
 					""); //$NON-NLS-1$
 			if (includeTags != null && !includeTags.trim().isEmpty()) {
 				String[] tags = includeTags.split(","); //$NON-NLS-1$
@@ -547,9 +547,9 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 		}
 
 		boolean hasExcludeTags = configuration
-				.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_HAS_EXCLUDE_TAGS, false);
+				.getAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_HAS_EXCLUDE_TAGS, false);
 		if (hasExcludeTags) {
-			String excludeTags = configuration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_EXCLUDE_TAGS,
+			String excludeTags = configuration.getAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_EXCLUDE_TAGS,
 					""); //$NON-NLS-1$
 			if (excludeTags != null && !excludeTags.trim().isEmpty()) {
 				String[] tags = excludeTags.split(","); //$NON-NLS-1$

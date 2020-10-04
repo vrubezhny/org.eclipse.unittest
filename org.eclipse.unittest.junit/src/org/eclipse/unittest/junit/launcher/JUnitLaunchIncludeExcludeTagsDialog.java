@@ -15,7 +15,6 @@ package org.eclipse.unittest.junit.launcher;
 
 import org.eclipse.unittest.junit.launcher.util.LayoutUtil;
 import org.eclipse.unittest.junit.ui.JUnitMessages;
-import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -31,6 +30,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.StatusDialog;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
+
+import org.eclipse.jdt.internal.junit.launcher.JUnitLaunchConfigurationConstants;
 
 import org.eclipse.jdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.DialogField;
@@ -155,14 +156,14 @@ public class JUnitLaunchIncludeExcludeTagsDialog extends StatusDialog {
 
 		try {
 			fHasIncludeTags.setSelection(fLaunchConfiguration
-					.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_HAS_INCLUDE_TAGS, false));
+					.getAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_HAS_INCLUDE_TAGS, false));
 		} catch (CoreException e) {
 			// ignore
 		}
 		fIncludeTags.setEnabled(fHasIncludeTags.isSelected());
 		try {
 			fIncludeTags.setText(getLineSeperatedText(fLaunchConfiguration
-					.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_INCLUDE_TAGS, EMPTY_STRING)));
+					.getAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_INCLUDE_TAGS, EMPTY_STRING)));
 		} catch (CoreException e) {
 			// ignore
 		}
@@ -179,14 +180,14 @@ public class JUnitLaunchIncludeExcludeTagsDialog extends StatusDialog {
 
 		try {
 			fHasExcludeTags.setSelection(fLaunchConfiguration
-					.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_HAS_EXCLUDE_TAGS, false));
+					.getAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_HAS_EXCLUDE_TAGS, false));
 		} catch (CoreException e) {
 			// ignore
 		}
 		fExcludeTags.setEnabled(fHasExcludeTags.isSelected());
 		try {
 			fExcludeTags.setText(getLineSeperatedText(fLaunchConfiguration
-					.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_TEST_EXCLUDE_TAGS, EMPTY_STRING)));
+					.getAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_EXCLUDE_TAGS, EMPTY_STRING)));
 		} catch (CoreException e) {
 			// ignore
 		}
