@@ -48,7 +48,6 @@ public interface ITestRunSession extends ITestElementContainer {
 	 * Notifies on an individual test re-run.
 	 *
 	 * @param testId       a unique Id identifying the test
-	 * @param className    the name of the test class that was rerun
 	 * @param testName     the name of the test that was rerun
 	 * @param status       the outcome of the test that was rerun; one of
 	 *                     {@link org.eclipse.unittest.model.ITestElement.Result#OK},
@@ -57,7 +56,7 @@ public interface ITestRunSession extends ITestElementContainer {
 	 *                     {@link org.eclipse.unittest.model.ITestElement.Result#FAILURE}
 	 * @param failureTrace the failure trace
 	 */
-	void notifyTestReran(String testId, String className, String testName, Result status, FailureTrace failureTrace);
+	void notifyTestReran(String testId, String testName, Result status, FailureTrace failureTrace);
 
 	/**
 	 * Notifies on a member of the test suite that is about to be run.
@@ -107,11 +106,9 @@ public interface ITestRunSession extends ITestElementContainer {
 	/**
 	 * Notifies on an individual test started.
 	 *
-	 * @param testId   a unique Id identifying the test
-	 * @param testName the name of the test that started
-	 * @return a test element
+	 * @param test   the test
 	 */
-	ITestElement notifyTestStarted(final String testId, final String testName);
+	void notifyTestStarted(ITestElement test);
 
 	/**
 	 * Notifies on a test run started.

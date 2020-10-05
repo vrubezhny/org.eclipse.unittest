@@ -620,30 +620,25 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			return testElement;
 		}
 
-		public void testStarted(String testId, String testName) {
+		public void testStarted(ITestElement test) {
+			if (!(test instanceof TestCaseElement)) {
+				return;
+			}
 			if (fStartedCount == 0) {
 				for (ITestSessionListener listener : fSessionListeners) {
 					listener.runningBegins();
 				}
 			}
-			ITestElement testElement = getTestElement(testId);
-			if (testElement == null) {
-				testElement = createUnrootedTestElement(testId, testName);
-			} else if (!(testElement instanceof TestCaseElement)) {
-				logUnexpectedTest(testId, testElement);
-				return;
-			}
-			TestCaseElement testCaseElement = (TestCaseElement) testElement;
-			setStatus(testCaseElement, Status.RUNNING);
+			setStatus(test, Status.RUNNING);
 
 			fStartedCount++;
-			if (testCaseElement.isDynamicTest()) {
+			if (((TestCaseElement) test).isDynamicTest()) {
 				fTotalCount++;
 			}
 			fTotalCount = Math.max(fStartedCount, fTotalCount);
 
 			for (ITestSessionListener listener : fSessionListeners) {
-				listener.testStarted(testCaseElement);
+				listener.testStarted((ITestCaseElement) test);
 			}
 		}
 
@@ -694,8 +689,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			}
 		}
 
-		public void testReran(String testId, String className, String testName, Result status,
-				FailureTrace failureTrace) {
+		public void testReran(String testId, String testName, Result status, FailureTrace failureTrace) {
 			ITestElement testElement = getTestElement(testId);
 			if (testElement == null) {
 				testElement = createUnrootedTestElement(testId, testName);
@@ -818,12 +812,11 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	}
 
 	@Override
-	public void notifyTestReran(String testId, String className, String testName, Result status,
-			FailureTrace failureTrace) {
+	public void notifyTestReran(String testId, String testName, Result status, FailureTrace failureTrace) {
 		SafeRunner.run(new ListenerSafeRunnable() {
 			@Override
 			public void run() {
-				fSessionNotifier.testReran(testId, className, testName, status, failureTrace);
+				fSessionNotifier.testReran(testId, testName, status, failureTrace);
 			}
 		});
 	}
@@ -885,17 +878,16 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	}
 
 	@Override
-	public ITestElement notifyTestStarted(final String testId, final String testName) {
+	public void notifyTestStarted(ITestElement test) {
 		if (isStopped()) {
-			return null;
+			return;
 		}
 		SafeRunner.run(new ListenerSafeRunnable() {
 			@Override
 			public void run() {
-				fSessionNotifier.testStarted(testId, testName);
+				fSessionNotifier.testStarted(test);
 			}
 		});
-		return getTestElement(testId);
 	}
 
 	@Override

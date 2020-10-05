@@ -138,10 +138,9 @@ public class CDTTestRunnerClient implements ITestRunnerClient {
 			this.fCurrentTestCase = cRef.id;
 			fFailedTrace.setLength(0);
 
-			fTestRunSession.newTestEntry(cRef.id, cRef.name, cRef.isSuite, 0, true, getTestSuite(cRef.parentId),
+			ITestElement test = fTestRunSession.newTestEntry(cRef.id, cRef.name, cRef.isSuite, 0, true, getTestSuite(cRef.parentId),
 					cRef.name,  null);
-
-			fTestRunSession.notifyTestStarted(cRef.id, cRef.name);
+			fTestRunSession.notifyTestStarted(test);
 		}
 
 		private ITestSuiteElement getTestSuite(String parentId) {

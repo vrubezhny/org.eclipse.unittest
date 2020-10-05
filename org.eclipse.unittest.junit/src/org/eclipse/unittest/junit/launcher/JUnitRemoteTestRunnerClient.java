@@ -97,7 +97,8 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 			}
 			if (message.startsWith(MessageIds.TEST_START)) {
 				String s[] = extractTestId(arg);
-				fTestRunSession.notifyTestStarted(s[0], s[1]);
+				ITestElement test = fTestRunSession.getTestElement(s[0]);
+				fTestRunSession.notifyTestStarted(test);
 				return this;
 			}
 			if (message.startsWith(MessageIds.TEST_END)) {
@@ -498,7 +499,7 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 		if (statusCode != Result.OK)
 			trace = fFailedRerunTrace.toString();
 		// assumption a rerun trace was sent before
-		fTestRunSession.notifyTestReran(testId, className, testName, statusCode,
+		fTestRunSession.notifyTestReran(testId, testName, statusCode,
 				new FailureTrace(trace, nullifyEmpty(fExpectedResult), nullifyEmpty(fActualResult)));
 	}
 
