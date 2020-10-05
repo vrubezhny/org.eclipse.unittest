@@ -822,10 +822,17 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	}
 
 	@Override
-	public ITestElement newTestEntry(String testId, String testName, boolean isSuite, int testCount,
-			boolean isDynamicTest, ITestSuiteElement parent, String displayName, String data) {
-		return fSessionNotifier.testTreeEntry(testId, testName, isSuite, testCount, isDynamicTest, parent, displayName,
-				data);
+	public TestCaseElement newTestCase(String testId, String testName, boolean isDynamicTest, ITestSuiteElement parent,
+			String displayName, String data) {
+		return (TestCaseElement) fSessionNotifier.testTreeEntry(testId, testName, false, 1, isDynamicTest, parent,
+				displayName, data);
+	}
+
+	@Override
+	public TestSuiteElement newTestSuite(String testId, String testName, int testCount, boolean isDynamicTest,
+			ITestSuiteElement parent, String displayName, String data) {
+		return (TestSuiteElement) fSessionNotifier.testTreeEntry(testId, testName, true, testCount, isDynamicTest,
+				parent, displayName, data);
 	}
 
 	/**

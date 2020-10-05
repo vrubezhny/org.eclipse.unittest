@@ -99,8 +99,7 @@ public class CDTTestRunnerClient implements ITestRunnerClient {
 
 			this.fCurrentTestSuite = cRef.id;
 
-			fTestRunSession.newTestEntry(cRef.id, cRef.name, cRef.isSuite, 0, true, getTestSuite(cRef.parentId),
-					cRef.name, null);
+			fTestRunSession.newTestSuite(cRef.id, cRef.name, -1, true, getTestSuite(cRef.parentId), cRef.name, null);
 		}
 
 		@Override
@@ -138,8 +137,7 @@ public class CDTTestRunnerClient implements ITestRunnerClient {
 			this.fCurrentTestCase = cRef.id;
 			fFailedTrace.setLength(0);
 
-			ITestElement test = fTestRunSession.newTestEntry(cRef.id, cRef.name, cRef.isSuite, 0, true, getTestSuite(cRef.parentId),
-					cRef.name,  null);
+			ITestElement test = fTestRunSession.newTestCase(cRef.id, cRef.name, true, getTestSuite(cRef.parentId), cRef.name, null);
 			fTestRunSession.notifyTestStarted(test);
 		}
 

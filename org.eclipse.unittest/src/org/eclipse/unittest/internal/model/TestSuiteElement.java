@@ -27,11 +27,13 @@ public class TestSuiteElement extends TestElement implements ITestSuiteElement {
 
 	private List<TestElement> fChildren;
 	private Status fChildrenStatus;
+	private int expectedTestCount;
 
 	public TestSuiteElement(TestSuiteElement parent, String id, String testName, int childrenCount, String displayName,
 			String data) {
 		super(parent, id, testName, displayName, data);
-		fChildren = new ArrayList<>(childrenCount);
+		this.expectedTestCount = childrenCount;
+		fChildren = new ArrayList<>(Math.max(0, childrenCount));
 	}
 
 	@Override

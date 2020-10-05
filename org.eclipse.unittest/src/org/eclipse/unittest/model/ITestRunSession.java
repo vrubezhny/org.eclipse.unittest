@@ -59,26 +59,36 @@ public interface ITestRunSession extends ITestElementContainer {
 	void notifyTestReran(String testId, String testName, Result status, FailureTrace failureTrace);
 
 	/**
-	 * Notifies on a member of the test suite that is about to be run.
+	 * Creates a new Test Case and adds it to the model
 	 *
 	 * @param testId        a unique id for the test
 	 * @param testName      the name of the test
-	 * @param isSuite       true or false depending on whether the test is a suite
-	 * @param testCount     an integer indicating the number of tests
-	 * @param isDynamicTest true or false
+	 * @param isDynamicTest whether this test is already accounted in parent's
+	 *                      <code>testCount</code>
 	 * @param parent        the parent
 	 * @param displayName   the display name of the test
 	 * @param data          runner specific data
-	 * @return the related test element
+	 * @return the new test case element
 	 */
-	ITestElement newTestEntry(String testId, String testName, boolean isSuite, int testCount, boolean isDynamicTest,
-			ITestSuiteElement parent, String displayName, String data);
+	ITestCaseElement newTestCase(String testId, String testName, boolean isDynamicTest, ITestSuiteElement parent,
+			String displayName, String data);
 
-//	ITestCaseElement newTestCase(String testId, String testName, boolean isDynamicTest, ITestSuiteElement parent,
-//			String displayName, String data);
-//
-//	ITestSuiteElement newTestSuite(String testId, String testName, int testCount, boolean isDynamicTest,
-//			ITestSuiteElement parent, String displayName, String data);
+	/**
+	 * Creates a new Test Suite and adds it to the model
+	 *
+	 * @param testId        a unique id for the test
+	 * @param testName      the name of the test
+	 * @param testCount     the number of tests this suite will run. A negative
+	 *                      value means unknown.
+	 * @param isDynamicTest whether this test is already accounted in parent's
+	 *                      <code>testCount</code>
+	 * @param parent        the parent
+	 * @param displayName   the display name of the test
+	 * @param data          runner specific data
+	 * @return the new test case element
+	 */
+	ITestSuiteElement newTestSuite(String testId, String testName, int testCount, boolean isDynamicTest,
+			ITestSuiteElement parent, String displayName, String data);
 
 	/**
 	 * Notifies on a test run stopped.
@@ -106,7 +116,7 @@ public interface ITestRunSession extends ITestElementContainer {
 	/**
 	 * Notifies on an individual test started.
 	 *
-	 * @param test   the test
+	 * @param test the test
 	 */
 	void notifyTestStarted(ITestElement test);
 

@@ -437,8 +437,12 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 			}
 		}
 
-		fTestRunSession.newTestEntry(id, testName, isSuite, testCount, isDynamicTest, getTestSuite(parentId),
-				displayName, uniqueId);
+		if (isSuite) {
+			fTestRunSession.newTestSuite(id, testName, testCount, isDynamicTest, getTestSuite(parentId), displayName,
+					uniqueId);
+		} else {
+			fTestRunSession.newTestCase(id, testName, isDynamicTest, getTestSuite(parentId), displayName, uniqueId);
+		}
 	}
 
 	private ITestSuiteElement getTestSuite(String parentId) {
