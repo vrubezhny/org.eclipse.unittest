@@ -24,6 +24,7 @@ import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElement.FailureTrace;
 import org.eclipse.unittest.model.ITestElement.Result;
 import org.eclipse.unittest.model.ITestRunSession;
+import org.eclipse.unittest.model.ITestSuiteElement;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 
@@ -435,8 +436,13 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 			}
 		}
 
-		fTestRunSession.notifyTestTreeEntry(id, testName, isSuite, testCount, isDynamicTest, parentId, displayName,
-				uniqueId);
+		fTestRunSession.newTestEntry(id, testName, isSuite, testCount, isDynamicTest, getTestSuite(parentId),
+				displayName, uniqueId);
+	}
+
+	private ITestSuiteElement getTestSuite(String parentId) {
+		ITestElement element = fTestRunSession.getTestElement(parentId);
+		return element instanceof ITestSuiteElement ? (ITestSuiteElement) element : null;
 	}
 
 	/**

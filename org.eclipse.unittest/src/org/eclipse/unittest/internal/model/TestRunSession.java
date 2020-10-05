@@ -66,7 +66,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	private ITestRunnerClient fTestRunnerClient;
 
 	private final ListenerList<ITestSessionListener> fSessionListeners;
-	private final List<ITestRunListener> testRunListeners = Collections.singletonList(new TestSessionNotifier());
+	private final TestSessionNotifier fSessionNotifier = new TestSessionNotifier();
 
 	/**
 	 * The model root, or <code>null</code> if swapped to disk.
@@ -477,22 +477,16 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	}
 
 	private TestElement addTreeEntry(String id, String testName, boolean isSuite, int testCount, boolean isDynamicTest,
-			String parentId, String displayName, String uniqueId) {
+			ITestSuiteElement parent, String displayName, String data) {
 		if (isDynamicTest) {
-			if (parentId != null) {
-				for (IncompleteTestSuite suite : fFactoryTestSuites) {
-					if (parentId.equals(suite.fTestSuiteElement.getId())) {
-						return createTestElement(suite.fTestSuiteElement, id, testName, isSuite, testCount,
-								isDynamicTest, displayName, uniqueId);
-					}
-				}
+			if (parent != null) {
+				return createTestElement(parent, id, testName, isSuite, testCount, isDynamicTest, displayName, data);
 			}
 			return createTestElement(getUnrootedSuite(), id, testName, isSuite, testCount, isDynamicTest, displayName,
-					uniqueId); // should not reach here
+					data); // should not reach here
 		} else {
 			if (fIncompleteTestSuites.isEmpty()) {
-				return createTestElement(fTestRoot, id, testName, isSuite, testCount, isDynamicTest, displayName,
-						uniqueId);
+				return createTestElement(fTestRoot, id, testName, isSuite, testCount, isDynamicTest, displayName, data);
 			} else {
 				int suiteIndex = fIncompleteTestSuites.size() - 1;
 				IncompleteTestSuite openSuite = fIncompleteTestSuites.get(suiteIndex);
@@ -500,7 +494,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 				if (openSuite.fOutstandingChildren <= 0)
 					fIncompleteTestSuites.remove(suiteIndex);
 				return createTestElement(openSuite.fTestSuiteElement, id, testName, isSuite, testCount, isDynamicTest,
-						displayName, uniqueId);
+						displayName, data);
 			}
 		}
 	}
@@ -553,13 +547,11 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	}
 
 	/**
-	 * An {@link ITestRunListener} that listens to events from the and translates
-	 * {@link ITestRunnerClient} them into high-level model events (broadcasted to
-	 * {@link ITestSessionListener}s).
+	 * Listens to events from the and translates {@link ITestRunnerClient} them into
+	 * high-level model events (broadcasted to {@link ITestSessionListener}s).
 	 */
-	private class TestSessionNotifier implements ITestRunListener {
+	private class TestSessionNotifier {
 
-		@Override
 		public void testRunStarted(int testCount) {
 			fIncompleteTestSuites = new ArrayList<>();
 			fFactoryTestSuites = new ArrayList<>();
@@ -579,7 +571,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			}
 		}
 
-		@Override
 		public void testRunEnded(Duration duration) {
 			fIsRunning = false;
 
@@ -588,7 +579,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			}
 		}
 
-		@Override
 		public void testRunStopped(Duration duration) {
 			fIsRunning = false;
 			fIsStopped = true;
@@ -598,7 +588,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			}
 		}
 
-		@Override
 		public void testRunTerminated() {
 			fIsRunning = false;
 			fIsStopped = true;
@@ -608,15 +597,15 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			}
 		}
 
-		@Override
-		public void testTreeEntry(String testId, String testName, boolean isSuite, int testCount, boolean isDynamicTest,
-				String parentId, String displayName, String uniqueId) {
-			ITestElement testElement = addTreeEntry(testId, testName, isSuite, testCount, isDynamicTest, parentId,
+		public ITestElement testTreeEntry(String testId, String testName, boolean isSuite, int testCount,
+				boolean isDynamicTest, ITestSuiteElement parent, String displayName, String uniqueId) {
+			ITestElement testElement = addTreeEntry(testId, testName, isSuite, testCount, isDynamicTest, parent,
 					displayName, uniqueId);
 
 			for (ITestSessionListener listener : fSessionListeners) {
 				listener.testAdded(testElement);
 			}
+			return testElement;
 		}
 
 		private ITestElement createUnrootedTestElement(String testId, String testName) {
@@ -631,7 +620,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			return testElement;
 		}
 
-		@Override
 		public void testStarted(String testId, String testName) {
 			if (fStartedCount == 0) {
 				for (ITestSessionListener listener : fSessionListeners) {
@@ -659,7 +647,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			}
 		}
 
-		@Override
 		public void testEnded(ITestElement testElement, boolean isIgnored) {
 			if (testElement == null) {
 				return;
@@ -688,7 +675,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			}
 		}
 
-		@Override
 		public void testFailed(ITestElement testElement, Result status, boolean isAssumptionFailed,
 				FailureTrace trace) {
 			if (testElement == null) {
@@ -708,7 +694,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			}
 		}
 
-		@Override
 		public void testReran(String testId, String className, String testName, Result status,
 				FailureTrace failureTrace) {
 			ITestElement testElement = getTestElement(testId);
@@ -723,7 +708,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			registerTestFailureStatus(testCaseElement, status, failureTrace);
 
 			for (ITestSessionListener listener : fSessionListeners) {
-				// TODO: post old & new status?
 				listener.testReran(testCaseElement, status, failureTrace);
 			}
 		}
@@ -836,23 +820,19 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	@Override
 	public void notifyTestReran(String testId, String className, String testName, Result status,
 			FailureTrace failureTrace) {
-		for (ITestRunListener listener : testRunListeners) {
-			SafeRunner.run(new ListenerSafeRunnable() {
-				@Override
-				public void run() {
-					listener.testReran(testId, className, testName, status, failureTrace);
-				}
-			});
-		}
+		SafeRunner.run(new ListenerSafeRunnable() {
+			@Override
+			public void run() {
+				fSessionNotifier.testReran(testId, className, testName, status, failureTrace);
+			}
+		});
 	}
 
 	@Override
-	public void notifyTestTreeEntry(String testId, String testName, boolean isSuite, int testCount,
-			boolean isDynamicTest, String parentId, String displayName, String uniqueId) {
-		for (ITestRunListener listener : testRunListeners) {
-			listener.testTreeEntry(testId, testName, isSuite, testCount, isDynamicTest, parentId, displayName,
-					uniqueId);
-		}
+	public ITestElement newTestEntry(String testId, String testName, boolean isSuite, int testCount,
+			boolean isDynamicTest, ITestSuiteElement parent, String displayName, String data) {
+		return fSessionNotifier.testTreeEntry(testId, testName, isSuite, testCount, isDynamicTest, parent, displayName,
+				data);
 	}
 
 	/**
@@ -862,16 +842,15 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	 */
 	@Override
 	public void notifyTestRunStopped(final Duration duration) {
-		if (isStopped())
+		if (isStopped()) {
 			return;
-		for (ITestRunListener listener : testRunListeners) {
-			SafeRunner.run(new ListenerSafeRunnable() {
-				@Override
-				public void run() {
-					listener.testRunStopped(duration);
-				}
-			});
 		}
+		SafeRunner.run(new ListenerSafeRunnable() {
+			@Override
+			public void run() {
+				fSessionNotifier.testRunStopped(duration);
+			}
+		});
 	}
 
 	/**
@@ -881,90 +860,72 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	 */
 	@Override
 	public void notifyTestRunEnded(final Duration duration) {
-		if (isStopped())
+		if (isStopped()) {
 			return;
-		for (ITestRunListener listener : testRunListeners) {
-			SafeRunner.run(new ListenerSafeRunnable() {
-				@Override
-				public void run() {
-					listener.testRunEnded(duration);
-				}
-			});
 		}
+		SafeRunner.run(new ListenerSafeRunnable() {
+			@Override
+			public void run() {
+				fSessionNotifier.testRunEnded(duration);
+			}
+		});
 	}
 
-	/**
-	 * Notifies on an individual test ended.
-	 *
-	 * @param testId    a unique Id identifying the test
-	 * @param testName  the name of the test that failed
-	 * @param isIgnored <code>true</code> indicates that the specified test was
-	 *                  ignored, otherwise - <code>false</code>
-	 */
 	@Override
 	public void notifyTestEnded(ITestElement test, boolean isIgnored) {
-		if (isStopped())
+		if (isStopped()) {
 			return;
-		for (ITestRunListener listener : testRunListeners) {
-			SafeRunner.run(new ListenerSafeRunnable() {
-				@Override
-				public void run() {
-					listener.testEnded(test, isIgnored);
-				}
-			});
 		}
+		SafeRunner.run(new ListenerSafeRunnable() {
+			@Override
+			public void run() {
+				fSessionNotifier.testEnded(test, isIgnored);
+			}
+		});
 	}
 
 	@Override
 	public ITestElement notifyTestStarted(final String testId, final String testName) {
-		if (isStopped())
+		if (isStopped()) {
 			return null;
-		for (ITestRunListener listener : testRunListeners) {
-			SafeRunner.run(new ListenerSafeRunnable() {
-				@Override
-				public void run() {
-					listener.testStarted(testId, testName);
-				}
-			});
 		}
+		SafeRunner.run(new ListenerSafeRunnable() {
+			@Override
+			public void run() {
+				fSessionNotifier.testStarted(testId, testName);
+			}
+		});
 		return getTestElement(testId);
 	}
 
-	/**
-	 * Notifies on a test run started.
-	 *
-	 * @param count the number of individual tests that will be run
-	 */
 	@Override
 	public void notifyTestRunStarted(final int count) {
-		if (isStopped())
+		if (isStopped()) {
 			return;
-		for (ITestRunListener listener : testRunListeners) {
-			SafeRunner.run(new ListenerSafeRunnable() {
-				@Override
-				public void run() {
-					listener.testRunStarted(count);
-				}
-			});
 		}
+		SafeRunner.run(new ListenerSafeRunnable() {
+			@Override
+			public void run() {
+				fSessionNotifier.testRunStarted(count);
+			}
+		});
 	}
 
 	@Override
 	public void notifyTestFailed(ITestElement test, Result status, boolean isAssumptionFailed,
 			FailureTrace failureTrace) {
-		if (isStopped())
+		if (isStopped()) {
 			return;
+		}
 		if (status != Result.FAILURE && status != Result.ERROR) {
 			throw new IllegalArgumentException("Status has to be FAILURE or ERROR");
 		}
-		for (ITestRunListener listener : testRunListeners) {
-			SafeRunner.run(new ListenerSafeRunnable() {
-				@Override
-				public void run() {
-					listener.testFailed(test, status, isAssumptionFailed, failureTrace);
-				}
-			});
-		}
+		SafeRunner.run(new ListenerSafeRunnable() {
+			@Override
+			public void run() {
+				fSessionNotifier.testFailed(test, status, isAssumptionFailed, failureTrace);
+			}
+		});
 	}
 
 	/**
@@ -972,15 +933,14 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	 */
 	@Override
 	public void notifyTestRunTerminated() {
-		if (isStopped())
+		if (isStopped()) {
 			return;
-		for (ITestRunListener listener : testRunListeners) {
-			SafeRunner.run(new ListenerSafeRunnable() {
-				@Override
-				public void run() {
-					listener.testRunTerminated();
-				}
-			});
 		}
+		SafeRunner.run(new ListenerSafeRunnable() {
+			@Override
+			public void run() {
+				fSessionNotifier.testRunTerminated();
+			}
+		});
 	}
 }

@@ -67,14 +67,19 @@ public interface ITestRunSession extends ITestElementContainer {
 	 * @param isSuite       true or false depending on whether the test is a suite
 	 * @param testCount     an integer indicating the number of tests
 	 * @param isDynamicTest true or false
-	 * @param parentId      the unique testId of its parent if it is a dynamic test,
-	 *                      otherwise can be "-1"
+	 * @param parent        the parent
 	 * @param displayName   the display name of the test
-	 * @param uniqueId      the unique ID of the test provided, otherwise an empty
-	 *                      string
+	 * @param data          runner specific data
+	 * @return the related test element
 	 */
-	void notifyTestTreeEntry(String testId, String testName, boolean isSuite, int testCount, boolean isDynamicTest,
-			String parentId, String displayName, String uniqueId);
+	ITestElement newTestEntry(String testId, String testName, boolean isSuite, int testCount, boolean isDynamicTest,
+			ITestSuiteElement parent, String displayName, String data);
+
+//	ITestCaseElement newTestCase(String testId, String testName, boolean isDynamicTest, ITestSuiteElement parent,
+//			String displayName, String data);
+//
+//	ITestSuiteElement newTestSuite(String testId, String testName, int testCount, boolean isDynamicTest,
+//			ITestSuiteElement parent, String displayName, String data);
 
 	/**
 	 * Notifies on a test run stopped.

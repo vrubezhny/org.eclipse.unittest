@@ -99,7 +99,7 @@ public class CDTTestRunnerClient implements ITestRunnerClient {
 
 			this.fCurrentTestSuite = cRef.id;
 
-			fTestRunSession.notifyTestTreeEntry(cRef.id, cRef.name, cRef.isSuite, 0, true, cRef.parentId,
+			fTestRunSession.newTestEntry(cRef.id, cRef.name, cRef.isSuite, 0, true, getTestSuite(cRef.parentId),
 					cRef.name, null);
 		}
 
@@ -138,10 +138,18 @@ public class CDTTestRunnerClient implements ITestRunnerClient {
 			this.fCurrentTestCase = cRef.id;
 			fFailedTrace.setLength(0);
 
-			fTestRunSession.notifyTestTreeEntry(cRef.id, cRef.name, cRef.isSuite, 0, true, cRef.parentId,
+			fTestRunSession.newTestEntry(cRef.id, cRef.name, cRef.isSuite, 0, true, getTestSuite(cRef.parentId),
 					cRef.name,  null);
 
 			fTestRunSession.notifyTestStarted(cRef.id, cRef.name);
+		}
+
+		private ITestSuiteElement getTestSuite(String parentId) {
+			ITestElement parent= fTestRunSession.getTestElement(parentId);
+			if (parent instanceof ITestSuiteElement) {
+				return (ITestSuiteElement)parent;
+			}
+			return null;
 		}
 
 		@Override
