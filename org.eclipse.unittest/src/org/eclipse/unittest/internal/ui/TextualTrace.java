@@ -21,8 +21,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Collection;
 
-import org.eclipse.unittest.ui.ITestViewSupport;
+import org.eclipse.core.text.StringMatcher;
 
 public class TextualTrace {
 	public static final int LINE_TYPE_EXCEPTION = 1;
@@ -33,7 +34,7 @@ public class TextualTrace {
 
 	private final String fTrace;
 
-	public TextualTrace(String trace, String[] filterPatterns) {
+	public TextualTrace(String trace, Collection<StringMatcher> filterPatterns) {
 		super();
 		fTrace = filterStack(trace, filterPatterns);
 	}
@@ -76,34 +77,17 @@ public class TextualTrace {
 		}
 	}
 
-	private boolean filterLine(String[] patterns, String line) {
-		String pattern;
-		int len;
-		for (int i = (patterns.length - 1); i >= 0; --i) {
-			pattern = patterns[i];
-			len = pattern.length() - 1;
-			if (pattern.charAt(len) == '*') {
-				// strip trailing * from a package filter
-				pattern = pattern.substring(0, len);
-			} else if (Character.isUpperCase(pattern.charAt(0))) {
-				// class in the default package
-				pattern = ITestViewSupport.FRAME_LINE_PREFIX + pattern + '.';
-			} else {
-				// class names start w/ an uppercase letter after the .
-				final int lastDotIndex = pattern.lastIndexOf('.');
-				if ((lastDotIndex != -1) && (lastDotIndex != len)
-						&& Character.isUpperCase(pattern.charAt(lastDotIndex + 1)))
-					pattern += '.'; // append . to a class filter
-			}
-
-			if (line.indexOf(pattern) > 0)
+	private boolean filterLine(Collection<StringMatcher> patterns, String line) {
+		for (StringMatcher pattern : patterns) {
+			if (pattern.match(line)) {
 				return true;
+			}
 		}
 		return false;
 	}
 
-	private String filterStack(String stackTrace, String[] filterPatterns) {
-		if (filterPatterns.length == 0 || stackTrace == null)
+	private String filterStack(String stackTrace, Collection<StringMatcher> filterPatterns) {
+		if (filterPatterns == null || filterPatterns.isEmpty() || stackTrace == null)
 			return stackTrace;
 
 		StringWriter stringWriter = new StringWriter();
@@ -112,11 +96,10 @@ public class TextualTrace {
 		BufferedReader bufferedReader = new BufferedReader(stringReader);
 
 		String line;
-		String[] patterns = filterPatterns;
 		boolean firstLine = true;
 		try {
 			while ((line = bufferedReader.readLine()) != null) {
-				if (firstLine || !filterLine(patterns, line))
+				if (firstLine || !filterLine(filterPatterns, line))
 					printWriter.println(line);
 				firstLine = false;
 			}

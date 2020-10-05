@@ -11,7 +11,9 @@
 package org.eclipse.unittest.junit.launcher;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.eclipse.unittest.junit.JUnitTestPlugin;
@@ -26,6 +28,8 @@ import org.eclipse.unittest.model.ITestRoot;
 import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.unittest.ui.ITestViewSupport;
+
+import org.eclipse.core.text.StringMatcher;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
@@ -53,10 +57,16 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 @SuppressWarnings("restriction")
 public class JUnitTestViewSupport implements ITestViewSupport {
 
+	public static final String FRAME_LINE_PREFIX = "at "; //$NON-NLS-1$
+
 	@Override
-	public String[] getFilterPatterns() {
-		return JUnitPreferencesConstants.parseList(Platform.getPreferencesService().getString(
-				JUnitCorePlugin.CORE_PLUGIN_ID, JUnitPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, null, null));
+	public Collection<StringMatcher> getTraceExclusionFilterPatterns() {
+		return Arrays
+				.stream(JUnitPreferencesConstants.parseList(Platform.getPreferencesService().getString(
+						JUnitCorePlugin.CORE_PLUGIN_ID, JUnitPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, "", null))) //$NON-NLS-1$
+				.filter(Predicate.not(String::isBlank)) //
+				.map(pattern -> new StringMatcher(pattern, true, false)) //
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -90,13 +100,12 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 	public IAction createOpenEditorAction(IViewPart testRunnerPart, ITestElement failure, String traceLine) {
 		try {
 			String testName = traceLine;
-			int indexOfFramePrefix = testName.indexOf(ITestViewSupport.FRAME_LINE_PREFIX);
+			int indexOfFramePrefix = testName.indexOf(FRAME_LINE_PREFIX);
 			if (indexOfFramePrefix == -1) {
 				return null;
 			}
 			testName = testName.substring(indexOfFramePrefix);
-			testName = testName.substring(ITestViewSupport.FRAME_LINE_PREFIX.length(), testName.lastIndexOf('('))
-					.trim();
+			testName = testName.substring(FRAME_LINE_PREFIX.length(), testName.lastIndexOf('(')).trim();
 			int indexOfModuleSeparator = testName.lastIndexOf('/');
 			if (indexOfModuleSeparator != -1) {
 				testName = testName.substring(indexOfModuleSeparator + 1);

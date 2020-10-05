@@ -13,11 +13,15 @@
  *******************************************************************************/
 package org.eclipse.unittest.ui;
 
+import java.util.Collection;
+
 import org.eclipse.unittest.launcher.ITestRunnerClient;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestSuiteElement;
+
+import org.eclipse.core.text.StringMatcher;
 
 import org.eclipse.jface.action.IAction;
 
@@ -32,15 +36,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 public interface ITestViewSupport {
 
 	/**
-	 * The prefix used by default when generating frame lines.
-	 *
-	 * @deprecated This is probably something that should be language specific an
-	 *             not provided as API. So it's likely to be removed.
-	 */
-	@Deprecated
-	String FRAME_LINE_PREFIX = "at "; //$NON-NLS-1$
-
-	/**
 	 * Returns a Test Runner Client.
 	 *
 	 * @param session the test session. ⚠️ The session may not be fully initialized
@@ -52,11 +47,11 @@ public interface ITestViewSupport {
 	ITestRunnerClient newTestRunnerClient(ITestRunSession session);
 
 	/**
-	 * Returns a filter patterns array for a stack trace or an error message
+	 * Returns filter patterns to exclude lines from stack trace or an error message
 	 *
-	 * @return a filter patterns array
+	 * @return filter patterns, matching lines will be hidden in the UI
 	 */
-	String[] getFilterPatterns();
+	Collection<StringMatcher> getTraceExclusionFilterPatterns();
 
 	/**
 	 * Returns an action to open a specified test case element

@@ -12,6 +12,8 @@ package org.eclipse.unittest.cdt.launcher;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.cdt.testsrunner.internal.launcher.ITestsLaunchConfigurationConstants;
@@ -25,6 +27,8 @@ import org.eclipse.unittest.model.ITestRoot;
 import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.unittest.ui.ITestViewSupport;
+
+import org.eclipse.core.text.StringMatcher;
 
 import org.eclipse.core.runtime.CoreException;
 
@@ -41,12 +45,11 @@ public class CDTTestViewSupport implements ITestViewSupport {
 	 * test paths names.
 	 */
 	private static final String TEST_PATH_PART_DELIMITER = "\n"; //$NON-NLS-1$
+	public static final String FRAME_PREFIX= "at "; //$NON-NLS-1$
 
 	@Override
-	public String[] getFilterPatterns() {
-		return new String[0];
-//		return JUnitPreferencesConstants.parseList(Platform.getPreferencesService().getString(
-//				JUnitCorePlugin.CORE_PLUGIN_ID, JUnitPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, null, null));
+	public Collection<StringMatcher> getTraceExclusionFilterPatterns() {
+		return Collections.emptySet();
 	}
 
 	@Override
@@ -63,21 +66,18 @@ public class CDTTestViewSupport implements ITestViewSupport {
 	public IAction createOpenEditorAction(IViewPart testRunnerPart, ITestElement failure, String traceLine) {
 		try {
 			String testName= traceLine;
-			int indexOfFramePrefix= testName.indexOf(ITestViewSupport.FRAME_LINE_PREFIX);
+			int indexOfFramePrefix= testName.indexOf(FRAME_PREFIX);
 			if (indexOfFramePrefix == -1) {
 				return null;
 			}
 			testName= testName.substring(indexOfFramePrefix);
-			testName= testName.substring(ITestViewSupport.FRAME_LINE_PREFIX.length(), testName.lastIndexOf(':')).trim();
+			testName= testName.substring(FRAME_PREFIX.length(), testName.lastIndexOf(':')).trim();
 
 			String lineNumber= traceLine;
 			lineNumber= lineNumber.substring(lineNumber.indexOf(':') + 1);
-			int line= Integer.valueOf(lineNumber).intValue();
+			int line= Integer.parseInt(lineNumber);
 			return new OpenEditorAtLineAction(testRunnerPart, testName, failure.getTestRunSession(), line);
-		} catch(NumberFormatException e) {
-			CDTUnitTestPlugin.log(e);
-		}
-		catch(IndexOutOfBoundsException e) {
+		} catch(NumberFormatException | IndexOutOfBoundsException e) {
 			CDTUnitTestPlugin.log(e);
 		}
 		return null;

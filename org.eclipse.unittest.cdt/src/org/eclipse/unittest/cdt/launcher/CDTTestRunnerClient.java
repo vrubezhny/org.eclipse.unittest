@@ -28,7 +28,6 @@ import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElement.FailureTrace;
 import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestSuiteElement;
-import org.eclipse.unittest.ui.ITestViewSupport;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ICoreRunnable;
@@ -42,7 +41,6 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamMonitor;
 
 public class CDTTestRunnerClient implements ITestRunnerClient {
-	private static final String FRAME_PREFIX = ITestViewSupport.FRAME_LINE_PREFIX;
 
 	class TestModelUpdaterAdapter implements ITestModelUpdater {
 
@@ -208,7 +206,7 @@ public class CDTTestRunnerClient implements ITestRunnerClient {
 			}
 
 			fFailedTrace.append(level.toString()).append(": ").append(text).append("\r\n") //$NON-NLS-1$ //$NON-NLS-2$
-				.append(FRAME_PREFIX).append(file).append(':').append(line).append("\r\n"); //$NON-NLS-1$
+				.append(CDTTestViewSupport.FRAME_PREFIX).append(file).append(':').append(line).append("\r\n"); //$NON-NLS-1$
 		}
 
 		@Override

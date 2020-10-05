@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.unittest.internal.ui;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
 
 import org.eclipse.unittest.internal.UnitTestPreferencesConstants;
@@ -29,6 +31,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.ToolBar;
+
+import org.eclipse.core.text.StringMatcher;
 
 import org.eclipse.core.runtime.Assert;
 
@@ -209,10 +213,10 @@ public class FailureTraceUIBlock implements IMenuListener {
 		fTable.setRedraw(true);
 	}
 
-	private String[] getFilterPatterns() {
+	private Collection<StringMatcher> getFilterPatterns() {
 		if (UnitTestPreferencesConstants.getFilterStack())
 			return getFilterPatterns(fFailure.getTestRunSession());
-		return new String[0];
+		return Collections.emptySet();
 	}
 
 	/**
@@ -221,15 +225,18 @@ public class FailureTraceUIBlock implements IMenuListener {
 	 * @param session a {@link ITestRunSession} to ask the filter pattern for
 	 * @return an array of filter patterns
 	 */
-	public String[] getFilterPatterns(ITestRunSession session) {
+	public Collection<StringMatcher> getFilterPatterns(ITestRunSession session) {
 		if (session == null) {
-			return new String[0];
+			return Collections.emptySet();
 		}
 		ITestViewSupport viewSupport = ((TestRunSession) session).getTestViewSupport();
 		if (viewSupport != null) {
-			return viewSupport.getFilterPatterns();
+			Collection<StringMatcher> res = viewSupport.getTraceExclusionFilterPatterns();
+			if (res != null) {
+				return res;
+			}
 		}
-		return new String[0];
+		return Collections.emptySet();
 	}
 
 	/**
