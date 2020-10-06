@@ -445,10 +445,11 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 				int suiteIndex = fIncompleteTestSuites.size() - 1;
 				IncompleteTestSuite openSuite = fIncompleteTestSuites.get(suiteIndex);
 				openSuite.fOutstandingChildren--;
-				if (openSuite.fOutstandingChildren <= 0)
+				if (openSuite.fOutstandingChildren <= 0) {
 					fIncompleteTestSuites.remove(suiteIndex);
-				return createTestElement(openSuite.fTestSuiteElement, id, testName, isSuite, testCount, isDynamicTest,
-						displayName, data);
+				}
+				return createTestElement(openSuite.fOutstandingChildren < 0 ? fTestRoot : openSuite.fTestSuiteElement,
+						id, testName, isSuite, testCount, isDynamicTest, displayName, data);
 			}
 		}
 	}
