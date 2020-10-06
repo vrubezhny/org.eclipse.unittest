@@ -1310,7 +1310,7 @@ public class TestRunnerViewPart extends ViewPart {
 		if (fTestRunSession == null)
 			return 0;
 		else
-			return fTestRunSession.getErrorCount() + fTestRunSession.getFailureCount();
+			return fTestRunSession.getCurrentErrorCount() + fTestRunSession.getCurrentFailureCount();
 	}
 
 	private void handleStopped() {
@@ -1326,7 +1326,7 @@ public class TestRunnerViewPart extends ViewPart {
 	}
 
 	private void showMessageIfNoTests() {
-		if (fTestRunSession != null && fTestRunSession.getTotalCount() == 0) {
+		if (fTestRunSession != null && fTestRunSession.getFinalTestCaseCount() == 0) {
 			Display.getDefault().asyncExec(() -> {
 				String msg = MessageFormat.format(Messages.TestRunnerViewPart_error_no_tests_found, getDisplayName());
 				MessageDialog.openInformation(getSite().getShell(), Messages.TestRunnerViewPart__error_cannotrun, msg);
@@ -1341,7 +1341,7 @@ public class TestRunnerViewPart extends ViewPart {
 
 	private void updateViewIcon() {
 		if (fTestRunSession == null || fTestRunSession.isStopped() || fTestRunSession.isRunning()
-				|| fTestRunSession.getStartedCount() == 0)
+				|| fTestRunSession.getCurrentStartedCount() == 0)
 			fViewImage = fOriginalViewImage;
 		else if (hasErrorsOrFailures())
 			fViewImage = fTestRunFailIcon;
@@ -1353,9 +1353,9 @@ public class TestRunnerViewPart extends ViewPart {
 	private void updateViewTitleProgress() {
 		if (fTestRunSession != null) {
 			if (fTestRunSession.isRunning()) {
-				Image progress = fProgressImages.getImage(fTestRunSession.getStartedCount(),
-						fTestRunSession.getTotalCount(), fTestRunSession.getErrorCount(),
-						fTestRunSession.getFailureCount());
+				Image progress = fProgressImages.getImage(fTestRunSession.getCurrentStartedCount(),
+						fTestRunSession.getFinalTestCaseCount(), fTestRunSession.getCurrentErrorCount(),
+						fTestRunSession.getCurrentFailureCount());
 				if (progress != fViewImage) {
 					fViewImage = progress;
 					firePropertyChange(IWorkbenchPart.PROP_TITLE);
@@ -1524,7 +1524,7 @@ public class TestRunnerViewPart extends ViewPart {
 
 		int startedCount;
 		int ignoredCount;
-		int totalCount;
+		Integer totalCount;
 		int errorCount;
 		int failureCount;
 		int assumptionFailureCount;
@@ -1532,18 +1532,18 @@ public class TestRunnerViewPart extends ViewPart {
 		boolean stopped;
 
 		if (fTestRunSession != null) {
-			startedCount = fTestRunSession.getStartedCount();
-			ignoredCount = fTestRunSession.getIgnoredCount();
-			totalCount = fTestRunSession.getTotalCount();
-			errorCount = fTestRunSession.getErrorCount();
-			failureCount = fTestRunSession.getFailureCount();
-			assumptionFailureCount = fTestRunSession.getAssumptionFailureCount();
+			startedCount = fTestRunSession.getCurrentStartedCount();
+			ignoredCount = fTestRunSession.getCurrentIgnoredCount();
+			totalCount = fTestRunSession.getFinalTestCaseCount();
+			errorCount = fTestRunSession.getCurrentErrorCount();
+			failureCount = fTestRunSession.getCurrentFailureCount();
+			assumptionFailureCount = fTestRunSession.getCurrentAssumptionFailureCount();
 			hasErrorsOrFailures = errorCount + failureCount > 0;
 			stopped = fTestRunSession.isStopped();
 		} else {
 			startedCount = 0;
 			ignoredCount = 0;
-			totalCount = 0;
+			totalCount = null;
 			errorCount = 0;
 			failureCount = 0;
 			assumptionFailureCount = 0;
@@ -1559,12 +1559,13 @@ public class TestRunnerViewPart extends ViewPart {
 		int ticksDone;
 		if (startedCount == 0)
 			ticksDone = 0;
-		else if (startedCount == totalCount && !fTestRunSession.isRunning())
-			ticksDone = totalCount;
+		else if (totalCount != null && startedCount == totalCount.intValue() && !fTestRunSession.isRunning())
+			ticksDone = totalCount.intValue();
 		else
 			ticksDone = startedCount - 1;
 
-		fProgressBar.reset(hasErrorsOrFailures, stopped, ticksDone, totalCount);
+		fProgressBar.reset(hasErrorsOrFailures, stopped, ticksDone,
+				totalCount != null ? totalCount.intValue() : ticksDone + 1);
 	}
 
 	protected void postShowTestResultsView() {

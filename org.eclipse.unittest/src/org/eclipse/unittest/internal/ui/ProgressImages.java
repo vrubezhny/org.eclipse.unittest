@@ -56,13 +56,14 @@ public class ProgressImages {
 		}
 	}
 
-	public Image getImage(int current, int total, int errors, int failures) {
+	public Image getImage(int current, Integer total, int errors, int failures) {
 		if (!isLoaded())
 			load();
 
-		if (total == 0)
+		if (total == null || total.intValue() == 0) {
 			return fOKImages[0];
-		int index = ((current * PROGRESS_STEPS) / total) - 1;
+		}
+		int index = ((current * PROGRESS_STEPS) / total.intValue()) - 1;
 		index = Math.min(Math.max(0, index), PROGRESS_STEPS - 1);
 
 		if (errors + failures == 0)

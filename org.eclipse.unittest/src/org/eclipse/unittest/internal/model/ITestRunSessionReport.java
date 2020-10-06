@@ -21,48 +21,6 @@ public interface ITestRunSessionReport {
 	String getTestRunName();
 
 	/**
-	 * Returns the number of started test case elements
-	 *
-	 * @return a number of started test cases
-	 */
-	int getStartedCount();
-
-	/**
-	 * Returns the number of failed test case elements
-	 *
-	 * @return a number of failed test cases
-	 */
-	int getFailureCount();
-
-	/**
-	 * Returns the number of assumption failures
-	 *
-	 * @return a number of assumption failures
-	 */
-	int getAssumptionFailureCount();
-
-	/**
-	 * Returns the number of ignored test case elements
-	 *
-	 * @return a number of ignored test cases
-	 */
-	int getIgnoredCount();
-
-	/**
-	 * Returns the total number of test case elements
-	 *
-	 * @return a total number of test cases
-	 */
-	int getTotalCount();
-
-	/**
-	 * Returns the number of test case elements with errors
-	 *
-	 * @return a number of test cases with errors
-	 */
-	int getErrorCount();
-
-	/**
 	 * Indicates if the test run session is starting
 	 *
 	 * @return <code>true</code> in case of the test session is starting, otherwise

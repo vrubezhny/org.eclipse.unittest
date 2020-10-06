@@ -57,4 +57,34 @@ public class TestCaseElement extends TestElement implements ITestCaseElement {
 	public boolean isDynamicTest() {
 		return fIsDynamicTest;
 	}
+
+	@Override
+	Integer getFinalTestCaseCount() {
+		return Integer.valueOf(1);
+	}
+
+	@Override
+	int getCurrentStartedCount() {
+		return testStartedInstant != null ? 1 : 0;
+	}
+
+	@Override
+	int getCurrentFailureCount() {
+		return getStatus() == Status.FAILURE ? 1 : 0;
+	}
+
+	@Override
+	int getCurrentAssumptionFailureCount() {
+		return isAssumptionFailure() ? 1 : 0;
+	}
+
+	@Override
+	int getCurrentIgnoredCount() {
+		return isIgnored() ? 1 : 0;
+	}
+
+	@Override
+	int getCurrentErrorCount() {
+		return getStatus() == Status.ERROR ? 1 : 0;
+	}
 }

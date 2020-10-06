@@ -19,21 +19,22 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestSuiteElement;
 
 public class TestSuiteElement extends TestElement implements ITestSuiteElement {
 
-	private List<TestElement> fChildren;
+	private final List<TestElement> fChildren;
 	private Status fChildrenStatus;
-	private int expectedTestCount;
+	private Integer expectedTestCount;
 
-	public TestSuiteElement(TestSuiteElement parent, String id, String testName, int childrenCount, String displayName,
-			String data) {
+	public TestSuiteElement(TestSuiteElement parent, String id, String testName, Integer expectedChildrenCount,
+			String displayName, String data) {
 		super(parent, id, testName, displayName, data);
-		this.expectedTestCount = childrenCount;
-		fChildren = new ArrayList<>(Math.max(0, childrenCount));
+		this.expectedTestCount = expectedChildrenCount;
+		fChildren = new ArrayList<>(expectedChildrenCount == null ? 0 : expectedChildrenCount.intValue());
 	}
 
 	@Override
@@ -152,13 +153,12 @@ public class TestSuiteElement extends TestElement implements ITestSuiteElement {
 			} else {
 				testStartedInstant = Instant.now();
 			}
-		} else if (status.convertToProgressState() == ProgressState.COMPLETED) {
-			if (duration == null) { // assert ! Double.isNaN(fTime)
-				duration = Duration.between(testStartedInstant, Instant.now());
-			}
+		} else if (status.convertToProgressState() == ProgressState.COMPLETED && duration == null) {
+			duration = Duration.between(testStartedInstant, Instant.now());
 		}
 
 		fChildrenStatus = status;
+
 		TestSuiteElement parent = getParent();
 		if (parent != null) {
 			parent.childChangedStatus(this, getStatus());
@@ -177,46 +177,87 @@ public class TestSuiteElement extends TestElement implements ITestSuiteElement {
 	}
 
 	private static Status combineProgress(Status one, Status two) {
-		if (one.isNotRun() && two.isNotRun())
+		if (one.isNotRun() && two.isNotRun()) {
 			return Status.NOT_RUN;
-		else if (one.isDone() && two.isDone())
+		}
+		if (one.isDone() && two.isDone()) {
 			return Status.OK;
-		else if (!one.isRunning() && !two.isRunning())
+		}
+		if (!one.isRunning() && !two.isRunning()) {
 			return Status.OK; // one done, one not-run -> a parent failed and its children are not run
-		else
-			return Status.RUNNING;
+		}
+		return Status.RUNNING;
 	}
 
 	private static Status combineError(Status one, Status two) {
-		if (one.isError() || two.isError())
+		if (one.isError() || two.isError()) {
 			return Status.ERROR;
-		else if (one.isFailure() || two.isFailure())
+		}
+		if (one.isFailure() || two.isFailure()) {
 			return Status.FAILURE;
-		else
-			return Status.OK;
+		}
+		return Status.OK;
 	}
 
 	private static Status combineProgressAndErrorStatus(Status progress, Status error) {
 		if (progress.isDone()) {
-			if (error.isError())
+			if (error.isError()) {
 				return Status.ERROR;
-			if (error.isFailure())
+			}
+			if (error.isFailure()) {
 				return Status.FAILURE;
+			}
 			return Status.OK;
 		}
 
 		if (progress.isNotRun()) {
-//			Assert.isTrue(!error.isErrorOrFailure());
 			return Status.NOT_RUN;
 		}
 
-//		Assert.isTrue(progress.isRunning());
-		if (error.isError())
+		if (error.isError()) {
 			return Status.RUNNING_ERROR;
-		if (error.isFailure())
+		}
+		if (error.isFailure()) {
 			return Status.RUNNING_FAILURE;
-//		Assert.isTrue(error.isOK());
+		}
 		return Status.RUNNING;
+	}
+
+	@Override
+	Integer getFinalTestCaseCount() {
+		if (expectedTestCount != null) {
+			return expectedTestCount;
+		}
+		if (getStatus().isDone()) {
+			return Integer.valueOf(getChildren().stream().map(TestElement::getFinalTestCaseCount)
+					.filter(Objects::nonNull).mapToInt(Integer::intValue).sum());
+		}
+		return null;
+	}
+
+	@Override
+	int getCurrentStartedCount() {
+		return getChildren().stream().mapToInt(TestElement::getCurrentStartedCount).sum();
+	}
+
+	@Override
+	int getCurrentFailureCount() {
+		return getChildren().stream().mapToInt(TestElement::getCurrentFailureCount).sum();
+	}
+
+	@Override
+	int getCurrentAssumptionFailureCount() {
+		return getChildren().stream().mapToInt(TestElement::getCurrentAssumptionFailureCount).sum();
+	}
+
+	@Override
+	int getCurrentIgnoredCount() {
+		return getChildren().stream().mapToInt(TestElement::getCurrentIgnoredCount).sum();
+	}
+
+	@Override
+	int getCurrentErrorCount() {
+		return getChildren().stream().mapToInt(TestElement::getCurrentErrorCount).sum();
 	}
 
 }

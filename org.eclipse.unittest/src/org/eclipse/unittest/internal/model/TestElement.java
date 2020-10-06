@@ -269,4 +269,47 @@ public abstract class TestElement implements ITestElement {
 		return fData;
 	}
 
+	/**
+	 * Returns the total number of expected test case elements, or the total number
+	 * of ran test case elements if completed, or <code>null</null> if tests are
+	 * still running and we can't know the final count.
+	 *
+	 * @return a total number of test cases
+	 */
+	abstract Integer getFinalTestCaseCount();
+
+	/**
+	 * Returns the number of started test case elements
+	 *
+	 * @return a number of started test cases
+	 */
+	abstract int getCurrentStartedCount();
+
+	/**
+	 * Returns the number of failed test case elements
+	 *
+	 * @return a number of failed test cases
+	 */
+	abstract int getCurrentFailureCount();
+
+	/**
+	 * Returns the number of assumption failures
+	 *
+	 * @return a number of assumption failures
+	 */
+	abstract int getCurrentAssumptionFailureCount();
+
+	/**
+	 * Returns the number of ignored test case elements
+	 *
+	 * @return a number of ignored test cases
+	 */
+	abstract int getCurrentIgnoredCount();
+
+	/**
+	 * Returns the number of test case elements with errors
+	 *
+	 * @return a number of test cases with errors
+	 */
+	abstract int getCurrentErrorCount();
 }

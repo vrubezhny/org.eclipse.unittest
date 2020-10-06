@@ -78,8 +78,8 @@ public interface ITestRunSession extends ITestElementContainer {
 	 *
 	 * @param testId        a unique id for the test
 	 * @param testName      the name of the test
-	 * @param testCount     the number of tests this suite will run. A negative
-	 *                      value means unknown.
+	 * @param testCount     the number of tests this suite will run,
+	 *                      <code>null</code> if unknown.
 	 * @param isDynamicTest whether this test is already accounted in parent's
 	 *                      <code>testCount</code>
 	 * @param parent        the parent
@@ -87,7 +87,7 @@ public interface ITestRunSession extends ITestElementContainer {
 	 * @param data          runner specific data
 	 * @return the new test case element
 	 */
-	ITestSuiteElement newTestSuite(String testId, String testName, int testCount, boolean isDynamicTest,
+	ITestSuiteElement newTestSuite(String testId, String testName, Integer testCount, boolean isDynamicTest,
 			ITestSuiteElement parent, String displayName, String data);
 
 	/**
@@ -123,9 +123,10 @@ public interface ITestRunSession extends ITestElementContainer {
 	/**
 	 * Notifies on a test run started.
 	 *
-	 * @param count the number of individual tests that will be run
+	 * @param count the number of individual tests that will be run,
+	 *              <code>null</code> if unknown
 	 */
-	void notifyTestRunStarted(final int count);
+	void notifyTestRunStarted(final Integer count);
 
 	/**
 	 * Notifies on an individual test failed with a stack trace.

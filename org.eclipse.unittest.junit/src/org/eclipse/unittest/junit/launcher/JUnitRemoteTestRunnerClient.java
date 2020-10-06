@@ -407,7 +407,7 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 			testCount = Integer.parseInt(fixedTreeEntry.substring(index2 + 1, index3));
 
 			int index4 = fixedTreeEntry.indexOf(',', index3 + 1);
-			isDynamicTest = fixedTreeEntry.substring(index3 + 1, index4).equals("true"); //$NON-NLS-1$
+			isDynamicTest = Boolean.parseBoolean(fixedTreeEntry.substring(index3 + 1, index4));
 
 			int index5 = fixedTreeEntry.indexOf(',', index4 + 1);
 			parentId = fixedTreeEntry.substring(index4 + 1, index5);

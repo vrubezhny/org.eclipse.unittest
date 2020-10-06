@@ -99,7 +99,7 @@ public class CDTTestRunnerClient implements ITestRunnerClient {
 
 			this.fCurrentTestSuite = cRef.id;
 
-			fTestRunSession.newTestSuite(cRef.id, cRef.name, -1, true, getTestSuite(cRef.parentId), cRef.name, null);
+			fTestRunSession.newTestSuite(cRef.id, cRef.name, null, true, getTestSuite(cRef.parentId), cRef.name, null);
 		}
 
 		@Override
@@ -350,7 +350,7 @@ public class CDTTestRunnerClient implements ITestRunnerClient {
 		if (iStream == null) {
 			return;
 		}
-		fTestRunSession.notifyTestRunStarted(0);
+		fTestRunSession.notifyTestRunStarted(null);
 		try {
 			fTestsRunnerProvider.run(new TestModelUpdaterAdapter(), iStream);
 			// If testing session was stopped, the status is set in stop()

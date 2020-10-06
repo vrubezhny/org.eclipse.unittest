@@ -96,42 +96,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	 */
 	private TestSuiteElement fUnrootedSuite;
 
-	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
-
-	/**
-	 * Tags included in this test run.
-	 */
-	private String fIncludeTags;
-
-	/**
-	 * Tags excluded from this test run.
-	 */
-	private String fExcludeTags;
-
-	/**
-	 * Number of tests started during this test run.
-	 */
-	volatile int fStartedCount;
-	/**
-	 * Number of tests ignored during this test run.
-	 */
-	volatile int fIgnoredCount;
-	/**
-	 * Number of tests whose assumption failed during this test run.
-	 */
-	volatile int fAssumptionFailureCount;
-	/**
-	 * Number of errors during this test run.
-	 */
-	volatile int fErrorCount;
-	/**
-	 * Number of failures during this test run.
-	 */
-	volatile int fFailureCount;
-	/**
-	 * Total number of tests to run.
-	 */
-	volatile int fTotalCount;
 	/**
 	 * <ul>
 	 * <li>If &gt; 0: Start time in millis</li>
@@ -143,6 +107,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	volatile boolean fIsRunning;
 
 	volatile boolean fIsStopped;
+	private Integer predefinedTestCount;
 
 	/**
 	 * Creates a test run session.
@@ -229,13 +194,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 
 	// TODO Consider removal as it's only use in XML parsing
 	public void reset() {
-		fStartedCount = 0;
-		fFailureCount = 0;
-		fAssumptionFailureCount = 0;
-		fErrorCount = 0;
-		fIgnoredCount = 0;
-		fTotalCount = 0;
-
 		fTestRoot = new TestRoot(this);
 		fTestResult = null;
 		fIdToTest = new HashMap<>();
@@ -315,33 +273,28 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	}
 
 	@Override
-	public int getErrorCount() {
-		return fErrorCount;
+	public int getCurrentErrorCount() {
+		return getChildren().stream().mapToInt(TestElement::getCurrentErrorCount).sum();
 	}
 
 	@Override
-	public int getFailureCount() {
-		return fFailureCount;
+	public int getCurrentFailureCount() {
+		return getChildren().stream().mapToInt(TestElement::getCurrentFailureCount).sum();
 	}
 
 	@Override
-	public int getAssumptionFailureCount() {
-		return fAssumptionFailureCount;
+	public int getCurrentAssumptionFailureCount() {
+		return getChildren().stream().mapToInt(TestElement::getCurrentAssumptionFailureCount).sum();
 	}
 
 	@Override
-	public int getStartedCount() {
-		return fStartedCount;
+	public int getCurrentStartedCount() {
+		return getChildren().stream().mapToInt(TestElement::getCurrentStartedCount).sum();
 	}
 
 	@Override
-	public int getIgnoredCount() {
-		return fIgnoredCount;
-	}
-
-	@Override
-	public int getTotalCount() {
-		return fTotalCount;
+	public int getCurrentIgnoredCount() {
+		return getChildren().stream().mapToInt(TestElement::getCurrentIgnoredCount).sum();
 	}
 
 	public long getStartTime() {
@@ -405,8 +358,9 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 
 	public void removeSwapFile() {
 		File swapFile = getSwapFile();
-		if (swapFile.exists())
+		if (swapFile.exists()) {
 			swapFile.delete();
+		}
 	}
 
 	private File getSwapFile() throws IllegalStateException {
@@ -476,8 +430,8 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		return fIdToTest.get(id);
 	}
 
-	private TestElement addTreeEntry(String id, String testName, boolean isSuite, int testCount, boolean isDynamicTest,
-			ITestSuiteElement parent, String displayName, String data) {
+	private TestElement addTreeEntry(String id, String testName, boolean isSuite, Integer testCount,
+			boolean isDynamicTest, ITestSuiteElement parent, String displayName, String data) {
 		if (isDynamicTest) {
 			if (parent != null) {
 				return createTestElement(parent, id, testName, isSuite, testCount, isDynamicTest, displayName, data);
@@ -518,13 +472,13 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	 *         instance
 	 */
 	public TestElement createTestElement(ITestSuiteElement parent, String id, String testName, boolean isSuite,
-			int testCount, boolean isDynamicTest, String displayName, String data) {
+			Integer testCount, boolean isDynamicTest, String displayName, String data) {
 		TestElement testElement;
 		if (isSuite) {
 			TestSuiteElement testSuiteElement = new TestSuiteElement((TestSuiteElement) parent, id, testName, testCount,
 					displayName, data);
 			testElement = testSuiteElement;
-			if (testCount > 0) {
+			if (testCount != null) {
 				fIncompleteTestSuites.add(new IncompleteTestSuite(testSuiteElement, testCount));
 			} else if (fFactoryTestSuites != null) {
 				fFactoryTestSuites.add(new IncompleteTestSuite(testSuiteElement, testCount));
@@ -540,7 +494,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	private TestSuiteElement getUnrootedSuite() {
 		if (fUnrootedSuite == null) {
 			fUnrootedSuite = (TestSuiteElement) createTestElement(fTestRoot, "-2", //$NON-NLS-1$
-					ModelMessages.TestRunSession_unrootedTests, true, 0, false,
+					ModelMessages.TestRunSession_unrootedTests, true, null, false,
 					ModelMessages.TestRunSession_unrootedTests, null);
 		}
 		return fUnrootedSuite;
@@ -552,16 +506,11 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	 */
 	private class TestSessionNotifier {
 
-		public void testRunStarted(int testCount) {
+		private boolean firstStart;
+
+		public void testRunStarted(Integer testCount) {
 			fIncompleteTestSuites = new ArrayList<>();
 			fFactoryTestSuites = new ArrayList<>();
-
-			fStartedCount = 0;
-			fIgnoredCount = 0;
-			fFailureCount = 0;
-			fAssumptionFailureCount = 0;
-			fErrorCount = 0;
-			fTotalCount = testCount;
 
 			fStartTime = System.currentTimeMillis();
 			fIsRunning = true;
@@ -597,7 +546,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			}
 		}
 
-		public ITestElement testTreeEntry(String testId, String testName, boolean isSuite, int testCount,
+		public ITestElement testTreeEntry(String testId, String testName, boolean isSuite, Integer testCount,
 				boolean isDynamicTest, ITestSuiteElement parent, String displayName, String uniqueId) {
 			ITestElement testElement = addTreeEntry(testId, testName, isSuite, testCount, isDynamicTest, parent,
 					displayName, uniqueId);
@@ -624,18 +573,13 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			if (!(test instanceof TestCaseElement)) {
 				return;
 			}
-			if (fStartedCount == 0) {
+			if (firstStart) {
 				for (ITestSessionListener listener : fSessionListeners) {
 					listener.runningBegins();
 				}
+				firstStart = false;
 			}
 			setStatus(test, Status.RUNNING);
-
-			fStartedCount++;
-			if (((TestCaseElement) test).isDynamicTest()) {
-				fTotalCount++;
-			}
-			fTotalCount = Math.max(fStartedCount, fTotalCount);
 
 			for (ITestSessionListener listener : fSessionListeners) {
 				listener.testStarted((ITestCaseElement) test);
@@ -649,7 +593,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			if (!(testElement instanceof TestCaseElement)) {
 				if (isIgnored) {
 					((TestElement) testElement).setAssumptionFailed(true);
-					fAssumptionFailureCount++;
 					setStatus(testElement, Status.OK);
 				} else {
 					logUnexpectedTest(testElement.getId(), testElement);
@@ -659,7 +602,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			TestCaseElement testCaseElement = (TestCaseElement) testElement;
 			if (isIgnored) {
 				testCaseElement.setIgnored(true);
-				fIgnoredCount++;
 			}
 
 			if (testCaseElement.getStatus() == Status.RUNNING)
@@ -678,7 +620,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 
 			if (isAssumptionFailed) {
 				((TestElement) testElement).setAssumptionFailed(true);
-				fAssumptionFailureCount++;
 				status = Result.OK;
 			}
 
@@ -714,9 +655,9 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 
 	private static class IncompleteTestSuite {
 		public final TestSuiteElement fTestSuiteElement;
-		public int fOutstandingChildren;
+		public Integer fOutstandingChildren;
 
-		public IncompleteTestSuite(TestSuiteElement testSuiteElement, int outstandingChildren) {
+		public IncompleteTestSuite(TestSuiteElement testSuiteElement, Integer outstandingChildren) {
 			fTestSuiteElement = testSuiteElement;
 			fOutstandingChildren = outstandingChildren;
 		}
@@ -724,32 +665,16 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 
 	public void registerTestFailureStatus(TestElement testElement, Result status, FailureTrace failureTrace) {
 		testElement.setStatus(Status.fromResult(status), failureTrace);
-		if (!testElement.isAssumptionFailure()) {
-			if (status == Result.ERROR) {
-				fErrorCount++;
-			} else if (status == Result.FAILURE) {
-				fFailureCount++;
-			}
-		}
 	}
 
 	public void registerTestEnded(TestElement testElement, boolean completed) {
 		if (testElement instanceof TestCaseElement) {
-			fTotalCount++;
 			if (!completed) {
 				return;
 			}
-			fStartedCount++;
 			TestCaseElement testCaseElement = (TestCaseElement) testElement;
-			if (testCaseElement.isIgnored()) {
-				fIgnoredCount++;
-			}
 			if (!testCaseElement.getStatus().isErrorOrFailure())
 				setStatus(testElement, Status.OK);
-		}
-
-		if (testElement.isAssumptionFailure()) {
-			fAssumptionFailureCount++;
 		}
 	}
 
@@ -829,7 +754,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	}
 
 	@Override
-	public TestSuiteElement newTestSuite(String testId, String testName, int testCount, boolean isDynamicTest,
+	public TestSuiteElement newTestSuite(String testId, String testName, Integer testCount, boolean isDynamicTest,
 			ITestSuiteElement parent, String displayName, String data) {
 		return (TestSuiteElement) fSessionNotifier.testTreeEntry(testId, testName, true, testCount, isDynamicTest,
 				parent, displayName, data);
@@ -898,10 +823,11 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	}
 
 	@Override
-	public void notifyTestRunStarted(final int count) {
+	public void notifyTestRunStarted(final Integer count) {
 		if (isStopped()) {
 			return;
 		}
+		this.predefinedTestCount = count;
 		SafeRunner.run(new ListenerSafeRunnable() {
 			@Override
 			public void run() {
@@ -917,7 +843,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			return;
 		}
 		if (status != Result.FAILURE && status != Result.ERROR) {
-			throw new IllegalArgumentException("Status has to be FAILURE or ERROR");
+			throw new IllegalArgumentException("Status has to be FAILURE or ERROR"); //$NON-NLS-1$
 		}
 		SafeRunner.run(new ListenerSafeRunnable() {
 			@Override
@@ -941,5 +867,27 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 				fSessionNotifier.testRunTerminated();
 			}
 		});
+	}
+
+	@Override
+	public Integer getFinalTestCaseCount() {
+		if (predefinedTestCount != null) {
+			return predefinedTestCount;
+		}
+		if (getChildren().isEmpty()) {
+			return null;
+		}
+		if (!isRunning()) {
+			int res = 0;
+			for (TestElement child : getChildren()) {
+				Integer childCount = child.getFinalTestCaseCount();
+				if (childCount == null) {
+					return null;
+				}
+				res += childCount.intValue();
+			}
+			return Integer.valueOf(res);
+		}
+		return null;
 	}
 }
