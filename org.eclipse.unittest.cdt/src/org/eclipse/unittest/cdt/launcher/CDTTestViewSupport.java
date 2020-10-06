@@ -11,10 +11,10 @@
 package org.eclipse.unittest.cdt.launcher;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.cdt.testsrunner.internal.launcher.ITestsLaunchConfigurationConstants;
 import org.eclipse.unittest.cdt.CDTUnitTestPlugin;
@@ -89,13 +89,15 @@ public class CDTTestViewSupport implements ITestViewSupport {
 	}
 
 	@Override
-	public ILaunchConfiguration getRerunLaunchConfiguration(ITestElement testSuite) {
-		ILaunchConfiguration origin = testSuite.getTestRunSession().getLaunch().getLaunchConfiguration();
+	public ILaunchConfiguration getRerunLaunchConfiguration(List<ITestElement> tests) {
+		if (tests.isEmpty()) {
+			return null;
+		}
+		ILaunchConfiguration origin = tests.get(0).getTestRunSession().getLaunch().getLaunchConfiguration();
 		ILaunchConfigurationWorkingCopy res;
 		try {
-			res= origin.copy(origin.getName() + "\uD83D\uDD03" + testSuite.getTestName()); //$NON-NLS-1$
-			List<String> testsFilterAttr = Arrays.asList(packTestPaths(testSuite));
-			res.setAttribute(ITestsLaunchConfigurationConstants.ATTR_TESTS_FILTER, testsFilterAttr);
+			res= origin.copy(origin.getName() + "\uD83D\uDD03"); //$NON-NLS-1$
+			res.setAttribute(ITestsLaunchConfigurationConstants.ATTR_TESTS_FILTER, tests.stream().map(CDTTestViewSupport::packTestPaths).collect(Collectors.toList()));
 			return res;
 		} catch (CoreException e) {
 			CDTUnitTestPlugin.log(e);
@@ -109,8 +111,7 @@ public class CDTTestViewSupport implements ITestViewSupport {
 	 *
 	 * @return string list
 	 */
-	private static String[] packTestPaths(ITestElement testElement) {
-		String[] result = new String[1];
+	private static String packTestPaths(ITestElement testElement) {
 		List<String> testPath = new ArrayList<>();
 
 		// Collect test path parts (in reverse order)
@@ -134,8 +135,7 @@ public class CDTTestViewSupport implements ITestViewSupport {
 			}
 			sb.append(testPath.get(pathPartIdx));
 		}
-		result[0] = sb.toString();
-		return result;
+		return sb.toString();
 	}
 
 	@Override

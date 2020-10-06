@@ -14,6 +14,7 @@
 package org.eclipse.unittest.ui;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.unittest.launcher.ITestRunnerClient;
 import org.eclipse.unittest.model.ITestCaseElement;
@@ -54,7 +55,7 @@ public interface ITestViewSupport {
 	Collection<StringMatcher> getTraceExclusionFilterPatterns();
 
 	/**
-	 * Returns an action to open a specified test case element
+	 * Returns an action to open a specified test elements
 	 *
 	 * @param testRunnerPart a test runner view part instance
 	 * @param testCase       a test case element
@@ -95,11 +96,11 @@ public interface ITestViewSupport {
 	/**
 	 * Returns a Rerun launch configuration for the given element
 	 *
-	 * @param testElement a test suite element
+	 * @param testElements the tests to rerun
 	 * @return a {@link ILaunchConfiguration}, derived from current test session and
 	 *         selected element.
 	 */
-	ILaunchConfiguration getRerunLaunchConfiguration(ITestElement testElement);
+	ILaunchConfiguration getRerunLaunchConfiguration(List<ITestElement> testElements);
 
 	/**
 	 * Returns a Test View Support display name

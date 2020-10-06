@@ -17,6 +17,7 @@ package org.eclipse.unittest.internal.ui;
 import java.util.AbstractList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -321,7 +322,7 @@ class TestViewer {
 
 	private void addRerunActions(IMenuManager manager, TestElement testCaseElement) {
 		ILaunchConfiguration rerunLaunchConfiguration = testCaseElement.getTestRunSession().getTestViewSupport()
-				.getRerunLaunchConfiguration(testCaseElement);
+				.getRerunLaunchConfiguration(Collections.singletonList(testCaseElement));
 		if (rerunLaunchConfiguration == null) {
 			return;
 		}

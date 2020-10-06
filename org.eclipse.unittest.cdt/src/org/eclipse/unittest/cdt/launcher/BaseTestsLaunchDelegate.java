@@ -157,8 +157,8 @@ public abstract class BaseTestsLaunchDelegate extends LaunchConfigurationDelegat
 	 * @throws CoreException in case of error
 	 */
 	private void setProgramArguments(ILaunchConfigurationWorkingCopy config) throws CoreException {
-		List<?> packedTestsFilter = config.getAttribute(ITestsLaunchConfigurationConstants.ATTR_TESTS_FILTER,
-				Collections.EMPTY_LIST);
+		List<String> packedTestsFilter = config.getAttribute(ITestsLaunchConfigurationConstants.ATTR_TESTS_FILTER,
+				Collections.emptyList());
 		String[][] testsFilter = TestPathUtils
 				.unpackTestPaths(packedTestsFilter.toArray(new String[packedTestsFilter.size()]));
 

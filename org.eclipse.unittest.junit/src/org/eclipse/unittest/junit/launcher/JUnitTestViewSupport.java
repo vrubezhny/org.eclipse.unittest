@@ -130,7 +130,11 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 	}
 
 	@Override
-	public ILaunchConfiguration getRerunLaunchConfiguration(ITestElement testSuite) {
+	public ILaunchConfiguration getRerunLaunchConfiguration(List<ITestElement> tests) {
+		if (tests == null || tests.size() != 1) {
+			return null;
+		}
+		ITestElement testSuite = tests.get(0);
 		String testMethodName = null; // test method name is null when re-running a regular test class
 		String testName = testSuite.getTestName();
 
