@@ -43,10 +43,10 @@
             id="org.eclipse.unittest.UnitTestShortcut.rerunLast">
       </command>
       <command
-            name="%UnitTestShortcut.description.rerunFailedFirst"
-            description="%UnitTestShortcut.description.rerunFailedFirst"
+            name="%UnitTestShortcut.description.rerunFailedCases"
+            description="%UnitTestShortcut.description.rerunFailedCases"
             categoryId="org.eclipse.debug.ui.category.run"
-            id="org.eclipse.unittest.UnitTestShortcut.rerunFailedFirst">
+            id="org.eclipse.unittest.UnitTestShortcut.rerunFailedCases">
       </command>
    </extension>
 

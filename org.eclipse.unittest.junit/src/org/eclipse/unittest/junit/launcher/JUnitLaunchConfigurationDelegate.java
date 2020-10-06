@@ -519,8 +519,7 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 			}
 		}
 
-		String testFailureNames = configuration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_FAILURES_NAMES,
-				""); //$NON-NLS-1$
+		String testFailureNames = configuration.getAttribute(JUnitLaunchConfigurationConstants.ATTR_FAILURES_NAMES, ""); //$NON-NLS-1$
 		if (testFailureNames.length() > 0) {
 			programArguments.add("-testfailures"); //$NON-NLS-1$
 			programArguments.add(testFailureNames);
