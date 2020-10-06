@@ -1326,7 +1326,8 @@ public class TestRunnerViewPart extends ViewPart {
 	}
 
 	private void showMessageIfNoTests() {
-		if (fTestRunSession != null && fTestRunSession.getFinalTestCaseCount() == 0) {
+		if (fTestRunSession != null && fTestRunSession.getFinalTestCaseCount() != null
+				&& fTestRunSession.getFinalTestCaseCount().intValue() == 0) {
 			Display.getDefault().asyncExec(() -> {
 				String msg = MessageFormat.format(Messages.TestRunnerViewPart_error_no_tests_found, getDisplayName());
 				MessageDialog.openInformation(getSite().getShell(), Messages.TestRunnerViewPart__error_cannotrun, msg);
