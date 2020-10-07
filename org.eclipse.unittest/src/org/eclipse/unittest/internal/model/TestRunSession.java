@@ -88,9 +88,9 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	/**
 	 * The TestSuites for which additional children are expected.
 	 */
-	private List<IncompleteTestSuite> fIncompleteTestSuites;
+	private final List<IncompleteTestSuite> fIncompleteTestSuites = new ArrayList<>();
 
-	private List<IncompleteTestSuite> fFactoryTestSuites;
+	private final List<IncompleteTestSuite> fFactoryTestSuites = new ArrayList<>();
 
 	/**
 	 * Suite for unrooted test case elements, or <code>null</code>.
@@ -341,8 +341,8 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			fTestRoot = null;
 			fTestRunnerClient = null;
 			fIdToTest = new HashMap<>();
-			fIncompleteTestSuites = null;
-			fFactoryTestSuites = null;
+			fIncompleteTestSuites.clear();
+			fFactoryTestSuites.clear();
 			fUnrootedSuite = null;
 
 		} catch (IllegalStateException e) {
@@ -485,7 +485,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			testElement = testSuiteElement;
 			if (testCount != null) {
 				fIncompleteTestSuites.add(new IncompleteTestSuite(testSuiteElement, testCount));
-			} else if (fFactoryTestSuites != null) {
+			} else {
 				fFactoryTestSuites.add(new IncompleteTestSuite(testSuiteElement, testCount));
 			}
 		} else {
@@ -514,8 +514,8 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		private boolean firstStart;
 
 		public void testRunStarted(Integer testCount) {
-			fIncompleteTestSuites = new ArrayList<>();
-			fFactoryTestSuites = new ArrayList<>();
+			fIncompleteTestSuites.clear();
+			fFactoryTestSuites.clear();
 
 			fStartTime = System.currentTimeMillis();
 			fIsRunning = true;
