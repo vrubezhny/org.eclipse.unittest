@@ -257,13 +257,15 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 	 */
 	private String[] getParameterTypes(ITestElement test) {
 		String testName = test.getData();
-		int index = testName.lastIndexOf("method:"); //$NON-NLS-1$
-		index = testName.indexOf('(', index);
-		if (index > 0) {
-			int closeIndex = testName.indexOf(')', index);
-			if (closeIndex > 0) {
-				String params = testName.substring(index + 1, closeIndex);
-				return params.split(","); //$NON-NLS-1$
+		if (testName != null) {
+			int index = testName.lastIndexOf("method:"); //$NON-NLS-1$
+			index = testName.indexOf('(', index);
+			if (index > 0) {
+				int closeIndex = testName.indexOf(')', index);
+				if (closeIndex > 0) {
+					String params = testName.substring(index + 1, closeIndex);
+					return params.split(","); //$NON-NLS-1$
+				}
 			}
 		}
 		return null;
