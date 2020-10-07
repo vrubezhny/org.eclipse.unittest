@@ -160,7 +160,7 @@ public class CDTTestRunnerClient implements ITestRunnerClient {
 				if (cRef != null) {
 					ITestElement test = fTestRunSession.getTestElement(cRef.id);
 					if (test != null) {
-						fTestRunSession.notifyTestFailed(test, status == Status.Aborted ? ITestElement.Result.FAILURE :	ITestElement.Result.ERROR,false, new FailureTrace(fFailedTrace.toString(),
+						fTestRunSession.notifyTestFailed(test, status == Status.Aborted ? ITestElement.Result.ERROR :	ITestElement.Result.FAILURE,false, new FailureTrace(fFailedTrace.toString(),
 							"", "")); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				} else {
