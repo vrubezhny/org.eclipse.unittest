@@ -153,7 +153,8 @@ public class TestSuiteElement extends TestElement implements ITestSuiteElement {
 			} else {
 				testStartedInstant = Instant.now();
 			}
-		} else if (status.convertToProgressState() == ProgressState.COMPLETED && duration == null) {
+		} else if (status.convertToProgressState() == ProgressState.COMPLETED && duration == null
+				&& testStartedInstant != null) {
 			duration = Duration.between(testStartedInstant, Instant.now());
 		}
 

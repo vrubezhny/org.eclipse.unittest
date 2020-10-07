@@ -1164,7 +1164,9 @@ public class TestRunnerViewPart extends ViewPart {
 		List<ITestElement> allFailedTestCases = new ArrayList<>();
 		collectFailedTestCases(fTestRunSession, allFailedTestCases);
 		ILaunchConfiguration tmp = fTestRunSession.getTestViewSupport().getRerunLaunchConfiguration(allFailedTestCases);
-		DebugUITools.launch(tmp, fTestRunSession.getLaunch().getLaunchMode());
+		if (tmp != null) {
+			DebugUITools.launch(tmp, fTestRunSession.getLaunch().getLaunchMode());
+		}
 	}
 
 	private void collectFailedTestCases(TestElement testElement, List<ITestElement> allFailedTestCases) {
