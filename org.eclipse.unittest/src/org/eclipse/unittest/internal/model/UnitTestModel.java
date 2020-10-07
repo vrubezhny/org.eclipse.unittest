@@ -60,6 +60,7 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -95,8 +96,7 @@ public final class UnitTestModel {
 				return;
 			}
 
-			ITestViewSupport testRunnerViewSupport = UnitTestModel
-					.newTestRunnerViewSupport(config);
+			ITestViewSupport testRunnerViewSupport = UnitTestModel.newTestRunnerViewSupport(config);
 			if (testRunnerViewSupport == null) {
 				return;
 			}
@@ -422,7 +422,11 @@ public final class UnitTestModel {
 	}
 
 	private void notifyTestRunSessionRemoved(TestRunSession testRunSession) {
-		testRunSession.stopTestRun();
+		try {
+			testRunSession.stopTestRun();
+		} catch (DebugException ex) {
+			UnitTestPlugin.log(ex);
+		}
 		ILaunch launch = testRunSession.getLaunch();
 		if (launch != null) {
 			ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();

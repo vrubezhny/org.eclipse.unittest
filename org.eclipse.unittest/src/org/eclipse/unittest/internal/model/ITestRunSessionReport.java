@@ -52,8 +52,4 @@ public interface ITestRunSessionReport {
 	 */
 	boolean isStopped();
 
-	/**
-	 * Stops the test run
-	 */
-	void stopTestRun();
 }

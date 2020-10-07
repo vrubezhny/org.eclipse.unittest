@@ -107,6 +107,7 @@ import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 import org.eclipse.debug.ui.DebugUITools;
@@ -1093,7 +1094,11 @@ public class TestRunnerViewPart extends ViewPart {
 			if (fTestRunSession.isRunning()) {
 				setContentDescription(Messages.TestRunnerViewPart_message_stopping);
 			}
-			fTestRunSession.stopTestRun();
+			try {
+				fTestRunSession.stopTestRun();
+			} catch (DebugException ex) {
+				UnitTestPlugin.log(ex);
+			}
 		}
 	}
 
@@ -1158,7 +1163,11 @@ public class TestRunnerViewPart extends ViewPart {
 			// prompt for terminating the existing run
 			if (MessageDialog.openQuestion(getSite().getShell(), Messages.TestRunnerViewPart_terminate_title,
 					Messages.TestRunnerViewPart_terminate_message) && fTestRunSession != null) {
-				fTestRunSession.stopTestRun();
+				try {
+					fTestRunSession.stopTestRun();
+				} catch (DebugException ex) {
+					UnitTestPlugin.log(ex);
+				}
 			}
 		}
 		List<ITestElement> allFailedTestCases = new ArrayList<>();

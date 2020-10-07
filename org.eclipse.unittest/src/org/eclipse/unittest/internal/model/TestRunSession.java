@@ -41,6 +41,7 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
 
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -387,12 +388,15 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		}
 	}
 
-	@Override
-	public void stopTestRun() {
-		if (isRunning() || !isKeptAlive())
-			fIsStopped = true;
-		if (fTestRunnerClient != null)
+	public void stopTestRun() throws DebugException {
+		if (isKeptAlive() || !isRunning()) {
+			return;
+		}
+		fIsStopped = true;
+		getLaunch().terminate();
+		if (fTestRunnerClient != null) {
 			fTestRunnerClient.stopTest();
+		}
 	}
 
 	/**
