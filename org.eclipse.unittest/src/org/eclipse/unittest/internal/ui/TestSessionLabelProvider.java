@@ -104,7 +104,8 @@ class TestSessionLabelProvider extends LabelProvider implements IStyledLabelProv
 		if (!fShowTime || duration == null) {
 			return string;
 		}
-		return MessageFormat.format(Messages.TestSessionLabelProvider_testName_elapsedTimeInSeconds, string, duration);
+		return MessageFormat.format(Messages.TestSessionLabelProvider_testName_elapsedTimeInSeconds, string,
+				Double.valueOf(duration.toNanos() / 1.0e9));
 	}
 
 	@Override
