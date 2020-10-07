@@ -45,7 +45,7 @@ public class CDTTestViewSupport implements ITestViewSupport {
 	 * test paths names.
 	 */
 	private static final String TEST_PATH_PART_DELIMITER = "\n"; //$NON-NLS-1$
-	public static final String FRAME_PREFIX= "at "; //$NON-NLS-1$
+	public static final String FRAME_PREFIX= " at "; //$NON-NLS-1$
 
 	@Override
 	public Collection<StringMatcher> getTraceExclusionFilterPatterns() {

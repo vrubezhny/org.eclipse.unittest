@@ -102,7 +102,7 @@ public interface ITestElement {
 		}
 
 		public boolean isComparisonFailure() {
-			return !Objects.equals(fActual, fExpected);
+			return (fExpected != null || fActual != null) && !Objects.equals(fActual, fExpected);
 		}
 	}
 

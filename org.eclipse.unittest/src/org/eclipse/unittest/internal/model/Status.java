@@ -71,7 +71,7 @@ public final class Status {
 	}
 
 	/**
-	 * @param oldStatus one of {@link ITestRunListener}'s STATUS_* constants
+	 * @param oldStatus one of {@link Status}'s constants
 	 * @return the Status
 	 */
 	public static Status convert(int oldStatus) {
