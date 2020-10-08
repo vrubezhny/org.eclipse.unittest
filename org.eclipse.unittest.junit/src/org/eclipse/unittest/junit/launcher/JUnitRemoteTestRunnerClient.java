@@ -277,10 +277,8 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 	 */
 	@Override
 	public synchronized void stopTest() {
-		if (isRunning()) {
-			fWriter.println(MessageIds.TEST_STOP);
-			fWriter.flush();
-		}
+		fWriter.println(MessageIds.TEST_STOP);
+		fWriter.flush();
 		ILaunch launch = fTestRunSession.getLaunch();
 		try {
 			launch.terminate();
