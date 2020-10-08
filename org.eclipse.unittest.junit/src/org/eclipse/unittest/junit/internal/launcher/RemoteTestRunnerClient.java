@@ -62,7 +62,6 @@ public abstract class RemoteTestRunnerClient implements ITestRunnerClient {
 	 */
 	protected String fVersion;
 
-	@SuppressWarnings("hiding")
 	protected boolean fDebug = false;
 	protected final ITestRunSession fTestRunSession;
 

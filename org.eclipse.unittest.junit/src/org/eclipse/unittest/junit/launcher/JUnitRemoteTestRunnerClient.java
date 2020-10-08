@@ -20,6 +20,7 @@ import java.util.Arrays;
 
 import org.eclipse.unittest.junit.JUnitTestPlugin;
 import org.eclipse.unittest.junit.internal.launcher.RemoteTestRunnerClient;
+import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElement.FailureTrace;
 import org.eclipse.unittest.model.ITestElement.Result;
@@ -509,8 +510,13 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 		if (statusCode != Result.OK)
 			trace = fFailedRerunTrace.toString();
 		// assumption a rerun trace was sent before
-		fTestRunSession.notifyTestReran(testId, testName, statusCode,
-				new FailureTrace(trace, nullifyEmpty(fExpectedResult), nullifyEmpty(fActualResult)));
+
+		ITestCaseElement element = fTestRunSession.newTestCase(testId, testName, true, null, testName, null);
+		if (statusCode != Result.OK) {
+			fTestRunSession.notifyTestFailed(element, statusCode, false,
+					new FailureTrace(trace, nullifyEmpty(fExpectedResult), nullifyEmpty(fActualResult)));
+		}
+		fTestRunSession.notifyTestEnded(element, false);
 	}
 
 	private static String nullifyEmpty(StringBuilder buf) {

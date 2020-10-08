@@ -106,11 +106,6 @@ public class TestRunListenerAdapter implements ITestSessionListener {
 	}
 
 	@Override
-	public void testReran(ITestCaseElement testCaseElement, Result status, FailureTrace trace) {
-		// ignore
-	}
-
-	@Override
 	public boolean acceptsSwapToDisk() {
 		return true;
 	}

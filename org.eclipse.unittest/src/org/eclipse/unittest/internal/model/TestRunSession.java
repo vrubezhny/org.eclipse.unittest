@@ -577,23 +577,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			}
 		}
 
-		public void testReran(String testId, String testName, Result status, FailureTrace failureTrace) {
-			ITestElement testElement = getTestElement(testId);
-			if (testElement == null) {
-				testElement = createUnrootedTestElement(testId, testName);
-			} else if (!(testElement instanceof TestCaseElement)) {
-				logUnexpectedTest(testId, testElement);
-				return;
-			}
-			TestCaseElement testCaseElement = (TestCaseElement) testElement;
-
-			registerTestFailureStatus(testCaseElement, status, failureTrace);
-
-			for (ITestSessionListener listener : fSessionListeners) {
-				listener.testReran(testCaseElement, status, failureTrace);
-			}
-		}
-
 		private void logUnexpectedTest(String testId, ITestElement testElement) {
 			UnitTestPlugin
 					.log(new Exception("Unexpected TestElement type for testId '" + testId + "': " + testElement)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -681,16 +664,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		public void handleException(Throwable exception) {
 			UnitTestPlugin.log(exception);
 		}
-	}
-
-	@Override
-	public void notifyTestReran(String testId, String testName, Result status, FailureTrace failureTrace) {
-		SafeRunner.run(new ListenerSafeRunnable() {
-			@Override
-			public void run() {
-				fSessionNotifier.testReran(testId, testName, status, failureTrace);
-			}
-		});
 	}
 
 	@Override

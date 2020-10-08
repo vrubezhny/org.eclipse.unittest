@@ -45,20 +45,6 @@ public interface ITestRunSession extends ITestElementContainer {
 	ITestElement getTestElement(String id);
 
 	/**
-	 * Notifies on an individual test re-run.
-	 *
-	 * @param testId       a unique Id identifying the test
-	 * @param testName     the name of the test that was rerun
-	 * @param status       the outcome of the test that was rerun; one of
-	 *                     {@link org.eclipse.unittest.model.ITestElement.Result#OK},
-	 *                     {@link org.eclipse.unittest.model.ITestElement.Result#ERROR},
-	 *                     or
-	 *                     {@link org.eclipse.unittest.model.ITestElement.Result#FAILURE}
-	 * @param failureTrace the failure trace
-	 */
-	void notifyTestReran(String testId, String testName, Result status, FailureTrace failureTrace);
-
-	/**
 	 * Creates a new Test Case and adds it to the model
 	 *
 	 * @param testId        a unique id for the test
@@ -97,8 +83,8 @@ public interface ITestRunSession extends ITestElementContainer {
 	 *
 	 * @param duration the total elapsed time of the test run, can be
 	 *                 <code>null</code>.
-	 * @see #notifyTestSessionAborted(Duration, Exception) notifyTestRunAborted to use
-	 *      for abnormal termination of the test session.
+	 * @see #notifyTestSessionAborted(Duration, Exception) notifyTestRunAborted to
+	 *      use for abnormal termination of the test session.
 	 */
 	void notifyTestSessionCompleted(final Duration duration);
 
@@ -109,8 +95,8 @@ public interface ITestRunSession extends ITestElementContainer {
 	 *                 <code>null</code>.
 	 * @param cause    the cause of the abortion, can be shown in log or to user,
 	 *                 can be <code>null</code>.
-	 * @see #notifyTestSessionCompleted(Duration) notifyTestRunAborted to use for nomal
-	 *      completion.
+	 * @see #notifyTestSessionCompleted(Duration) notifyTestRunAborted to use for
+	 *      nomal completion.
 	 */
 	void notifyTestSessionAborted(final Duration duration, final Exception cause);
 

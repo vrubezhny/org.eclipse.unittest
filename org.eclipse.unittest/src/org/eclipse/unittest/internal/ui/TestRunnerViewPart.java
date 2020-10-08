@@ -675,13 +675,6 @@ public class TestRunnerViewPart extends ViewPart {
 		}
 
 		@Override
-		public void testReran(ITestCaseElement testCaseElement, ITestElement.Result status, FailureTrace trace) {
-			fTestViewer.registerViewerUpdate(testCaseElement); // TODO: autoExpand?
-			postSyncProcessChanges();
-			showFailure((TestCaseElement) testCaseElement);
-		}
-
-		@Override
 		public void testAdded(ITestElement testElement) {
 			fTestViewer.registerTestAdded(testElement);
 		}

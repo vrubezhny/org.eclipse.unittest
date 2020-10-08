@@ -84,20 +84,6 @@ public interface ITestSessionListener {
 	void testFailed(ITestElement testElement, Result status, FailureTrace trace);
 
 	/**
-	 * An individual test has been rerun.
-	 *
-	 * @param testCaseElement the test
-	 * @param status          the outcome of the test that was rerun; one of
-	 *                        {@link org.eclipse.unittest.model.ITestElement.Result#OK},
-	 *                        {@link org.eclipse.unittest.model.ITestElement.Result#ERROR},
-	 *                        or
-	 *                        {@link org.eclipse.unittest.model.ITestElement.Result#FAILURE}
-	 * @param trace           the stack trace in the case of abnormal termination,
-	 *                        or the empty string if none
-	 */
-	void testReran(ITestCaseElement testCaseElement, Result status, FailureTrace trace);
-
-	/**
 	 * @return <code>true</code> if the test run session can be swapped to disk
 	 *         although this listener is still installed
 	 */
