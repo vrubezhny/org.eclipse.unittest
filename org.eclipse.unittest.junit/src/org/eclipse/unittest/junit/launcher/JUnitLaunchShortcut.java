@@ -397,7 +397,7 @@ public class JUnitLaunchShortcut implements ILaunchShortcut2 {
 		 */
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, element.getJavaProject().getElementName());
 
-		wc.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_KEEPRUNNING, false);
+		wc.setAttribute(JUnitLaunchConfigurationConstants.ATTR_KEEPRUNNING, false);
 		wc.setAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_CONTAINER, containerHandleId);
 		wc.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_UNIT_TEST_VIEW_SUPPORT,
 				JUnitTestPlugin.UNIT_TEST_VIEW_SUPPORT_ID);

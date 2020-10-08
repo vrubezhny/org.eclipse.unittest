@@ -105,6 +105,11 @@ public interface ITestRunSession extends ITestElementContainer {
 	void notifyTestRunEnded(final Duration duration);
 
 	/**
+	 * Notifies on a test run terminated.
+	 */
+	void notifyTestRunTerminated();
+
+	/**
 	 * Notifies on an individual test ended.
 	 *
 	 * @param test      a unique Id identifying the test
@@ -144,8 +149,4 @@ public interface ITestRunSession extends ITestElementContainer {
 	void notifyTestFailed(ITestElement test, Result status, boolean isAssumptionFailed, FailureTrace failureTrace)
 			throws IllegalArgumentException;
 
-	/**
-	 * Notifies on a test run terminated.
-	 */
-	void notifyTestRunTerminated();
 }

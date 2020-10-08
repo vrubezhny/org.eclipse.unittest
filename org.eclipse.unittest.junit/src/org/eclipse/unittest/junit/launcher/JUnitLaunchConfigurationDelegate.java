@@ -39,7 +39,6 @@ import org.osgi.framework.Constants;
 import org.eclipse.unittest.junit.JUnitMessages;
 import org.eclipse.unittest.junit.JUnitTestPlugin;
 import org.eclipse.unittest.junit.JUnitTestPlugin.JUnitVersion;
-import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 
 import org.eclipse.core.variables.VariablesPlugin;
 
@@ -163,7 +162,7 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 			}
 
 			fKeepAlive = mode.equals(ILaunchManager.DEBUG_MODE)
-					&& configuration.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_KEEPRUNNING, false);
+					&& configuration.getAttribute(JUnitLaunchConfigurationConstants.ATTR_KEEPRUNNING, false);
 			fPort = evaluatePort();
 			launch.setAttribute(ATTR_PORT, String.valueOf(fPort));
 

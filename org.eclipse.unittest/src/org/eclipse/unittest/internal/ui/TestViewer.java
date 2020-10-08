@@ -290,7 +290,7 @@ class TestViewer {
 					manager.add(openTestAction);
 				}
 				manager.add(new Separator());
-				if (!fTestRunnerPart.lastLaunchIsKeptAlive()) {
+				if (!fTestRunnerPart.lastLaunchStillRunning()) {
 					addRerunActions(manager, testSuiteElement);
 				}
 			} else {
@@ -326,7 +326,7 @@ class TestViewer {
 		if (rerunLaunchConfiguration == null) {
 			return;
 		}
-		if (fTestRunnerPart.lastLaunchIsKeptAlive()) {
+		if (fTestRunnerPart.lastLaunchStillRunning()) {
 			manager.add(new RerunAction(rerunLaunchConfiguration, ILaunchManager.RUN_MODE));
 		} else {
 			try {

@@ -15,6 +15,8 @@ package org.eclipse.unittest.launcher;
 
 import org.eclipse.unittest.internal.model.TestRunSession;
 
+import org.eclipse.debug.core.ILaunch;
+
 /**
  * An interface to be implemented by a Test Runner Client. Such implementation
  * takes care of placing the right listeners got a given {@link TestRunSession}
@@ -25,24 +27,24 @@ import org.eclipse.unittest.internal.model.TestRunSession;
 public interface ITestRunnerClient {
 
 	/**
-	 * Indicates if a test run is in progress
+	 * Indicates if a test run is in progress and still worth being watched.
 	 *
 	 * @return returns true in case of a test run in progress, otherwise false
 	 */
 	boolean isRunning();
 
 	/**
-	 * Requests to stop the remote test run.
+	 * Requests to stop the remote test run. Usually requested by user; so should
+	 * stop the test runner client (usually calling {@link #disconnect()} and also
+	 * related test specific closeable objects like an underlying {@link ILaunch}
+	 * (unless launch is configured to be kept alive).
 	 */
 	void stopTest();
 
 	/**
-	 * Requests to stop waiting for test runner messages
+	 * Disconnects this test runner client; this is typically happening when a test
+	 * run session is marked as terminated.
 	 */
-	void stopWaiting();
+	void disconnect();
 
-	/**
-	 * Requests to shutdown a rest run
-	 */
-	void shutDown();
 }

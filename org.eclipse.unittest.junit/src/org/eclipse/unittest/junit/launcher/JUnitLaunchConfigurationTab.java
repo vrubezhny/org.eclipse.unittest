@@ -490,7 +490,7 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 	private void updateKeepRunning(ILaunchConfiguration config) {
 		boolean running = false;
 		try {
-			running = config.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_KEEPRUNNING, false);
+			running = config.getAttribute(JUnitLaunchConfigurationConstants.ATTR_KEEPRUNNING, false);
 		} catch (CoreException ce) {
 		}
 		fKeepRunning.setSelection(running);
@@ -561,7 +561,7 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 		}
 		config.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_UNIT_TEST_VIEW_SUPPORT,
 				JUnitTestPlugin.UNIT_TEST_VIEW_SUPPORT_ID);
-		config.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_KEEPRUNNING, fKeepRunning.getSelection());
+		config.setAttribute(JUnitLaunchConfigurationConstants.ATTR_KEEPRUNNING, fKeepRunning.getSelection());
 		try {
 			mapResources(config);
 		} catch (CoreException e) {

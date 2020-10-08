@@ -112,12 +112,8 @@ public abstract class RemoteTestRunnerClient implements ITestRunnerClient {
 		connection.start();
 	}
 
-	abstract public void receiveMessage(String message);
+	public abstract void receiveMessage(String message);
 
-	@Override
-	abstract public void stopTest();
-
-	@Override
 	public synchronized void shutDown() {
 		if (fDebug)
 			System.out.println("shutdown " + fPort); //$NON-NLS-1$
@@ -195,7 +191,7 @@ public abstract class RemoteTestRunnerClient implements ITestRunnerClient {
 	protected Socket fSocket;
 
 	@Override
-	public synchronized void stopWaiting() {
+	public synchronized void disconnect() {
 		if (fServerSocket != null && !fServerSocket.isClosed() && fSocket == null) {
 			shutDown(); // will throw a SocketException in Threads that wait in ServerSocket#accept()
 		}

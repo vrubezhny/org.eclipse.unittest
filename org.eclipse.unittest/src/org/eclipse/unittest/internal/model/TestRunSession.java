@@ -27,7 +27,6 @@ import java.util.List;
 
 import org.eclipse.unittest.internal.UnitTestPlugin;
 import org.eclipse.unittest.launcher.ITestRunnerClient;
-import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElementContainer;
@@ -41,7 +40,6 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
 
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -161,9 +159,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			@Override
 			public void launchesTerminated(ILaunch[] launches) {
 				if (Arrays.asList(launches).contains(fLaunch)) {
-					if (fTestRunnerClient != null) {
-						fTestRunnerClient.stopWaiting();
-					}
 					launchManager.removeLaunchListener(this);
 				}
 			}
@@ -171,9 +166,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			@Override
 			public void launchesRemoved(ILaunch[] launches) {
 				if (Arrays.asList(launches).contains(fLaunch)) {
-					if (fTestRunnerClient != null) {
-						fTestRunnerClient.stopWaiting();
-					}
 					launchManager.removeLaunchListener(this);
 				}
 			}
@@ -323,14 +315,17 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	}
 
 	public synchronized void swapOut() {
-		if (fTestRoot == null)
+		if (fTestRoot == null) {
 			return;
-		if (isRunning() || isStarting() || isKeptAlive())
+		}
+		if (isRunning() || isStarting()) {
 			return;
+		}
 
 		for (ITestSessionListener registered : fSessionListeners) {
-			if (!registered.acceptsSwapToDisk())
+			if (!registered.acceptsSwapToDisk()) {
 				return;
+			}
 		}
 
 		try {
@@ -377,46 +372,18 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 
 		try {
 			UnitTestModel.importIntoTestRunSession(getSwapFile(), this);
-		} catch (IllegalStateException e) {
-			UnitTestPlugin.log(e);
-			fTestRoot = new TestRoot(this);
-			fTestResult = null;
-		} catch (CoreException e) {
+		} catch (IllegalStateException | CoreException e) {
 			UnitTestPlugin.log(e);
 			fTestRoot = new TestRoot(this);
 			fTestResult = null;
 		}
 	}
 
-	public void stopTestRun() throws DebugException {
-		if (isKeptAlive() || !isRunning()) {
-			return;
-		}
+	public void stopTestRun() {
 		fIsStopped = true;
-		getLaunch().terminate();
 		if (fTestRunnerClient != null) {
 			fTestRunnerClient.stopTest();
-		}
-	}
-
-	/**
-	 * @return <code>true</code> iff the runtime VM of this test session is still
-	 *         alive
-	 */
-	@Override
-	public boolean isKeptAlive() {
-		if (fTestRunnerClient != null && fLaunch != null && fTestRunnerClient.isRunning()
-				&& ILaunchManager.DEBUG_MODE.equals(fLaunch.getLaunchMode())) {
-			ILaunchConfiguration config = fLaunch.getLaunchConfiguration();
-			try {
-				return config != null
-						&& config.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_KEEPRUNNING, false);
-			} catch (CoreException e) {
-				return false;
-			}
-
-		} else {
-			return false;
+			fTestRunnerClient.disconnect();
 		}
 	}
 
@@ -781,6 +748,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 				fSessionNotifier.testRunStopped(duration);
 			}
 		});
+		fTestRunnerClient.disconnect();
 	}
 
 	/**
@@ -799,6 +767,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 				fSessionNotifier.testRunEnded(duration);
 			}
 		});
+		fTestRunnerClient.disconnect();
 	}
 
 	@Override

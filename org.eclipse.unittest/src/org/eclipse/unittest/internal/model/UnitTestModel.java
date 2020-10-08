@@ -60,7 +60,6 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -241,7 +240,7 @@ public final class UnitTestModel {
 				List<TestRunSession> excess = fTestRunSessions.subList(maxCount, size);
 				for (Iterator<TestRunSession> iter = excess.iterator(); iter.hasNext();) {
 					TestRunSession oldSession = iter.next();
-					if (!(oldSession.isStarting() || oldSession.isRunning() || oldSession.isKeptAlive())) {
+					if (oldSession.isStopped()) {
 						toRemove.add(oldSession);
 						iter.remove();
 					}
@@ -422,17 +421,6 @@ public final class UnitTestModel {
 	}
 
 	private void notifyTestRunSessionRemoved(TestRunSession testRunSession) {
-		try {
-			testRunSession.stopTestRun();
-		} catch (DebugException ex) {
-			UnitTestPlugin.log(ex);
-		}
-		ILaunch launch = testRunSession.getLaunch();
-		if (launch != null) {
-			ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-			launchManager.removeLaunch(launch);
-		}
-
 		for (ITestRunSessionListener listener : fTestRunSessionListeners) {
 			listener.sessionRemoved(testRunSession);
 		}

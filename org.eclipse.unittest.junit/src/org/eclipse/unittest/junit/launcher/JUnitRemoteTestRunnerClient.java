@@ -28,6 +28,8 @@ import org.eclipse.unittest.model.ITestSuiteElement;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 
+import org.eclipse.debug.core.ILaunch;
+
 import org.eclipse.jdt.internal.junit.runner.MessageIds;
 import org.eclipse.jdt.internal.junit.runner.RemoteTestRunner;
 
@@ -278,6 +280,12 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 		if (isRunning()) {
 			fWriter.println(MessageIds.TEST_STOP);
 			fWriter.flush();
+		}
+		ILaunch launch = fTestRunSession.getLaunch();
+		try {
+			launch.terminate();
+		} catch (Exception ex) {
+			JUnitTestPlugin.log(ex);
 		}
 	}
 

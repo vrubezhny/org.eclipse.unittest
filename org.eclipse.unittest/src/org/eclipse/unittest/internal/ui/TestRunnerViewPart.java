@@ -107,7 +107,6 @@ import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 import org.eclipse.debug.ui.DebugUITools;
@@ -608,7 +607,7 @@ public class TestRunnerViewPart extends ViewPart {
 
 		@Override
 		public void sessionEnded(Duration duration) {
-			deregisterTestSessionListener(false);
+			deregisterTestSessionListener();
 
 			fTestViewer.registerAutoScrollTarget(null);
 
@@ -618,7 +617,7 @@ public class TestRunnerViewPart extends ViewPart {
 			postSyncRunnable(() -> {
 				if (isDisposed())
 					return;
-				fStopAction.setEnabled(lastLaunchIsKeptAlive());
+				fStopAction.setEnabled(lastLaunchStillRunning());
 				updateRerunFailedFirstAction();
 				processChangesInUI();
 				if (hasErrorsOrFailures()) {
@@ -636,7 +635,7 @@ public class TestRunnerViewPart extends ViewPart {
 
 		@Override
 		public void sessionStopped(Duration duration) {
-			deregisterTestSessionListener(false);
+			deregisterTestSessionListener();
 
 			fTestViewer.registerAutoScrollTarget(null);
 
@@ -646,7 +645,7 @@ public class TestRunnerViewPart extends ViewPart {
 
 		@Override
 		public void sessionTerminated() {
-			deregisterTestSessionListener(true);
+			deregisterTestSessionListener();
 
 			fTestViewer.registerAutoScrollTarget(null);
 
@@ -1094,11 +1093,7 @@ public class TestRunnerViewPart extends ViewPart {
 			if (fTestRunSession.isRunning()) {
 				setContentDescription(Messages.TestRunnerViewPart_message_stopping);
 			}
-			try {
-				fTestRunSession.stopTestRun();
-			} catch (DebugException ex) {
-				UnitTestPlugin.log(ex);
-			}
+			fTestRunSession.stopTestRun();
 		}
 	}
 
@@ -1159,15 +1154,11 @@ public class TestRunnerViewPart extends ViewPart {
 	 * Re-runs the tests executing the failed tests first
 	 */
 	private void rerunFailedTestCases() {
-		if (lastLaunchIsKeptAlive()) {
+		if (lastLaunchStillRunning()) {
 			// prompt for terminating the existing run
 			if (MessageDialog.openQuestion(getSite().getShell(), Messages.TestRunnerViewPart_terminate_title,
 					Messages.TestRunnerViewPart_terminate_message) && fTestRunSession != null) {
-				try {
-					fTestRunSession.stopTestRun();
-				} catch (DebugException ex) {
-					UnitTestPlugin.log(ex);
-				}
+				fTestRunSession.stopTestRun();
 			}
 		}
 		List<ITestElement> allFailedTestCases = new ArrayList<>();
@@ -1320,7 +1311,7 @@ public class TestRunnerViewPart extends ViewPart {
 		if (fTestRunSession == testRunSession)
 			return null;
 
-		deregisterTestSessionListener(true);
+		deregisterTestSessionListener();
 
 		TestRunSession deactivatedSession = fTestRunSession;
 
@@ -1346,7 +1337,7 @@ public class TestRunnerViewPart extends ViewPart {
 			fRerunLastTestAction.setEnabled(false);
 
 		} else {
-			if (fTestRunSession.isStarting() || fTestRunSession.isRunning() || fTestRunSession.isKeptAlive()) {
+			if (fTestRunSession.isStarting() || fTestRunSession.isRunning()) {
 				fTestSessionListener = new TestSessionListener();
 				fTestRunSession.addTestSessionListener(fTestSessionListener);
 			}
@@ -1362,23 +1353,19 @@ public class TestRunnerViewPart extends ViewPart {
 			updateRerunFailedFirstAction();
 			fRerunLastTestAction.setEnabled(fTestRunSession.getLaunch() != null);
 
+			fStopAction.setEnabled(fTestRunSession.isRunning());
 			if (fTestRunSession.isRunning()) {
 				startUpdateJobs();
-
-				fStopAction.setEnabled(true);
-
 			} else /* old or fresh session: don't want jobs at this stage */ {
 				stopUpdateJobs();
 
-				fStopAction.setEnabled(fTestRunSession.isKeptAlive());
-				fTestViewer.expandFirstLevel();
 			}
 		}
 		return deactivatedSession;
 	}
 
-	private void deregisterTestSessionListener(boolean force) {
-		if (fTestRunSession != null && fTestSessionListener != null && (force || !fTestRunSession.isKeptAlive())) {
+	private void deregisterTestSessionListener() {
+		if (fTestRunSession != null && fTestSessionListener != null) {
 			fTestRunSession.removeTestSessionListener(fTestSessionListener);
 			fTestSessionListener = null;
 		}
@@ -1945,8 +1932,8 @@ public class TestRunnerViewPart extends ViewPart {
 	 * @return <code>true</code> in case of the last test launch is kept alive,
 	 *         otherwise returns <code>false</code>
 	 */
-	public boolean lastLaunchIsKeptAlive() {
-		return fTestRunSession != null && fTestRunSession.isKeptAlive();
+	public boolean lastLaunchStillRunning() {
+		return fTestRunSession != null && !fTestRunSession.getLaunch().isTerminated();
 	}
 
 	private void setOrientation(int orientation) {

@@ -372,7 +372,6 @@ public class CDTTestRunnerClient implements ITestRunnerClient {
 			}
 			fTestRunSession.notifyTestRunTerminated();
 		}
-		shutDown();
 	}
 
 	@Override
@@ -411,13 +410,7 @@ public class CDTTestRunnerClient implements ITestRunnerClient {
 	}
 
 	@Override
-	public void stopWaiting() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void shutDown() {
+	public void disconnect() {
 		// TODO Auto-generated method stub
 
 	}

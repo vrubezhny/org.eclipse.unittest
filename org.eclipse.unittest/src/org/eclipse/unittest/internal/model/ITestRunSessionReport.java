@@ -37,14 +37,6 @@ public interface ITestRunSessionReport {
 	boolean isRunning();
 
 	/**
-	 * Indicates if the test run session has been kept alive
-	 *
-	 * @return <code>true</code> in case of the test session has been kept alive,
-	 *         otherwise returns <code>false</code>
-	 */
-	boolean isKeptAlive();
-
-	/**
 	 * Indicates if the test run session has been stopped or terminated
 	 *
 	 * @return <code>true</code> if the session has been stopped or terminated,
