@@ -92,7 +92,7 @@ public abstract class RemoteTestRunnerClient implements ITestRunnerClient {
 				while (fPushbackReader != null && (message = readMessage(fPushbackReader)) != null)
 					receiveMessage(message);
 			} catch (SocketException e) {
-				fTestRunSession.notifyTestRunTerminated();
+				fTestRunSession.notifyTestSessionAborted(null, e);
 			} catch (IOException e) {
 				JUnitTestPlugin.log(e);
 				// fall through
@@ -104,10 +104,10 @@ public abstract class RemoteTestRunnerClient implements ITestRunnerClient {
 	protected RemoteTestRunnerClient(int port, ITestRunSession testRunSession) {
 		this.fPort = port;
 		fTestRunSession = testRunSession;
-		startListening();
 	}
 
-	private void startListening() {
+	@Override
+	public void start() {
 		ServerConnection connection = new ServerConnection(fPort);
 		connection.start();
 	}
@@ -149,11 +149,6 @@ public abstract class RemoteTestRunnerClient implements ITestRunnerClient {
 		} catch (IOException e) {
 			// Ignore
 		}
-	}
-
-	@Override
-	public boolean isRunning() {
-		return fSocket != null;
 	}
 
 	private String readMessage(PushbackReader in) throws IOException {

@@ -36,19 +36,14 @@ public interface ITestSessionListener {
 	 *
 	 * @param duration the total elapsed time of the test run
 	 */
-	void sessionEnded(Duration duration);
+	void sessionCompleted(Duration duration);
 
 	/**
 	 * A test run has been stopped prematurely.
 	 *
 	 * @param duration the time elapsed before the test run was stopped
 	 */
-	void sessionStopped(Duration duration);
-
-	/**
-	 * The VM instance performing the tests has terminated.
-	 */
-	void sessionTerminated();
+	void sessionAborted(Duration duration);
 
 	/**
 	 * A test has been added to the plan.

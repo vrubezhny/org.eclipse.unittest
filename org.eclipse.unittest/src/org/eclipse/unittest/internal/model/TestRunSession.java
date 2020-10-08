@@ -17,6 +17,7 @@ import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -95,18 +96,11 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	 */
 	private TestSuiteElement fUnrootedSuite;
 
-	/**
-	 * <ul>
-	 * <li>If &gt; 0: Start time in millis</li>
-	 * <li>If &lt; 0: Unique identifier for imported test run</li>
-	 * <li>If = 0: Session not started yet</li>
-	 * </ul>
-	 */
-	volatile long fStartTime;
-	volatile boolean fIsRunning;
+	volatile Instant fStartTime;
 
-	volatile boolean fIsStopped;
+	volatile boolean fIsAborted;
 	private Integer predefinedTestCount;
+	private boolean completedOrAborted;
 
 	/**
 	 * Creates a test run session.
@@ -118,7 +112,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		// TODO: check assumptions about non-null fields
 
 		fLaunch = null;
-		fStartTime = -System.currentTimeMillis();
 
 		Assert.isNotNull(testRunName);
 		fTestRunName = testRunName;
@@ -180,9 +173,9 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 				// do nothing
 			}
 		});
-
 		fSessionListeners = new ListenerList<>();
 		addTestSessionListener(new TestRunListenerAdapter(this));
+		fTestRunnerClient.start();
 	}
 
 	// TODO Consider removal as it's only use in XML parsing
@@ -198,7 +191,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			return ProgressState.RUNNING;
 		}
 		if (isStopped()) {
-			return ProgressState.STOPPED;
+			return ProgressState.ABORTED;
 		}
 		return ProgressState.COMPLETED;
 	}
@@ -290,7 +283,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		return getChildren().stream().mapToInt(TestElement::getCurrentIgnoredCount).sum();
 	}
 
-	public long getStartTime() {
+	public Instant getStartTime() {
 		return fStartTime;
 	}
 
@@ -302,7 +295,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	 */
 	@Override
 	public boolean isStopped() {
-		return fIsStopped;
+		return fIsAborted;
 	}
 
 	public synchronized void addTestSessionListener(ITestSessionListener listener) {
@@ -349,7 +342,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 
 	@Override
 	public boolean isStarting() {
-		return getStartTime() == 0 && fLaunch != null && !fLaunch.isTerminated();
+		return getStartTime() == null && fLaunch != null && !fLaunch.isTerminated();
 	}
 
 	public void removeSwapFile() {
@@ -359,9 +352,9 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		}
 	}
 
-	private File getSwapFile() throws IllegalStateException {
+	private File getSwapFile() {
 		File historyDir = UnitTestModel.getHistoryDirectory();
-		String isoTime = new SimpleDateFormat("yyyyMMdd-HHmmss.SSS").format(new Date(getStartTime())); //$NON-NLS-1$
+		String isoTime = new SimpleDateFormat("yyyyMMdd-HHmmss.SSS").format(new Date(getStartTime().toEpochMilli())); //$NON-NLS-1$
 		String swapFileName = isoTime + ".xml"; //$NON-NLS-1$
 		return new File(historyDir, swapFileName);
 	}
@@ -379,21 +372,17 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		}
 	}
 
-	public void stopTestRun() {
-		fIsStopped = true;
+	public void abortTestRun() {
+		fIsAborted = true;
 		if (fTestRunnerClient != null) {
 			fTestRunnerClient.stopTest();
 			fTestRunnerClient.disconnect();
 		}
 	}
 
-	/**
-	 * @return <code>true</code> if this session has been started, but not ended nor
-	 *         stopped nor terminated
-	 */
 	@Override
 	public boolean isRunning() {
-		return fIsRunning;
+		return getStartTime() != null && fTestRunnerClient != null && !completedOrAborted;
 	}
 
 	@Override
@@ -483,9 +472,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		public void testRunStarted(Integer testCount) {
 			fIncompleteTestSuites.clear();
 			fFactoryTestSuites.clear();
-
-			fStartTime = System.currentTimeMillis();
-			fIsRunning = true;
+			fStartTime = Instant.now();
 
 			for (ITestSessionListener listener : fSessionListeners) {
 				listener.sessionStarted();
@@ -493,28 +480,16 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		}
 
 		public void testRunEnded(Duration duration) {
-			fIsRunning = false;
-
 			for (ITestSessionListener listener : fSessionListeners) {
-				listener.sessionEnded(duration);
+				listener.sessionCompleted(duration);
 			}
 		}
 
 		public void testRunStopped(Duration duration) {
-			fIsRunning = false;
-			fIsStopped = true;
+			fIsAborted = true;
 
 			for (ITestSessionListener listener : fSessionListeners) {
-				listener.sessionStopped(duration);
-			}
-		}
-
-		public void testRunTerminated() {
-			fIsRunning = false;
-			fIsStopped = true;
-
-			for (ITestSessionListener listener : fSessionListeners) {
-				listener.sessionTerminated();
+				listener.sessionAborted(duration);
 			}
 		}
 
@@ -688,7 +663,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 
 	@Override
 	public String toString() {
-		return fTestRunName + " " + DateFormat.getDateTimeInstance().format(new Date(fStartTime)); //$NON-NLS-1$
+		return fTestRunName + " " + DateFormat.getDateTimeInstance().format(new Date(fStartTime.toEpochMilli())); //$NON-NLS-1$
 	}
 
 	@Override
@@ -732,42 +707,40 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 				parent, displayName, data);
 	}
 
-	/**
-	 * Notifies on a test run stopped.
-	 *
-	 * @param duration the total elapsed time of the test run
-	 */
 	@Override
-	public void notifyTestRunStopped(final Duration duration) {
+	public void notifyTestSessionAborted(final Duration reportDuration, Exception cause) {
 		if (isStopped()) {
 			return;
 		}
+		if (reportDuration != null) {
+			setDuration(reportDuration);
+		}
+		fTestRunnerClient.disconnect();
+		this.completedOrAborted = true;
 		SafeRunner.run(new ListenerSafeRunnable() {
 			@Override
 			public void run() {
 				fSessionNotifier.testRunStopped(duration);
 			}
 		});
-		fTestRunnerClient.disconnect();
 	}
 
-	/**
-	 * Notifies on a test run ended.
-	 *
-	 * @param duration the total elapsed time of the test run
-	 */
 	@Override
-	public void notifyTestRunEnded(final Duration duration) {
+	public void notifyTestSessionCompleted(final Duration reportDuration) {
 		if (isStopped()) {
 			return;
 		}
+		if (reportDuration != null) {
+			setDuration(reportDuration);
+		}
+		fTestRunnerClient.disconnect();
+		this.completedOrAborted = true;
 		SafeRunner.run(new ListenerSafeRunnable() {
 			@Override
 			public void run() {
 				fSessionNotifier.testRunEnded(duration);
 			}
 		});
-		fTestRunnerClient.disconnect();
 	}
 
 	@Override
@@ -823,22 +796,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			@Override
 			public void run() {
 				fSessionNotifier.testFailed(test, status, isAssumptionFailed, failureTrace);
-			}
-		});
-	}
-
-	/**
-	 * Notifies on a test run terminated.
-	 */
-	@Override
-	public void notifyTestRunTerminated() {
-		if (isStopped()) {
-			return;
-		}
-		SafeRunner.run(new ListenerSafeRunnable() {
-			@Override
-			public void run() {
-				fSessionNotifier.testRunTerminated();
 			}
 		});
 	}

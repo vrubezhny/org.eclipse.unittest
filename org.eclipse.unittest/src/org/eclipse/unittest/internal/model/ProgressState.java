@@ -13,18 +13,18 @@ package org.eclipse.unittest.internal.model;
 /**
  * Running states of a test.
  */
-public final class ProgressState {
+public enum ProgressState {
 	/** state that describes that the test element has not started */
-	public static final ProgressState NOT_STARTED = new ProgressState("Not Started"); //$NON-NLS-1$
+	NOT_STARTED("Not Started"), //$NON-NLS-1$
 	/** state that describes that the test element has is running */
-	public static final ProgressState RUNNING = new ProgressState("Running"); //$NON-NLS-1$
+	RUNNING("Running"), //$NON-NLS-1$
 	/**
 	 * state that describes that the test element has been stopped before being
 	 * completed
 	 */
-	public static final ProgressState STOPPED = new ProgressState("Stopped"); //$NON-NLS-1$
+	ABORTED("Aborted"), //$NON-NLS-1$
 	/** state that describes that the test element has completed */
-	public static final ProgressState COMPLETED = new ProgressState("Completed"); //$NON-NLS-1$
+	COMPLETED("Completed"); //$NON-NLS-1$
 
 	private String fName;
 

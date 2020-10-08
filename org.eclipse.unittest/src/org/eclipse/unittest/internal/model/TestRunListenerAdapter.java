@@ -69,19 +69,14 @@ public class TestRunListenerAdapter implements ITestSessionListener {
 	}
 
 	@Override
-	public void sessionEnded(Duration duration) {
+	public void sessionCompleted(Duration duration) {
 		fireSessionFinished();
 		fSession.swapOut();
 	}
 
 	@Override
-	public void sessionStopped(Duration duration) {
+	public void sessionAborted(Duration duration) {
 		fireSessionFinished();
-		fSession.swapOut();
-	}
-
-	@Override
-	public void sessionTerminated() {
 		fSession.swapOut();
 	}
 

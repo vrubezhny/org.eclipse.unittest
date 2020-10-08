@@ -91,23 +91,28 @@ public interface ITestRunSession extends ITestElementContainer {
 			ITestSuiteElement parent, String displayName, String data);
 
 	/**
-	 * Notifies on a test run stopped.
+	 * Notifies on a test run ended normally. Individual test success don't matter.
+	 * If the test session failed to complete for some reason, use
+	 * {@link #notifyTestSessionAborted(Duration, Exception)}.
 	 *
-	 * @param duration the total elapsed time of the test run
+	 * @param duration the total elapsed time of the test run, can be
+	 *                 <code>null</code>.
+	 * @see #notifyTestSessionAborted(Duration, Exception) notifyTestRunAborted to use
+	 *      for abnormal termination of the test session.
 	 */
-	void notifyTestRunStopped(final Duration duration);
+	void notifyTestSessionCompleted(final Duration duration);
 
 	/**
-	 * Notifies on a test run ended.
+	 * Notifies on a test run aborted, abnormally.
 	 *
-	 * @param duration the total elapsed time of the test run
+	 * @param duration duration of the test run session until abortion, can be
+	 *                 <code>null</code>.
+	 * @param cause    the cause of the abortion, can be shown in log or to user,
+	 *                 can be <code>null</code>.
+	 * @see #notifyTestSessionCompleted(Duration) notifyTestRunAborted to use for nomal
+	 *      completion.
 	 */
-	void notifyTestRunEnded(final Duration duration);
-
-	/**
-	 * Notifies on a test run terminated.
-	 */
-	void notifyTestRunTerminated();
+	void notifyTestSessionAborted(final Duration duration, final Exception cause);
 
 	/**
 	 * Notifies on an individual test ended.

@@ -72,14 +72,14 @@ public abstract class TestElement implements ITestElement {
 	 * <ul>
 	 * <li>{@link ProgressState#NOT_STARTED}: the test has not yet started</li>
 	 * <li>{@link ProgressState#RUNNING}: the test is currently running</li>
-	 * <li>{@link ProgressState#STOPPED}: the test has stopped before being
+	 * <li>{@link ProgressState#ABORTED}: the test has stopped before being
 	 * completed</li>
 	 * <li>{@link ProgressState#COMPLETED}: the test (and all its children) has
 	 * completed</li>
 	 * </ul>
 	 *
 	 * @return returns one of {@link ProgressState#NOT_STARTED},
-	 *         {@link ProgressState#RUNNING}, {@link ProgressState#STOPPED} or
+	 *         {@link ProgressState#RUNNING}, {@link ProgressState#ABORTED} or
 	 *         {@link ProgressState#COMPLETED}.
 	 */
 	public ProgressState getProgressState() {

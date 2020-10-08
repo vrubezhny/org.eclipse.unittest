@@ -27,14 +27,12 @@ import org.eclipse.debug.core.ILaunch;
 public interface ITestRunnerClient {
 
 	/**
-	 * Indicates if a test run is in progress and still worth being watched.
-	 *
-	 * @return returns true in case of a test run in progress, otherwise false
+	 * Start monitoring test execution
 	 */
-	boolean isRunning();
+	void start();
 
 	/**
-	 * Requests to stop the remote test run. Usually requested by user; so should
+	 * Requests to stop the tests execution. Usually requested by user; so it should
 	 * stop the test runner client (usually calling {@link #disconnect()} and also
 	 * related test specific closeable objects like an underlying {@link ILaunch}
 	 * (unless launch is configured to be kept alive).

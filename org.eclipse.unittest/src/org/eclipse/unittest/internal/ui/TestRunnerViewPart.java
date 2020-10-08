@@ -25,6 +25,7 @@ import org.eclipse.unittest.internal.UnitTestPlugin;
 import org.eclipse.unittest.internal.UnitTestPreferencesConstants;
 import org.eclipse.unittest.internal.model.ITestRunSessionListener;
 import org.eclipse.unittest.internal.model.ITestSessionListener;
+import org.eclipse.unittest.internal.model.ProgressState;
 import org.eclipse.unittest.internal.model.TestCaseElement;
 import org.eclipse.unittest.internal.model.TestElement;
 import org.eclipse.unittest.internal.model.TestRunSession;
@@ -606,7 +607,7 @@ public class TestRunnerViewPart extends ViewPart {
 		}
 
 		@Override
-		public void sessionEnded(Duration duration) {
+		public void sessionCompleted(Duration duration) {
 			deregisterTestSessionListener();
 
 			fTestViewer.registerAutoScrollTarget(null);
@@ -634,22 +635,12 @@ public class TestRunnerViewPart extends ViewPart {
 		}
 
 		@Override
-		public void sessionStopped(Duration duration) {
+		public void sessionAborted(Duration duration) {
 			deregisterTestSessionListener();
 
 			fTestViewer.registerAutoScrollTarget(null);
 
 			registerInfoMessage(Messages.TestRunnerViewPart_message_stopped);
-			handleStopped();
-		}
-
-		@Override
-		public void sessionTerminated() {
-			deregisterTestSessionListener();
-
-			fTestViewer.registerAutoScrollTarget(null);
-
-			registerInfoMessage(Messages.TestRunnerViewPart_message_terminated);
 			handleStopped();
 		}
 
@@ -1093,7 +1084,7 @@ public class TestRunnerViewPart extends ViewPart {
 			if (fTestRunSession.isRunning()) {
 				setContentDescription(Messages.TestRunnerViewPart_message_stopping);
 			}
-			fTestRunSession.stopTestRun();
+			fTestRunSession.abortTestRun();
 		}
 	}
 
@@ -1158,7 +1149,7 @@ public class TestRunnerViewPart extends ViewPart {
 			// prompt for terminating the existing run
 			if (MessageDialog.openQuestion(getSite().getShell(), Messages.TestRunnerViewPart_terminate_title,
 					Messages.TestRunnerViewPart_terminate_message) && fTestRunSession != null) {
-				fTestRunSession.stopTestRun();
+				fTestRunSession.abortTestRun();
 			}
 		}
 		List<ITestElement> allFailedTestCases = new ArrayList<>();
@@ -1479,12 +1470,14 @@ public class TestRunnerViewPart extends ViewPart {
 		fCounterPanel.setFailureValue(failureCount);
 
 		int ticksDone;
-		if (startedCount == 0)
+		if (startedCount == 0) {
 			ticksDone = 0;
-		else if (totalCount != null && startedCount == totalCount.intValue() && !fTestRunSession.isRunning())
+		} else if (totalCount != null && startedCount == totalCount.intValue()
+				&& fTestRunSession.getProgressState() == ProgressState.COMPLETED) {
 			ticksDone = totalCount.intValue();
-		else
+		} else {
 			ticksDone = startedCount - 1;
+		}
 
 		fProgressBar.reset(hasErrorsOrFailures, stopped, ticksDone,
 				totalCount != null ? totalCount.intValue() : ticksDone + 1);

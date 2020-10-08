@@ -2,7 +2,6 @@ package org.eclipse.unittest.cdt.launcher;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -31,7 +30,6 @@ import org.eclipse.unittest.model.ITestSuiteElement;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ICoreRunnable;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.debug.core.DebugPlugin;
@@ -249,12 +247,17 @@ public class CDTTestRunnerClient implements ITestRunnerClient {
 	private final ITestRunSession fTestRunSession;
 	private ITestsRunnerProvider fTestsRunnerProvider;
 	private IProcess process;
-	private final ILaunchListener fFindProcessListener;
+	private ILaunchListener fFindProcessListener;
 	protected boolean fDebug = false;
+	private InputStream fStream;
 
 	public CDTTestRunnerClient(ITestRunSession session) {
 		this.fTestRunSession = session;
-		ILaunch launch = session.getLaunch();
+	}
+
+	@Override
+	public void start() {
+		ILaunch launch = this.fTestRunSession.getLaunch();
 		fFindProcessListener= new ILaunchListener() {
 			@Override
 			public void launchRemoved(@SuppressWarnings("hiding") ILaunch launch) {
@@ -289,8 +292,8 @@ public class CDTTestRunnerClient implements ITestRunnerClient {
 		this.process = Arrays.stream(launch.getProcesses()).filter(InferiorRuntimeProcess.class::isInstance).findAny().orElse(null);
 		if (this.process != null) {
 			DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(fFindProcessListener);
-			InputStream stream = toInputStream(process);
-			Job.createSystem("Monitor test process", (ICoreRunnable)monitor -> run(stream)).schedule(); //$NON-NLS-1$
+			fStream= toInputStream(process);
+			Job.createSystem("Monitor test process", (ICoreRunnable)monitor -> run(fStream)).schedule(); //$NON-NLS-1$
 		}
 		return this.process;
 	}
@@ -353,24 +356,9 @@ public class CDTTestRunnerClient implements ITestRunnerClient {
 		fTestRunSession.notifyTestRunStarted(null);
 		try {
 			fTestsRunnerProvider.run(new TestModelUpdaterAdapter(), iStream);
-			// If testing session was stopped, the status is set in stop()
-			if (isRunning()) {
-				CDTUnitTestPlugin.log(
-						new org.eclipse.core.runtime.Status(IStatus.WARNING, CDTUnitTestPlugin.PLUGIN_ID,
-						MessageFormat.format(CDTMessages.TestingSession_finished_status,
-								fTestRunSession.getDuration())));
-			}
-
-			fTestRunSession.notifyTestRunEnded(fTestRunSession.getDuration());
+			fTestRunSession.notifyTestSessionCompleted(fTestRunSession.getDuration());
 		} catch (TestingException e) {
-			// If testing session was stopped, the status is set in stop()
-			if (isRunning()) {
-				CDTUnitTestPlugin.log(
-						new org.eclipse.core.runtime.Status(IStatus.WARNING,
-								CDTUnitTestPlugin.PLUGIN_ID,
-						e.getLocalizedMessage()));
-			}
-			fTestRunSession.notifyTestRunTerminated();
+			fTestRunSession.notifyTestSessionAborted(null, e);
 		}
 	}
 
@@ -404,15 +392,8 @@ public class CDTTestRunnerClient implements ITestRunnerClient {
 	}
 
 	@Override
-	public boolean isRunning() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public void disconnect() {
-		// TODO Auto-generated method stub
-
+		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(fFindProcessListener);
 	}
 
 }

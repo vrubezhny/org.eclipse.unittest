@@ -125,11 +125,11 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 				return this;
 			}
 			if (message.startsWith(MessageIds.TEST_RUN_END)) {
-				fTestRunSession.notifyTestRunEnded(Duration.ofMillis(Long.parseLong(arg)));
+				fTestRunSession.notifyTestSessionCompleted(Duration.ofMillis(Long.parseLong(arg)));
 				return this;
 			}
 			if (message.startsWith(MessageIds.TEST_STOPPED)) {
-				fTestRunSession.notifyTestRunStopped(Duration.ofMillis(Long.parseLong(arg)));
+				fTestRunSession.notifyTestSessionAborted(Duration.ofMillis(Long.parseLong(arg)), null);
 				shutDown();
 				return this;
 			}
