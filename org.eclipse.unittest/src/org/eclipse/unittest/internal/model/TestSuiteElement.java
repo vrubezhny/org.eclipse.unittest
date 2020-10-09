@@ -148,14 +148,14 @@ public class TestSuiteElement extends TestElement implements ITestSuiteElement {
 			return;
 
 		if (status == Status.RUNNING) {
-			if (duration != null) {
+			if (fDuration != null) {
 				// re-running child: ignore change
 			} else {
 				testStartedInstant = Instant.now();
 			}
-		} else if (status.convertToProgressState() == ProgressState.COMPLETED && duration == null
+		} else if (status.convertToProgressState() == ProgressState.COMPLETED && fDuration == null
 				&& testStartedInstant != null) {
-			duration = Duration.between(testStartedInstant, Instant.now());
+			fDuration = Duration.between(testStartedInstant, Instant.now());
 		}
 
 		fChildrenStatus = status;

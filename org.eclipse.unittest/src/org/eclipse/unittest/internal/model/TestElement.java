@@ -42,7 +42,7 @@ public abstract class TestElement implements ITestElement {
 	private boolean fAssumptionFailed;
 
 	protected Instant testStartedInstant = null;
-	protected Duration duration = null;
+	protected Duration fDuration = null;
 
 	/**
 	 * Constructs the test element object
@@ -174,7 +174,7 @@ public abstract class TestElement implements ITestElement {
 		if (status == Status.RUNNING) {
 			testStartedInstant = Instant.now();
 		} else if (status.convertToProgressState() == ProgressState.COMPLETED && testStartedInstant != null) {
-			this.duration = Duration.between(testStartedInstant, Instant.now());
+			this.fDuration = Duration.between(testStartedInstant, Instant.now());
 		}
 
 		fStatus = status;
@@ -228,12 +228,12 @@ public abstract class TestElement implements ITestElement {
 	}
 
 	public void setDuration(Duration duration) {
-		this.duration = duration;
+		this.fDuration = duration;
 	}
 
 	@Override
 	public Duration getDuration() {
-		return this.duration;
+		return this.fDuration;
 	}
 
 	/**

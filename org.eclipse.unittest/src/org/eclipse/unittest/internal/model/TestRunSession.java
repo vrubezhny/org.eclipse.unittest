@@ -97,6 +97,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	private TestSuiteElement fUnrootedSuite;
 
 	volatile Instant fStartTime;
+	volatile Integer fPredefinedTestCount;
 
 	volatile boolean fIsAborted;
 	private Integer predefinedTestCount;
@@ -473,6 +474,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			fIncompleteTestSuites.clear();
 			fFactoryTestSuites.clear();
 			fStartTime = Instant.now();
+			fPredefinedTestCount = testCount;
 
 			for (ITestSessionListener listener : fSessionListeners) {
 				listener.sessionStarted();
@@ -501,18 +503,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			for (ITestSessionListener listener : fSessionListeners) {
 				listener.testAdded(testElement);
 			}
-			return testElement;
-		}
-
-		private ITestElement createUnrootedTestElement(String testId, String testName) {
-			ITestSuiteElement unrootedSuite = getUnrootedSuite();
-			ITestElement testElement = createTestElement(unrootedSuite, testId, testName, false, 1, false, testName,
-					null);
-
-			for (ITestSessionListener listener : fSessionListeners) {
-				listener.testAdded(testElement);
-			}
-
 			return testElement;
 		}
 
@@ -693,7 +683,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		SafeRunner.run(new ListenerSafeRunnable() {
 			@Override
 			public void run() {
-				fSessionNotifier.testRunStopped(duration);
+				fSessionNotifier.testRunStopped(fDuration);
 			}
 		});
 	}
@@ -711,7 +701,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		SafeRunner.run(new ListenerSafeRunnable() {
 			@Override
 			public void run() {
-				fSessionNotifier.testRunEnded(duration);
+				fSessionNotifier.testRunEnded(fDuration);
 			}
 		});
 	}
@@ -743,7 +733,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	}
 
 	@Override
-	public void notifyTestRunStarted(final Integer count) {
+	public void notifyTestSessionStarted(final Integer count) {
 		if (isStopped()) {
 			return;
 		}

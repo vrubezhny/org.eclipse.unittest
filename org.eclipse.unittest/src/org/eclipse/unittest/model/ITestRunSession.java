@@ -122,7 +122,7 @@ public interface ITestRunSession extends ITestElementContainer {
 	 * @param count the number of individual tests that will be run,
 	 *              <code>null</code> if unknown
 	 */
-	void notifyTestRunStarted(final Integer count);
+	void notifyTestSessionStarted(final Integer count);
 
 	/**
 	 * Notifies on an individual test failed with a stack trace.

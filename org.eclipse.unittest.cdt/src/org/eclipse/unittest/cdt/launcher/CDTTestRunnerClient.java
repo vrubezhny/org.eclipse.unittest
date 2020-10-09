@@ -353,7 +353,7 @@ public class CDTTestRunnerClient implements ITestRunnerClient {
 		if (iStream == null) {
 			return;
 		}
-		fTestRunSession.notifyTestRunStarted(null);
+		fTestRunSession.notifyTestSessionStarted(null);
 		try {
 			fTestsRunnerProvider.run(new TestModelUpdaterAdapter(), iStream);
 			fTestRunSession.notifyTestSessionCompleted(fTestRunSession.getDuration());

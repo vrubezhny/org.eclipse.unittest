@@ -95,7 +95,7 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 					String sc = arg.substring(0, v);
 					count = Integer.parseInt(sc);
 				}
-				fTestRunSession.notifyTestRunStarted(count);
+				fTestRunSession.notifyTestSessionStarted(count);
 				return this;
 			}
 			if (message.startsWith(MessageIds.TEST_START)) {
