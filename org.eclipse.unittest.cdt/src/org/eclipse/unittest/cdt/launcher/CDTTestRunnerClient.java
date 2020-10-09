@@ -364,7 +364,7 @@ public class CDTTestRunnerClient implements ITestRunnerClient {
 
 	@Override
 	public void stopTest() {
-		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(fFindProcessListener);
+		disconnect();
 	}
 
 	ITestItem convertFromTestElement(final ITestElement element) {
