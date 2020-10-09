@@ -28,6 +28,7 @@ import org.eclipse.cdt.testsrunner.launcher.ITestsRunnerProvider;
 import org.eclipse.cdt.testsrunner.model.TestingException;
 import org.eclipse.unittest.cdt.internal.launcher.LauncherMessages;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
+import org.eclipse.unittest.ui.ITestViewSupport;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -57,6 +58,7 @@ public abstract class BaseTestsLaunchDelegate extends LaunchConfigurationDelegat
 
 	@Override
 	public ILaunch getLaunch(ILaunchConfiguration config, String mode) throws CoreException {
+		ITestViewSupport.activateBundle();
 		return getPreferredDelegate(config, mode).getLaunch(config, mode);
 	}
 
