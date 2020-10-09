@@ -111,7 +111,7 @@ public class TextualTrace {
 
 	private boolean isAStackFrame(String itemLabel) {
 		// heuristic for detecting a stack frame - works for JDK
-		return itemLabel.contains(" at "); //$NON-NLS-1$
+		return itemLabel.startsWith(" at "); //$NON-NLS-1$
 	}
 
 	private String readLine(BufferedReader bufferedReader) throws IOException {
