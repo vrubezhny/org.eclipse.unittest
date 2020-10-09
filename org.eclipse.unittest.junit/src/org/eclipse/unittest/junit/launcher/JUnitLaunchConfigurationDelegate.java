@@ -39,6 +39,7 @@ import org.osgi.framework.Constants;
 import org.eclipse.unittest.junit.JUnitMessages;
 import org.eclipse.unittest.junit.JUnitTestPlugin;
 import org.eclipse.unittest.junit.JUnitTestPlugin.JUnitVersion;
+import org.eclipse.unittest.ui.ITestViewSupport;
 
 import org.eclipse.core.variables.VariablesPlugin;
 
@@ -105,6 +106,12 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 	private IJavaElement[] fTestElements;
 
 	private static final String DEFAULT = "<default>"; //$NON-NLS-1$
+
+	@Override
+	public ILaunch getLaunch(ILaunchConfiguration configuration, String mode) throws CoreException {
+		ITestViewSupport.activateBundle();
+		return super.getLaunch(configuration, mode);
+	}
 
 	@Override
 	public String showCommandLine(ILaunchConfiguration configuration, String mode, ILaunch launch,
