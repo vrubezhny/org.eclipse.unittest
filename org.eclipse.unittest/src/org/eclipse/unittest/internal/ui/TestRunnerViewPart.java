@@ -109,8 +109,11 @@ import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.internal.ui.DebugPluginImages;
+import org.eclipse.debug.internal.ui.actions.EditLaunchConfigurationAction;
 
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
  * A ViewPart that shows the results of a test run.
@@ -321,6 +324,8 @@ public class TestRunnerViewPart extends ViewPart {
 	};
 
 	protected boolean fPartIsVisible = false;
+
+	private EditLaunchConfigurationAction fEditLaunchConfigAction;
 
 	/*
 	 * private class RunnerViewHistory extends ViewHistory<TestRunSession> {
@@ -604,6 +609,7 @@ public class TestRunnerViewPart extends ViewPart {
 
 			fStopAction.setEnabled(true);
 			fRerunLastTestAction.setEnabled(true);
+			fEditLaunchConfigAction.setEnabled(fTestRunSession.getLaunch().getLaunchConfiguration() != null);
 		}
 
 		@Override
@@ -1750,6 +1756,27 @@ public class TestRunnerViewPart extends ViewPart {
 			}
 		};
 		fRerunFailedFirstActivation = handlerService.activateHandler(RERUN_FAILED_CASES_COMMAND, handler);
+		fEditLaunchConfigAction = new EditLaunchConfigurationAction() {
+			@Override
+			protected ILaunchConfiguration getLaunchConfiguration() {
+				return fTestRunSession != null ? fTestRunSession.getLaunch().getLaunchConfiguration() : null;
+			}
+
+			@Override
+			protected String getMode() {
+				return fTestRunSession != null ? fTestRunSession.getLaunch().getLaunchMode() : null;
+			}
+
+			@Override
+			protected boolean isTerminated() {
+				return true; // always allow to re-run
+			}
+		};
+		fEditLaunchConfigAction.setToolTipText(Messages.TestRunnerViewPart_editLaunchConfiguration);
+		fEditLaunchConfigAction.setImageDescriptor(
+				DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_OBJS_MODIFICATION_WATCHPOINT));
+		fEditLaunchConfigAction.setDisabledImageDescriptor(
+				DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_OBJS_MODIFICATION_WATCHPOINT_DISABLED));
 
 		fFailuresOnlyFilterAction = new FailuresOnlyFilterAction();
 		fIgnoredOnlyFilterAction = new IgnoredOnlyFilterAction();
@@ -1773,7 +1800,7 @@ public class TestRunnerViewPart extends ViewPart {
 		toolBar.add(fRerunLastTestAction);
 		toolBar.add(fRerunFailedCasesAction);
 		toolBar.add(fStopAction);
-//		toolBar.add(fViewHistory.createHistoryDropDownAction());
+		toolBar.add(fEditLaunchConfigAction);
 
 		viewMenu.add(fShowTestHierarchyAction);
 		viewMenu.add(fShowTimeAction);
