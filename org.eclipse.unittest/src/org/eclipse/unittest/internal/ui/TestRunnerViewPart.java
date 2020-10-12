@@ -153,7 +153,7 @@ public class TestRunnerViewPart extends ViewPart {
 //	private boolean fTestIsRunning= false;
 
 	private UnitTestProgressBar fProgressBar;
-	private ProgressImages fProgressImages;
+	private ProgressIcons fProgressImages;
 	protected Image fViewImage;
 	private CounterPanel fCounterPanel;
 	protected boolean fShowOnErrorOnly = false;
@@ -1270,8 +1270,8 @@ public class TestRunnerViewPart extends ViewPart {
 		if (fTestRunSession != null) {
 			if (fTestRunSession.isRunning()) {
 				Image progress = fProgressImages.getImage(fTestRunSession.getCurrentStartedCount(),
-						fTestRunSession.getFinalTestCaseCount(), fTestRunSession.getCurrentErrorCount(),
-						fTestRunSession.getCurrentFailureCount());
+						fTestRunSession.getFinalTestCaseCount(),
+						fTestRunSession.getCurrentErrorCount() > 0 || fTestRunSession.getCurrentFailureCount() > 0);
 				if (progress != fViewImage) {
 					fViewImage = progress;
 					firePropertyChange(IWorkbenchPart.PROP_TITLE);
@@ -1611,7 +1611,7 @@ public class TestRunnerViewPart extends ViewPart {
 		addDropAdapter(parent);
 
 		fOriginalViewImage = getTitleImage();
-		fProgressImages = new ProgressImages();
+		fProgressImages = new ProgressIcons(fOriginalViewImage);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IUnitTestHelpContextIds.RESULTS_VIEW);
 
 		getViewSite().getPage().addPartListener(fPartListener);
@@ -1898,11 +1898,13 @@ public class TestRunnerViewPart extends ViewPart {
 
 	@Override
 	public Image getTitleImage() {
-		if (fOriginalViewImage == null)
+		if (fOriginalViewImage == null) {
 			fOriginalViewImage = super.getTitleImage();
+		}
 
-		if (fViewImage == null)
+		if (fViewImage == null) {
 			return super.getTitleImage();
+		}
 		return fViewImage;
 	}
 
