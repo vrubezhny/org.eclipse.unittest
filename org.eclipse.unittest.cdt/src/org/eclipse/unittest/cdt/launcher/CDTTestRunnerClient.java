@@ -144,7 +144,7 @@ public class CDTTestRunnerClient implements ITestRunnerClient {
 			if (parent instanceof ITestSuiteElement) {
 				return (ITestSuiteElement)parent;
 			}
-			return null;
+			return fTestRunSession.getTestRoot();
 		}
 
 		@Override

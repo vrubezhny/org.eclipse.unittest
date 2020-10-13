@@ -45,6 +45,13 @@ public interface ITestRunSession extends ITestElementContainer {
 	ITestElement getTestElement(String id);
 
 	/**
+	 * Returns the root test element of this test run session
+	 *
+	 * @return a root test element
+	 */
+	ITestRoot getTestRoot();
+
+	/**
 	 * Creates a new Test Case and adds it to the model
 	 *
 	 * @param testId        a unique id for the test

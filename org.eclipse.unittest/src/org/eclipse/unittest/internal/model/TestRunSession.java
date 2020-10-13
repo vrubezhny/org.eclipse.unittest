@@ -226,11 +226,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		return this;
 	}
 
-	/**
-	 * Returns the root test element of this test run session
-	 *
-	 * @return a root test element
-	 */
+	@Override
 	public synchronized TestRoot getTestRoot() {
 		swapIn(); // TODO: TestRoot should stay (e.g. for getTestRoot().getStatus())
 		return fTestRoot;
