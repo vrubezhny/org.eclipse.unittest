@@ -618,8 +618,9 @@ public class TestRunnerViewPart extends ViewPart {
 
 			fTestViewer.registerAutoScrollTarget(null);
 
-			String msg = MessageFormat.format(Messages.TestRunnerViewPart_message_finish, duration);
-			registerInfoMessage(msg);
+			final String msg = MessageFormat.format(Messages.TestRunnerViewPart_message_finish,
+					Double.valueOf(duration.toNanos() / 1.0e9));
+			getDisplay().asyncExec(() -> registerInfoMessage(msg));
 
 			postSyncRunnable(() -> {
 				if (isDisposed())
@@ -646,7 +647,7 @@ public class TestRunnerViewPart extends ViewPart {
 
 			fTestViewer.registerAutoScrollTarget(null);
 
-			registerInfoMessage(Messages.TestRunnerViewPart_message_stopped);
+			getDisplay().asyncExec(() -> registerInfoMessage(Messages.TestRunnerViewPart_message_stopped));
 			handleStopped();
 		}
 
