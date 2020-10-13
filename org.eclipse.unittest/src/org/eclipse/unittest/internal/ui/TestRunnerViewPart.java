@@ -619,7 +619,7 @@ public class TestRunnerViewPart extends ViewPart {
 			fTestViewer.registerAutoScrollTarget(null);
 
 			final String msg = MessageFormat.format(Messages.TestRunnerViewPart_message_finish,
-					Double.valueOf(duration.toNanos() / 1.0e9));
+					Double.valueOf(duration != null ? duration.toNanos() / 1.0e9 : 0));
 			getDisplay().asyncExec(() -> registerInfoMessage(msg));
 
 			postSyncRunnable(() -> {
