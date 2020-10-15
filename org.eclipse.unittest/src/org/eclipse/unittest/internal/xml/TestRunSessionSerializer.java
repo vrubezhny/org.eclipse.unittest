@@ -34,7 +34,6 @@ import org.eclipse.unittest.internal.model.TestSuiteElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElement.FailureTrace;
 import org.eclipse.unittest.model.ITestElement.Result;
-import org.eclipse.unittest.model.ITestRoot;
 
 import org.eclipse.core.runtime.Assert;
 
@@ -89,8 +88,7 @@ public class TestRunSessionSerializer implements XMLReader {
 		addCDATA(atts, IXMLTags.ATTR_IGNORED, fTestRunSession.getCurrentIgnoredCount());
 		startElement(IXMLTags.NODE_TESTRUN, atts);
 
-		ITestRoot testRoot = fTestRunSession.getTestRoot();
-		for (ITestElement topSuite : testRoot.getChildren()) {
+		for (ITestElement topSuite : fTestRunSession.getChildren()) {
 			handleTestElement(topSuite);
 		}
 

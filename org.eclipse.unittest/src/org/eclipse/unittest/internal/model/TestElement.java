@@ -17,7 +17,6 @@ import java.time.Duration;
 import java.time.Instant;
 
 import org.eclipse.unittest.model.ITestElement;
-import org.eclipse.unittest.model.ITestElementContainer;
 
 import org.eclipse.core.runtime.Assert;
 
@@ -64,6 +63,8 @@ public abstract class TestElement implements ITestElement {
 		fStatus = Status.NOT_RUN;
 		if (parent != null) {
 			parent.addChild(this);
+		} else if (!(this instanceof TestRunSession)) {
+			throw new IllegalArgumentException("Test elements must have a parent"); //$NON-NLS-1$
 		}
 	}
 
@@ -121,21 +122,13 @@ public abstract class TestElement implements ITestElement {
 		return getStatus().convertToResult();
 	}
 
-	@Override
-	public TestRunSession getTestRunSession() {
-		return getRoot().getTestRunSession();
-	}
-
 	/**
 	 * Returns the parent test element container or <code>null</code> if the test
 	 * element is the test run session.
 	 *
 	 * @return the parent test suite
 	 */
-	public ITestElementContainer getParentContainer() {
-		if (fParent instanceof TestRoot) {
-			return getTestRunSession();
-		}
+	public TestSuiteElement getParentContainer() {
 		return fParent;
 	}
 
@@ -218,15 +211,6 @@ public abstract class TestElement implements ITestElement {
 		return fStatus;
 	}
 
-	/**
-	 * Returns the root test element
-	 *
-	 * @return a root test element
-	 */
-	public TestRoot getRoot() {
-		return getParent().getRoot();
-	}
-
 	public void setDuration(Duration duration) {
 		this.fDuration = duration;
 	}
@@ -267,6 +251,11 @@ public abstract class TestElement implements ITestElement {
 	@Override
 	public String getData() {
 		return fData;
+	}
+
+	@Override
+	public TestRunSession getTestRunSession() {
+		return getParent().getTestRunSession();
 	}
 
 	/**

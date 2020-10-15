@@ -20,7 +20,6 @@ import java.time.Duration;
 import org.eclipse.unittest.internal.model.Status;
 import org.eclipse.unittest.internal.model.TestCaseElement;
 import org.eclipse.unittest.internal.model.TestElement;
-import org.eclipse.unittest.internal.model.TestSuiteElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestRunSession;
 
@@ -116,7 +115,8 @@ class TestSessionLabelProvider extends LabelProvider implements IStyledLabelProv
 		TestElement testElement = (TestElement) element;
 		String label = testElement.getDisplayName();
 		if (fLayoutMode == TestRunnerViewPart.LAYOUT_HIERARCHICAL) {
-			if (testElement.getParentContainer() instanceof ITestRunSession) {
+			if (testElement instanceof ITestRunSession || (testElement.getParent() instanceof ITestRunSession
+					&& testElement.getParent().getChildren().size() <= 1)) {
 				String displayName = fTestRunnerPart.getDisplayName();
 				if (displayName != null) {
 					label = MessageFormat.format(Messages.TestSessionLabelProvider_testName_RunnerVersion, label,
@@ -154,9 +154,8 @@ class TestSessionLabelProvider extends LabelProvider implements IStyledLabelProv
 				return fTestRunnerPart.fTestOkIcon;
 			else
 				throw new IllegalStateException(element.toString());
-
-		} else if (element instanceof TestSuiteElement) {
-			Status status = ((TestSuiteElement) element).getStatus();
+		} else if (element instanceof TestElement) { // suite or session
+			Status status = ((TestElement) element).getStatus();
 			if (status.isNotRun())
 				return fTestRunnerPart.fSuiteIcon;
 			else if (status.isRunning())
@@ -169,7 +168,6 @@ class TestSessionLabelProvider extends LabelProvider implements IStyledLabelProv
 				return fTestRunnerPart.fSuiteOkIcon;
 			else
 				throw new IllegalStateException(element.toString());
-
 		} else {
 			throw new IllegalArgumentException(String.valueOf(element));
 		}

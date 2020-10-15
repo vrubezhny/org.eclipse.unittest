@@ -33,7 +33,7 @@ import org.eclipse.unittest.internal.model.TestSuiteElement;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElement.Result;
-import org.eclipse.unittest.model.ITestRoot;
+import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestSuiteElement;
 
 import org.eclipse.swt.SWT;
@@ -524,8 +524,7 @@ class TestViewer {
 		if (getActiveViewerNeedsRefresh()) {
 			clearUpdateAndExpansion();
 			setActiveViewerNeedsRefresh(false);
-			viewer.setInput(fTestRunSession);
-
+			viewer.setInput(fTestRunnerPart);
 		} else {
 			Object[] toUpdate;
 			synchronized (this) {
@@ -569,9 +568,9 @@ class TestViewer {
 				if (fTreeViewer.testFindItem(current) != null)
 					fTreeViewer.remove(current);
 				current = current.getParent();
-			} while (!(current instanceof ITestRoot) && !isShown(current));
+			} while (!(current instanceof ITestRunSession) && !isShown(current));
 
-			while (current != null && !(current instanceof ITestRoot)) {
+			while (current != null && !(current instanceof ITestRunSession)) {
 				fTreeViewer.update(current, null);
 				current = current.getParent();
 			}
@@ -579,7 +578,7 @@ class TestViewer {
 	}
 
 	private void updateShownElementInTree(ITestElement testElement) {
-		if (testElement == null || testElement instanceof ITestRoot) // paranoia null check
+		if (testElement == null || testElement instanceof ITestRunSession) // paranoia null check
 			return;
 
 		ITestSuiteElement parent = testElement.getParent();
@@ -654,8 +653,7 @@ class TestViewer {
 				}
 			}
 
-			while (parent != null && !fTestRunSession.getTestRoot().equals(parent)
-					&& fTreeViewer.getExpandedState(parent) == false) {
+			while (parent != null && !fTestRunSession.equals(parent) && fTreeViewer.getExpandedState(parent) == false) {
 				fAutoClose.add(parent); // add to auto-opened elements -> close later if STATUS_OK
 				parent = (ITestSuiteElement) fTreeContentProvider.getParent(parent);
 			}
@@ -668,7 +666,7 @@ class TestViewer {
 	 * Selects the next failure test element
 	 */
 	public void selectFirstFailure() {
-		ITestElement firstFailure = getNextChildFailure(fTestRunSession.getTestRoot(), true);
+		ITestElement firstFailure = getNextChildFailure(fTestRunSession, true);
 		if (firstFailure != null)
 			getActiveViewer().setSelection(new StructuredSelection(firstFailure), true);
 	}
@@ -685,7 +683,7 @@ class TestViewer {
 		ITestElement next;
 
 		if (selected == null) {
-			next = getNextChildFailure(fTestRunSession.getTestRoot(), showNext);
+			next = getNextChildFailure(fTestRunSession, showNext);
 		} else {
 			next = getNextFailure(selected, showNext);
 		}
@@ -730,8 +728,8 @@ class TestViewer {
 		return getNextFailureSibling(parent, showNext);
 	}
 
-	private TestElement getNextChildFailure(TestSuiteElement root, boolean showNext) {
-		List<TestElement> children = root.getChildren();
+	private TestElement getNextChildFailure(ITestSuiteElement root, boolean showNext) {
+		List<TestElement> children = (List<TestElement>) root.getChildren();
 		if (!showNext)
 			children = new ReverseList<>(children);
 		for (TestElement child : children) {

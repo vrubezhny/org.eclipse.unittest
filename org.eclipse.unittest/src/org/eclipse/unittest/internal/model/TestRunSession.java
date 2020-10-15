@@ -30,7 +30,6 @@ import org.eclipse.unittest.internal.UnitTestPlugin;
 import org.eclipse.unittest.launcher.ITestRunnerClient;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
-import org.eclipse.unittest.model.ITestElementContainer;
 import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.unittest.ui.ITestViewSupport;
@@ -51,7 +50,7 @@ import org.eclipse.debug.core.ILaunchesListener2;
  * A test run session holds all information about a test run, i.e. launch
  * configuration, launch, test tree (including results).
  */
-public class TestRunSession extends TestElement implements ITestRunSession, ITestRunSessionReport {
+public class TestRunSession extends TestSuiteElement implements ITestRunSession, ITestRunSessionReport {
 
 	/**
 	 * The launch, or <code>null</code> iff this session was run externally.
@@ -67,11 +66,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 
 	private final ListenerList<ITestSessionListener> fSessionListeners;
 	private final TestSessionNotifier fSessionNotifier = new TestSessionNotifier();
-
-	/**
-	 * The model root, or <code>null</code> if swapped to disk.
-	 */
-	private TestRoot fTestRoot;
 
 	/**
 	 * The test run session's cached result, or <code>null</code> if
@@ -104,7 +98,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	 * @param testRunName name of the test run
 	 */
 	public TestRunSession(String testRunName) {
-		super(null, "-1", testRunName, null, null); //$NON-NLS-1$
+		super(null, "-1", testRunName, null, null, null); //$NON-NLS-1$
 		// TODO: check assumptions about non-null fields
 
 		fLaunch = null;
@@ -113,7 +107,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		fTestRunName = testRunName;
 		fTestRunnerSupport = null;
 
-		fTestRoot = new TestRoot(this);
 		fIdToTest = new HashMap<>();
 
 		fTestRunnerClient = null;
@@ -122,7 +115,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	}
 
 	public TestRunSession(ILaunch launch) {
-		super(null, "-1", "<TestRunSession>", null, null); //$NON-NLS-1$ //$NON-NLS-2$
+		super(null, "-1", "<TestRunSession>", null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
 		Assert.isNotNull(launch);
 
 		fLaunch = launch;
@@ -136,7 +129,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			fTestRunnerSupport = null;
 		}
 
-		fTestRoot = new TestRoot(this);
 		fIdToTest = new HashMap<>();
 
 		if (fTestRunnerSupport != null) {
@@ -170,13 +162,13 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			}
 		});
 		fSessionListeners = new ListenerList<>();
+		setStatus(Status.RUNNING);
 		addTestSessionListener(new TestRunListenerAdapter(this));
 		fTestRunnerClient.start();
 	}
 
 	// TODO Consider removal as it's only use in XML parsing
 	public void reset() {
-		fTestRoot = new TestRoot(this);
 		fTestResult = null;
 		fIdToTest = new HashMap<>();
 	}
@@ -193,42 +185,18 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	}
 
 	@Override
-	public Result getTestResult(boolean includeChildren) {
-		if (fTestRoot != null) {
-			return fTestRoot.getTestResult(true);
-		} else {
-			return fTestResult;
-		}
-	}
-
-	@Override
-	public List<TestElement> getChildren() {
-		return getTestRoot().getChildren();
-	}
-
-	@Override
 	public FailureTrace getFailureTrace() {
 		return null;
 	}
 
 	@Override
-	public ITestElementContainer getParentContainer() {
+	public TestSuiteElement getParentContainer() {
 		return null;
 	}
 
 	@Override
 	public TestRunSession getTestRunSession() {
 		return this;
-	}
-
-	/**
-	 * Returns the root test element of this test run session
-	 *
-	 * @return a root test element
-	 */
-	public synchronized TestRoot getTestRoot() {
-		swapIn(); // TODO: TestRoot should stay (e.g. for getTestRoot().getStatus())
-		return fTestRoot;
 	}
 
 	/**
@@ -295,7 +263,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	}
 
 	public synchronized void addTestSessionListener(ITestSessionListener listener) {
-		swapIn();
 		fSessionListeners.add(listener);
 	}
 
@@ -304,9 +271,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	}
 
 	public synchronized void swapOut() {
-		if (fTestRoot == null) {
-			return;
-		}
 		if (isRunning() || isStarting()) {
 			return;
 		}
@@ -321,13 +285,11 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			File swapFile = getSwapFile();
 
 			UnitTestModel.exportTestRunSession(this, swapFile);
-			fTestResult = fTestRoot.getTestResult(true);
-			fTestRoot = null;
 			fTestRunnerClient = null;
 			fIdToTest = new HashMap<>();
 			fIncompleteTestSuites.clear();
 			fFactoryTestSuites.clear();
-
+			getChildren().clear();
 		} catch (IllegalStateException e) {
 			UnitTestPlugin.log(e);
 		} catch (CoreException e) {
@@ -355,14 +317,13 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	}
 
 	public synchronized void swapIn() {
-		if (fTestRoot != null)
+		if (!getChildren().isEmpty())
 			return;
 
 		try {
 			UnitTestModel.importIntoTestRunSession(getSwapFile(), this);
 		} catch (IllegalStateException | CoreException e) {
 			UnitTestPlugin.log(e);
-			fTestRoot = new TestRoot(this);
 			fTestResult = null;
 		}
 	}
@@ -386,10 +347,9 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	}
 
 	private TestElement addTreeEntry(String id, String testName, boolean isSuite, Integer testCount,
-			boolean isDynamicTest, ITestSuiteElement parent, String displayName, String data) {
-		return parent != null
-				? createTestElement(parent, id, testName, isSuite, testCount, isDynamicTest, displayName, data)
-				: createTestElement(fTestRoot, id, testName, isSuite, testCount, isDynamicTest, displayName, data);
+			boolean isDynamicTest, TestSuiteElement parent, String displayName, String data) {
+		return createTestElement(parent != null ? parent : this, id, testName, isSuite, testCount, isDynamicTest,
+				displayName, data);
 	}
 
 	/**
@@ -410,12 +370,12 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	 * @return a created {@link ITestSuiteElement} or {@link ITestCaseElement}
 	 *         instance
 	 */
-	public TestElement createTestElement(ITestSuiteElement parent, String id, String testName, boolean isSuite,
+	public TestElement createTestElement(TestSuiteElement parent, String id, String testName, boolean isSuite,
 			Integer testCount, boolean isDynamicTest, String displayName, String data) {
 		TestElement testElement;
 		if (isSuite) {
-			TestSuiteElement testSuiteElement = new TestSuiteElement((TestSuiteElement) parent, id, testName, testCount,
-					displayName, data);
+			TestSuiteElement testSuiteElement = new TestSuiteElement(parent != null ? parent : this, id, testName,
+					testCount, displayName, data);
 			testElement = testSuiteElement;
 			if (testCount != null) {
 				fIncompleteTestSuites.add(new IncompleteTestSuite(testSuiteElement, testCount));
@@ -423,7 +383,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 				fFactoryTestSuites.add(new IncompleteTestSuite(testSuiteElement, testCount));
 			}
 		} else {
-			testElement = new TestCaseElement((TestSuiteElement) parent, id, testName, displayName, isDynamicTest,
+			testElement = new TestCaseElement(parent != null ? parent : this, id, testName, displayName, isDynamicTest,
 					data);
 		}
 		fIdToTest.put(id, testElement);
@@ -465,8 +425,8 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 
 		public ITestElement testTreeEntry(String testId, String testName, boolean isSuite, Integer testCount,
 				boolean isDynamicTest, ITestSuiteElement parent, String displayName, String uniqueId) {
-			ITestElement testElement = addTreeEntry(testId, testName, isSuite, testCount, isDynamicTest, parent,
-					displayName, uniqueId);
+			ITestElement testElement = addTreeEntry(testId, testName, isSuite, testCount, isDynamicTest,
+					(TestSuiteElement) parent, displayName, uniqueId);
 
 			for (ITestSessionListener listener : fSessionListeners) {
 				listener.testAdded(testElement);
@@ -577,7 +537,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	 */
 	public List<TestElement> getAllFailedTestElements() {
 		List<TestElement> failures = new ArrayList<>();
-		addFailures(failures, getTestRoot());
+		addFailures(failures, this);
 		return Collections.unmodifiableList(failures);
 	}
 
@@ -592,14 +552,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 				addFailures(failures, child);
 			}
 		}
-	}
-
-	@Override
-	public Duration getDuration() {
-		if (fTestRoot == null) {
-			return null;
-		}
-		return fTestRoot.getDuration();
 	}
 
 	@Override
@@ -754,7 +706,7 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	}
 
 	@Override
-	public TestRoot getRoot() {
-		return this.fTestRoot;
+	public Result getTestResult(boolean includeChildren) {
+		return this.fTestResult != null ? this.fTestResult : super.getTestResult(includeChildren);
 	}
 }

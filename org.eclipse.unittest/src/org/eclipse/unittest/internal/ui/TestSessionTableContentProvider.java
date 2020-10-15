@@ -18,9 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.unittest.internal.model.TestCaseElement;
-import org.eclipse.unittest.internal.model.TestRoot;
 import org.eclipse.unittest.internal.model.TestSuiteElement;
 import org.eclipse.unittest.model.ITestElement;
+import org.eclipse.unittest.model.ITestRunSession;
+import org.eclipse.unittest.model.ITestSuiteElement;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -33,12 +34,13 @@ public class TestSessionTableContentProvider implements IStructuredContentProvid
 
 	@Override
 	public Object[] getElements(Object inputElement) {
-		ArrayList<ITestElement> all = new ArrayList<>();
-		addAll(all, (TestRoot) inputElement);
+		ITestRunSession session = (ITestRunSession) inputElement;
+		List<ITestElement> all = new ArrayList<>();
+		addAll(all, session);
 		return all.toArray();
 	}
 
-	private void addAll(List<ITestElement> all, TestSuiteElement suite) {
+	private void addAll(List<ITestElement> all, ITestSuiteElement suite) {
 		for (ITestElement element : suite.getChildren()) {
 			if (element instanceof TestSuiteElement) {
 				if (((TestSuiteElement) element).getSuiteStatus().isErrorOrFailure())

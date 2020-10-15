@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.unittest.model;
 
+import java.util.List;
+
 /**
  * Represents a test suite element.
  * <p>
@@ -22,7 +24,12 @@ package org.eclipse.unittest.model;
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
-public interface ITestSuiteElement extends ITestElementContainer {
+public interface ITestSuiteElement extends ITestElement {
 
-	// nothing specific to add
+	/**
+	 * Returns all tests (and test suites) contained in the suite.
+	 *
+	 * @return returns all tests (and test suites) contained in the suite.
+	 */
+	List<? extends ITestElement> getChildren();
 }

@@ -34,8 +34,8 @@ import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElement.FailureTrace;
 import org.eclipse.unittest.model.ITestElement.Result;
-import org.eclipse.unittest.model.ITestElementContainer;
 import org.eclipse.unittest.model.ITestRunSession;
+import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.unittest.ui.ITestViewSupport;
 
 import org.eclipse.swt.SWT;
@@ -1170,8 +1170,8 @@ public class TestRunnerViewPart extends ViewPart {
 		}
 		if (testElement instanceof TestCaseElement) {
 			allFailedTestCases.add(testElement);
-		} else if (testElement instanceof ITestElementContainer) {
-			((ITestElementContainer) testElement).getChildren()
+		} else if (testElement instanceof ITestSuiteElement) {
+			((ITestSuiteElement) testElement).getChildren()
 					.forEach(child -> collectFailedTestCases((TestElement) child, allFailedTestCases));
 		}
 

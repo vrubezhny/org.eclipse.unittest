@@ -135,7 +135,7 @@ public class TestRunHandler extends DefaultHandler {
 			} else {
 				fTestRunSession.reset();
 			}
-			fTestSuite = fTestRunSession.getTestRoot();
+			fTestSuite = fTestRunSession;
 			break;
 		case IXMLTags.NODE_TESTSUITES:
 			break;
@@ -143,7 +143,7 @@ public class TestRunHandler extends DefaultHandler {
 			String name = attributes.getValue(IXMLTags.ATTR_NAME);
 			if (fTestRunSession == null) {
 				fTestRunSession = new TestRunSession(name);
-				fTestSuite = fTestRunSession.getTestRoot();
+				fTestSuite = fTestRunSession;
 			}
 			String pack = attributes.getValue(IXMLTags.ATTR_PACKAGE);
 			String suiteName = pack == null ? name : pack + "." + name; //$NON-NLS-1$

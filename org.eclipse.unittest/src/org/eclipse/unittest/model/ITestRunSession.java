@@ -26,7 +26,7 @@ import org.eclipse.debug.core.ILaunch;
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
-public interface ITestRunSession extends ITestElementContainer {
+public interface ITestRunSession extends ITestSuiteElement {
 
 	/**
 	 * Returns the Java project from which this test run session has been launched,
