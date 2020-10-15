@@ -520,13 +520,11 @@ class TestViewer {
 			return;
 		}
 
-		ITestRoot testRoot = fTestRunSession.getTestRoot();
-
 		StructuredViewer viewer = getActiveViewer();
 		if (getActiveViewerNeedsRefresh()) {
 			clearUpdateAndExpansion();
 			setActiveViewerNeedsRefresh(false);
-			viewer.setInput(testRoot);
+			viewer.setInput(fTestRunSession);
 
 		} else {
 			Object[] toUpdate;

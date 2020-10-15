@@ -47,34 +47,30 @@ public interface ITestRunSession extends ITestElementContainer {
 	/**
 	 * Creates a new Test Case and adds it to the model
 	 *
-	 * @param testId        a unique id for the test
-	 * @param testName      the name of the test
-	 * @param isDynamicTest whether this test is already accounted in parent's
-	 *                      <code>testCount</code>
-	 * @param parent        the parent
-	 * @param displayName   the display name of the test
-	 * @param data          runner specific data
+	 * @param testId      a unique id for the test
+	 * @param testName    the name of the test
+	 * @param parent      the parent, can be <code>null</code>
+	 * @param displayName the display name of the test
+	 * @param data        runner specific data
 	 * @return the new test case element
 	 */
-	ITestCaseElement newTestCase(String testId, String testName, boolean isDynamicTest, ITestSuiteElement parent,
-			String displayName, String data);
+	ITestCaseElement newTestCase(String testId, String testName, ITestSuiteElement parent, String displayName,
+			String data);
 
 	/**
 	 * Creates a new Test Suite and adds it to the model
 	 *
-	 * @param testId        a unique id for the test
-	 * @param testName      the name of the test
-	 * @param testCount     the number of tests this suite will run,
-	 *                      <code>null</code> if unknown.
-	 * @param isDynamicTest whether this test is already accounted in parent's
-	 *                      <code>testCount</code>
-	 * @param parent        the parent
-	 * @param displayName   the display name of the test
-	 * @param data          runner specific data
+	 * @param testId      a unique id for the test
+	 * @param testName    the name of the test
+	 * @param testCount   the number of tests this suite will run, <code>null</code>
+	 *                    if unknown.
+	 * @param parent      the parent
+	 * @param displayName the display name of the test
+	 * @param data        runner specific data
 	 * @return the new test case element
 	 */
-	ITestSuiteElement newTestSuite(String testId, String testName, Integer testCount, boolean isDynamicTest,
-			ITestSuiteElement parent, String displayName, String data);
+	ITestSuiteElement newTestSuite(String testId, String testName, Integer testCount, ITestSuiteElement parent,
+			String displayName, String data);
 
 	/**
 	 * Notifies on a test run ended normally. Individual test success don't matter.

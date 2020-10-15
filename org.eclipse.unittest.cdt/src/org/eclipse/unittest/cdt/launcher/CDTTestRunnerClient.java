@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
 
 import org.eclipse.cdt.dsf.gdb.launching.InferiorRuntimeProcess;
 import org.eclipse.cdt.testsrunner.internal.launcher.TestsRunnerProvidersManager;
@@ -71,7 +71,7 @@ public class CDTTestRunnerClient implements ITestRunnerClient {
 			}
 		}
 
-		Stack<TestElementReference> testElementRefs = new Stack<>();
+		Deque<TestElementReference> testElementRefs = new LinkedList<>();
 
 		String fCurrentTestCase;
 		String fCurrentTestSuite;
@@ -97,7 +97,7 @@ public class CDTTestRunnerClient implements ITestRunnerClient {
 
 			this.fCurrentTestSuite = cRef.id;
 
-			fTestRunSession.newTestSuite(cRef.id, cRef.name, null, true, getTestSuite(cRef.parentId), cRef.name, null);
+			fTestRunSession.newTestSuite(cRef.id, cRef.name, null, getTestSuite(cRef.parentId), cRef.name, null);
 		}
 
 		@Override
@@ -135,7 +135,7 @@ public class CDTTestRunnerClient implements ITestRunnerClient {
 			this.fCurrentTestCase = cRef.id;
 			fFailedTrace.setLength(0);
 
-			ITestElement test = fTestRunSession.newTestCase(cRef.id, cRef.name, true, getTestSuite(cRef.parentId), cRef.name, null);
+			ITestElement test = fTestRunSession.newTestCase(cRef.id, cRef.name, getTestSuite(cRef.parentId), cRef.name, null);
 			fTestRunSession.notifyTestStarted(test);
 		}
 

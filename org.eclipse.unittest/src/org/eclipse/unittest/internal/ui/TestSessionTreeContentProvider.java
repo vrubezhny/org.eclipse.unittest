@@ -15,7 +15,7 @@
 package org.eclipse.unittest.internal.ui;
 
 import org.eclipse.unittest.internal.model.TestElement;
-import org.eclipse.unittest.internal.model.TestRoot;
+import org.eclipse.unittest.internal.model.TestRunSession;
 import org.eclipse.unittest.internal.model.TestSuiteElement;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -40,7 +40,12 @@ public class TestSessionTreeContentProvider implements ITreeContentProvider {
 
 	@Override
 	public Object[] getElements(Object inputElement) {
-		return ((TestRoot) inputElement).getChildren().toArray(Object[]::new);
+		TestRunSession session = (TestRunSession) inputElement;
+		if (session.getRoot().getChildren().size() == 1) {
+			return new Object[] { session.getChildren().get(0) };
+		} else {
+			return new Object[] { session.getRoot() };
+		}
 	}
 
 	@Override

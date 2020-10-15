@@ -32,10 +32,7 @@ public class TestCaseElement extends TestElement implements ITestCaseElement {
 
 	@Override
 	public Result getTestResult(boolean includeChildren) {
-		if (fIgnored)
-			return Result.IGNORED;
-		else
-			return super.getTestResult(includeChildren);
+		return isIgnored() ? Result.IGNORED : super.getTestResult(includeChildren);
 	}
 
 	@Override

@@ -245,6 +245,7 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 	 * The failed trace of a reran test
 	 */
 	private final StringBuilder fFailedRerunTrace = new StringBuilder();
+	private ITestSuiteElement currentSuite;
 
 	ProcessingState fDefaultState = new DefaultProcessingState();
 	ProcessingState fTraceState = new TraceProcessingState();
@@ -444,11 +445,15 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 			}
 		}
 
+		ITestSuiteElement parent = getTestSuite(parentId);
+		if (parent == null && currentSuite != null) {
+			parent = currentSuite;
+		}
 		if (isSuite) {
-			fTestRunSession.newTestSuite(id, testName, testCount, isDynamicTest, getTestSuite(parentId), displayName,
+			currentSuite = fTestRunSession.newTestSuite(id, testName, Integer.valueOf(testCount), parent, displayName,
 					uniqueId);
 		} else {
-			fTestRunSession.newTestCase(id, testName, isDynamicTest, getTestSuite(parentId), displayName, uniqueId);
+			fTestRunSession.newTestCase(id, testName, parent, displayName, uniqueId);
 		}
 	}
 
@@ -511,7 +516,7 @@ public class JUnitRemoteTestRunnerClient extends RemoteTestRunnerClient {
 			trace = fFailedRerunTrace.toString();
 		// assumption a rerun trace was sent before
 
-		ITestCaseElement element = fTestRunSession.newTestCase(testId, testName, true, null, testName, null);
+		ITestCaseElement element = fTestRunSession.newTestCase(testId, testName, null, testName, className);
 		if (statusCode != Result.OK) {
 			fTestRunSession.notifyTestFailed(element, statusCode, false,
 					new FailureTrace(trace, nullifyEmpty(fExpectedResult), nullifyEmpty(fActualResult)));

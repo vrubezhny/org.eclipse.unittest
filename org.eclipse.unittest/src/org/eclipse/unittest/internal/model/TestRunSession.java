@@ -91,11 +91,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 
 	private final List<IncompleteTestSuite> fFactoryTestSuites = new ArrayList<>();
 
-	/**
-	 * Suite for unrooted test case elements, or <code>null</code>.
-	 */
-	private TestSuiteElement fUnrootedSuite;
-
 	volatile Instant fStartTime;
 	volatile Integer fPredefinedTestCount;
 
@@ -332,7 +327,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			fIdToTest = new HashMap<>();
 			fIncompleteTestSuites.clear();
 			fFactoryTestSuites.clear();
-			fUnrootedSuite = null;
 
 		} catch (IllegalStateException e) {
 			UnitTestPlugin.log(e);
@@ -393,26 +387,9 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 
 	private TestElement addTreeEntry(String id, String testName, boolean isSuite, Integer testCount,
 			boolean isDynamicTest, ITestSuiteElement parent, String displayName, String data) {
-		if (isDynamicTest) {
-			if (parent != null) {
-				return createTestElement(parent, id, testName, isSuite, testCount, isDynamicTest, displayName, data);
-			}
-			return createTestElement(getUnrootedSuite(), id, testName, isSuite, testCount, isDynamicTest, displayName,
-					data); // should not reach here
-		} else {
-			if (fIncompleteTestSuites.isEmpty()) {
-				return createTestElement(fTestRoot, id, testName, isSuite, testCount, isDynamicTest, displayName, data);
-			} else {
-				int suiteIndex = fIncompleteTestSuites.size() - 1;
-				IncompleteTestSuite openSuite = fIncompleteTestSuites.get(suiteIndex);
-				openSuite.fOutstandingChildren--;
-				if (openSuite.fOutstandingChildren <= 0) {
-					fIncompleteTestSuites.remove(suiteIndex);
-				}
-				return createTestElement(openSuite.fOutstandingChildren < 0 ? fTestRoot : openSuite.fTestSuiteElement,
-						id, testName, isSuite, testCount, isDynamicTest, displayName, data);
-			}
-		}
+		return parent != null
+				? createTestElement(parent, id, testName, isSuite, testCount, isDynamicTest, displayName, data)
+				: createTestElement(fTestRoot, id, testName, isSuite, testCount, isDynamicTest, displayName, data);
 	}
 
 	/**
@@ -451,15 +428,6 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 		}
 		fIdToTest.put(id, testElement);
 		return testElement;
-	}
-
-	private TestSuiteElement getUnrootedSuite() {
-		if (fUnrootedSuite == null) {
-			fUnrootedSuite = (TestSuiteElement) createTestElement(fTestRoot, "-2", //$NON-NLS-1$
-					ModelMessages.TestRunSession_unrootedTests, true, null, false,
-					ModelMessages.TestRunSession_unrootedTests, null);
-		}
-		return fUnrootedSuite;
 	}
 
 	/**
@@ -657,16 +625,16 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 	}
 
 	@Override
-	public TestCaseElement newTestCase(String testId, String testName, boolean isDynamicTest, ITestSuiteElement parent,
-			String displayName, String data) {
-		return (TestCaseElement) fSessionNotifier.testTreeEntry(testId, testName, false, 1, isDynamicTest, parent,
-				displayName, data);
+	public TestCaseElement newTestCase(String testId, String testName, ITestSuiteElement parent, String displayName,
+			String data) {
+		return (TestCaseElement) fSessionNotifier.testTreeEntry(testId, testName, false, Integer.valueOf(1), false,
+				parent, displayName, data);
 	}
 
 	@Override
-	public TestSuiteElement newTestSuite(String testId, String testName, Integer testCount, boolean isDynamicTest,
-			ITestSuiteElement parent, String displayName, String data) {
-		return (TestSuiteElement) fSessionNotifier.testTreeEntry(testId, testName, true, testCount, isDynamicTest,
+	public TestSuiteElement newTestSuite(String testId, String testName, Integer testCount, ITestSuiteElement parent,
+			String displayName, String data) {
+		return (TestSuiteElement) fSessionNotifier.testTreeEntry(testId, testName, true, testCount, testCount == null,
 				parent, displayName, data);
 	}
 
@@ -783,5 +751,10 @@ public class TestRunSession extends TestElement implements ITestRunSession, ITes
 			return Integer.valueOf(res);
 		}
 		return null;
+	}
+
+	@Override
+	public TestRoot getRoot() {
+		return this.fTestRoot;
 	}
 }
