@@ -12,7 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.unittest.internal.xml;
+package org.eclipse.unittest.internal.junitXmlReport;
 
 import java.io.IOException;
 
@@ -82,10 +82,12 @@ public class TestRunSessionSerializer implements XMLReader {
 		if (total != null) {
 			addCDATA(atts, IXMLTags.ATTR_TESTS, total.intValue());
 		}
-		addCDATA(atts, IXMLTags.ATTR_STARTED, fTestRunSession.getCurrentStartedCount());
+		addCDATA(atts, IXMLTags.ATTR_STARTED, fTestRunSession.countStartedTestCases());
 		addCDATA(atts, IXMLTags.ATTR_FAILURES, fTestRunSession.getCurrentFailureCount());
 		addCDATA(atts, IXMLTags.ATTR_ERRORS, fTestRunSession.getCurrentErrorCount());
 		addCDATA(atts, IXMLTags.ATTR_IGNORED, fTestRunSession.getCurrentIgnoredCount());
+		addCDATA(atts, IXMLTags.ATTR_START_TIME, fTestRunSession.getStartTime().toString());
+		addCDATA(atts, IXMLTags.ATTR_DURATION, fTestRunSession.getDuration().toString());
 		startElement(IXMLTags.NODE_TESTRUN, atts);
 
 		for (ITestElement topSuite : fTestRunSession.getChildren()) {
@@ -104,7 +106,8 @@ public class TestRunSessionSerializer implements XMLReader {
 			// test factory methods
 			addCDATA(atts, IXMLTags.ATTR_NAME, testSuiteElement.getTestName());
 			if (testSuiteElement.getDuration() != null) {
-				addCDATA(atts, IXMLTags.ATTR_TIME, testSuiteElement.getDuration().toString());
+				addCDATA(atts, IXMLTags.ATTR_DURATION,
+						Double.toString(testSuiteElement.getDuration().toMillis() / 1000.));
 			}
 			if (testSuiteElement.getProgressState() != ProgressState.COMPLETED
 					|| testSuiteElement.getTestResult(false) != Result.UNDEFINED)
@@ -128,7 +131,7 @@ public class TestRunSessionSerializer implements XMLReader {
 
 			AttributesImpl atts = new AttributesImpl();
 			if (testCaseElement.getDuration() != null) {
-				addCDATA(atts, IXMLTags.ATTR_TIME, testCaseElement.getDuration().toString());
+				addCDATA(atts, IXMLTags.ATTR_DURATION, testCaseElement.getDuration().toString());
 			}
 			if (testCaseElement.getProgressState() != ProgressState.COMPLETED)
 				addCDATA(atts, IXMLTags.ATTR_INCOMPLETE, Boolean.TRUE.toString());

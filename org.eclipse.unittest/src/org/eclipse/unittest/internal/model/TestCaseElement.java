@@ -61,8 +61,8 @@ public class TestCaseElement extends TestElement implements ITestCaseElement {
 	}
 
 	@Override
-	int getCurrentStartedCount() {
-		return testStartedInstant != null ? 1 : 0;
+	int countStartedTestCases() {
+		return getProgressState() != ProgressState.NOT_STARTED || testStartedInstant != null ? 1 : 0;
 	}
 
 	@Override

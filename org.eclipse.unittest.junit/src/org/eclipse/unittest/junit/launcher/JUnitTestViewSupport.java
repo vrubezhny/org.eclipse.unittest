@@ -24,7 +24,6 @@ import org.eclipse.unittest.junit.ui.ShowStackTraceInConsoleViewActionDelegate;
 import org.eclipse.unittest.launcher.ITestRunnerClient;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
-import org.eclipse.unittest.model.ITestRoot;
 import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.unittest.ui.ITestViewSupport;
@@ -207,7 +206,7 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 		while (current != null) {
 			try {
 				String className = null;
-				if (current instanceof ITestRoot) {
+				if (current instanceof ITestRunSession) {
 					ILaunch launch = element.getTestRunSession().getLaunch();
 					if (launch != null) {
 						ILaunchConfiguration configuration = launch.getLaunchConfiguration();

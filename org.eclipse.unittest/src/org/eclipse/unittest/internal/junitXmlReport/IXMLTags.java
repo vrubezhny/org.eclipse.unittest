@@ -12,9 +12,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.unittest.internal.xml;
+package org.eclipse.unittest.internal.junitXmlReport;
 
-public interface IXMLTags {
+interface IXMLTags {
 
 	String NODE_TESTRUN = "testrun"; //$NON-NLS-1$
 	String NODE_TESTSUITES = "testsuites"; //$NON-NLS-1$
@@ -75,9 +75,13 @@ public interface IXMLTags {
 	 */
 	String ATTR_INCOMPLETE = "incomplete"; //$NON-NLS-1$
 	/**
-	 * value: Double
+	 * value: Duration.toString()
 	 */
-	String ATTR_TIME = "time"; //$NON-NLS-1$
+	String ATTR_START_TIME = "startTime"; //$NON-NLS-1$
+	/**
+	 * value: Double (duration in seconds)
+	 */
+	String ATTR_DURATION = "time"; //$NON-NLS-1$
 	/**
 	 * value: String
 	 */

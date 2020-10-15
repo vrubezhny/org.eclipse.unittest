@@ -272,7 +272,7 @@ public abstract class TestElement implements ITestElement {
 	 *
 	 * @return a number of started test cases
 	 */
-	abstract int getCurrentStartedCount();
+	abstract int countStartedTestCases();
 
 	/**
 	 * Returns the number of failed test case elements

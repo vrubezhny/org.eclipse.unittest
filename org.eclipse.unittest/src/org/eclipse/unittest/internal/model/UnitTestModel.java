@@ -13,12 +13,8 @@
  *******************************************************************************/
 package org.eclipse.unittest.internal.model;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,26 +24,15 @@ import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.sax.SAXSource;
-import javax.xml.transform.stream.StreamResult;
 
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import org.eclipse.unittest.internal.UnitTestPlugin;
 import org.eclipse.unittest.internal.UnitTestPreferencesConstants;
+import org.eclipse.unittest.internal.junitXmlReport.TestRunHandler;
 import org.eclipse.unittest.internal.launcher.TestListenerRegistry;
 import org.eclipse.unittest.internal.launcher.TestRunListener;
 import org.eclipse.unittest.internal.launcher.TestViewSupportRegistry;
-import org.eclipse.unittest.internal.ui.BasicElementLabels;
-import org.eclipse.unittest.internal.xml.TestRunHandler;
-import org.eclipse.unittest.internal.xml.TestRunSessionSerializer;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.ui.ITestViewSupport;
@@ -106,8 +91,6 @@ public final class UnitTestModel {
 		@Override
 		public void launchRemoved(final ILaunch launch) {
 			fTrackedLaunches.remove(launch);
-			getTestRunSessions().stream().filter(session -> launch.equals(session.getLaunch()))
-					.forEach(UnitTestModel.this::removeTestRunSession);
 		}
 
 		@Override
@@ -191,14 +174,6 @@ public final class UnitTestModel {
 	public void stop() {
 		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		launchManager.removeLaunchListener(fLaunchListener);
-
-		File historyDirectory = getHistoryDirectory();
-		File[] swapFiles = historyDirectory.listFiles();
-		if (swapFiles != null) {
-			for (File swapFile : swapFiles) {
-				swapFile.delete();
-			}
-		}
 
 //		for (Iterator iter= fTestRunSessions.iterator(); iter.hasNext();) {
 //			final TestRunSession session= (TestRunSession) iter.next();
@@ -314,96 +289,6 @@ public final class UnitTestModel {
 	}
 
 	/**
-	 * Loads an {@link ITestRunSession} from a swap file
-	 *
-	 * @param swapFile       a swap file
-	 * @param testRunSession to be set from the swap file
-	 * @throws CoreException in case of import failure
-	 */
-	public static void importIntoTestRunSession(File swapFile, TestRunSession testRunSession) throws CoreException {
-		try {
-			SAXParserFactory parserFactory = SAXParserFactory.newInstance();
-//			parserFactory.setValidating(true); // TODO: add DTD and debug flag
-			SAXParser parser = parserFactory.newSAXParser();
-			TestRunHandler handler = new TestRunHandler(testRunSession);
-			parser.parse(swapFile, handler);
-		} catch (ParserConfigurationException e) {
-			throwImportError(swapFile, e);
-		} catch (SAXException e) {
-			throwImportError(swapFile, e);
-		} catch (IOException e) {
-			throwImportError(swapFile, e);
-		} catch (IllegalArgumentException e) {
-			// Bug in parser: can throw IAE even if file is not null
-			throwImportError(swapFile, e);
-		}
-	}
-
-	/**
-	 * Exports the given test run session.
-	 *
-	 * @param testRunSession the test run session
-	 * @param file           the destination
-	 * @throws CoreException if an error occurred
-	 */
-	public static void exportTestRunSession(TestRunSession testRunSession, File file) throws CoreException {
-		try (FileOutputStream out = new FileOutputStream(file)) {
-			exportTestRunSession(testRunSession, out);
-		} catch (IOException e) {
-			throwExportError(file, e);
-		} catch (TransformerConfigurationException e) {
-			throwExportError(file, e);
-		} catch (TransformerException e) {
-			throwExportError(file, e);
-		}
-	}
-
-	/**
-	 * Exports the given test run session.
-	 *
-	 * @param testRunSession the test run session
-	 * @param out            an {@link OutputStream} instance
-	 * @throws TransformerFactoryConfigurationError if a transformer factory
-	 *                                              configuration error occurred
-	 * @throws TransformerException                 if a transformer error occurred
-	 */
-	public static void exportTestRunSession(TestRunSession testRunSession, OutputStream out)
-			throws TransformerFactoryConfigurationError, TransformerException {
-
-		Transformer transformer = TransformerFactory.newInstance().newTransformer();
-		InputSource inputSource = new InputSource();
-		SAXSource source = new SAXSource(new TestRunSessionSerializer(testRunSession), inputSource);
-		StreamResult result = new StreamResult(out);
-		transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
-		transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
-		/*
-		 * Bug in Xalan: Only indents if proprietary property
-		 * org.apache.xalan.templates.OutputProperties.S_KEY_INDENT_AMOUNT is set.
-		 *
-		 * Bug in Xalan as shipped with J2SE 5.0: Does not read the indent-amount
-		 * property at all >:-(.
-		 */
-		try {
-			transformer.setOutputProperty("{http://xml.apache.org/xalan}indent-amount", "2"); //$NON-NLS-1$ //$NON-NLS-2$
-		} catch (IllegalArgumentException e) {
-			// no indentation today...
-		}
-		transformer.transform(source, result);
-	}
-
-	private static void throwExportError(File file, Exception e) throws CoreException {
-		throw new CoreException(
-				new org.eclipse.core.runtime.Status(IStatus.ERROR, UnitTestPlugin.PLUGIN_ID, MessageFormat.format(
-						ModelMessages.UnitTestModel_could_not_write, BasicElementLabels.getPathLabel(file)), e));
-	}
-
-	private static void throwImportError(File file, Exception e) throws CoreException {
-		throw new CoreException(new org.eclipse.core.runtime.Status(IStatus.ERROR, UnitTestPlugin.PLUGIN_ID,
-				MessageFormat.format(ModelMessages.UnitTestModel_could_not_read, BasicElementLabels.getPathLabel(file)),
-				e));
-	}
-
-	/**
 	 * Removes the given {@link TestRunSession} and notifies all registered
 	 * {@link ITestRunSessionListener}s.
 	 *
@@ -417,7 +302,6 @@ public final class UnitTestModel {
 		if (existed) {
 			notifyTestRunSessionRemoved(testRunSession);
 		}
-		testRunSession.removeSwapFile();
 	}
 
 	private void notifyTestRunSessionRemoved(TestRunSession testRunSession) {
@@ -447,22 +331,4 @@ public final class UnitTestModel {
 		}
 		return null;
 	}
-
-	private static final String HISTORY_DIR_NAME = "history"; //$NON-NLS-1$
-
-	/**
-	 * Creates and returns a directory to store the History information
-	 *
-	 * @return the file corresponding to History directory
-	 * @throws IllegalStateException in case of failed to create or find an existing
-	 *                               directory
-	 */
-	public static File getHistoryDirectory() throws IllegalStateException {
-		File historyDir = UnitTestPlugin.getDefault().getStateLocation().append(HISTORY_DIR_NAME).toFile();
-		if (!historyDir.isDirectory()) {
-			historyDir.mkdir();
-		}
-		return historyDir;
-	}
-
 }

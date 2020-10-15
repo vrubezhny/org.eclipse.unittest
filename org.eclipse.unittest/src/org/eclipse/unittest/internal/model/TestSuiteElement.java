@@ -237,8 +237,8 @@ public class TestSuiteElement extends TestElement implements ITestSuiteElement {
 	}
 
 	@Override
-	int getCurrentStartedCount() {
-		return getChildren().stream().mapToInt(TestElement::getCurrentStartedCount).sum();
+	public int countStartedTestCases() {
+		return getChildren().stream().mapToInt(TestElement::countStartedTestCases).sum();
 	}
 
 	@Override

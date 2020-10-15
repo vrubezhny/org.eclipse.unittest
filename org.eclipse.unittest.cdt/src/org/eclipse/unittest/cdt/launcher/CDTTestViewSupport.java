@@ -23,7 +23,6 @@ import org.eclipse.unittest.cdt.ui.OpenTestAction;
 import org.eclipse.unittest.launcher.ITestRunnerClient;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
-import org.eclipse.unittest.model.ITestRoot;
 import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.unittest.ui.ITestViewSupport;
@@ -117,7 +116,7 @@ public class CDTTestViewSupport implements ITestViewSupport {
 		// Collect test path parts (in reverse order)
 		testPath.clear();
 		ITestElement element = testElement;
-		while (element != null && !(element.getParent() instanceof ITestRoot)) {
+		while (element != null && !(element.getParent() instanceof ITestRunSession)) {
 			// Exclude root test suite
 			if (element.getParent() != null) {
 				testPath.add(element.getTestName());

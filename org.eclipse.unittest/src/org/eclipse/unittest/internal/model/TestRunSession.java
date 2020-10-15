@@ -13,9 +13,7 @@
  *******************************************************************************/
 package org.eclipse.unittest.internal.model;
 
-import java.io.File;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -35,7 +33,6 @@ import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.unittest.ui.ITestViewSupport;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
@@ -45,6 +42,8 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchesListener2;
+import org.eclipse.debug.core.Launch;
+import org.eclipse.debug.core.model.ISourceLocator;
 
 /**
  * A test run session holds all information about a test run, i.e. launch
@@ -97,19 +96,20 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 	 *
 	 * @param testRunName name of the test run
 	 */
-	public TestRunSession(String testRunName) {
+	public TestRunSession(String testRunName, Instant startTime, ILaunchConfiguration launchConfiguration) {
 		super(null, "-1", testRunName, null, null, null); //$NON-NLS-1$
 		// TODO: check assumptions about non-null fields
 
-		fLaunch = null;
+		fLaunch = new NoopLaunch(launchConfiguration, ILaunchManager.RUN_MODE, null);
+		fTestRunnerSupport = UnitTestModel.newTestRunnerViewSupport(launchConfiguration);
 
 		Assert.isNotNull(testRunName);
 		fTestRunName = testRunName;
-		fTestRunnerSupport = null;
 
 		fIdToTest = new HashMap<>();
 
 		fTestRunnerClient = null;
+		fStartTime = startTime;
 
 		fSessionListeners = new ListenerList<>();
 	}
@@ -238,11 +238,6 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 	}
 
 	@Override
-	public int getCurrentStartedCount() {
-		return getChildren().stream().mapToInt(TestElement::getCurrentStartedCount).sum();
-	}
-
-	@Override
 	public int getCurrentIgnoredCount() {
 		return getChildren().stream().mapToInt(TestElement::getCurrentIgnoredCount).sum();
 	}
@@ -270,62 +265,9 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 		fSessionListeners.remove(listener);
 	}
 
-	public synchronized void swapOut() {
-		if (isRunning() || isStarting()) {
-			return;
-		}
-
-		for (ITestSessionListener registered : fSessionListeners) {
-			if (!registered.acceptsSwapToDisk()) {
-				return;
-			}
-		}
-
-		try {
-			File swapFile = getSwapFile();
-
-			UnitTestModel.exportTestRunSession(this, swapFile);
-			fTestRunnerClient = null;
-			fIdToTest = new HashMap<>();
-			fIncompleteTestSuites.clear();
-			fFactoryTestSuites.clear();
-			getChildren().clear();
-		} catch (IllegalStateException e) {
-			UnitTestPlugin.log(e);
-		} catch (CoreException e) {
-			UnitTestPlugin.log(e);
-		}
-	}
-
 	@Override
 	public boolean isStarting() {
 		return getStartTime() == null && fLaunch != null && !fLaunch.isTerminated();
-	}
-
-	public void removeSwapFile() {
-		File swapFile = getSwapFile();
-		if (swapFile.exists()) {
-			swapFile.delete();
-		}
-	}
-
-	private File getSwapFile() {
-		File historyDir = UnitTestModel.getHistoryDirectory();
-		String isoTime = new SimpleDateFormat("yyyyMMdd-HHmmss.SSS").format(new Date(getStartTime().toEpochMilli())); //$NON-NLS-1$
-		String swapFileName = isoTime + ".xml"; //$NON-NLS-1$
-		return new File(historyDir, swapFileName);
-	}
-
-	public synchronized void swapIn() {
-		if (!getChildren().isEmpty())
-			return;
-
-		try {
-			UnitTestModel.importIntoTestRunSession(getSwapFile(), this);
-		} catch (IllegalStateException | CoreException e) {
-			UnitTestPlugin.log(e);
-			fTestResult = null;
-		}
 	}
 
 	public void abortTestRun() {
@@ -388,6 +330,22 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 		}
 		fIdToTest.put(id, testElement);
 		return testElement;
+	}
+
+	private final class NoopLaunch extends Launch {
+		private NoopLaunch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator) {
+			super(launchConfiguration, mode, locator);
+		}
+
+		@Override
+		public boolean isTerminated() {
+			return true;
+		}
+
+		@Override
+		public boolean isDisconnected() {
+			return true;
+		}
 	}
 
 	/**
@@ -709,4 +667,5 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 	public Result getTestResult(boolean includeChildren) {
 		return this.fTestResult != null ? this.fTestResult : super.getTestResult(includeChildren);
 	}
+
 }

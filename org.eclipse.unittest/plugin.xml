@@ -48,6 +48,20 @@
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.unittest.UnitTestShortcut.rerunFailedCases">
       </command>
+      <command
+            defaultHandler="org.eclipse.unittest.internal.ui.history.HistoryHandler"
+            description="%UnitTestShortcut.description.history"
+            id="org.eclipse.unittest.history"
+            name="%UnitTestShortcut.description.history">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commandImages">
+      <image
+            commandId="org.eclipse.unittest.history"
+            disabledIcon="icons/full/dlcl16/history_list.png"
+            icon="icons/full/elcl16/history_list.png">
+      </image>
    </extension>
 
 </plugin>

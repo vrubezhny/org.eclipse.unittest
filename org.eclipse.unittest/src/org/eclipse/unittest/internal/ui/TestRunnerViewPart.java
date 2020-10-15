@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+L * Copyright (c) 2000, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -30,6 +30,8 @@ import org.eclipse.unittest.internal.model.TestCaseElement;
 import org.eclipse.unittest.internal.model.TestElement;
 import org.eclipse.unittest.internal.model.TestRunSession;
 import org.eclipse.unittest.internal.model.UnitTestModel;
+import org.eclipse.unittest.internal.ui.history.History;
+import org.eclipse.unittest.internal.ui.history.HistoryHandler;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElement.FailureTrace;
@@ -77,6 +79,7 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -102,6 +105,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.menus.CommandContributionItem;
+import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
@@ -109,6 +114,7 @@ import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.actions.EditLaunchConfigurationAction;
 
@@ -150,8 +156,6 @@ public class TestRunnerViewPart extends ViewPart {
 	 */
 	private int fLayout = LAYOUT_HIERARCHICAL;
 
-//	private boolean fTestIsRunning= false;
-
 	private UnitTestProgressBar fProgressBar;
 	private ProgressIcons fProgressImages;
 	protected Image fViewImage;
@@ -182,6 +186,7 @@ public class TestRunnerViewPart extends ViewPart {
 	private IHandlerActivation fRerunLastActivation;
 	private Action fRerunFailedCasesAction;
 	private IHandlerActivation fRerunFailedFirstActivation;
+	private EditLaunchConfigurationAction fEditLaunchConfigAction;
 
 	private Action fFailuresOnlyFilterAction;
 	private Action fIgnoredOnlyFilterAction;
@@ -262,9 +267,7 @@ public class TestRunnerViewPart extends ViewPart {
 	private IMemento fMemento;
 
 	Image fOriginalViewImage;
-//	IElementChangedListener fDirtyListener;
 
-//	private CTabFolder fTabFolder;
 	private SashForm fSashForm;
 
 	private Composite fCounterComposite;
@@ -324,8 +327,6 @@ public class TestRunnerViewPart extends ViewPart {
 	};
 
 	protected boolean fPartIsVisible = false;
-
-	private EditLaunchConfigurationAction fEditLaunchConfigAction;
 
 	/*
 	 * private class RunnerViewHistory extends ViewHistory<TestRunSession> {
@@ -572,10 +573,7 @@ public class TestRunnerViewPart extends ViewPart {
 						registerInfoMessage(msg);
 					}
 
-					TestRunSession deactivatedSession = setActiveTestRunSession((TestRunSession) testRunSession);
-					if (deactivatedSession != null) {
-						deactivatedSession.swapOut();
-					}
+					setActiveTestRunSession((TestRunSession) testRunSession);
 				}
 			});
 		}
@@ -590,9 +588,6 @@ public class TestRunnerViewPart extends ViewPart {
 						deactivatedSession = setActiveTestRunSession(testRunSessions.get(0));
 					} else {
 						deactivatedSession = setActiveTestRunSession(null);
-					}
-					if (deactivatedSession != null && deactivatedSession instanceof TestRunSession) {
-						((TestRunSession) deactivatedSession).swapOut();
 					}
 				}
 			});
@@ -609,7 +604,7 @@ public class TestRunnerViewPart extends ViewPart {
 
 			fStopAction.setEnabled(true);
 			fRerunLastTestAction.setEnabled(true);
-			fEditLaunchConfigAction.setEnabled(fTestRunSession.getLaunch().getLaunchConfiguration() != null);
+			fEditLaunchConfigAction.setEnabled(fTestRunSession.getLaunch() != null);
 		}
 
 		@Override
@@ -684,11 +679,6 @@ public class TestRunnerViewPart extends ViewPart {
 		@Override
 		public void testAdded(ITestElement testElement) {
 			fTestViewer.registerTestAdded(testElement);
-		}
-
-		@Override
-		public boolean acceptsSwapToDisk() {
-			return false;
 		}
 	}
 
@@ -785,8 +775,7 @@ public class TestRunnerViewPart extends ViewPart {
 
 		@Override
 		public void run() {
-			DebugUITools.launch(fTestRunSession.getLaunch().getLaunchConfiguration(),
-					fTestRunSession.getLaunch().getLaunchMode());
+			DebugUITools.launch(fTestRunSession.getLaunch().getLaunchConfiguration(), rerunLaunchMode());
 		}
 	}
 
@@ -1141,6 +1130,12 @@ public class TestRunnerViewPart extends ViewPart {
 		fPreviousAction.setEnabled(hasErrorsOrFailures);
 	}
 
+	private String rerunLaunchMode() {
+		return fTestRunSession != null && fTestRunSession.getLaunch() != null
+				? fTestRunSession.getLaunch().getLaunchMode()
+				: ILaunchManager.RUN_MODE;
+	}
+
 	/**
 	 * Re-runs the tests executing the failed tests first
 	 */
@@ -1156,7 +1151,7 @@ public class TestRunnerViewPart extends ViewPart {
 		collectFailedTestCases(fTestRunSession, allFailedTestCases);
 		ILaunchConfiguration tmp = fTestRunSession.getTestViewSupport().getRerunLaunchConfiguration(allFailedTestCases);
 		if (tmp != null) {
-			DebugUITools.launch(tmp, fTestRunSession.getLaunch().getLaunchMode());
+			DebugUITools.launch(tmp, rerunLaunchMode());
 		}
 	}
 
@@ -1258,7 +1253,7 @@ public class TestRunnerViewPart extends ViewPart {
 
 	private void updateViewIcon() {
 		if (fTestRunSession == null || fTestRunSession.isStopped() || fTestRunSession.isRunning()
-				|| fTestRunSession.getCurrentStartedCount() == 0)
+				|| fTestRunSession.countStartedTestCases() == 0)
 			fViewImage = fOriginalViewImage;
 		else if (hasErrorsOrFailures())
 			fViewImage = fTestRunFailIcon;
@@ -1270,7 +1265,7 @@ public class TestRunnerViewPart extends ViewPart {
 	private void updateViewTitleProgress() {
 		if (fTestRunSession != null) {
 			if (fTestRunSession.isRunning()) {
-				Image progress = fProgressImages.getImage(fTestRunSession.getCurrentStartedCount(),
+				Image progress = fProgressImages.getImage(fTestRunSession.countStartedTestCases(),
 						fTestRunSession.getFinalTestCaseCount(),
 						fTestRunSession.getCurrentErrorCount() > 0 || fTestRunSession.getCurrentFailureCount() > 0);
 				if (progress != fViewImage) {
@@ -1290,7 +1285,7 @@ public class TestRunnerViewPart extends ViewPart {
 	 * @return deactivated session, or <code>null</code> iff no session got
 	 *         deactivated
 	 */
-	private TestRunSession setActiveTestRunSession(TestRunSession testRunSession) {
+	public TestRunSession setActiveTestRunSession(TestRunSession testRunSession) {
 		/*
 		 * - State: fTestRunSession fTestSessionListener Jobs
 		 * fTestViewer.processChangesInUI(); - UI: fCounterPanel fProgressBar
@@ -1308,6 +1303,7 @@ public class TestRunnerViewPart extends ViewPart {
 
 		fTestRunSession = testRunSession;
 		fTestViewer.registerActiveSession(testRunSession);
+		History.INSTANCE.watch(testRunSession);
 
 		if (fSashForm.isDisposed()) {
 			stopUpdateJobs();
@@ -1332,8 +1328,9 @@ public class TestRunnerViewPart extends ViewPart {
 				fTestSessionListener = new TestSessionListener();
 				fTestRunSession.addTestSessionListener(fTestSessionListener);
 			}
-			if (!fTestRunSession.isStarting() && !fShowOnErrorOnly)
+			if (!fTestRunSession.isStarting() && !fShowOnErrorOnly) {
 				showTestResultsView();
+			}
 
 			setTitleToolTip();
 
@@ -1343,15 +1340,16 @@ public class TestRunnerViewPart extends ViewPart {
 
 			updateRerunFailedFirstAction();
 			fRerunLastTestAction.setEnabled(fTestRunSession.getLaunch() != null);
+			fEditLaunchConfigAction.setEnabled(fTestRunSession.getLaunch() != null);
 
 			fStopAction.setEnabled(fTestRunSession.isRunning());
 			if (fTestRunSession.isRunning()) {
 				startUpdateJobs();
 			} else /* old or fresh session: don't want jobs at this stage */ {
 				stopUpdateJobs();
-
 			}
 		}
+		getSite().getShell().getDisplay().asyncExec(this::processChangesInUI);
 		return deactivatedSession;
 	}
 
@@ -1363,7 +1361,7 @@ public class TestRunnerViewPart extends ViewPart {
 	}
 
 	private void updateRerunFailedFirstAction() {
-		boolean state = hasErrorsOrFailures() && fTestRunSession.getLaunch() != null;
+		boolean state = hasErrorsOrFailures() && fTestRunSession.getLaunch().getLaunchConfiguration() != null;
 		fRerunFailedCasesAction.setEnabled(state);
 	}
 
@@ -1445,7 +1443,7 @@ public class TestRunnerViewPart extends ViewPart {
 		boolean stopped;
 
 		if (fTestRunSession != null) {
-			startedCount = fTestRunSession.getCurrentStartedCount();
+			startedCount = fTestRunSession.countStartedTestCases();
 			ignoredCount = fTestRunSession.getCurrentIgnoredCount();
 			totalCount = fTestRunSession.getFinalTestCaseCount();
 			errorCount = fTestRunSession.getCurrentErrorCount();
@@ -1626,6 +1624,7 @@ public class TestRunnerViewPart extends ViewPart {
 
 		fTestRunSessionListener = new TestRunSessionListener();
 		UnitTestModel.getInstance().addTestRunSessionListener(fTestRunSessionListener);
+		UnitTestModel.getInstance().addTestRunSessionListener(History.INSTANCE);
 
 		// always show youngest test run in view. simulate "sessionAdded" event to do
 		// that
@@ -1765,7 +1764,7 @@ public class TestRunnerViewPart extends ViewPart {
 
 			@Override
 			protected String getMode() {
-				return fTestRunSession != null ? fTestRunSession.getLaunch().getLaunchMode() : null;
+				return rerunLaunchMode();
 			}
 
 			@Override
@@ -1790,8 +1789,6 @@ public class TestRunnerViewPart extends ViewPart {
 				new ToggleOrientationAction(VIEW_ORIENTATION_HORIZONTAL),
 				new ToggleOrientationAction(VIEW_ORIENTATION_AUTOMATIC) };
 
-		fShowTestHierarchyAction = new ShowTestHierarchyAction();
-		fShowTimeAction = new ShowTimeAction();
 		toolBar.add(fNextAction);
 		toolBar.add(fPreviousAction);
 		toolBar.add(fFailuresOnlyFilterAction);
@@ -1802,7 +1799,13 @@ public class TestRunnerViewPart extends ViewPart {
 		toolBar.add(fRerunFailedCasesAction);
 		toolBar.add(fStopAction);
 		toolBar.add(fEditLaunchConfigAction);
+		toolBar.add(new Separator());
+		IContributionItem historyIte = new CommandContributionItem(new CommandContributionItemParameter(getSite(),
+				HistoryHandler.COMMAND_ID, HistoryHandler.COMMAND_ID, SWT.PUSH));
+		toolBar.add(historyIte);
 
+		fShowTestHierarchyAction = new ShowTestHierarchyAction();
+		fShowTimeAction = new ShowTimeAction();
 		viewMenu.add(fShowTestHierarchyAction);
 		viewMenu.add(fShowTimeAction);
 		viewMenu.add(new Separator());

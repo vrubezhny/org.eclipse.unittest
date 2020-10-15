@@ -12,9 +12,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.unittest.internal.xml;
+package org.eclipse.unittest.internal.junitXmlReport;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.util.Stack;
 
 import org.xml.sax.Attributes;
@@ -24,6 +25,7 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.unittest.internal.UnitTestPlugin;
 import org.eclipse.unittest.internal.model.ModelMessages;
 import org.eclipse.unittest.internal.model.TestCaseElement;
 import org.eclipse.unittest.internal.model.TestElement;
@@ -33,12 +35,12 @@ import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElement.FailureTrace;
 import org.eclipse.unittest.model.ITestElement.Result;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.ILaunchConfiguration;
 
 public class TestRunHandler extends DefaultHandler {
 
@@ -82,15 +84,6 @@ public class TestRunHandler extends DefaultHandler {
 		fMonitor = monitor;
 	}
 
-	/**
-	 * Constructs a {@link TestRunHandler} object instance
-	 *
-	 * @param testRunSession a {@link TestRunSession} instance
-	 */
-	public TestRunHandler(TestRunSession testRunSession) {
-		fTestRunSession = testRunSession;
-	}
-
 	@Override
 	public void setDocumentLocator(Locator locator) {
 		fLocator = locator;
@@ -119,19 +112,23 @@ public class TestRunHandler extends DefaultHandler {
 			if (fTestRunSession == null) {
 				String name = attributes.getValue(IXMLTags.ATTR_NAME);
 				String launchConfigName = attributes.getValue(IXMLTags.ATTR_LAUNCH_CONFIG_NAME);
-				ILaunch launch = null;
+				ILaunchConfiguration launchConfiguration = null;
 				if (launchConfigName != null) {
-					ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-					for (ILaunch l : launchManager.getLaunches()) {
-						if (l.getLaunchConfiguration().getName().equals(name)) {
-							launch = l;
-							break;
+					try {
+						for (ILaunchConfiguration config : DebugPlugin.getDefault().getLaunchManager()
+								.getLaunchConfigurations()) {
+							if (config.getName().equals(launchConfigName)) {
+								launchConfiguration = config;
+							}
 						}
+					} catch (CoreException e) {
+						UnitTestPlugin.log(e);
 					}
 				}
-				fTestRunSession = new TestRunSession(launch);
+				fTestRunSession = new TestRunSession(name, Instant.parse(attributes.getValue(IXMLTags.ATTR_START_TIME)),
+						launchConfiguration);
+				readDuration(fTestRunSession, attributes);
 				// TODO: read counts?
-
 			} else {
 				fTestRunSession.reset();
 			}
@@ -141,10 +138,6 @@ public class TestRunHandler extends DefaultHandler {
 			break;
 		case IXMLTags.NODE_TESTSUITE: {
 			String name = attributes.getValue(IXMLTags.ATTR_NAME);
-			if (fTestRunSession == null) {
-				fTestRunSession = new TestRunSession(name);
-				fTestSuite = fTestRunSession;
-			}
 			String pack = attributes.getValue(IXMLTags.ATTR_PACKAGE);
 			String suiteName = pack == null ? name : pack + "." + name; //$NON-NLS-1$
 			String displayName = attributes.getValue(IXMLTags.ATTR_DISPLAY_NAME);
@@ -153,8 +146,8 @@ public class TestRunHandler extends DefaultHandler {
 				data = null;
 			}
 			fTestSuite = (TestSuiteElement) fTestRunSession.createTestElement(fTestSuite, getNextId(), suiteName, true,
-					0, false, displayName, data);
-			readTime(fTestSuite, attributes);
+					null, false, displayName, data);
+			readDuration(fTestSuite, attributes);
 			fNotRun.push(Boolean.valueOf(attributes.getValue(IXMLTags.ATTR_INCOMPLETE)));
 			break;
 		}
@@ -172,11 +165,11 @@ public class TestRunHandler extends DefaultHandler {
 			if (data != null && data.isBlank()) {
 				data = null;
 			}
-			fTestCase = (TestCaseElement) fTestRunSession.createTestElement(fTestSuite, getNextId(), testName, false, 0,
+			fTestCase = (TestCaseElement) fTestRunSession.createTestElement(fTestSuite, getNextId(), testName, false, 1,
 					isDynamicTest, displayName, data);
 			fNotRun.push(Boolean.valueOf(attributes.getValue(IXMLTags.ATTR_INCOMPLETE)));
-			fTestCase.setIgnored(Boolean.valueOf(attributes.getValue(IXMLTags.ATTR_IGNORED)).booleanValue());
-			readTime(fTestCase, attributes);
+			fTestCase.setIgnored(Boolean.parseBoolean(attributes.getValue(IXMLTags.ATTR_IGNORED)));
+			readDuration(fTestCase, attributes);
 			break;
 		}
 		case IXMLTags.NODE_ERROR:
@@ -218,13 +211,15 @@ public class TestRunHandler extends DefaultHandler {
 		}
 	}
 
-	private void readTime(ITestElement testElement, Attributes attributes) {
+	private void readDuration(ITestElement testElement, Attributes attributes) {
 		if (testElement instanceof TestElement) {
 			TestElement element = (TestElement) testElement;
-			String timeString = attributes.getValue(IXMLTags.ATTR_TIME);
+			String timeString = attributes.getValue(IXMLTags.ATTR_DURATION);
 			if (timeString != null) {
 				try {
-					element.setDuration(Duration.parse(timeString));
+					double seconds = Double.parseDouble(timeString);
+					long millis = (long) (seconds * 1000);
+					element.setDuration(Duration.ofMillis(millis));
 				} catch (NumberFormatException e) {
 					// Ignore
 				}

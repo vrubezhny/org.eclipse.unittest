@@ -16,6 +16,7 @@ package org.eclipse.unittest.internal;
 import org.osgi.framework.BundleContext;
 
 import org.eclipse.unittest.internal.model.UnitTestModel;
+import org.eclipse.unittest.internal.ui.history.History;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -81,6 +82,7 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 		try {
 			InstanceScope.INSTANCE.getNode(UnitTestPlugin.PLUGIN_ID).flush();
 			UnitTestModel.getInstance().stop();
+			History.INSTANCE.clear();
 		} finally {
 			super.stop(context);
 		}

@@ -83,10 +83,4 @@ public interface ITestSessionListener {
 	 */
 	void testFailed(ITestElement testElement, Result status, FailureTrace trace);
 
-	/**
-	 * @return <code>true</code> if the test run session can be swapped to disk
-	 *         although this listener is still installed
-	 */
-	boolean acceptsSwapToDisk();
-
 }
