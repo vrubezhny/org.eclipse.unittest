@@ -243,7 +243,7 @@ public class HistoryItem {
 
 	public Long getSizeOnDisk() {
 		File file = getFile();
-		if (file.isFile()) {
+		if (file != null && file.isFile()) {
 			return Long.valueOf(file.length());
 		}
 		return null;
