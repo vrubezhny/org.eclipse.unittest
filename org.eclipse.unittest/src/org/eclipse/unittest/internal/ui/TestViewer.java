@@ -23,6 +23,8 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.unittest.internal.UnitTestPlugin;
 import org.eclipse.unittest.internal.model.Status;
@@ -706,7 +708,7 @@ class TestViewer {
 		if (parent == null)
 			return null;
 
-		List<TestElement> siblings = parent.getChildren();
+		List<TestElement> siblings = getSortedChildren(parent);
 		if (!showNext)
 			siblings = new ReverseList<>(siblings);
 
@@ -729,7 +731,7 @@ class TestViewer {
 	}
 
 	private TestElement getNextChildFailure(ITestSuiteElement root, boolean showNext) {
-		List<TestElement> children = (List<TestElement>) root.getChildren();
+		List<TestElement> children = getSortedChildren(root);
 		if (!showNext)
 			children = new ReverseList<>(children);
 		for (TestElement child : children) {
@@ -746,6 +748,12 @@ class TestViewer {
 			}
 		}
 		return null;
+	}
+
+	private List<TestElement> getSortedChildren(ITestSuiteElement parent) {
+		Set<ITestElement> siblings = new TreeSet<>(TestSessionTreeContentProvider.TEST_ELEMENT_ALPHABETIC_ORDER);
+		siblings.addAll(parent.getChildren());
+		return Arrays.asList(siblings.toArray(new TestElement[siblings.size()]));
 	}
 
 	/**
