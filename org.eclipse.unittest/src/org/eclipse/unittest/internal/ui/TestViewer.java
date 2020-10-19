@@ -15,6 +15,7 @@
 package org.eclipse.unittest.internal.ui;
 
 import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,8 +24,6 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.eclipse.unittest.internal.UnitTestPlugin;
 import org.eclipse.unittest.internal.model.Status;
@@ -32,6 +31,7 @@ import org.eclipse.unittest.internal.model.TestCaseElement;
 import org.eclipse.unittest.internal.model.TestElement;
 import org.eclipse.unittest.internal.model.TestRunSession;
 import org.eclipse.unittest.internal.model.TestSuiteElement;
+import org.eclipse.unittest.internal.ui.TestRunnerViewPart.TestResultsLayout;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestElement.Result;
@@ -63,6 +63,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -190,6 +191,25 @@ class TestViewer {
 		}
 	}
 
+	/**
+	 * Compares two {@link TestElement}s: - {@link TestSuiteElement}s are placed on
+	 * top of {@link TestCaseElement}s - TestElements are alphabetically ordered(by
+	 * their names)
+	 */
+	private static final ViewerComparator TEST_ELEMENT_ALPHABETIC_ORDER = new ViewerComparator() {
+		@Override
+		public int compare(Viewer viewer, Object e1, Object e2) {
+			// Show test suites on top of test messages
+			int weight1 = (e1 instanceof ITestSuiteElement) ? 0 : 1;
+			int weight2 = (e2 instanceof ITestSuiteElement) ? 0 : 1;
+			if (weight1 != weight2) {
+				return weight1 - weight2;
+			}
+			// Compare by element names
+			return ((TestElement) e1).getTestName().compareTo(((TestElement) e2).getTestName());
+		}
+	};
+
 	private final FailuresOnlyFilter fFailuresOnlyFilter = new FailuresOnlyFilter();
 	private final IgnoredOnlyFilter fIgnoredOnlyFilter = new IgnoredOnlyFilter();
 
@@ -204,7 +224,7 @@ class TestViewer {
 	private TestSessionLabelProvider fTableLabelProvider;
 	private SelectionProviderMediator fSelectionProvider;
 
-	private int fLayoutMode;
+	private TestResultsLayout fLayoutMode;
 	private boolean fTreeHasFilter;
 	private boolean fTableHasFilter;
 
@@ -229,7 +249,7 @@ class TestViewer {
 		fTestRunnerPart = runner;
 		fClipboard = clipboard;
 
-		fLayoutMode = TestRunnerViewPart.LAYOUT_HIERARCHICAL;
+		fLayoutMode = TestRunnerViewPart.TestResultsLayout.HIERARCHICAL;
 
 		createTestViewers(parent);
 
@@ -245,7 +265,8 @@ class TestViewer {
 		fTreeViewer.setUseHashlookup(true);
 		fTreeContentProvider = new TestSessionTreeContentProvider();
 		fTreeViewer.setContentProvider(fTreeContentProvider);
-		fTreeLabelProvider = new TestSessionLabelProvider(fTestRunnerPart, TestRunnerViewPart.LAYOUT_HIERARCHICAL);
+		fTreeLabelProvider = new TestSessionLabelProvider(fTestRunnerPart,
+				TestRunnerViewPart.TestResultsLayout.HIERARCHICAL);
 //		fTreeViewer.setLabelProvider(new ColoringLabelProvider(fTreeLabelProvider));
 		fTreeViewer.setLabelProvider(fTreeLabelProvider);
 
@@ -253,7 +274,7 @@ class TestViewer {
 		fTableViewer.setUseHashlookup(true);
 		TestSessionTableContentProvider fTableContentProvider = new TestSessionTableContentProvider();
 		fTableViewer.setContentProvider(fTableContentProvider);
-		fTableLabelProvider = new TestSessionLabelProvider(fTestRunnerPart, TestRunnerViewPart.LAYOUT_FLAT);
+		fTableLabelProvider = new TestSessionLabelProvider(fTestRunnerPart, TestRunnerViewPart.TestResultsLayout.FLAT);
 //		fTableViewer.setLabelProvider(new ColoringLabelProvider(fTableLabelProvider));
 		fTableViewer.setLabelProvider(fTableLabelProvider);
 
@@ -305,7 +326,7 @@ class TestViewer {
 				manager.add(new Separator());
 				addRerunActions(manager, testCaseElement);
 			}
-			if (fLayoutMode == TestRunnerViewPart.LAYOUT_HIERARCHICAL) {
+			if (fLayoutMode == TestRunnerViewPart.TestResultsLayout.HIERARCHICAL) {
 				manager.add(new Separator());
 				manager.add(new ExpandAllAction());
 				manager.add(new CollapseAllAction());
@@ -314,8 +335,9 @@ class TestViewer {
 		}
 		if (fTestRunSession != null
 				&& fTestRunSession.getCurrentFailureCount() + fTestRunSession.getCurrentErrorCount() > 0) {
-			if (fLayoutMode != TestRunnerViewPart.LAYOUT_HIERARCHICAL)
+			if (fLayoutMode != TestRunnerViewPart.TestResultsLayout.HIERARCHICAL) {
 				manager.add(new Separator());
+			}
 			manager.add(new CopyFailureListAction(fTestRunnerPart, fClipboard));
 		}
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
@@ -406,7 +428,8 @@ class TestViewer {
 	 * @param ignoredOnly  whether to show only skipped tests
 	 * @param layoutMode   the layout mode
 	 */
-	public synchronized void setShowFailuresOrIgnoredOnly(boolean failuresOnly, boolean ignoredOnly, int layoutMode) {
+	public synchronized void setShowFailuresOrIgnoredOnly(boolean failuresOnly, boolean ignoredOnly,
+			TestResultsLayout layoutMode) {
 		/*
 		 * Management of fTreeViewer and fTableViewer
 		 * ****************************************** - invisible viewer is updated on
@@ -421,7 +444,7 @@ class TestViewer {
 			boolean switchLayout = layoutMode != fLayoutMode;
 			if (switchLayout) {
 				selection = (IStructuredSelection) fSelectionProvider.getSelection();
-				if (layoutMode == TestRunnerViewPart.LAYOUT_HIERARCHICAL) {
+				if (layoutMode == TestRunnerViewPart.TestResultsLayout.HIERARCHICAL) {
 					if (fTreeNeedsRefresh) {
 						clearUpdateAndExpansion();
 					}
@@ -475,35 +498,35 @@ class TestViewer {
 	}
 
 	private boolean getActiveViewerHasFilter() {
-		if (fLayoutMode == TestRunnerViewPart.LAYOUT_HIERARCHICAL)
+		if (fLayoutMode == TestRunnerViewPart.TestResultsLayout.HIERARCHICAL)
 			return fTreeHasFilter;
 		else
 			return fTableHasFilter;
 	}
 
 	private void setActiveViewerHasFilter(boolean filter) {
-		if (fLayoutMode == TestRunnerViewPart.LAYOUT_HIERARCHICAL)
+		if (fLayoutMode == TestRunnerViewPart.TestResultsLayout.HIERARCHICAL)
 			fTreeHasFilter = filter;
 		else
 			fTableHasFilter = filter;
 	}
 
 	private StructuredViewer getActiveViewer() {
-		if (fLayoutMode == TestRunnerViewPart.LAYOUT_HIERARCHICAL)
+		if (fLayoutMode == TestRunnerViewPart.TestResultsLayout.HIERARCHICAL)
 			return fTreeViewer;
 		else
 			return fTableViewer;
 	}
 
 	private boolean getActiveViewerNeedsRefresh() {
-		if (fLayoutMode == TestRunnerViewPart.LAYOUT_HIERARCHICAL)
+		if (fLayoutMode == TestRunnerViewPart.TestResultsLayout.HIERARCHICAL)
 			return fTreeNeedsRefresh;
 		else
 			return fTableNeedsRefresh;
 	}
 
 	private void setActiveViewerNeedsRefresh(boolean needsRefresh) {
-		if (fLayoutMode == TestRunnerViewPart.LAYOUT_HIERARCHICAL)
+		if (fLayoutMode == TestRunnerViewPart.TestResultsLayout.HIERARCHICAL)
 			fTreeNeedsRefresh = needsRefresh;
 		else
 			fTableNeedsRefresh = needsRefresh;
@@ -623,7 +646,7 @@ class TestViewer {
 			return;
 		}
 
-		if (fLayoutMode == TestRunnerViewPart.LAYOUT_FLAT) {
+		if (fLayoutMode == TestRunnerViewPart.TestResultsLayout.FLAT) {
 			if (fAutoScrollTarget != null)
 				fTableViewer.reveal(fAutoScrollTarget);
 			return;
@@ -730,7 +753,7 @@ class TestViewer {
 		return getNextFailureSibling(parent, showNext);
 	}
 
-	private TestElement getNextChildFailure(ITestSuiteElement root, boolean showNext) {
+	private TestElement getNextChildFailure(TestSuiteElement root, boolean showNext) {
 		List<TestElement> children = getSortedChildren(root);
 		if (!showNext)
 			children = new ReverseList<>(children);
@@ -750,10 +773,13 @@ class TestViewer {
 		return null;
 	}
 
-	private List<TestElement> getSortedChildren(ITestSuiteElement parent) {
-		Set<ITestElement> siblings = new TreeSet<>(TestSessionTreeContentProvider.TEST_ELEMENT_ALPHABETIC_ORDER);
-		siblings.addAll(parent.getChildren());
-		return Arrays.asList(siblings.toArray(new TestElement[siblings.size()]));
+	private List<TestElement> getSortedChildren(TestSuiteElement parent) {
+		List<TestElement> siblings = new ArrayList<>(parent.getChildren());
+		ViewerComparator comparator = fTreeViewer.getComparator();
+		if (comparator != null) {
+			siblings.sort((e1, e2) -> comparator.compare(fTreeViewer, e1, e2));
+		}
+		return siblings;
 	}
 
 	/**
@@ -822,4 +848,12 @@ class TestViewer {
 		fTreeViewer.expandToLevel(2);
 	}
 
+	public void setAlphabeticalSort(boolean enableAlphabeticalSort) {
+		fTreeViewer.setComparator(enableAlphabeticalSort ? TEST_ELEMENT_ALPHABETIC_ORDER : null);
+		fTreeViewer.refresh();
+	}
+
+	public boolean isAlphabeticalSort() {
+		return fTreeViewer.getComparator() == TEST_ELEMENT_ALPHABETIC_ORDER;
+	}
 }

@@ -133,8 +133,9 @@ public class TestRunnerViewPart extends ViewPart {
 
 	static final int REFRESH_INTERVAL = 200;
 
-	static final int LAYOUT_FLAT = 0;
-	static final int LAYOUT_HIERARCHICAL = 1;
+	public enum TestResultsLayout {
+		FLAT, HIERARCHICAL
+	}
 
 	/**
 	 * Whether the output scrolls and reveals tests as they are executed.
@@ -154,7 +155,7 @@ public class TestRunnerViewPart extends ViewPart {
 	/**
 	 * The current layout mode (LAYOUT_FLAT or LAYOUT_HIERARCHICAL).
 	 */
-	private int fLayout = LAYOUT_HIERARCHICAL;
+	private TestResultsLayout fLayout = TestResultsLayout.HIERARCHICAL;
 
 	private UnitTestProgressBar fProgressBar;
 	private ProgressIcons fProgressImages;
@@ -328,111 +329,6 @@ public class TestRunnerViewPart extends ViewPart {
 
 	protected boolean fPartIsVisible = false;
 
-	/*
-	 * private class RunnerViewHistory extends ViewHistory<TestRunSession> {
-	 *
-	 * @Override public void configureHistoryListAction(IAction action) {
-	 * action.setText(Messages.TestRunnerViewPart_history); }
-	 *
-	 * @Override public void configureHistoryDropDownAction(IAction action) {
-	 * action.setToolTipText(Messages.TestRunnerViewPart_test_run_history);
-	 * UnitTestPlugin.setLocalImageDescriptors(action, "history_list.png");
-	 * //$NON-NLS-1$ }
-	 *
-	 * @Override public Action getClearAction() { return new ClearAction(); }
-	 *
-	 * @Override public String getHistoryListDialogTitle() { return
-	 * Messages.TestRunnerViewPart_test_runs; }
-	 *
-	 * @Override public String getHistoryListDialogMessage() { return
-	 * Messages.TestRunnerViewPart_select_test_run; }
-	 *
-	 * @Override public Shell getShell() { return fParent.getShell(); }
-	 *
-	 * @Override public List<TestRunSession> getHistoryEntries() { return
-	 * UnitTestPlugin.getModel().getTestRunSessions(); }
-	 *
-	 * @Override public TestRunSession getCurrentEntry() { return fTestRunSession; }
-	 *
-	 * @Override public void setActiveEntry(TestRunSession entry) { TestRunSession
-	 * deactivatedSession= setActiveTestRunSession(entry); if (deactivatedSession !=
-	 * null) deactivatedSession.swapOut(); }
-	 *
-	 * @Override public void setHistoryEntries(List<TestRunSession>
-	 * remainingEntries, TestRunSession activeEntry) {
-	 * setActiveTestRunSession(activeEntry);
-	 *
-	 * List<TestRunSession> testRunSessions=
-	 * UnitTestPlugin.getModel().getTestRunSessions();
-	 * testRunSessions.removeAll(remainingEntries); for (TestRunSession
-	 * testRunSession : testRunSessions) {
-	 * UnitTestPlugin.getModel().removeTestRunSession(testRunSession); } for
-	 * (TestRunSession remaining : remainingEntries) { remaining.swapOut(); } }
-	 *
-	 * @Override public ImageDescriptor getImageDescriptor(Object element) {
-	 * TestRunSession session= (TestRunSession) element; if (session.isStopped())
-	 * return fSuiteIconDescriptor;
-	 *
-	 * if (session.isRunning()) return fSuiteRunningIconDescriptor;
-	 *
-	 * Result result= session.getTestResult(true); if (result == Result.OK) return
-	 * fSuiteOkIconDescriptor; else if (result == Result.ERROR) return
-	 * fSuiteErrorIconDescriptor; else if (result == Result.FAILURE) return
-	 * fSuiteFailIconDescriptor; else return fSuiteIconDescriptor; }
-	 *
-	 * @Override public String getText(TestRunSession session) { String
-	 * testRunLabel=
-	 * BasicElementLabels.getJavaElementName(session.getTestRunName()); if
-	 * (session.getStartTime() <= 0) { return testRunLabel; } else { String
-	 * startTime= DateFormat.getDateTimeInstance().format(new
-	 * Date(session.getStartTime())); return
-	 * Messages.format(Messages.TestRunnerViewPart_testName_startTime, new Object[]
-	 * { testRunLabel, startTime }); } }
-	 *
-	 * @Override public void addMenuEntries(MenuManager manager) {
-	 * manager.appendToGroup(IWorkbenchActionConstants.MB_ADDITIONS, new
-	 * ImportTestRunSessionAction(fParent.getShell()));
-	 * manager.appendToGroup(IWorkbenchActionConstants.MB_ADDITIONS, new
-	 * ImportTestRunSessionFromURLAction(fParent.getShell()));
-	 * manager.appendToGroup(IWorkbenchActionConstants.MB_ADDITIONS, fPasteAction);
-	 * if (fTestRunSession != null)
-	 * manager.appendToGroup(IWorkbenchActionConstants.MB_ADDITIONS, new
-	 * ExportTestRunSessionAction(fParent.getShell(), fTestRunSession)); }
-	 *
-	 * @Override public String getMaxEntriesMessage() { return
-	 * Messages.TestRunnerViewPart_max_remembered; }
-	 *
-	 * @Override public int getMaxEntries() { return
-	 * Platform.getPreferencesService().getInt(UnitTestPlugin.PLUGIN_ID,
-	 * UnitTestPreferencesConstants.MAX_TEST_RUNS, 10, null); }
-	 *
-	 * @Override public void setMaxEntries(int maxEntries) {
-	 * InstanceScope.INSTANCE.getNode(UnitTestPlugin.PLUGIN_ID).putInt(
-	 * UnitTestPreferencesConstants.MAX_TEST_RUNS, maxEntries); } }
-	 *
-	 * private static class ImportTestRunSessionAction extends Action { private
-	 * final Shell fShell;
-	 *
-	 * public ImportTestRunSessionAction(Shell shell) {
-	 * super(Messages.TestRunnerViewPart_ImportTestRunSessionAction_name); fShell=
-	 * shell; }
-	 *
-	 * @Override public void run() { FileDialog importDialog= new FileDialog(fShell,
-	 * SWT.OPEN | SWT.SHEET); importDialog.setText(Messages.
-	 * TestRunnerViewPart_ImportTestRunSessionAction_title); IDialogSettings
-	 * dialogSettings= UnitTestPlugin.getDefault().getDialogSettings(); String
-	 * lastPath= dialogSettings.get(PREF_LAST_PATH); if (lastPath != null) {
-	 * importDialog.setFilterPath(lastPath); } importDialog.setFilterExtensions(new
-	 * String[] {"*.xml", "*.*"}); //$NON-NLS-1$ //$NON-NLS-2$ String path=
-	 * importDialog.open(); if (path == null) return;
-	 *
-	 * //TODO: MULTI: getFileNames() File file= new File(path);
-	 *
-	 * try { UnitTestModel.importTestRunSession(file); } catch (CoreException e) {
-	 * UnitTestPlugin.log(e); ErrorDialog.openError(fShell,
-	 * Messages.TestRunnerViewPart_ImportTestRunSessionAction_error_title,
-	 * e.getStatus().getMessage(), e.getStatus()); } } }
-	 */
 	private static class UnitTesttPasteAction extends Action {
 		private final Shell fShell;
 		private Clipboard fClipboard;
@@ -471,90 +367,6 @@ public class TestRunnerViewPart extends ViewPart {
 		}
 	}
 
-	/*
-	 * private static class ImportTestRunSessionFromURLAction extends Action {
-	 * private static class URLValidator implements IInputValidator {
-	 *
-	 * @Override public String isValid(String newText) { if (newText.length() == 0)
-	 * return null; try {
-	 *
-	 * @SuppressWarnings("unused") URL url= new URL(newText); return null; } catch
-	 * (MalformedURLException e) { return
-	 * Messages.TestRunnerViewPart_ImportTestRunSessionFromURLAction_invalid_url +
-	 * e.getLocalizedMessage(); } } }
-	 *
-	 * private static final String DIALOG_SETTINGS=
-	 * "ImportTestRunSessionFromURLAction"; //$NON-NLS-1$
-	 *
-	 * private final Shell fShell;
-	 *
-	 * public ImportTestRunSessionFromURLAction(Shell shell) { super(Messages.
-	 * TestRunnerViewPart_ImportTestRunSessionFromURLAction_import_from_url);
-	 * fShell= shell; }
-	 *
-	 * @Override public void run() { String title=
-	 * Messages.TestRunnerViewPart_ImportTestRunSessionAction_title; String message=
-	 * Messages.TestRunnerViewPart_ImportTestRunSessionFromURLAction_url;
-	 *
-	 * final IDialogSettings dialogSettings=
-	 * UnitTestPlugin.getDefault().getDialogSettings(); String url=
-	 * dialogSettings.get(PREF_LAST_URL);
-	 *
-	 * IInputValidator validator= new URLValidator();
-	 *
-	 * InputDialog inputDialog= new InputDialog(fShell, title, message, url,
-	 * validator) {
-	 *
-	 * @Override protected Control createDialogArea(Composite parent) { Control
-	 * dialogArea2= super.createDialogArea(parent); Object layoutData=
-	 * getText().getLayoutData(); if (layoutData instanceof GridData) { GridData gd=
-	 * (GridData)layoutData; gd.widthHint= convertWidthInCharsToPixels(150); }
-	 * return dialogArea2; }
-	 *
-	 * @Override protected IDialogSettings getDialogBoundsSettings() {
-	 * IDialogSettings settings= dialogSettings.getSection(DIALOG_SETTINGS); if
-	 * (settings == null) { settings= dialogSettings.addNewSection(DIALOG_SETTINGS);
-	 * } settings.put("DIALOG_HEIGHT", Dialog.DIALOG_DEFAULT_BOUNDS); //$NON-NLS-1$
-	 * return settings; }
-	 *
-	 * @Override protected boolean isResizable() { return true; } };
-	 *
-	 * int res= inputDialog.open(); if (res == IDialogConstants.OK_ID) { url=
-	 * inputDialog.getValue(); dialogSettings.put(PREF_LAST_URL, url);
-	 * importTestRunSession(url); } } }
-	 *
-	 * private static class ExportTestRunSessionAction extends Action { private
-	 * final TestRunSession fTestRunSession; private final Shell fShell;
-	 *
-	 * public ExportTestRunSessionAction(Shell shell, TestRunSession testRunSession)
-	 * { super(Messages.TestRunnerViewPart_ExportTestRunSessionAction_name); fShell=
-	 * shell; fTestRunSession= testRunSession; }
-	 *
-	 * @Override public void run() { FileDialog exportDialog= new FileDialog(fShell,
-	 * SWT.SAVE | SWT.SHEET); exportDialog.setText(Messages.
-	 * TestRunnerViewPart_ExportTestRunSessionAction_title); IDialogSettings
-	 * dialogSettings= UnitTestPlugin.getDefault().getDialogSettings(); String
-	 * lastPath= dialogSettings.get(PREF_LAST_PATH); if (lastPath != null) {
-	 * exportDialog.setFilterPath(lastPath); }
-	 * exportDialog.setFileName(getFileName()); exportDialog.setFilterExtensions(new
-	 * String[] {"*.xml", "*.*"}); //$NON-NLS-1$ //$NON-NLS-2$ String path=
-	 * exportDialog.open(); if (path == null) return;
-	 *
-	 * //TODO: MULTI: getFileNames() File file= new File(path);
-	 *
-	 * try { UnitTestModel.exportTestRunSession(fTestRunSession, file); } catch
-	 * (CoreException e) { UnitTestPlugin.log(e); ErrorDialog.openError(fShell,
-	 * Messages.TestRunnerViewPart_ExportTestRunSessionAction_error_title,
-	 * e.getStatus().getMessage(), e.getStatus()); } }
-	 *
-	 * private String getFileName() { String testRunName=
-	 * fTestRunSession.getTestRunName(); long startTime=
-	 * fTestRunSession.getStartTime(); if (startTime <= 0) return testRunName;
-	 *
-	 * String isoTime= new SimpleDateFormat("yyyyMMdd-HHmmss").format(new
-	 * Date(startTime)); //$NON-NLS-1$ return testRunName + " " + isoTime + ".xml";
-	 * //$NON-NLS-1$ //$NON-NLS-2$ } }
-	 */
 	private class TestRunSessionListener implements ITestRunSessionListener {
 		@Override
 		public void sessionAdded(final ITestRunSession testRunSession) {
@@ -728,28 +540,6 @@ public class TestRunnerViewPart extends ViewPart {
 		}
 	}
 
-	/*
-	 * private class ClearAction extends Action { public ClearAction() {
-	 * setText(Messages.TestRunnerViewPart_clear_history_label);
-	 *
-	 * boolean enabled= false; List<TestRunSession> testRunSessions=
-	 * UnitTestPlugin.getModel().getTestRunSessions(); for (TestRunSession
-	 * testRunSession : testRunSessions) { if (! testRunSession.isRunning() && !
-	 * testRunSession.isStarting()) { enabled= true; break; } } setEnabled(enabled);
-	 * }
-	 *
-	 * @Override public void run() { List<TestRunSession> testRunSessions=
-	 * getRunningSessions(); TestRunSession first= testRunSessions.isEmpty() ? null
-	 * : testRunSessions.get(0); // fViewHistory.setHistoryEntries(testRunSessions,
-	 * first); }
-	 *
-	 * private List<TestRunSession> getRunningSessions() { List<TestRunSession>
-	 * testRunSessions= UnitTestPlugin.getModel().getTestRunSessions(); for
-	 * (Iterator<TestRunSession> iter= testRunSessions.iterator(); iter.hasNext();)
-	 * { TestRunSession testRunSession= iter.next(); if (!
-	 * testRunSession.isRunning() && ! testRunSession.isStarting()) { iter.remove();
-	 * } } return testRunSessions; } }
-	 */
 	private class StopAction extends Action {
 		public StopAction() {
 			setText(Messages.TestRunnerViewPart_stopaction_text);
@@ -833,40 +623,26 @@ public class TestRunnerViewPart extends ViewPart {
 		}
 	}
 
-	/**
-	 * Listen for for modifications to Java elements
-	 */
-	/*
-	 * private class DirtyListener implements IElementChangedListener {
-	 *
-	 * @Override public void elementChanged(ElementChangedEvent event) {
-	 * processDelta(event.getDelta()); }
-	 *
-	 * private boolean processDelta(IJavaElementDelta delta) { int kind=
-	 * delta.getKind(); int details= delta.getFlags(); int type=
-	 * delta.getElement().getElementType();
-	 *
-	 * switch (type) { // Consider containers for class files. case
-	 * IJavaElement.JAVA_MODEL: case IJavaElement.JAVA_PROJECT: case
-	 * IJavaElement.PACKAGE_FRAGMENT_ROOT: case IJavaElement.PACKAGE_FRAGMENT: // If
-	 * we did something different than changing a child we flush the undo / redo
-	 * stack. if (kind != IJavaElementDelta.CHANGED || details !=
-	 * IJavaElementDelta.F_CHILDREN) { codeHasChanged(); return false; } break; case
-	 * IJavaElement.COMPILATION_UNIT: // if we have changed a primary working copy
-	 * (e.g created, removed, ...) // then we do nothing. if ((details &
-	 * IJavaElementDelta.F_PRIMARY_WORKING_COPY) != 0) return true;
-	 * codeHasChanged(); return false;
-	 *
-	 * case IJavaElement.CLASS_FILE: // Don't examine children of a class file but
-	 * keep on examining siblings. return true; default: codeHasChanged(); return
-	 * false; }
-	 *
-	 * IJavaElementDelta[] affectedChildren= delta.getAffectedChildren(); if
-	 * (affectedChildren == null) return true;
-	 *
-	 * for (IJavaElementDelta affectedChild : affectedChildren) { if
-	 * (!processDelta(affectedChild)) { return false; } } return true; } }
-	 */
+	private class SortAction extends Action {
+		private final boolean enableAlphabeticalSort;
+
+		public SortAction(boolean enableAlphabeticalSort) {
+			super(enableAlphabeticalSort ? Messages.TestRunnerViewPart_sortAlphabetical
+					: Messages.TestRunnerViewPart_sortRunner, AS_RADIO_BUTTON);
+			this.enableAlphabeticalSort = enableAlphabeticalSort;
+		}
+
+		@Override
+		public void run() {
+			fTestViewer.setAlphabeticalSort(enableAlphabeticalSort);
+		}
+
+		@Override
+		public boolean isChecked() {
+			return fTestViewer.isAlphabeticalSort() == enableAlphabeticalSort;
+		}
+	}
+
 	private class FailuresOnlyFilterAction extends Action {
 		public FailuresOnlyFilterAction() {
 			super(Messages.TestRunnerViewPart_show_failures_only, AS_CHECK_BOX);
@@ -894,7 +670,6 @@ public class TestRunnerViewPart extends ViewPart {
 	}
 
 	private class ShowTimeAction extends Action {
-
 		public ShowTimeAction() {
 			super(Messages.TestRunnerViewPart_show_execution_time, IAction.AS_CHECK_BOX);
 		}
@@ -906,7 +681,6 @@ public class TestRunnerViewPart extends ViewPart {
 	}
 
 	private class ShowTestHierarchyAction extends Action {
-
 		public ShowTestHierarchyAction() {
 			super(Messages.TestRunnerViewPart_hierarchical_layout, IAction.AS_CHECK_BOX);
 			setImageDescriptor(Images.getImageDescriptor("elcl16/hierarchicalLayout.png")); //$NON-NLS-1$
@@ -914,8 +688,8 @@ public class TestRunnerViewPart extends ViewPart {
 
 		@Override
 		public void run() {
-			int mode = isChecked() ? LAYOUT_HIERARCHICAL : LAYOUT_FLAT;
-			setLayoutMode(mode);
+			setFilterAndLayout(fFailuresOnlyFilterAction.isChecked(), fIgnoredOnlyFilterAction.isChecked(),
+					isChecked() ? TestResultsLayout.HIERARCHICAL : TestResultsLayout.FLAT);
 		}
 	}
 
@@ -1015,7 +789,7 @@ public class TestRunnerViewPart extends ViewPart {
 
 		memento.putString(TAG_FAILURES_ONLY, fFailuresOnlyFilterAction.isChecked() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		memento.putString(TAG_IGNORED_ONLY, fIgnoredOnlyFilterAction.isChecked() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
-		memento.putInteger(TAG_LAYOUT, fLayout);
+		memento.putString(TAG_LAYOUT, fLayout.name());
 		memento.putString(TAG_SHOW_TIME, fShowTimeAction.isChecked() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
@@ -1041,10 +815,9 @@ public class TestRunnerViewPart extends ViewPart {
 			setAutoScroll(!fScrollLockAction.isChecked());
 		}
 
-		Integer layout = memento.getInteger(TAG_LAYOUT);
-		int layoutValue = LAYOUT_HIERARCHICAL;
-		if (layout != null)
-			layoutValue = layout.intValue();
+		String layoutString = memento.getString(TAG_LAYOUT);
+		TestResultsLayout layout = layoutString == null ? TestResultsLayout.HIERARCHICAL
+				: TestResultsLayout.valueOf(layoutString);
 
 		String failuresOnly = memento.getString(TAG_FAILURES_ONLY);
 		boolean showFailuresOnly = false;
@@ -1061,7 +834,7 @@ public class TestRunnerViewPart extends ViewPart {
 		if (time != null)
 			showTime = time.equals("true"); //$NON-NLS-1$
 
-		setFilterAndLayout(showFailuresOnly, showIgnoredOnly, layoutValue);
+		setFilterAndLayout(showFailuresOnly, showIgnoredOnly, layout);
 		setShowExecutionTime(showTime);
 	}
 
@@ -1615,7 +1388,7 @@ public class TestRunnerViewPart extends ViewPart {
 
 		getViewSite().getPage().addPartListener(fPartListener);
 
-		setFilterAndLayout(false, false, LAYOUT_HIERARCHICAL);
+		setFilterAndLayout(false, false, TestResultsLayout.HIERARCHICAL);
 		setShowExecutionTime(true);
 		if (fMemento != null) {
 			restoreLayoutState(fMemento);
@@ -1815,6 +1588,10 @@ public class TestRunnerViewPart extends ViewPart {
 			layoutSubMenu.add(toggleOrientationAction);
 		}
 		viewMenu.add(layoutSubMenu);
+		MenuManager sortSubmenu = new MenuManager(Messages.TestRunnerViewPart_sort);
+		sortSubmenu.add(new SortAction(true));
+		sortSubmenu.add(new SortAction(false));
+		viewMenu.add(sortSubmenu);
 		viewMenu.add(new Separator());
 
 		viewMenu.add(fFailuresOnlyFilterAction);
@@ -2009,12 +1786,8 @@ public class TestRunnerViewPart extends ViewPart {
 		setFilterAndLayout(false /* failuresOnly must be off */, ignoredOnly, fLayout);
 	}
 
-	private void setLayoutMode(int mode) {
-		setFilterAndLayout(fFailuresOnlyFilterAction.isChecked(), fIgnoredOnlyFilterAction.isChecked(), mode);
-	}
-
-	private void setFilterAndLayout(boolean failuresOnly, boolean ignoredOnly, int layoutMode) {
-		fShowTestHierarchyAction.setChecked(layoutMode == LAYOUT_HIERARCHICAL);
+	private void setFilterAndLayout(boolean failuresOnly, boolean ignoredOnly, TestResultsLayout layoutMode) {
+		fShowTestHierarchyAction.setChecked(layoutMode == TestResultsLayout.HIERARCHICAL);
 		fLayout = layoutMode;
 		fFailuresOnlyFilterAction.setChecked(failuresOnly);
 		fIgnoredOnlyFilterAction.setChecked(ignoredOnly);
@@ -2025,6 +1798,5 @@ public class TestRunnerViewPart extends ViewPart {
 	private void setShowExecutionTime(boolean showTime) {
 		fTestViewer.setShowTime(showTime);
 		fShowTimeAction.setChecked(showTime);
-
 	}
 }

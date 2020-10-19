@@ -14,43 +14,14 @@
 
 package org.eclipse.unittest.internal.ui;
 
-import java.util.Comparator;
-import java.util.Set;
-import java.util.TreeSet;
-
-import org.eclipse.unittest.internal.model.TestCaseElement;
 import org.eclipse.unittest.internal.model.TestElement;
 import org.eclipse.unittest.internal.model.TestRunSession;
 import org.eclipse.unittest.internal.model.TestSuiteElement;
-import org.eclipse.unittest.model.ITestElement;
-import org.eclipse.unittest.model.ITestSuiteElement;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 public class TestSessionTreeContentProvider implements ITreeContentProvider {
-	private static class TestElementComparator implements Comparator<ITestElement> {
-
-		@Override
-		public int compare(ITestElement o1, ITestElement o2) {
-			// Show test suites on top of test messages
-			int weight1 = (o1 instanceof ITestSuiteElement) ? 0 : 1;
-			int weight2 = (o2 instanceof ITestSuiteElement) ? 0 : 1;
-			if (weight1 != weight2) {
-				return weight1 - weight2;
-			}
-			// Compare by element names
-			return o1.getTestName().compareTo(o2.getTestName());
-		}
-
-	}
-
-	/**
-	 * Compares two {@link TestElement}s: - {@link TestSuiteElement}s are placed on
-	 * top of {@link TestCaseElement}s - TestElements are alphabetically ordered(by
-	 * their names)
-	 */
-	public static final Comparator<ITestElement> TEST_ELEMENT_ALPHABETIC_ORDER = new TestElementComparator();
 
 	private static final Object[] NO_CHILDREN = new Object[0];
 
@@ -62,9 +33,7 @@ public class TestSessionTreeContentProvider implements ITreeContentProvider {
 	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof TestSuiteElement) {
-			Set<ITestElement> sortedChildren = new TreeSet<>(TEST_ELEMENT_ALPHABETIC_ORDER);
-			sortedChildren.addAll(((TestSuiteElement) parentElement).getChildren());
-			return sortedChildren.toArray(Object[]::new);
+			return ((TestSuiteElement) parentElement).getChildren().toArray();
 		} else {
 			return NO_CHILDREN;
 		}

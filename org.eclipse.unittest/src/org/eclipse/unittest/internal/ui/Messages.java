@@ -121,4 +121,7 @@ public final class Messages extends NLS {
 	public static String TestRunnerViewPart_PasteAction_label;
 	public static String TestRunnerViewPart_layout_menu;
 	public static String TestRunnerViewPart_editLaunchConfiguration;
+	public static String TestRunnerViewPart_sortAlphabetical;
+	public static String TestRunnerViewPart_sortRunner;
+	public static String TestRunnerViewPart_sort;
 }

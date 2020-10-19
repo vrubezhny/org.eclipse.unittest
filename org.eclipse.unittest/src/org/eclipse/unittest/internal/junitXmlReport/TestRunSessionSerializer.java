@@ -87,7 +87,9 @@ public class TestRunSessionSerializer implements XMLReader {
 		addCDATA(atts, IXMLTags.ATTR_ERRORS, fTestRunSession.getCurrentErrorCount());
 		addCDATA(atts, IXMLTags.ATTR_IGNORED, fTestRunSession.getCurrentIgnoredCount());
 		addCDATA(atts, IXMLTags.ATTR_START_TIME, fTestRunSession.getStartTime().toString());
-		addCDATA(atts, IXMLTags.ATTR_DURATION, fTestRunSession.getDuration().toString());
+		if (fTestRunSession.getDuration() != null) {
+			addCDATA(atts, IXMLTags.ATTR_DURATION, fTestRunSession.getDuration().toString());
+		}
 		startElement(IXMLTags.NODE_TESTRUN, atts);
 
 		for (ITestElement topSuite : fTestRunSession.getChildren()) {

@@ -20,6 +20,7 @@ import java.time.Duration;
 import org.eclipse.unittest.internal.model.Status;
 import org.eclipse.unittest.internal.model.TestCaseElement;
 import org.eclipse.unittest.internal.model.TestElement;
+import org.eclipse.unittest.internal.ui.TestRunnerViewPart.TestResultsLayout;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestRunSession;
 
@@ -37,7 +38,7 @@ import org.eclipse.jface.viewers.StyledString;
 class TestSessionLabelProvider extends LabelProvider implements IStyledLabelProvider {
 
 	private final TestRunnerViewPart fTestRunnerPart;
-	private final int fLayoutMode;
+	private final TestResultsLayout fLayoutMode;
 
 	private boolean fShowTime;
 
@@ -45,11 +46,9 @@ class TestSessionLabelProvider extends LabelProvider implements IStyledLabelProv
 	 * Constructs Test Session Provider object.
 	 *
 	 * @param testRunnerPart a test runner view part object
-	 * @param layoutMode     a layout mode, a one of <code>LAYOUT_FLAT</code> or
-	 *                       <code>LAYOUT_HIERARCHICAL</code> constants defined in
-	 *                       {@link TestRunnerViewPart}
+	 * @param layoutMode     a layout mode
 	 */
-	public TestSessionLabelProvider(TestRunnerViewPart testRunnerPart, int layoutMode) {
+	public TestSessionLabelProvider(TestRunnerViewPart testRunnerPart, TestResultsLayout layoutMode) {
 		fTestRunnerPart = testRunnerPart;
 		fLayoutMode = layoutMode;
 		fShowTime = true;
@@ -62,7 +61,7 @@ class TestSessionLabelProvider extends LabelProvider implements IStyledLabelProv
 		}
 		TestElement testElement = (TestElement) element;
 		StyledString text = new StyledString(testElement.getDisplayName());
-		if (fLayoutMode == TestRunnerViewPart.LAYOUT_HIERARCHICAL) {
+		if (fLayoutMode == TestRunnerViewPart.TestResultsLayout.HIERARCHICAL) {
 			if (testElement.getParentContainer() instanceof ITestRunSession) {
 				String displayName = fTestRunnerPart.getDisplayName();
 				if (displayName != null) {
@@ -114,7 +113,7 @@ class TestSessionLabelProvider extends LabelProvider implements IStyledLabelProv
 		}
 		TestElement testElement = (TestElement) element;
 		String label = testElement.getDisplayName();
-		if (fLayoutMode == TestRunnerViewPart.LAYOUT_HIERARCHICAL) {
+		if (fLayoutMode == TestRunnerViewPart.TestResultsLayout.HIERARCHICAL) {
 			if (testElement instanceof ITestRunSession || (testElement.getParent() instanceof ITestRunSession
 					&& testElement.getParent().getChildren().size() <= 1)) {
 				String displayName = fTestRunnerPart.getDisplayName();
