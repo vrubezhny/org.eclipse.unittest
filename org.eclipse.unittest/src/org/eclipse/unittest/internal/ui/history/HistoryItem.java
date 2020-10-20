@@ -89,11 +89,7 @@ public class HistoryItem {
 
 			@Override
 			public void sessionStarted() {
-				File historyDir = History.INSTANCE.getDirectory();
-				String isoTime = new SimpleDateFormat("yyyyMMdd-HHmmss.SSS") //$NON-NLS-1$
-						.format(new Date(session.getStartTime().toEpochMilli()));
-				String swapFileName = session.getTestRunName() + '@' + isoTime + ".xml"; //$NON-NLS-1$
-				HistoryItem.this.historyFile = new File(historyDir, swapFileName);
+				getFile(); // Force creating a History File
 			}
 
 			@Override
@@ -152,7 +148,7 @@ public class HistoryItem {
 	}
 
 	public void removeSwapFile() throws IOException {
-		if (historyFile.exists()) {
+		if (historyFile != null && historyFile.exists()) {
 			Files.delete(historyFile.toPath());
 		}
 	}
@@ -182,12 +178,20 @@ public class HistoryItem {
 			}
 			transformer.transform(source, result);
 		} catch (Exception e) {
-			throwExportError(historyFile, e);
+			throwExportError(target, e);
 		}
 	}
 
 	public File getFile() {
-		return historyFile;
+		if (this.historyFile == null) {
+			File historyDir = History.INSTANCE.getDirectory();
+			String isoTime = new SimpleDateFormat("yyyyMMdd-HHmmss.SSS") //$NON-NLS-1$
+					.format(new Date(session.getStartTime().toEpochMilli()));
+			String swapFileName = session.getTestRunName() + '@' + isoTime + ".xml"; //$NON-NLS-1$
+			this.historyFile = new File(historyDir, swapFileName);
+		}
+
+		return this.historyFile;
 	}
 
 	public void swapOut() throws CoreException {
@@ -214,8 +218,15 @@ public class HistoryItem {
 		if (startTime != null) {
 			return startTime;
 		}
+
+		File file = getFile();
+		// History file still can be null
+		if (file == null) {
+			return Instant.now();
+		}
+
 		try {
-			return Files.getLastModifiedTime(historyFile.toPath()).toInstant();
+			return Files.getLastModifiedTime(file.toPath()).toInstant();
 		} catch (IOException e) {
 			UnitTestPlugin.log(e);
 			return Instant.now();
