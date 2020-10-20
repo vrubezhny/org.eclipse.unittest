@@ -99,7 +99,7 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 
 	// This needs to be differnet from JunitLaunchConfigurationConstants.ATTR_PORT
 	// or the "legacy" view handles it first
-	static final String ATTR_PORT = JUnitTestPlugin.PLUGIN_ID + ".PORT"; //$NON-NLS-1$
+	public static final String ATTR_PORT = JUnitTestPlugin.PLUGIN_ID + ".PORT"; //$NON-NLS-1$
 
 	private boolean fKeepAlive = false;
 	private int fPort;

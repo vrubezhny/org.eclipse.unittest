@@ -8,7 +8,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.unittest.junit.launcher;
+package org.eclipse.unittest.junit.ui;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -18,9 +18,8 @@ import java.util.stream.Collectors;
 
 import org.eclipse.unittest.junit.JUnitTestPlugin;
 import org.eclipse.unittest.junit.JUnitTestPlugin.JUnitVersion;
-import org.eclipse.unittest.junit.ui.OpenEditorAtLineAction;
-import org.eclipse.unittest.junit.ui.OpenTestAction;
-import org.eclipse.unittest.junit.ui.ShowStackTraceInConsoleViewActionDelegate;
+import org.eclipse.unittest.junit.launcher.JUnitLaunchConfigurationDelegate;
+import org.eclipse.unittest.junit.launcher.JUnitRemoteTestRunnerClient;
 import org.eclipse.unittest.launcher.ITestRunnerClient;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
@@ -28,12 +27,15 @@ import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.unittest.ui.ITestViewSupport;
 
+import org.eclipse.swt.widgets.Display;
+
 import org.eclipse.core.text.StringMatcher;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 
 import org.eclipse.ui.IViewPart;
 
@@ -43,7 +45,6 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaModelException;
 
 import org.eclipse.jdt.internal.junit.JUnitCorePlugin;
 import org.eclipse.jdt.internal.junit.JUnitPreferencesConstants;
@@ -116,9 +117,10 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 
 			String lineNumber = traceLine;
 			lineNumber = lineNumber.substring(lineNumber.indexOf(':') + 1, lineNumber.lastIndexOf(')'));
-			int line = Integer.valueOf(lineNumber).intValue();
+			int line = Integer.parseInt(lineNumber);
 			return new OpenEditorAtLineAction(testRunnerPart, testName, line, failure.getTestRunSession());
 		} catch (NumberFormatException | IndexOutOfBoundsException e) {
+			JUnitTestPlugin.log(e);
 		}
 		return null;
 	}
@@ -130,7 +132,9 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 
 	@Override
 	public ILaunchConfiguration getRerunLaunchConfiguration(List<ITestElement> tests) {
-		if (tests == null || tests.size() != 1) {
+		if (tests.size() > 1) {
+			MessageDialog.openInformation(Display.getDefault().getActiveShell(),
+					JUnitMessages.JUnitCantRunMultipleTests, JUnitMessages.JUnitCantRunMultipleTests);
 			return null;
 		}
 		ITestElement testSuite = tests.get(0);
@@ -227,10 +231,8 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 						return null;
 					}
 				}
-			} catch (JavaModelException e) {
-				// fall through
 			} catch (CoreException e) {
-				// fall through
+				JUnitTestPlugin.log(e);
 			}
 			current = current.getParent();
 		}
@@ -255,7 +257,7 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 	 * @return a parameter type array
 	 */
 	private String[] getParameterTypes(ITestElement test) {
-		String testName = test.getData();
+		String testName = test.getDisplayName();
 		if (testName != null) {
 			int index = testName.lastIndexOf("method:"); //$NON-NLS-1$
 			index = testName.indexOf('(', index);

@@ -21,7 +21,7 @@ import org.eclipse.osgi.util.NLS;
 
 public final class JUnitMessages extends NLS {
 
-	private static final String BUNDLE_NAME= "org.eclipse.unittest.junit.ui.JUnitMessages";//$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.unittest.junit.ui.JUnitMessages";//$NON-NLS-1$
 
 	public static String ClasspathVariableMarkerResolutionGenerator_use_JUnit3;
 
@@ -365,4 +365,6 @@ public final class JUnitMessages extends NLS {
 	public static String TestRunnerViewPart_JUnitPasteAction_label;
 
 	public static String TestRunnerViewPart_layout_menu;
+
+	public static String JUnitCantRunMultipleTests;
 }

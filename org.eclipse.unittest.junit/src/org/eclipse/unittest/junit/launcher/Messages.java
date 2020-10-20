@@ -50,10 +50,6 @@ public final class Messages extends NLS {
 	public static String EnableStackFilterAction_action_description;
 	public static String EnableStackFilterAction_action_label;
 	public static String EnableStackFilterAction_action_tooltip;
-	public static String ExpandAllAction_text;
-	public static String ExpandAllAction_tooltip;
-	public static String CollapseAllAction_text;
-	public static String CollapseAllAction_tooltip;
 	public static String GotoReferencedTestAction_dialog_error;
 	public static String GotoReferencedTestAction_dialog_error_nomethod;
 	public static String GotoReferencedTestAction_dialog_message;
@@ -206,9 +202,6 @@ public final class Messages extends NLS {
 	public static String OpenTestAction_error_methodNoFound;
 	public static String OpenTestAction_dialog_title;
 	public static String OpenTestAction_select_element;
-	public static String RerunAction_label_debug;
-	public static String RerunAction_label_run;
-	public static String RerunAction_label_rerun;
 	public static String Resources_fileModified;
 	public static String Resources_modifiedResources;
 
@@ -232,65 +225,6 @@ public final class Messages extends NLS {
 	public static String TestMethodSelectionDialog_select_dialog_title;
 	public static String TestMethodSelectionDialog_test_not_found;
 	public static String TestMethodSelectionDialog_testproject;
-	public static String TestRunnerViewPart_activate_on_failure_only;
-	public static String TestRunnerViewPart_cannotrerun_title;
-	public static String TestRunnerViewPart_cannotrerurn_message;
-	public static String TestRunnerViewPart_configName;
-
-	public static String TestRunnerViewPart__error_cannotrun;
-	public static String TestRunnerViewPart_error_cannotrerun;
-
-	public static String TestRunnerViewPart_error_notests_kind;
-
-	public static String TestRunnerViewPart_ExportTestRunSessionAction_error_title;
-
-	public static String TestRunnerViewPart_ExportTestRunSessionAction_name;
-
-	public static String TestRunnerViewPart_ExportTestRunSessionAction_title;
-
-	public static String TestRunnerViewPart_ImportTestRunSessionAction_error_title;
-
-	public static String TestRunnerViewPart_ImportTestRunSessionAction_name;
-
-	public static String TestRunnerViewPart_ImportTestRunSessionAction_title;
-	public static String TestRunnerViewPart_ImportTestRunSessionFromURLAction_import_from_url;
-
-	public static String TestRunnerViewPart_ImportTestRunSessionFromURLAction_invalid_url;
-
-	public static String TestRunnerViewPart_ImportTestRunSessionFromURLAction_url;
-
-	public static String TestRunnerViewPart_jobName;
-	public static String TestRunnerViewPart_label_failure;
-	public static String TestRunnerViewPart_Launching;
-	public static String TestRunnerViewPart_message_finish;
-	public static String TestRunnerViewPart_message_started;
-	public static String TestRunnerViewPart_message_stopped;
-	public static String TestRunnerViewPart_message_terminated;
-	public static String TestRunnerViewPart_rerunaction_label;
-	public static String TestRunnerViewPart_rerunaction_tooltip;
-	public static String TestRunnerViewPart_rerunfailuresaction_label;
-	public static String TestRunnerViewPart_rerunfailuresaction_tooltip;
-	public static String TestRunnerViewPart_rerunFailedFirstLaunchConfigName;
-	public static String TestRunnerViewPart_stopaction_text;
-	public static String TestRunnerViewPart_stopaction_tooltip;
-	public static String TestRunnerViewPart_terminate_message;
-	public static String TestRunnerViewPart_terminate_title;
-	public static String TestRunnerViewPart_toggle_automatic_label;
-	public static String TestRunnerViewPart_toggle_horizontal_label;
-	public static String TestRunnerViewPart_toggle_vertical_label;
-	public static String TestRunnerViewPart_titleToolTip;
-	public static String TestRunnerViewPart_wrapperJobName;
-	public static String TestRunnerViewPart_history;
-	public static String TestRunnerViewPart_test_run_history;
-	public static String TestRunnerViewPart_test_runs;
-	public static String TestRunnerViewPart_select_test_run;
-	public static String TestRunnerViewPart_testName_startTime;
-	public static String TestRunnerViewPart_max_remembered;
-	public static String TestRunnerViewPart_show_execution_time;
-
-	public static String TestRunnerViewPart_show_failures_only;
-	public static String TestRunnerViewPart_show_ignored_only;
-	public static String TestRunnerViewPart_hierarchical_layout;
 
 	public static String TestSessionLabelProvider_testName_elapsedTimeInSeconds;
 
@@ -307,17 +241,4 @@ public final class Messages extends NLS {
 		// Do not instantiate
 	}
 
-	public static String TestSessionLabelProvider_testMethodName_className;
-
-	public static String TestRunnerViewPart_message_stopping;
-
-	public static String TestRunnerViewPart_clear_history_label;
-
-	public static String TestRunnerViewPart_JUnitPasteAction_cannotpaste_message;
-
-	public static String TestRunnerViewPart_JUnitPasteAction_cannotpaste_title;
-
-	public static String TestRunnerViewPart_JUnitPasteAction_label;
-
-	public static String TestRunnerViewPart_layout_menu;
 }

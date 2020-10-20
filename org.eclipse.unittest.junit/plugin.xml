@@ -132,7 +132,7 @@
    <extension
          point="org.eclipse.unittest.unittestViewSupport">
       <viewSupport
-            class="org.eclipse.unittest.junit.launcher.JUnitTestViewSupport"
+            class="org.eclipse.unittest.junit.ui.JUnitTestViewSupport"
             id="org.eclipse.unittest.junit">
       </viewSupport>
    </extension>

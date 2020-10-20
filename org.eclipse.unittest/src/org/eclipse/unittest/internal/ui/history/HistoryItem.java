@@ -186,7 +186,7 @@ public class HistoryItem {
 		if (this.historyFile == null) {
 			File historyDir = History.INSTANCE.getDirectory();
 			String isoTime = new SimpleDateFormat("yyyyMMdd-HHmmss.SSS") //$NON-NLS-1$
-					.format(new Date(session.getStartTime().toEpochMilli()));
+					.format(new Date(getStartDate().toEpochMilli()));
 			String swapFileName = session.getTestRunName() + '@' + isoTime + ".xml"; //$NON-NLS-1$
 			this.historyFile = new File(historyDir, swapFileName);
 		}
@@ -213,24 +213,12 @@ public class HistoryItem {
 
 	public Instant getStartDate() {
 		if (session != null) {
-			return session.getStartTime();
+			startTime = session.getStartTime();
 		}
 		if (startTime != null) {
 			return startTime;
 		}
-
-		File file = getFile();
-		// History file still can be null
-		if (file == null) {
-			return Instant.now();
-		}
-
-		try {
-			return Files.getLastModifiedTime(file.toPath()).toInstant();
-		} catch (IOException e) {
-			UnitTestPlugin.log(e);
-			return Instant.now();
-		}
+		return Instant.now();
 	}
 
 	public int getFailureCount() {
