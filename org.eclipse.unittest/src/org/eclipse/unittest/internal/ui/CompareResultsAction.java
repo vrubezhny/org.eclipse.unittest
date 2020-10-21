@@ -28,6 +28,11 @@ public class CompareResultsAction extends Action {
 	private FailureTraceUIBlock fView;
 	private CompareResultDialog fOpenDialog;
 
+	/**
+	 * Constructs a compare result object
+	 *
+	 * @param view a {@link FailureTraceUIBlock} object
+	 */
 	public CompareResultsAction(FailureTraceUIBlock view) {
 		super(Messages.CompareResultsAction_label);
 		setDescription(Messages.CompareResultsAction_description);

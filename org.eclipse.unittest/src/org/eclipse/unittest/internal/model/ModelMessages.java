@@ -16,6 +16,9 @@ package org.eclipse.unittest.internal.model;
 
 import org.eclipse.osgi.util.NLS;
 
+/**
+ * Unit Test Model messages
+ */
 public class ModelMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.unittest.internal.model.ModelMessages"; //$NON-NLS-1$
 	public static String UnitTestModel_could_not_import;

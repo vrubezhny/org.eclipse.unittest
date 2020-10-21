@@ -32,6 +32,9 @@ public class UnitTestUIPreferencesConstants {
 	 */
 	public static final String SHOW_IN_ALL_VIEWS = UnitTestPlugin.PLUGIN_ID + ".show_in_all_views"; //$NON-NLS-1$
 
+	/**
+	 * A default value for SHOW_IN_ALL_VIEWS preference
+	 */
 	public static final boolean SHOW_IN_ALL_VIEWS_DEFAULT = false; // would need a PreferenceInitializer if this was
 																	// changed to true!
 
@@ -39,11 +42,22 @@ public class UnitTestUIPreferencesConstants {
 		// no instance
 	}
 
+	/**
+	 * Returns a value of SHOW_IN_ALL_VIEWS preference
+	 *
+	 * @return boolean value of SHOW_IN_ALL_VIEWS preference
+	 */
 	public static boolean getShowInAllViews() {
 		return Platform.getPreferencesService().getBoolean(UnitTestPlugin.PLUGIN_ID, SHOW_IN_ALL_VIEWS,
 				SHOW_IN_ALL_VIEWS_DEFAULT, null);
 	}
 
+	/**
+	 * Sets a value of SHOW_IN_ALL_VIEWS preference
+	 *
+	 * @param show <code>true</code> if the results view is to be shown in all
+	 *             views, otherwise <code>false</code>
+	 */
 	public static void setShowInAllViews(boolean show) {
 		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(UnitTestPlugin.PLUGIN_ID);
 		preferences.putBoolean(SHOW_IN_ALL_VIEWS, show);

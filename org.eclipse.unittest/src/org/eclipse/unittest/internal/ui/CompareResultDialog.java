@@ -63,6 +63,9 @@ import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.contentmergeviewer.TextMergeViewer;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 
+/**
+ * A Compare result dialog
+ */
 public class CompareResultDialog extends TrayDialog {
 	private static final String PREFIX_SUFFIX_PROPERTY = "org.eclipse.unittest.ui.CompareResultDialog.prefixSuffix"; //$NON-NLS-1$
 
@@ -183,6 +186,12 @@ public class CompareResultDialog extends TrayDialog {
 
 	private CompareViewerPane fCompareViewerPane;
 
+	/**
+	 * Constructs a compare results dialog
+	 *
+	 * @param parentShell a parent shell object
+	 * @param element     a {@link TestElement} object
+	 */
 	public CompareResultDialog(Shell parentShell, TestElement element) {
 		super(parentShell);
 		setShellStyle((getShellStyle() & ~SWT.APPLICATION_MODAL) | SWT.TOOL);

@@ -18,11 +18,24 @@ import org.eclipse.unittest.model.ITestCaseElement;
 
 import org.eclipse.core.runtime.Assert;
 
+/**
+ * A test case element. Holds all information about a test case
+ */
 public class TestCaseElement extends TestElement implements ITestCaseElement {
 
 	private boolean fIgnored;
 	private boolean fIsDynamicTest;
 
+	/**
+	 * Constructs a {@link TestCaseElement} object
+	 *
+	 * @param parent        a parent {@link TestSuiteElement} object
+	 * @param id            an identifier of the object
+	 * @param testName      a name of the test case
+	 * @param displayName   a display name for a test case
+	 * @param isDynamicTest an indicator of a "dynamic" test case
+	 * @param uniqueId      an unique test case identifier or <code>null</code>
+	 */
 	public TestCaseElement(TestSuiteElement parent, String id, String testName, String displayName,
 			boolean isDynamicTest, String uniqueId) {
 		super(parent, id, testName, displayName, uniqueId);

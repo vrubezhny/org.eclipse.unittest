@@ -92,9 +92,11 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 	private boolean completedOrAborted;
 
 	/**
-	 * Creates a test run session.
+	 * Constructs a test run session object.
 	 *
-	 * @param testRunName name of the test run
+	 * @param testRunName         name of the test run
+	 * @param startTime           a start time of a test run
+	 * @param launchConfiguration a launch configuration for a test run
 	 */
 	public TestRunSession(String testRunName, Instant startTime, ILaunchConfiguration launchConfiguration) {
 		super(null, "-1", testRunName, null, null, null); //$NON-NLS-1$
@@ -114,6 +116,11 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 		fSessionListeners = new ListenerList<>();
 	}
 
+	/**
+	 * Constructs a test run session object from a launch.
+	 *
+	 * @param launch an {@link ILaunch} object
+	 */
 	public TestRunSession(ILaunch launch) {
 		super(null, "-1", "<TestRunSession>", null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
 		Assert.isNotNull(launch);
@@ -167,7 +174,12 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 		fTestRunnerClient.start();
 	}
 
-	// TODO Consider removal as it's only use in XML parsing
+	/**
+	 * Resets a test run session object (used when re-creating a test run session
+	 * from an XML file(
+	 *
+	 * TODO Consider removal as it's only use in XML parsing
+	 */
 	public void reset() {
 		fTestResult = null;
 		fIdToTest = new HashMap<>();
@@ -242,6 +254,11 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 		return getChildren().stream().mapToInt(TestElement::getCurrentIgnoredCount).sum();
 	}
 
+	/**
+	 * Returns start time for a run session
+	 *
+	 * @return an {@link Instant} object indicating a test run session start time
+	 */
 	public Instant getStartTime() {
 		return fStartTime;
 	}
@@ -257,10 +274,20 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 		return fIsAborted;
 	}
 
+	/**
+	 * Adds an {@link ITestSessionListener} listener
+	 *
+	 * @param listener an {@link ITestSessionListener} object
+	 */
 	public synchronized void addTestSessionListener(ITestSessionListener listener) {
 		fSessionListeners.add(listener);
 	}
 
+	/**
+	 * Removes an {@link ITestSessionListener} listener
+	 *
+	 * @param listener an {@link ITestSessionListener} object
+	 */
 	public void removeTestSessionListener(ITestSessionListener listener) {
 		fSessionListeners.remove(listener);
 	}
@@ -270,6 +297,9 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 		return getStartTime() == null && fLaunch != null && !fLaunch.isTerminated();
 	}
 
+	/**
+	 * Forces a test run session to abort its execution
+	 */
 	public void abortTestRun() {
 		fIsAborted = true;
 		if (fTestRunnerClient != null) {
@@ -356,6 +386,11 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 
 		private boolean firstStart;
 
+		/**
+		 * Notifies on a test run started
+		 *
+		 * @param testCount number of tests in this run
+		 */
 		public void testRunStarted(Integer testCount) {
 			fIncompleteTestSuites.clear();
 			fFactoryTestSuites.clear();
@@ -367,12 +402,22 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 			}
 		}
 
+		/**
+		 * Notifies on a test run ended
+		 *
+		 * @param duration a duration of this test run
+		 */
 		public void testRunEnded(Duration duration) {
 			for (ITestSessionListener listener : fSessionListeners) {
 				listener.sessionCompleted(duration);
 			}
 		}
 
+		/**
+		 * Notifies on a test run stopped (aborted)
+		 *
+		 * @param duration a duration of this test run
+		 */
 		public void testRunStopped(Duration duration) {
 			fIsAborted = true;
 
@@ -381,6 +426,21 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 			}
 		}
 
+		/**
+		 * Notifies on a test tree entry is created
+		 *
+		 * @param testId        an identifier of a test entry
+		 * @param testName      a name of test
+		 * @param isSuite       <code>true</code> indicates that a test entry is a test
+		 *                      suite, <code>false</code> - a test case
+		 * @param testCount     a number of tests in a test suite or <code>null</code>
+		 * @param isDynamicTest indicates if a test is a dynamic test (doesn't have a
+		 *                      predefined number of tests)
+		 * @param parent        a parent test suite element
+		 * @param displayName   a display name for the test
+		 * @param uniqueId      an unique identifier of test entry or <code>null</code>
+		 * @return an {@link ITestElement} object instance
+		 */
 		public ITestElement testTreeEntry(String testId, String testName, boolean isSuite, Integer testCount,
 				boolean isDynamicTest, ITestSuiteElement parent, String displayName, String uniqueId) {
 			ITestElement testElement = addTreeEntry(testId, testName, isSuite, testCount, isDynamicTest,
@@ -392,6 +452,11 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 			return testElement;
 		}
 
+		/**
+		 * Notifies on a test started
+		 *
+		 * @param test a test element object
+		 */
 		public void testStarted(ITestElement test) {
 			if (!(test instanceof TestCaseElement)) {
 				return;
@@ -409,6 +474,12 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 			}
 		}
 
+		/**
+		 * Notifies on a test ended
+		 *
+		 * @param testElement a test element object
+		 * @param isIgnored   indicates a skipped (not run) test element
+		 */
 		public void testEnded(ITestElement testElement, boolean isIgnored) {
 			if (testElement == null) {
 				return;
@@ -435,6 +506,14 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 			}
 		}
 
+		/**
+		 * Notifies on a failed test element
+		 *
+		 * @param testElement        a failed test element
+		 * @param status             a result status of test execution
+		 * @param isAssumptionFailed indicates if the failure is an assumption failure
+		 * @param trace              a failure trace
+		 */
 		public void testFailed(ITestElement testElement, Result status, boolean isAssumptionFailed,
 				FailureTrace trace) {
 			if (testElement == null) {
@@ -460,7 +539,9 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 	}
 
 	private static class IncompleteTestSuite {
+		@SuppressWarnings("unused")
 		public final TestSuiteElement fTestSuiteElement;
+		@SuppressWarnings("unused")
 		public Integer fOutstandingChildren;
 
 		public IncompleteTestSuite(TestSuiteElement testSuiteElement, Integer outstandingChildren) {
@@ -469,10 +550,24 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 		}
 	}
 
+	/**
+	 * Registers a failure status for a test element
+	 *
+	 * @param testElement  a test element
+	 * @param status       a result of test execution
+	 * @param failureTrace a failure trace
+	 */
 	public void registerTestFailureStatus(TestElement testElement, Result status, FailureTrace failureTrace) {
 		testElement.setStatus(Status.fromResult(status), failureTrace);
 	}
 
+	/**
+	 * Registers an ended test element
+	 *
+	 * @param testElement a test element
+	 * @param completed   <code>true</code> indicates that the test was completed.
+	 *                    <code>false</code> otherwise
+	 */
 	public void registerTestEnded(TestElement testElement, boolean completed) {
 		if (testElement instanceof TestCaseElement) {
 			if (!completed) {
@@ -484,6 +579,12 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 		}
 	}
 
+	/**
+	 * Sets a {@link Status} for a test element
+	 *
+	 * @param testElement a test element
+	 * @param status      an execution status
+	 */
 	private void setStatus(ITestElement testElement, Status status) {
 		((TestElement) testElement).setStatus(status);
 	}
@@ -527,6 +628,9 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 		return getTestRunName();
 	}
 
+	/**
+	 * An abstract base class for a listener safe runnable
+	 */
 	public abstract class ListenerSafeRunnable implements ISafeRunnable {
 		@Override
 		public void handleException(Throwable exception) {
@@ -667,5 +771,4 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 	public Result getTestResult(boolean includeChildren) {
 		return this.fTestResult != null ? this.fTestResult : super.getTestResult(includeChildren);
 	}
-
 }

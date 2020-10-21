@@ -20,6 +20,9 @@ import org.eclipse.unittest.ui.ITestViewSupport;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 
+/**
+ * A {@link TestViewSupportExtension} implementation
+ */
 public class TestViewSupportExtension {
 
 	private static final String ID = "id"; //$NON-NLS-1$
@@ -27,19 +30,37 @@ public class TestViewSupportExtension {
 
 	private final IConfigurationElement fElement;
 
+	/**
+	 * Constructs a {@link TestViewSupportExtension} object
+	 *
+	 * @param element an {@link IConfigurationElement} object
+	 */
 	public TestViewSupportExtension(IConfigurationElement element) {
 		fElement = element;
 	}
 
+	/**
+	 * Returns an identifier of the test view support extension
+	 *
+	 * @return A test view support identifier
+	 */
 	public String getId() {
 		return getAttribute(ID);
 	}
 
+	/**
+	 * Returns an attribute by a given name
+	 *
+	 * @param attributeName an attribute name
+	 *
+	 * @return a value of an attribute
+	 */
 	protected String getAttribute(String attributeName) {
 		return fElement.getAttribute(attributeName);
 	}
 
 	/**
+	 * Instantiates an {@link ITestViewSupport} object
 	 *
 	 * @return an instance of {@link ITestViewSupport} for the given extension.
 	 *         <code>null</code> if class couldn't be loaded.

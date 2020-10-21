@@ -49,6 +49,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
+/**
+ * A history item object
+ */
 public class HistoryItem {
 
 	private File historyFile;
@@ -61,6 +64,11 @@ public class HistoryItem {
 
 	private int failuresAndErrors;
 
+	/**
+	 * Constructs a history item object for a {@link TestRunSession}
+	 *
+	 * @param session a {@link TestRunSession} object
+	 */
 	public HistoryItem(TestRunSession session) {
 		this.session = session;
 		this.name = session.getTestRunName();
@@ -113,6 +121,11 @@ public class HistoryItem {
 		});
 	}
 
+	/**
+	 * Constructs a history item object from a file
+	 *
+	 * @param file a history item file
+	 */
 	public HistoryItem(File file) {
 		this.historyFile = file;
 		try {
@@ -128,6 +141,12 @@ public class HistoryItem {
 		}
 	}
 
+	/**
+	 * Reloads a {@link TestRunSession} object
+	 *
+	 * @return a {@link TestRunSession} object instance
+	 * @throws CoreException in case of a problem during the object reading
+	 */
 	public TestRunSession reloadTestRunSession() throws CoreException {
 		if (this.session == null && getFile() != null) {
 			try {
@@ -143,16 +162,35 @@ public class HistoryItem {
 		return this.session;
 	}
 
+	/**
+	 * Returns current {@link TestRunSession} object
+	 *
+	 * @return a {@link TestRunSession} object
+	 */
 	public Optional<TestRunSession> getCurrentTestRunSession() {
 		return Optional.ofNullable(this.session);
 	}
 
+	/**
+	 * Removes a swap file for a history item
+	 *
+	 * @throws IOException in case of I/O failure
+	 */
 	public void removeSwapFile() throws IOException {
 		if (historyFile != null && historyFile.exists()) {
 			Files.delete(historyFile.toPath());
 		}
 	}
 
+	/**
+	 * Saves a history item into a file
+	 *
+	 * @param target a target file
+	 * @throws TransformerFactoryConfigurationError in case of transformation
+	 *                                              operation failure
+	 * @throws CoreException                        in case of storing operation
+	 *                                              failure
+	 */
 	void storeSessionToFile(File target) throws TransformerFactoryConfigurationError, CoreException {
 		if (this.session == null) {
 			return;
@@ -182,6 +220,11 @@ public class HistoryItem {
 		}
 	}
 
+	/**
+	 * Returns the history item swap file
+	 *
+	 * @return a history item file
+	 */
 	public File getFile() {
 		if (this.historyFile == null) {
 			File historyDir = History.INSTANCE.getDirectory();
@@ -194,6 +237,11 @@ public class HistoryItem {
 		return this.historyFile;
 	}
 
+	/**
+	 * Stores test session into a swap file
+	 *
+	 * @throws CoreException in case of a problem
+	 */
 	public void swapOut() throws CoreException {
 		if (session != null && session.isStopped()) {
 			storeSessionToFile(getFile());
@@ -201,6 +249,13 @@ public class HistoryItem {
 		}
 	}
 
+	/**
+	 * Returns a test session name.
+	 *
+	 * If a test session name is <code>null</code> returns a name of file
+	 *
+	 * @return a test session name
+	 */
 	public String getName() {
 		if (session != null) {
 			return session.getTestRunName();
@@ -211,6 +266,15 @@ public class HistoryItem {
 		return getFile().getName();
 	}
 
+	/**
+	 * Returns a test session start date/time.
+	 *
+	 * If date/time of a test session cannot be obtained returns a time of last swap
+	 * file modification, or "now"
+	 *
+	 *
+	 * @return an {@link Instant} object indicating a test session start date/time
+	 */
 	public Instant getStartDate() {
 		if (session != null) {
 			return session.getStartTime();
@@ -233,6 +297,11 @@ public class HistoryItem {
 		}
 	}
 
+	/**
+	 * Returns a failure count for a test session
+	 *
+	 * @return a failure count
+	 */
 	public int getFailureCount() {
 		if (session != null) {
 			return session.getCurrentErrorCount() + session.getCurrentFailureCount();
@@ -252,6 +321,11 @@ public class HistoryItem {
 				e));
 	}
 
+	/**
+	 * Returns a size of a swap file
+	 *
+	 * @return a size of a swap file
+	 */
 	public Long getSizeOnDisk() {
 		File file = getFile();
 		if (file != null && file.isFile()) {
@@ -259,5 +333,4 @@ public class HistoryItem {
 		}
 		return null;
 	}
-
 }

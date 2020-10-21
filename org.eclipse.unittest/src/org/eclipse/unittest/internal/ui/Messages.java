@@ -15,6 +15,9 @@ package org.eclipse.unittest.internal.ui;
 
 import org.eclipse.osgi.util.NLS;
 
+/**
+ * Unit Test View UI Messages
+ */
 public final class Messages extends NLS {
 
 	static {

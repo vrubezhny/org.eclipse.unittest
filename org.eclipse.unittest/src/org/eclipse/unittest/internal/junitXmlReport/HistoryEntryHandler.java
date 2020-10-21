@@ -50,14 +50,29 @@ public class HistoryEntryHandler extends DefaultHandler {
 		}
 	}
 
+	/**
+	 * Returns the number of failures and errors for the history entry
+	 *
+	 * @return a number of failures and errors
+	 */
 	public int getFailuresAndErrors() {
 		return failuresAndErrors;
 	}
 
+	/**
+	 * Returns an {@link Instant} object instance indicating a unit test start time.
+	 *
+	 * @return an {@link Instant} object instance
+	 */
 	public Instant getStartTime() {
 		return startTime;
 	}
 
+	/**
+	 * Returns a name of history entry
+	 *
+	 * @return a name of history entry
+	 */
 	public String getName() {
 		return name;
 	}

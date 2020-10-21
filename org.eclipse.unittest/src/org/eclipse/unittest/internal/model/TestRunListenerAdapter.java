@@ -31,6 +31,11 @@ public class TestRunListenerAdapter implements ITestSessionListener {
 
 	private final TestRunSession fSession;
 
+	/**
+	 * Constructs a {@link TestRunListenerAdapter} object
+	 *
+	 * @param session a {@link TestRunSession} object
+	 */
 	public TestRunListenerAdapter(TestRunSession session) {
 		fSession = session;
 	}

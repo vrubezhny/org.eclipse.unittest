@@ -15,10 +15,18 @@ package org.eclipse.unittest.internal.ui;
 
 import org.eclipse.jface.action.Action;
 
+/**
+ * Show previous failure action
+ */
 public class ShowPreviousFailureAction extends Action {
 
 	private TestRunnerViewPart fPart;
 
+	/**
+	 * Constructs a show previous failure action object
+	 *
+	 * @param part a test runner view part object
+	 */
 	public ShowPreviousFailureAction(TestRunnerViewPart part) {
 		super(Messages.ShowPreviousFailureAction_label);
 		setDisabledImageDescriptor(Images.getImageDescriptor("dlcl16/select_prev.png")); //$NON-NLS-1$

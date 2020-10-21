@@ -124,8 +124,12 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 /**
  * A ViewPart that shows the results of a test run.
  */
+@SuppressWarnings("restriction")
 public class TestRunnerViewPart extends ViewPart {
 
+	/**
+	 * An identifier of Test Runner View Part
+	 */
 	public static final String NAME = "org.eclipse.unittest.ResultView"; //$NON-NLS-1$
 
 	private static final String RERUN_LAST_COMMAND = "org.eclipse.unittest.UnitTestShortcut.rerunLast"; //$NON-NLS-1$
@@ -133,6 +137,9 @@ public class TestRunnerViewPart extends ViewPart {
 
 	static final int REFRESH_INTERVAL = 200;
 
+	/**
+	 * A Test Result layout
+	 */
 	public enum TestResultsLayout {
 		FLAT, HIERARCHICAL
 	}
@@ -1054,6 +1061,8 @@ public class TestRunnerViewPart extends ViewPart {
 	}
 
 	/**
+	 * Sets an active test run session
+	 *
 	 * @param testRunSession new active test run session
 	 * @return deactivated session, or <code>null</code> iff no session got
 	 *         deactivated
@@ -1254,6 +1263,9 @@ public class TestRunnerViewPart extends ViewPart {
 				totalCount != null ? totalCount.intValue() : ticksDone + 1);
 	}
 
+	/**
+	 * Queues a runnable that shows a test results view
+	 */
 	protected void postShowTestResultsView() {
 		postSyncRunnable(() -> {
 			if (isDisposed())
@@ -1288,6 +1300,9 @@ public class TestRunnerViewPart extends ViewPart {
 		}
 	}
 
+	/**
+	 * Shows an info message
+	 */
 	protected void doShowInfoMessage() {
 		if (fInfoMessage != null) {
 			setContentDescription(fInfoMessage);
@@ -1629,6 +1644,12 @@ public class TestRunnerViewPart extends ViewPart {
 		return getViewSite().getActionBars().getStatusLineManager();
 	}
 
+	/**
+	 * Creates a progress count panel
+	 *
+	 * @param parent a parent composite
+	 * @return a progress count ppanel composite object
+	 */
 	protected Composite createProgressCountPanel(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();

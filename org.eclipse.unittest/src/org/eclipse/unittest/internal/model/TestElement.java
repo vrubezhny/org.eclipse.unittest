@@ -20,6 +20,10 @@ import org.eclipse.unittest.model.ITestElement;
 
 import org.eclipse.core.runtime.Assert;
 
+/**
+ * A test element n holds basic information about a test case or a test suite
+ * element
+ */
 public abstract class TestElement implements ITestElement {
 	private final TestSuiteElement fParent;
 	private final String fId;
@@ -211,6 +215,11 @@ public abstract class TestElement implements ITestElement {
 		return fStatus;
 	}
 
+	/**
+	 * Sets a duration value for a test element
+	 *
+	 * @param duration a duration value
+	 */
 	public void setDuration(Duration duration) {
 		this.fDuration = duration;
 	}

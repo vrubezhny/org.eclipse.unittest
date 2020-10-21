@@ -54,6 +54,9 @@ import org.eclipse.jface.viewers.ViewerComparator;
 
 import org.eclipse.ui.dialogs.SelectionDialog;
 
+/**
+ * A History item selection dialog
+ */
 public class HistoryDialog extends SelectionDialog {
 
 	private static final Comparator<HistoryItem> COMPARING_START_DATE = Comparator.comparing(HistoryItem::getStartDate)
@@ -61,8 +64,14 @@ public class HistoryDialog extends SelectionDialog {
 	private Set<TestRunSession> fCurrentlyVisible;
 	private Button fRemoveButton;
 	private Button fExportButton;
-	private TableViewer table;
+	private TableViewer fTable;
 
+	/**
+	 * Constructs a history item selection dialog object
+	 *
+	 * @param shell           a shell object
+	 * @param visibleSessions a set of visible {@link TestRunSession} objects
+	 */
 	public HistoryDialog(Shell shell, Set<TestRunSession> visibleSessions) {
 		super(shell);
 		fCurrentlyVisible = visibleSessions;
@@ -76,10 +85,10 @@ public class HistoryDialog extends SelectionDialog {
 		Composite res = new Composite(parent, SWT.NONE);
 		res.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		res.setLayout(new GridLayout(2, false));
-		this.table = createTable(res);
-		table.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		this.fTable = createTable(res);
+		fTable.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		createButtons(res);
-		return table.getControl();
+		return fTable.getControl();
 	}
 
 	private void createButtons(Composite res) {
@@ -94,7 +103,7 @@ public class HistoryDialog extends SelectionDialog {
 			for (Object selected : getResult()) {
 				History.INSTANCE.remove((HistoryItem) selected);
 			}
-			table.refresh();
+			fTable.refresh();
 		}));
 		Button importButton = new Button(buttons, SWT.PUSH);
 		importButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
@@ -114,7 +123,7 @@ public class HistoryDialog extends SelectionDialog {
 			} catch (IOException e1) {
 				UnitTestPlugin.log(e1);
 			}
-			table.refresh();
+			fTable.refresh();
 		}));
 		importButton.setText(Messages.HistoryDialog_import);
 		fExportButton = new Button(buttons, SWT.PUSH);
@@ -134,7 +143,7 @@ public class HistoryDialog extends SelectionDialog {
 					UnitTestPlugin.log(e1);
 				}
 			}
-			table.refresh();
+			fTable.refresh();
 		}));
 		fExportButton.setText(Messages.HistoryDialog_export);
 		updateButtons();
@@ -188,7 +197,7 @@ public class HistoryDialog extends SelectionDialog {
 			@Override
 			public String getText(Object element) {
 				return ((HistoryItem) element).getCurrentTestRunSession().filter(TestRunSession::isRunning)
-						.map(any -> "🏃").orElse("");
+						.map(any -> "🏃").orElse(""); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		});
 		progressColumn.getColumn().setWidth(2 * fontSize);
@@ -199,9 +208,9 @@ public class HistoryDialog extends SelectionDialog {
 			public String getText(Object element) {
 				int failures = ((HistoryItem) element).getFailureCount();
 				if (failures == 0) {
-					return "✅";
+					return "✅"; //$NON-NLS-1$
 				}
-				return "❌ " + failures + Messages.HistoryDialog_failures;
+				return "❌ " + failures + Messages.HistoryDialog_failures; //$NON-NLS-1$
 			}
 		});
 		successColumn.getColumn().setWidth(15 * fontSize);

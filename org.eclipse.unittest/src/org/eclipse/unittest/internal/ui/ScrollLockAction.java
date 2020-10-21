@@ -24,6 +24,11 @@ public class ScrollLockAction extends Action {
 
 	private TestRunnerViewPart fRunnerViewPart;
 
+	/**
+	 * Constructs a scroll lock toggle action
+	 *
+	 * @param viewer a test runner viewer part object
+	 */
 	public ScrollLockAction(TestRunnerViewPart viewer) {
 		super(Messages.ScrollLockAction_action_label);
 		fRunnerViewPart = viewer;

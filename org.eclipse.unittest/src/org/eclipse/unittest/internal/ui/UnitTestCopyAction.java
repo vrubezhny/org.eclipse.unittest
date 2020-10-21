@@ -44,52 +44,62 @@ public class UnitTestCopyAction extends SelectionListenerAction {
 
 	private ITestElement fTestElement;
 
+	/**
+	 * Constructs a Unit Test Copy action
+	 *
+	 * @param view      a {@link FailureTraceUIBlock} object
+	 * @param clipboard a {@link Clipboard} object
+	 */
 	public UnitTestCopyAction(FailureTraceUIBlock view, Clipboard clipboard) {
 		super(Messages.CopyTrace_action_label);
 		Assert.isNotNull(clipboard);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IUnitTestHelpContextIds.COPYTRACE_ACTION);
-		fView= view;
-		fClipboard= clipboard;
+		fView = view;
+		fClipboard = clipboard;
 	}
 
 	@Override
 	public void run() {
-		String trace= fView.getTrace();
-		String source= null;
+		String trace = fView.getTrace();
+		String source = null;
 		if (trace != null) {
-			source= convertLineTerminators(trace);
+			source = convertLineTerminators(trace);
 		} else if (fTestElement != null) {
-			source= fTestElement.getTestName();
+			source = fTestElement.getTestName();
 		}
 		if (source == null || source.length() == 0)
 			return;
 
 		TextTransfer plainTextTransfer = TextTransfer.getInstance();
-		try{
-			fClipboard.setContents(
-				new String[]{ convertLineTerminators(source) },
-				new Transfer[]{ plainTextTransfer });
-		}  catch (SWTError e){
+		try {
+			fClipboard.setContents(new String[] { convertLineTerminators(source) },
+					new Transfer[] { plainTextTransfer });
+		} catch (SWTError e) {
 			if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
 				throw e;
-			if (MessageDialog.openQuestion(fView.getComposite().getShell(), Messages.CopyTraceAction_problem, Messages.CopyTraceAction_clipboard_busy))
+			if (MessageDialog.openQuestion(fView.getComposite().getShell(), Messages.CopyTraceAction_problem,
+					Messages.CopyTraceAction_clipboard_busy))
 				run();
 		}
 	}
 
-
+	/**
+	 * Handles a test selection
+	 *
+	 * @param test an {@link ITestElement} object
+	 */
 	public void handleTestSelected(ITestElement test) {
-		fTestElement= test;
+		fTestElement = test;
 	}
 
 	private String convertLineTerminators(String in) {
-		StringWriter stringWriter= new StringWriter();
-		PrintWriter printWriter= new PrintWriter(stringWriter);
-		StringReader stringReader= new StringReader(in);
-		BufferedReader bufferedReader= new BufferedReader(stringReader);
+		StringWriter stringWriter = new StringWriter();
+		PrintWriter printWriter = new PrintWriter(stringWriter);
+		StringReader stringReader = new StringReader(in);
+		BufferedReader bufferedReader = new BufferedReader(stringReader);
 		String line;
 		try {
-			while ((line= bufferedReader.readLine()) != null) {
+			while ((line = bufferedReader.readLine()) != null) {
 				printWriter.println(line);
 			}
 		} catch (IOException e) {

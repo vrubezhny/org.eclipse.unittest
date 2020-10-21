@@ -33,6 +33,12 @@ public class RerunAction extends Action {
 	private ILaunchConfiguration fLaunchConfiguration;
 	private String fLaunchMode;
 
+	/**
+	 * Constructs a rerun action
+	 *
+	 * @param launchConfiguration a launch configuration object
+	 * @param launchMode          a launch mode
+	 */
 	public RerunAction(ILaunchConfiguration launchConfiguration, String launchMode) {
 		super(NLS.bind(Messages.RerunAction_label_rerun,
 				DebugPlugin.getDefault().getLaunchManager().getLaunchMode(launchMode).getLabel()));

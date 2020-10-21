@@ -20,7 +20,7 @@ import org.eclipse.unittest.internal.model.ProgressState;
 
 /**
  * Common protocol for test elements. This set consists of
- * {@link ITestCaseElement} , {@link ITestSuiteElement} and
+ * {@link ITestCaseElement}, {@link ITestSuiteElement} and
  * {@link ITestRunSession}
  *
  * <p>
@@ -101,6 +101,12 @@ public interface ITestElement {
 			return fActual;
 		}
 
+		/**
+		 * Returns <code>true</code> in case of comparison failure.
+		 *
+		 * @return <code>true</code> in case of comparison failure, otherwise returns
+		 *         <code>false</code>
+		 */
 		public boolean isComparisonFailure() {
 			return (fExpected != null || fActual != null) && !Objects.equals(fActual, fExpected);
 		}

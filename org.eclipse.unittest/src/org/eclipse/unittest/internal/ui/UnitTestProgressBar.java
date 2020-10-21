@@ -41,6 +41,11 @@ public class UnitTestProgressBar extends Canvas {
 	private boolean fError;
 	private boolean fStopped = false;
 
+	/**
+	 * Constructs a Unit Test Progress Bar object
+	 *
+	 * @param parent a parent composite
+	 */
 	public UnitTestProgressBar(Composite parent) {
 		super(parent, SWT.NONE);
 
@@ -63,10 +68,18 @@ public class UnitTestProgressBar extends Canvas {
 		fStoppedColor = new Color(display, 120, 120, 120);
 	}
 
+	/**
+	 * Sets a maximum ticks count
+	 *
+	 * @param max a value of maximum ticks count
+	 */
 	public void setMaximum(int max) {
 		fMaxTickCount = max;
 	}
 
+	/**
+	 * Resets the progress bar
+	 */
 	public void reset() {
 		fError = false;
 		fStopped = false;
@@ -76,6 +89,16 @@ public class UnitTestProgressBar extends Canvas {
 		redraw();
 	}
 
+	/**
+	 * Resets the progress bar using new initial values
+	 *
+	 * @param hasErrors <code>true</code> if a test has errors, otherwise
+	 *                  <code>false</code>
+	 * @param stopped   <code>true</code> if a test is stopped, otherwise
+	 *                  <code>false</code>
+	 * @param ticksDone a number of ticks done
+	 * @param maximum   a maximum ticks count
+	 */
 	public void reset(boolean hasErrors, boolean stopped, int ticksDone, int maximum) {
 		boolean noChange = fError == hasErrors && fStopped == stopped && fCurrentTickCount == ticksDone
 				&& fMaxTickCount == maximum;
@@ -106,6 +129,9 @@ public class UnitTestProgressBar extends Canvas {
 			gc.setBackground(fOKColor);
 	}
 
+	/**
+	 * Sets a stopped flag on the progress bar
+	 */
 	public void stopped() {
 		fStopped = true;
 		redraw();
@@ -156,6 +182,11 @@ public class UnitTestProgressBar extends Canvas {
 		return size;
 	}
 
+	/**
+	 * Steps the progress according to failures count
+	 *
+	 * @param failures a failures count
+	 */
 	public void step(int failures) {
 		fCurrentTickCount++;
 		int x = fColorBarWidth;
@@ -171,6 +202,12 @@ public class UnitTestProgressBar extends Canvas {
 		paintStep(x, fColorBarWidth);
 	}
 
+	/**
+	 * Refreshes the progress bar
+	 *
+	 * @param hasErrors <code>true</code> if a test has errors, otherwise
+	 *                  <code>false</code>
+	 */
 	public void refresh(boolean hasErrors) {
 		fError = hasErrors;
 		redraw();

@@ -124,6 +124,11 @@ public final class UnitTestModel {
 
 	}
 
+	/**
+	 * Returns a {@link UnitTestModel} object instance
+	 *
+	 * @return a {@link UnitTestModel} object instance
+	 */
 	public static synchronized UnitTestModel getInstance() {
 		if (INSTANCE == null) {
 			INSTANCE = new UnitTestModel();
@@ -188,14 +193,29 @@ public final class UnitTestModel {
 //		}
 	}
 
+	/**
+	 * Adds an {@link ITestRunSessionListener} object
+	 *
+	 * @param listener a listener object
+	 */
 	public void addTestRunSessionListener(ITestRunSessionListener listener) {
 		fTestRunSessionListeners.add(listener);
 	}
 
+	/**
+	 * Removes an {@link ITestRunSessionListener} object
+	 *
+	 * @param listener a listener object
+	 */
 	public void removeTestRunSessionListener(ITestRunSessionListener listener) {
 		fTestRunSessionListeners.remove(listener);
 	}
 
+	/**
+	 * Returns a list of {@link TestRunSession} objects
+	 *
+	 * @return a list of {@link TestRunSession} objects
+	 */
 	public synchronized List<TestRunSession> getTestRunSessions() {
 		return new ArrayList<>(fTestRunSessions);
 	}
@@ -227,6 +247,16 @@ public final class UnitTestModel {
 		notifyTestRunSessionAdded(testRunSession);
 	}
 
+	/**
+	 * Imports a test run session from an URL
+	 *
+	 * @param url     an URL to source file
+	 * @param monitor a progress monitor object
+	 * @return an {@link ITestRunSession} object instance
+	 *
+	 * @throws InvocationTargetException in case of problems during import operation
+	 * @throws InterruptedException      in case of import operation is interrupted
+	 */
 	public ITestRunSession importTestRunSession(String url, IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException {
 		monitor.beginTask(ModelMessages.UnitTestModel_importing_from_url, IProgressMonitor.UNKNOWN);

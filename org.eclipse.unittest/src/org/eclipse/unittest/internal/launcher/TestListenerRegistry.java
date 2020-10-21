@@ -21,6 +21,12 @@ import org.eclipse.core.runtime.ListenerList;
  * Test View Support registry
  */
 public class TestListenerRegistry {
+
+	/**
+	 * Returns a {@link TestListenerRegistry} object instance
+	 *
+	 * @return a {@link TestListenerRegistry} object
+	 */
 	public static TestListenerRegistry getDefault() {
 		if (fgRegistry != null)
 			return fgRegistry;

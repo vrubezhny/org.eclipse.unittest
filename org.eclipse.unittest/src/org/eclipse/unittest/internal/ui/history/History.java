@@ -24,10 +24,16 @@ import org.eclipse.unittest.model.ITestRunSession;
 
 import org.eclipse.core.runtime.CoreException;
 
+/**
+ * A test run sessions history object
+ */
 public class History implements ITestRunSessionListener {
 
 	private static final String HISTORY_DIR_NAME = "history"; //$NON-NLS-1$
 
+	/**
+	 * An instance of test run sessions history object
+	 */
 	public static final History INSTANCE = new History();
 
 	private History() {
@@ -51,6 +57,11 @@ public class History implements ITestRunSessionListener {
 		return historyDir;
 	}
 
+	/**
+	 * Returns a list of history items
+	 *
+	 * @return a list of history items
+	 */
 	public List<HistoryItem> getHistory() {
 		if (!wasRead) {
 			Arrays.stream(getDirectory().listFiles()).map(HistoryItem::new).forEach(items::add);
@@ -59,6 +70,9 @@ public class History implements ITestRunSessionListener {
 		return Collections.unmodifiableList(items);
 	}
 
+	/**
+	 * Clears the history
+	 */
 	public void clear() {
 		for (HistoryItem item : items) {
 			try {
@@ -87,6 +101,11 @@ public class History implements ITestRunSessionListener {
 				});
 	}
 
+	/**
+	 * Saves a test run session into history
+	 *
+	 * @param testRunSession a test run session object
+	 */
 	public void watch(TestRunSession testRunSession) {
 		for (HistoryItem item : items) {
 			if (testRunSession == null || item.getCurrentTestRunSession().filter(testRunSession::equals).isEmpty()) {
@@ -99,6 +118,11 @@ public class History implements ITestRunSessionListener {
 		}
 	}
 
+	/**
+	 * Removes a history item
+	 *
+	 * @param selected a history item to remove
+	 */
 	public void remove(HistoryItem selected) {
 		this.items.remove(selected);
 		try {
@@ -108,8 +132,12 @@ public class History implements ITestRunSessionListener {
 		}
 	}
 
+	/**
+	 * adds a history item
+	 *
+	 * @param historyItem history item to add
+	 */
 	public void add(HistoryItem historyItem) {
 		items.add(historyItem);
 	}
-
 }

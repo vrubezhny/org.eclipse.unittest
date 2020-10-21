@@ -56,16 +56,32 @@ public class ProgressIcons {
 	private final Map<ProgressIconKey, Image> progressIcons = new HashMap<>();
 	private Device display;
 
+	/**
+	 * Constructs a progress icons object
+	 *
+	 * @param sourceImage a source image object
+	 */
 	public ProgressIcons(Image sourceImage) {
 		this.initialImageData = sourceImage.getImageData();
 		this.display = sourceImage.getDevice();
 	}
 
+	/**
+	 * Disposes a progress icons object
+	 */
 	public void dispose() {
 		this.progressIcons.values().forEach(Image::dispose);
 		this.progressIcons.clear();
 	}
 
+	/**
+	 * Returns an image added with counters
+	 *
+	 * @param current     a current test run number
+	 * @param total       a total test count
+	 * @param hasFailures a flag indicating if a test has failures
+	 * @return an image object instance
+	 */
 	public Image getImage(int current, Integer total, boolean hasFailures) {
 		int totalAsInt = total != null ? total.intValue() : current + 1;
 		int pixelsToDraw = initialImageData.width * current / totalAsInt;

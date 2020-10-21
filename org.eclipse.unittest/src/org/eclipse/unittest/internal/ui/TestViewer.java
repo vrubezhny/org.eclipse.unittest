@@ -848,11 +848,23 @@ class TestViewer {
 		fTreeViewer.expandToLevel(2);
 	}
 
+	/**
+	 * Sets up an alphabetical sort flag
+	 *
+	 * @param enableAlphabeticalSort <code>true</code> if an alphabetical sort is
+	 *                               enabled, otherwise <code>false</code>
+	 */
 	public void setAlphabeticalSort(boolean enableAlphabeticalSort) {
 		fTreeViewer.setComparator(enableAlphabeticalSort ? TEST_ELEMENT_ALPHABETIC_ORDER : null);
 		fTreeViewer.refresh();
 	}
 
+	/**
+	 * Indicates if an alphabetical sort is enabled
+	 *
+	 * @return <code>true</code> if an alphabetical sort is enabled, otherwise
+	 *         <code>false</code>
+	 */
 	public boolean isAlphabeticalSort() {
 		return fTreeViewer.getComparator() == TEST_ELEMENT_ALPHABETIC_ORDER;
 	}

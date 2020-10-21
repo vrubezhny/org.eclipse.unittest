@@ -36,6 +36,12 @@ public class CopyFailureListAction extends Action {
 	private final Clipboard fClipboard;
 	private final TestRunnerViewPart fRunner;
 
+	/**
+	 * Constructs a copy failure list action object
+	 *
+	 * @param runner    a test runner view part object
+	 * @param clipboard a clipboard object
+	 */
 	public CopyFailureListAction(TestRunnerViewPart runner, Clipboard clipboard) {
 		super(Messages.CopyFailureList_action_label);
 		fRunner = runner;
