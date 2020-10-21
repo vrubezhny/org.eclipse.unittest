@@ -24,6 +24,9 @@ public class ShowStackTraceInConsoleViewAction extends Action {
 
 	private Runnable fDelegate;
 
+	/**
+	 * Constructs a show stacktrace in console view action object
+	 */
 	public ShowStackTraceInConsoleViewAction() {
 		super(Messages.ShowStackTraceInConsoleViewAction_label, IAction.AS_PUSH_BUTTON);
 		setDescription(Messages.ShowStackTraceInConsoleViewAction_description);
@@ -43,6 +46,11 @@ public class ShowStackTraceInConsoleViewAction extends Action {
 		}
 	}
 
+	/**
+	 * Sets an action delegate
+	 *
+	 * @param delegate an action delegate
+	 */
 	public void setDelegate(Runnable delegate) {
 		fDelegate = delegate;
 	}

@@ -25,20 +25,44 @@ import java.util.Collection;
 
 import org.eclipse.core.text.StringMatcher;
 
+/**
+ * A Textual Trace
+ */
 public class TextualTrace {
+	/**
+	 * An exception line type
+	 */
 	public static final int LINE_TYPE_EXCEPTION = 1;
 
+	/**
+	 * An normal line type
+	 */
 	public static final int LINE_TYPE_NORMAL = 0;
 
+	/**
+	 * An stackframe line type
+	 */
 	public static final int LINE_TYPE_STACKFRAME = 2;
 
 	private final String fTrace;
 
+	/**
+	 * Constructs a Textual Trace object
+	 *
+	 * @param trace          a trace line
+	 * @param filterPatterns a collection of filter string matchers
+	 */
 	public TextualTrace(String trace, Collection<StringMatcher> filterPatterns) {
 		super();
 		fTrace = filterStack(trace, filterPatterns);
 	}
 
+	/**
+	 * Displays a trace line on a specified display
+	 *
+	 * @param display        a target display
+	 * @param maxLabelLength a maximum number of characters to be displayed
+	 */
 	public void display(ITraceDisplay display, int maxLabelLength) {
 		StringReader stringReader = new StringReader(fTrace);
 		BufferedReader bufferedReader = new BufferedReader(stringReader);

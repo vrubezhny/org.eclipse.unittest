@@ -37,6 +37,11 @@ public class CounterPanel extends Composite {
 	private final Image fErrorIcon = Images.createImage("ovr16/error_ovr.png"); //$NON-NLS-1$
 	private final Image fFailureIcon = Images.createImage("ovr16/failed_ovr.png"); //$NON-NLS-1$
 
+	/**
+	 * Constructs a CounterPanel object
+	 *
+	 * @param parent a parent composite
+	 */
 	public CounterPanel(Composite parent) {
 		super(parent, SWT.WRAP);
 		GridLayout gridLayout = new GridLayout();

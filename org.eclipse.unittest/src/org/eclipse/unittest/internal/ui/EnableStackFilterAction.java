@@ -26,6 +26,11 @@ public class EnableStackFilterAction extends Action {
 
 	private FailureTraceUIBlock fView;
 
+	/**
+	 * Constructs an enable stack filter action object
+	 *
+	 * @param view a {@link FailureTraceUIBlock} object
+	 */
 	public EnableStackFilterAction(FailureTraceUIBlock view) {
 		super(Messages.EnableStackFilterAction_action_label);
 		setDescription(Messages.EnableStackFilterAction_action_description);

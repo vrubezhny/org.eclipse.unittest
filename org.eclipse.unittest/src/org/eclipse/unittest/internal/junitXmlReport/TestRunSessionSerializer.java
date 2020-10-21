@@ -39,6 +39,9 @@ import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
 
+/**
+ * A {@link TestRunSession} object serializer
+ */
 public class TestRunSessionSerializer implements XMLReader {
 
 	private static final String EMPTY = ""; //$NON-NLS-1$
@@ -268,10 +271,12 @@ public class TestRunSessionSerializer implements XMLReader {
 
 	@Override
 	public void parse(String systemId) throws IOException, SAXException {
+		// Nothing to do
 	}
 
 	@Override
 	public void setDTDHandler(DTDHandler handler) {
+		// Nothing to do
 	}
 
 	@Override
@@ -281,6 +286,7 @@ public class TestRunSessionSerializer implements XMLReader {
 
 	@Override
 	public void setEntityResolver(EntityResolver resolver) {
+		// Nothing to do
 	}
 
 	@Override
@@ -290,6 +296,7 @@ public class TestRunSessionSerializer implements XMLReader {
 
 	@Override
 	public void setProperty(java.lang.String name, java.lang.Object value) {
+		// Nothing to do
 	}
 
 	@Override
@@ -299,6 +306,7 @@ public class TestRunSessionSerializer implements XMLReader {
 
 	@Override
 	public void setFeature(java.lang.String name, boolean value) {
+		// Nothing to do
 	}
 
 	@Override

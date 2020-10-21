@@ -21,6 +21,9 @@ import org.eclipse.unittest.internal.model.TestSuiteElement;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+/**
+ * A test session tree content provider
+ */
 public class TestSessionTreeContentProvider implements ITreeContentProvider {
 
 	private static final Object[] NO_CHILDREN = new Object[0];

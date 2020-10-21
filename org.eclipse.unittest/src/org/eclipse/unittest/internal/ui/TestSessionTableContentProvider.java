@@ -26,6 +26,9 @@ import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+/**
+ * A test session table content provider
+ */
 public class TestSessionTableContentProvider implements IStructuredContentProvider {
 
 	@Override

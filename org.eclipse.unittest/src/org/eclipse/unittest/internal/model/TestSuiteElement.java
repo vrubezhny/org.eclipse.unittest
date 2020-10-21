@@ -24,12 +24,25 @@ import java.util.Objects;
 import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestSuiteElement;
 
+/**
+ * A test suite element. Holds all information about a test case
+ */
 public class TestSuiteElement extends TestElement implements ITestSuiteElement {
 
 	private final List<TestElement> fChildren;
 	private Status fChildrenStatus;
 	private Integer expectedTestCount;
 
+	/**
+	 * Constructs a test suite object
+	 *
+	 * @param parent                a parent {@link TestSuiteElement} object
+	 * @param id                    an identifier of a test suite
+	 * @param testName              a name of test suite
+	 * @param expectedChildrenCount an expected children count
+	 * @param displayName           a display name of test suite
+	 * @param data                  an optional additional data for a test suite
+	 */
 	public TestSuiteElement(TestSuiteElement parent, String id, String testName, Integer expectedChildrenCount,
 			String displayName, String data) {
 		super(parent, id, testName, displayName, data);
@@ -60,6 +73,11 @@ public class TestSuiteElement extends TestElement implements ITestSuiteElement {
 		fChildren.add(child);
 	}
 
+	/**
+	 * Removes a child {@link ITestElement} from this test suite element
+	 *
+	 * @param child a child {@link ITestElement}
+	 */
 	public void removeChild(TestElement child) {
 		fChildren.remove(child);
 	}
@@ -94,6 +112,11 @@ public class TestSuiteElement extends TestElement implements ITestSuiteElement {
 		return cumulated;
 	}
 
+	/**
+	 * Returns a test suite execution status
+	 *
+	 * @return a test suite execution status
+	 */
 	public Status getSuiteStatus() {
 		return super.getStatus();
 	}
@@ -171,7 +194,7 @@ public class TestSuiteElement extends TestElement implements ITestSuiteElement {
 		return "TestSuite: " + getTestName() + " : " + super.toString() + " (" + fChildren.size() + ")"; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 
-	public static Status combineStatus(Status one, Status two) {
+	private static Status combineStatus(Status one, Status two) {
 		Status progress = combineProgress(one, two);
 		Status error = combineError(one, two);
 		return combineProgressAndErrorStatus(progress, error);

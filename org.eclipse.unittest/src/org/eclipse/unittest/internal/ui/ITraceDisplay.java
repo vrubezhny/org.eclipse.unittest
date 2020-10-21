@@ -13,6 +13,16 @@
  *******************************************************************************/
 package org.eclipse.unittest.internal.ui;
 
+/**
+ * A trace display interface
+ */
 public interface ITraceDisplay {
-	public abstract void addTraceLine(int lineType, String label);
+
+	/**
+	 * Adds a trace text line
+	 *
+	 * @param lineType a type of trace line
+	 * @param label    a trace line text
+	 */
+	void addTraceLine(int lineType, String label);
 }

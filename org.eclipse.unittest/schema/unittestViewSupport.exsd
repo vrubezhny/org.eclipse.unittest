@@ -50,24 +50,25 @@
    <element name="viewSupport">
       <annotation>
          <documentation>
-            A Test Kind definition that implements org.eclipse.unittest.launcher.ITestViewSupport.
-            This is used by the &lt;i&gt;Unit Test&lt;/i&gt; view to provide support for test engines.
+            A Test View Support definition that implements org.eclipse.unittest.launcher.ITestViewSupport.
+This is used by the &lt;i&gt;Unit Test&lt;/i&gt; view to provide support for test engines.
          </documentation>
       </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  a fulli qualified extention point identifier. This identifier is used to load support for the &lt;i&gt;Unit Test&lt;/i&gt;
-                  view when some ILaunch is running, and the underlying launch configuration sets attributes &lt;code&gt;UnitTestLaunchConfigurationConstants.ATTR_UNIT_TEST_VIEW_SUPPORT&lt;/code&gt;
-                  to the given id.
+                  a fully qualified extention point identifier. 
+This identifier is used to load support for the &lt;i&gt;Unit Test&lt;/i&gt; view when some ILaunch is running, and the underlying launch configuration sets attributes &lt;code&gt;UnitTestLaunchConfigurationConstants.ATTR_UNIT_TEST_VIEW_SUPPORT&lt;/code&gt; to the given id.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  a fully qualified class name that implements org.eclipse.unittest.launcher.ITestViewSupport.
+This is used by the &lt;i&gt;Unit Test&lt;/i&gt; view to provide support for test engines.
+The class defines the method that creates a Unit Test Runner Client  dedicated to communicate with a  test engine and to gather the results of testing as well as  a number of methods that help to  the &lt;i&gt;Unit Test&lt;/i&gt; view in creation of unit test related actions, like openning a test source or a file reported on a stack trace in  editor or returning a ILaunchConfiguration for Rerun action.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.unittest.launcher.ITestViewSupport"/>

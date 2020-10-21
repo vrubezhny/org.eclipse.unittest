@@ -35,8 +35,14 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+/**
+ * A handler for Show History command
+ */
 public class HistoryHandler extends AbstractHandler {
 
+	/**
+	 * An identifier of Show History command
+	 */
 	public static final String COMMAND_ID = "org.eclipse.unittest.history"; //$NON-NLS-1$
 
 	@Override

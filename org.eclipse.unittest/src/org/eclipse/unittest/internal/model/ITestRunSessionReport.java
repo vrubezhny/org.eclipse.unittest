@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.unittest.internal.model;
 
+/**
+ * An {@link ITestRunSessionReport} object
+ */
 public interface ITestRunSessionReport {
 
 	/**

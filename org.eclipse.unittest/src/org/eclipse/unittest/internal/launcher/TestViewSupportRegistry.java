@@ -30,9 +30,17 @@ import org.eclipse.core.runtime.Platform;
  * Test View Support registry
  */
 public class TestViewSupportRegistry {
+	/**
+	 * An identifier of Test View Support extension point
+	 */
 	public static final String ID_EXTENSION_POINT_TEST_VIEW_SUPPORTS = UnitTestPlugin.PLUGIN_ID + "." //$NON-NLS-1$
 			+ "unittestViewSupport"; //$NON-NLS-1$
 
+	/**
+	 * Returns an instance of {@link TestViewSupportRegistry} object
+	 *
+	 * @return a {@link TestViewSupportRegistry} object
+	 */
 	public static TestViewSupportRegistry getDefault() {
 		if (fgRegistry != null)
 			return fgRegistry;
@@ -87,6 +95,8 @@ public class TestViewSupportRegistry {
 	}
 
 	/**
+	 * Returns an {@link ITestViewSupport} object instance by its identifier
+	 *
 	 * @param id an identifier, can be <code>null</code>
 	 *
 	 * @return an {@link ITestViewSupport} object instance, or <code>null</code> if

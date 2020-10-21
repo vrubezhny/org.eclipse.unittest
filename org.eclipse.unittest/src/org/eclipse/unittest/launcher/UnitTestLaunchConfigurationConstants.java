@@ -14,6 +14,9 @@
 package org.eclipse.unittest.launcher;
 
 import org.eclipse.unittest.internal.UnitTestPlugin;
+import org.eclipse.unittest.ui.ITestViewSupport;
+
+import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
  * Attribute keys used by the UnitTest LaunchConfiguration. Note that these
@@ -21,6 +24,10 @@ import org.eclipse.unittest.internal.UnitTestPlugin;
  */
 public class UnitTestLaunchConfigurationConstants {
 
+	/**
+	 * An identifier of a property to be set on a {@link ILaunchConfiguration} to
+	 * identify an {@link ITestViewSupport} implementation.
+	 */
 	public static final String ATTR_UNIT_TEST_VIEW_SUPPORT = UnitTestPlugin.PLUGIN_ID + ".TEST_VIEW_SUPPPORT"; //$NON-NLS-1$
 
 	private UnitTestLaunchConfigurationConstants() {

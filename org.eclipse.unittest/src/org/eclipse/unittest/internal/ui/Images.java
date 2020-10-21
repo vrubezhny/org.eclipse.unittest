@@ -25,6 +25,9 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 
+/**
+ * Image related utilities
+ */
 public class Images {
 
 	private static final IPath ICONS_PATH = new Path("$nl$/icons/full"); //$NON-NLS-1$

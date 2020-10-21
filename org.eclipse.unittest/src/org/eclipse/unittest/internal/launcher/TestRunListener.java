@@ -17,10 +17,8 @@ import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestRunSession;
 
 /**
- * A test run listener that can be registered as a contribution to the
- * <code>org.eclipse.unittest.testRunListeners</code> extension point. The
- * latter approach has the advantage that the contributing plug-in is
- * automatically loaded when a test run starts.
+ * A test run listener default implementation.
+ *
  * <p>
  * A test run starts with the call to {@link #sessionLaunched(ITestRunSession)}
  * and {@link #sessionStarted(ITestRunSession)}, followed by calls to

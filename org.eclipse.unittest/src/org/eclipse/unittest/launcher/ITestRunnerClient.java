@@ -14,15 +14,17 @@
 package org.eclipse.unittest.launcher;
 
 import org.eclipse.unittest.internal.model.TestRunSession;
+import org.eclipse.unittest.internal.ui.UITestRunListener;
 
 import org.eclipse.debug.core.ILaunch;
 
 /**
- * An interface to be implemented by a Test Runner Client. Such implementation
- * takes care of placing the right listeners got a given {@link TestRunSession}
- * (usually received in the constructor) and to react to the various test engine
- * events (can be notifications via some network, reading standard output....)
- * by sending notifications to the ITestRunListeners.
+ * An interface to be implemented by a Test Runner Client. Its implementation
+ * should takes care of placing the right listeners to a given
+ * {@link TestRunSession} (usually received in the constructor) and to react to
+ * the various test engine events (can be some notifications via some network,
+ * reading standard output, etc. depending on design of a specified test runner)
+ * by sending notifications to the {@link UITestRunListener}s.
  */
 public interface ITestRunnerClient {
 
@@ -34,7 +36,7 @@ public interface ITestRunnerClient {
 	/**
 	 * Requests to stop the tests execution. Usually requested by user; so it should
 	 * stop the test runner client (usually calling {@link #disconnect()} and also
-	 * related test specific closeable objects like an underlying {@link ILaunch}
+	 * related test specific closable objects like an underlying {@link ILaunch}
 	 * (unless launch is configured to be kept alive).
 	 */
 	void stopTest();

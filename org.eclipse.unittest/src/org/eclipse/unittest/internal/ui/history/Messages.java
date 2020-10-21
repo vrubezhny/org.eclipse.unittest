@@ -12,6 +12,9 @@ package org.eclipse.unittest.internal.ui.history;
 
 import org.eclipse.osgi.util.NLS;
 
+/**
+ * History messages
+ */
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.unittest.internal.ui.history.messages"; //$NON-NLS-1$
 	public static String HistoryDialog_date;

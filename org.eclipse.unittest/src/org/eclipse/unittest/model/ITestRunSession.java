@@ -29,10 +29,11 @@ import org.eclipse.debug.core.ILaunch;
 public interface ITestRunSession extends ITestSuiteElement {
 
 	/**
-	 * Returns the Java project from which this test run session has been launched,
-	 * or <code>null</code> if not available.
+	 * Returns the {@link ILaunch} from which this test run session has been
+	 * started, or <code>null</code> if not available.
 	 *
-	 * @return the launched project, or <code>null</code> is not available.
+	 * @return the {@link ILaunch} object instance, or <code>null</code> is not
+	 *         available.
 	 */
 	ILaunch getLaunch();
 
@@ -92,7 +93,7 @@ public interface ITestRunSession extends ITestSuiteElement {
 	 * @param cause    the cause of the abortion, can be shown in log or to user,
 	 *                 can be <code>null</code>.
 	 * @see #notifyTestSessionCompleted(Duration) notifyTestRunAborted to use for
-	 *      nomal completion.
+	 *      normal completion.
 	 */
 	void notifyTestSessionAborted(final Duration duration, final Exception cause);
 
