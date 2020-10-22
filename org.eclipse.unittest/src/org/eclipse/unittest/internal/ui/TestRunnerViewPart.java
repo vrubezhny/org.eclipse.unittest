@@ -402,11 +402,10 @@ public class TestRunnerViewPart extends ViewPart {
 			getDisplay().asyncExec(() -> {
 				if (testRunSession.equals(fTestRunSession)) {
 					List<TestRunSession> testRunSessions = UnitTestModel.getInstance().getTestRunSessions();
-					ITestRunSession deactivatedSession;
 					if (!testRunSessions.isEmpty()) {
-						deactivatedSession = setActiveTestRunSession(testRunSessions.get(0));
+						setActiveTestRunSession(testRunSessions.get(0));
 					} else {
-						deactivatedSession = setActiveTestRunSession(null);
+						setActiveTestRunSession(null);
 					}
 				}
 			});
