@@ -77,13 +77,6 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 	 */
 	private HashMap<String, TestElement> fIdToTest;
 
-	/**
-	 * The TestSuites for which additional children are expected.
-	 */
-	private final List<IncompleteTestSuite> fIncompleteTestSuites = new ArrayList<>();
-
-	private final List<IncompleteTestSuite> fFactoryTestSuites = new ArrayList<>();
-
 	volatile Instant fStartTime;
 	volatile Integer fPredefinedTestCount;
 
@@ -349,11 +342,6 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 			TestSuiteElement testSuiteElement = new TestSuiteElement(parent != null ? parent : this, id, testName,
 					testCount, displayName, data);
 			testElement = testSuiteElement;
-			if (testCount != null) {
-				fIncompleteTestSuites.add(new IncompleteTestSuite(testSuiteElement, testCount));
-			} else {
-				fFactoryTestSuites.add(new IncompleteTestSuite(testSuiteElement, testCount));
-			}
 		} else {
 			testElement = new TestCaseElement(parent != null ? parent : this, id, testName, displayName, isDynamicTest,
 					data);
@@ -392,8 +380,6 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 		 * @param testCount number of tests in this run
 		 */
 		public void testRunStarted(Integer testCount) {
-			fIncompleteTestSuites.clear();
-			fFactoryTestSuites.clear();
 			fStartTime = Instant.now();
 			fPredefinedTestCount = testCount;
 
@@ -535,18 +521,6 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 		private void logUnexpectedTest(String testId, ITestElement testElement) {
 			UnitTestPlugin
 					.log(new Exception("Unexpected TestElement type for testId '" + testId + "': " + testElement)); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
-
-	private static class IncompleteTestSuite {
-		@SuppressWarnings("unused")
-		public final TestSuiteElement fTestSuiteElement;
-		@SuppressWarnings("unused")
-		public Integer fOutstandingChildren;
-
-		public IncompleteTestSuite(TestSuiteElement testSuiteElement, Integer outstandingChildren) {
-			fTestSuiteElement = testSuiteElement;
-			fOutstandingChildren = outstandingChildren;
 		}
 	}
 
