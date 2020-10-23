@@ -67,7 +67,7 @@ import org.eclipse.compare.structuremergeviewer.DiffNode;
  * A Compare result dialog
  */
 public class CompareResultDialog extends TrayDialog {
-	private static final String PREFIX_SUFFIX_PROPERTY = "org.eclipse.unittest.ui.CompareResultDialog.prefixSuffix"; //$NON-NLS-1$
+	private static final String PREFIX_SUFFIX_PROPERTY = UnitTestPlugin.PLUGIN_ID + ".CompareResultDialog.prefixSuffix"; //$NON-NLS-1$
 
 	private static class CompareResultMergeViewer extends TextMergeViewer {
 		private CompareResultMergeViewer(Composite parent, int style, CompareConfiguration configuration) {

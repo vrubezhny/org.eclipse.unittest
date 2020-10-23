@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
-Automatic-Module-Name: org.eclipse.unittest
+Automatic-Module-Name: org.eclipse.unittest.ui
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
-Bundle-SymbolicName: org.eclipse.unittest;singleton:=true
+Bundle-SymbolicName: org.eclipse.unittest.ui;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: org.eclipse.unittest.internal.UnitTestPlugin
 Bundle-ActivationPolicy: lazy

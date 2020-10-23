@@ -34,7 +34,7 @@ public class CDTUnitTestPlugin extends Plugin {
 	 */
 	private static CDTUnitTestPlugin fgPlugin= null;
 
-	public static final String CORE_PLUGIN_ID= "org.eclipse.unittest"; //$NON-NLS-1$
+	public static final String UNITTEST_PLUGIN_ID= "org.eclipse.unittest.ui"; //$NON-NLS-1$
 
 	public static final String PLUGIN_ID= "org.eclipse.unittest.cdt"; //$NON-NLS-1$
 
@@ -100,7 +100,7 @@ public class CDTUnitTestPlugin extends Plugin {
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		try {
-			InstanceScope.INSTANCE.getNode(CDTUnitTestPlugin.CORE_PLUGIN_ID).flush();
+			InstanceScope.INSTANCE.getNode(CDTUnitTestPlugin.UNITTEST_PLUGIN_ID).flush();
 		} finally {
 			super.stop(context);
 		}
