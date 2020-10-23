@@ -43,7 +43,7 @@ public class HistoryHandler extends AbstractHandler {
 	/**
 	 * An identifier of Show History command
 	 */
-	public static final String COMMAND_ID = "org.eclipse.unittest.history"; //$NON-NLS-1$
+	public static final String COMMAND_ID = UnitTestPlugin.PLUGIN_ID + ".history"; //$NON-NLS-1$
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {

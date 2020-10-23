@@ -44,7 +44,7 @@
    </extension>
 
    <extension
-         point="org.eclipse.unittest.unittestViewSupport">
+         point="org.eclipse.unittest.ui.unittestViewSupport">
       <viewSupport
             id="org.eclipse.unittest.cdt.loader"
             class="org.eclipse.unittest.cdt.launcher.CDTTestViewSupport">

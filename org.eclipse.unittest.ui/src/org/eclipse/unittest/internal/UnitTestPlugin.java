@@ -34,7 +34,7 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 	 */
 	private static UnitTestPlugin fgPlugin = null;
 
-	public static final String PLUGIN_ID = "org.eclipse.unittest"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.eclipse.unittest.ui"; //$NON-NLS-1$
 
 	/**
 	 * Constructs a {@link UnitTestPlugin} object

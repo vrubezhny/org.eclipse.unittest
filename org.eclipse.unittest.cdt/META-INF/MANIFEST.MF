@@ -9,7 +9,7 @@ Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: 
- org.eclipse.unittest,
+ org.eclipse.unittest.ui,
  org.eclipse.cdt.testsrunner,
  org.eclipse.cdt.debug.core,
  org.eclipse.cdt.debug.ui,

@@ -9,7 +9,7 @@
          <view
                relative="org.eclipse.jdt.ui.PackageExplorer"
                visible="false"
-               id="org.eclipse.unittest.ResultView"
+               id="org.eclipse.unittest.ui.ResultView"
                relationship="stack">
          </view>
       </perspectiveExtension>
@@ -18,11 +18,11 @@
          <view
                relative="org.eclipse.debug.ui.DebugView"
                visible="false"
-               id="org.eclipse.unittest.ResultView"
+               id="org.eclipse.unittest.ui.ResultView"
                relationship="stack">
          </view>
          <viewShortcut
-               id="org.eclipse.unittest.ResultView">
+               id="org.eclipse.unittest.ui.ResultView">
          </viewShortcut>
       </perspectiveExtension>
    </extension>
@@ -38,7 +38,7 @@
       <actionSetPartAssociation
             targetID="org.eclipse.jdt.ui.JavaActionSet">
          <part
-               id="org.eclipse.unittest.ResultView">
+               id="org.eclipse.unittest.ui.ResultView">
          </part>
       </actionSetPartAssociation>
    </extension>
@@ -130,7 +130,7 @@
    </extension>
 
    <extension
-         point="org.eclipse.unittest.unittestViewSupport">
+         point="org.eclipse.unittest.ui.unittestViewSupport">
       <viewSupport
             class="org.eclipse.unittest.junit.ui.JUnitTestViewSupport"
             id="org.eclipse.unittest.junit">

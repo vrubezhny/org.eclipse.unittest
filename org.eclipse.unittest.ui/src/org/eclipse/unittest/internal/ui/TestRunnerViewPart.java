@@ -130,10 +130,11 @@ public class TestRunnerViewPart extends ViewPart {
 	/**
 	 * An identifier of Test Runner View Part
 	 */
-	public static final String NAME = "org.eclipse.unittest.ResultView"; //$NON-NLS-1$
+	public static final String NAME = UnitTestPlugin.PLUGIN_ID + ".ResultView"; //$NON-NLS-1$
 
-	private static final String RERUN_LAST_COMMAND = "org.eclipse.unittest.UnitTestShortcut.rerunLast"; //$NON-NLS-1$
-	private static final String RERUN_FAILED_CASES_COMMAND = "org.eclipse.unittest.UnitTestShortcut.rerunFailedCases"; //$NON-NLS-1$
+	private static final String RERUN_LAST_COMMAND = UnitTestPlugin.PLUGIN_ID + ".UnitTestShortcut.rerunLast"; //$NON-NLS-1$
+	private static final String RERUN_FAILED_CASES_COMMAND = UnitTestPlugin.PLUGIN_ID
+			+ ".UnitTestShortcut.rerunFailedCases"; //$NON-NLS-1$
 
 	static final int REFRESH_INTERVAL = 200;
 

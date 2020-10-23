@@ -260,12 +260,14 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 		String testName = test.getDisplayName();
 		if (testName != null) {
 			int index = testName.lastIndexOf("method:"); //$NON-NLS-1$
-			index = testName.indexOf('(', index);
-			if (index > 0) {
-				int closeIndex = testName.indexOf(')', index);
-				if (closeIndex > 0) {
-					String params = testName.substring(index + 1, closeIndex);
-					return params.split(","); //$NON-NLS-1$
+			if (index != -1) {
+				index = testName.indexOf('(', index);
+				if (index > 0) {
+					int closeIndex = testName.indexOf(')', index);
+					if (closeIndex > 0) {
+						String params = testName.substring(index + 1, closeIndex);
+						return params.split(","); //$NON-NLS-1$
+					}
 				}
 			}
 		}
@@ -305,8 +307,7 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 		if (index < 0)
 			return testNameString;
 		int end = testNameString.lastIndexOf(')');
-		testNameString = testNameString.substring(index + 1, end > index ? end : testNameString.length());
-		return testNameString;
+		return testNameString.substring(index + 1, end > index ? end : testNameString.length());
 	}
 
 	public static String getTestMethodName(ITestElement test) {

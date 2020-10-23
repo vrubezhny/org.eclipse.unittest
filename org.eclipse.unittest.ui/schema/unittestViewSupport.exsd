@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.unittest" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="org.eclipse.unittest.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.unittest" id="unittestViewSupport" name="UnitTest View Support"/>
+         <meta.schema plugin="org.eclipse.unittest.ui" id="unittestViewSupport" name="UnitTest View Support"/>
       </appInfo>
       <documentation>
          Internal extension point to register Unit Test View support.
