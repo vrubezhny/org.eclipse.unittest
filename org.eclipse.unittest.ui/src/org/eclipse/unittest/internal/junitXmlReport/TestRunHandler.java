@@ -37,6 +37,7 @@ import org.eclipse.unittest.model.ITestElement.Result;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 
 import org.eclipse.debug.core.DebugPlugin;
@@ -72,7 +73,7 @@ public class TestRunHandler extends DefaultHandler {
 	 * Constructs a default {@link TestRunHandler} object instance
 	 */
 	public TestRunHandler() {
-
+		fMonitor = new NullProgressMonitor();
 	}
 
 	/**
@@ -96,6 +97,9 @@ public class TestRunHandler extends DefaultHandler {
 
 	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+		if (fMonitor != null && fMonitor.isCanceled())
+			throw new OperationCanceledException();
+
 		if (fLocator != null && fMonitor != null) {
 			int line = fLocator.getLineNumber();
 			if (line - 20 >= fLastReportedLine) {
@@ -104,6 +108,7 @@ public class TestRunHandler extends DefaultHandler {
 				fMonitor.subTask(NLS.bind(ModelMessages.TestRunHandler_lines_read, Integer.valueOf(line)));
 			}
 		}
+
 		if (Thread.interrupted())
 			throw new OperationCanceledException();
 

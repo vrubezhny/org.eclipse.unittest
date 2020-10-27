@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import org.eclipse.unittest.internal.UnitTestPlugin;
 import org.eclipse.unittest.ui.ITestViewSupport;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -79,17 +80,18 @@ public class TestViewSupportRegistry {
 	 */
 	public List<TestViewSupportExtension> getTestViewSupportExtensions(final String filter) {
 		List<TestViewSupportExtension> all = getAllTestViewSupportExtensions();
-		return all != null ? all.stream().filter(p -> p.getId().startsWith(filter)).collect(Collectors.toList()) : null;
+		if (all == null)
+			return Collections.emptyList();
+
+		return all.stream().filter(p -> p.getId().startsWith(filter)).collect(Collectors.toList());
 	}
 
 	private void loadTestViewSupportExtensions() {
 		if (fTestViewSupportExtensions != null)
 			return;
 
-		List<TestViewSupportExtension> items = new ArrayList<>();
-		for (IConfigurationElement configurationElement : getConfigurationElements()) {
-			items.add(new TestViewSupportExtension(configurationElement));
-		}
+		List<TestViewSupportExtension> items = getConfigurationElements().stream().map(TestViewSupportExtension::new)
+				.collect(Collectors.toList());
 
 		fTestViewSupportExtensions = items;
 	}
@@ -103,8 +105,14 @@ public class TestViewSupportRegistry {
 	 *         not available
 	 */
 	public ITestViewSupport getTestViewSupportInstance(String id) {
-		return getAllTestViewSupportExtensions().stream().filter(ext -> ext.getId().equals(id)).findFirst()
-				.map(TestViewSupportExtension::instantiateTestViewSupport).orElse(null);
+		return getAllTestViewSupportExtensions().stream().filter(ext -> ext.getId().equals(id)).findFirst().map(t -> {
+			try {
+				return t.instantiateTestViewSupport();
+			} catch (CoreException e) {
+				UnitTestPlugin.log(e);
+				return null;
+			}
+		}).orElse(null);
 	}
 
 	private List<IConfigurationElement> getConfigurationElements() {

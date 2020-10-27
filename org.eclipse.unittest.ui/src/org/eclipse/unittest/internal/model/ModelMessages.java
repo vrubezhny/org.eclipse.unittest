@@ -21,6 +21,8 @@ import org.eclipse.osgi.util.NLS;
  */
 public class ModelMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.unittest.internal.model.ModelMessages"; //$NON-NLS-1$
+
+	public static String UnitTestModel_could_not_instantiate_support;
 	public static String UnitTestModel_could_not_import;
 	public static String UnitTestModel_could_not_export;
 	public static String UnitTestModel_could_not_read;

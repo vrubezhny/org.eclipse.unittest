@@ -16,7 +16,7 @@ package org.eclipse.unittest.internal.model;
 public enum ProgressState {
 	/** state that describes that the test element has not started */
 	NOT_STARTED("Not Started"), //$NON-NLS-1$
-	/** state that describes that the test element has is running */
+	/** state that describes that the test element is running */
 	RUNNING("Running"), //$NON-NLS-1$
 	/**
 	 * state that describes that the test element has been stopped before being

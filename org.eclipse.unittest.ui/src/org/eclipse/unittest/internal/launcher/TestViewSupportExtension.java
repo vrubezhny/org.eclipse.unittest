@@ -16,9 +16,13 @@
 package org.eclipse.unittest.internal.launcher;
 
 import org.eclipse.unittest.internal.UnitTestPlugin;
+import org.eclipse.unittest.internal.model.ModelMessages;
 import org.eclipse.unittest.ui.ITestViewSupport;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 /**
  * A {@link TestViewSupportExtension} implementation
@@ -64,13 +68,15 @@ public class TestViewSupportExtension {
 	 *
 	 * @return an instance of {@link ITestViewSupport} for the given extension.
 	 *         <code>null</code> if class couldn't be loaded.
+	 * @throws CoreException In case of error during the Test View Support
+	 *                       instantiation
 	 */
-	ITestViewSupport instantiateTestViewSupport() {
+	ITestViewSupport instantiateTestViewSupport() throws CoreException {
 		try {
 			return (ITestViewSupport) fElement.createExecutableExtension(CLASS);
 		} catch (Exception e) {
-			UnitTestPlugin.log(e);
-			return null;
+			throw new CoreException(new Status(IStatus.ERROR, UnitTestPlugin.PLUGIN_ID,
+					ModelMessages.UnitTestModel_could_not_instantiate_support, e));
 		}
 	}
 

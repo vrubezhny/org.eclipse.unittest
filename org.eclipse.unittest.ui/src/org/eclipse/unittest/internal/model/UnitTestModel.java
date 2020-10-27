@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,7 +16,6 @@ package org.eclipse.unittest.internal.model;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,8 +29,6 @@ import org.xml.sax.SAXException;
 import org.eclipse.unittest.internal.UnitTestPlugin;
 import org.eclipse.unittest.internal.UnitTestPreferencesConstants;
 import org.eclipse.unittest.internal.junitXmlReport.TestRunHandler;
-import org.eclipse.unittest.internal.launcher.TestListenerRegistry;
-import org.eclipse.unittest.internal.launcher.TestRunListener;
 import org.eclipse.unittest.internal.launcher.TestViewSupportRegistry;
 import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.model.ITestRunSession;
@@ -45,78 +42,18 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchListener;
-import org.eclipse.debug.core.ILaunchManager;
 
 /**
  * Central registry for Unit Test test runs.
  */
 public final class UnitTestModel {
 
-	private final class UnitTestLaunchListener implements ILaunchListener {
-
-		/**
-		 * Used to track new launches. We need to do this so that we only attach a
-		 * TestRunner once to a launch. Once a test runner is connected, it is removed
-		 * from the set.
-		 */
-		private HashSet<ILaunch> fTrackedLaunches = new HashSet<>(20);
-
-		@Override
-		public void launchAdded(ILaunch launch) {
-			ILaunchConfiguration config = launch.getLaunchConfiguration();
-			if (config == null)
-				return;
-
-			try {
-				if (!config.hasAttribute(UnitTestLaunchConfigurationConstants.ATTR_UNIT_TEST_VIEW_SUPPORT)) {
-					return;
-				}
-			} catch (CoreException e1) {
-				UnitTestPlugin.log(e1);
-				return;
-			}
-
-			ITestViewSupport testRunnerViewSupport = UnitTestModel.newTestRunnerViewSupport(config);
-			if (testRunnerViewSupport == null) {
-				return;
-			}
-
-			fTrackedLaunches.add(launch);
-		}
-
-		@Override
-		public void launchRemoved(final ILaunch launch) {
-			fTrackedLaunches.remove(launch);
-		}
-
-		@Override
-		public void launchChanged(final ILaunch launch) {
-			if (!fTrackedLaunches.contains(launch))
-				return;
-			// Load session on 1st change (usually 1st process added), although it's not
-			// much reliable. Each TestRunnerClient should take care of listening to the
-			// launch to get the right IProcess or stream or whatever else i useful
-			if (getTestRunSessions().stream().noneMatch(session -> launch.equals(session.getLaunch()))) {
-				TestRunSession testRunSession = new TestRunSession(launch);
-				addTestRunSession(testRunSession);
-				for (TestRunListener listener : TestListenerRegistry.getDefault().getUnitTestRunListeners()) {
-					listener.sessionLaunched(testRunSession);
-				}
-			}
-		}
-
-	}
-
 	private final ListenerList<ITestRunSessionListener> fTestRunSessionListeners = new ListenerList<>();
 	/**
 	 * Active test run sessions, youngest first.
 	 */
 	private final LinkedList<TestRunSession> fTestRunSessions = new LinkedList<>();
-	private final ILaunchListener fLaunchListener = new UnitTestLaunchListener();
 
 	private static UnitTestModel INSTANCE = null;
 
@@ -140,9 +77,6 @@ public final class UnitTestModel {
 	 * Starts the model (called by the {@link UnitTestPlugin} on startup).
 	 */
 	public void start() {
-		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-		launchManager.addLaunchListener(fLaunchListener);
-
 		/*
 		 * TODO: restore on restart: - only import headers! - only import last n
 		 * sessions; remove all other files in historyDirectory
@@ -177,9 +111,6 @@ public final class UnitTestModel {
 	 * Stops the model (called by the {@link UnitTestPlugin} on shutdown).
 	 */
 	public void stop() {
-		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-		launchManager.removeLaunchListener(fLaunchListener);
-
 //		for (Iterator iter= fTestRunSessions.iterator(); iter.hasNext();) {
 //			final TestRunSession session= (TestRunSession) iter.next();
 //			SafeRunner.run(new ISafeRunnable() {
@@ -220,7 +151,18 @@ public final class UnitTestModel {
 		return new ArrayList<>(fTestRunSessions);
 	}
 
-	private void addTestRunSession(TestRunSession testRunSession) {
+	/**
+	 * Adds a specified {@link TestRunSession} object into the list of processed
+	 * test run sessions.
+	 *
+	 * The list length is limited by the value of
+	 * {@link UnitTestPreferencesConstants#MAX_TEST_RUNS} preference.
+	 *
+	 * @param testRunSession a {@link TestRunSession} object to be added
+	 * @see org.eclipse.unittest.internal.UnitTestPreferencesConstants#MAX_TEST_RUNS
+	 * @see org.eclipse.unittest.internal.model.UnitTestModel#removeTestRunSession(TestRunSession)
+	 */
+	void addTestRunSession(TestRunSession testRunSession) {
 		Assert.isNotNull(testRunSession);
 		ArrayList<TestRunSession> toRemove = new ArrayList<>();
 
@@ -323,8 +265,9 @@ public final class UnitTestModel {
 	 * {@link ITestRunSessionListener}s.
 	 *
 	 * @param testRunSession the session to remove
+	 * @see org.eclipse.unittest.internal.model.UnitTestModel#addTestRunSession(TestRunSession)
 	 */
-	public void removeTestRunSession(TestRunSession testRunSession) {
+	void removeTestRunSession(TestRunSession testRunSession) {
 		boolean existed;
 		synchronized (this) {
 			existed = fTestRunSessions.remove(testRunSession);

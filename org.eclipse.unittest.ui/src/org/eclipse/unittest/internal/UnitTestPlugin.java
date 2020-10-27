@@ -15,6 +15,7 @@ package org.eclipse.unittest.internal;
 
 import org.osgi.framework.BundleContext;
 
+import org.eclipse.unittest.internal.model.UnitTestLaunchListener;
 import org.eclipse.unittest.internal.model.UnitTestModel;
 import org.eclipse.unittest.internal.ui.history.History;
 
@@ -23,6 +24,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchListener;
 
 /**
  * The plug-in runtime class for the Unit Test plug-in.
@@ -33,6 +37,8 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 	 * The single instance of this plug-in runtime class.
 	 */
 	private static UnitTestPlugin fgPlugin = null;
+
+	private final ILaunchListener fLaunchListener = new UnitTestLaunchListener();
 
 	public static final String PLUGIN_ID = "org.eclipse.unittest.ui"; //$NON-NLS-1$
 
@@ -74,14 +80,15 @@ public class UnitTestPlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		UnitTestModel.getInstance().start();
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(fLaunchListener);
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		super.stop(context);
 		try {
 			InstanceScope.INSTANCE.getNode(UnitTestPlugin.PLUGIN_ID).flush();
 			UnitTestModel.getInstance().stop();
+			DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(fLaunchListener);
 			History.INSTANCE.clear();
 		} finally {
 			super.stop(context);
