@@ -116,7 +116,7 @@ public class CDTTestViewSupport implements ITestViewSupport {
 		// Collect test path parts (in reverse order)
 		testPath.clear();
 		ITestElement element = testElement;
-		while (element != null && !(element.getParent() instanceof ITestRunSession)) {
+		while (element != null && !(element instanceof ITestRunSession)) {
 			// Exclude root test suite
 			if (element.getParent() != null) {
 				testPath.add(element.getTestName());
