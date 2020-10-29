@@ -25,13 +25,6 @@ package org.eclipse.unittest.model;
 public interface ITestCaseElement extends ITestElement {
 
 	/**
-	 * Sets ignored flag on the test case
-	 *
-	 * @param ignored an ignored flag value
-	 */
-	void setIgnored(boolean ignored);
-
-	/**
 	 * Indicates if the test case was ignored
 	 *
 	 * @return true in case of the test case was ignored, otherwise false
@@ -44,5 +37,4 @@ public interface ITestCaseElement extends ITestElement {
 	 * @return true in case of dynamic test case element, otherwise false
 	 */
 	boolean isDynamicTest();
-
 }

@@ -66,7 +66,7 @@ public class TestRunHandler extends DefaultHandler {
 
 	private Result fStatus;
 
-	private IProgressMonitor fMonitor;
+	private final IProgressMonitor fMonitor;
 	private int fLastReportedLine;
 
 	/**
@@ -82,7 +82,7 @@ public class TestRunHandler extends DefaultHandler {
 	 * @param monitor a progress monitor
 	 */
 	public TestRunHandler(IProgressMonitor monitor) {
-		fMonitor = monitor;
+		fMonitor = monitor != null ? monitor : new NullProgressMonitor();
 	}
 
 	@Override
@@ -97,10 +97,10 @@ public class TestRunHandler extends DefaultHandler {
 
 	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-		if (fMonitor != null && fMonitor.isCanceled())
+		if (fMonitor.isCanceled())
 			throw new OperationCanceledException();
 
-		if (fLocator != null && fMonitor != null) {
+		if (fLocator != null) {
 			int line = fLocator.getLineNumber();
 			if (line - 20 >= fLastReportedLine) {
 				line -= line % 20;

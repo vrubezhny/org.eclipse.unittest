@@ -16,6 +16,7 @@ package org.eclipse.unittest.internal.launcher;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.eclipse.unittest.internal.UnitTestPlugin;
@@ -26,6 +27,8 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
+
+import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
  * Test View Support registry
@@ -96,15 +99,15 @@ public class TestViewSupportRegistry {
 		fTestViewSupportExtensions = items;
 	}
 
-	/**
+	/*
 	 * Returns an {@link ITestViewSupport} object instance by its identifier
 	 *
 	 * @param id an identifier, can be <code>null</code>
 	 *
 	 * @return an {@link ITestViewSupport} object instance, or <code>null</code> if
-	 *         not available
+	 * not available
 	 */
-	public ITestViewSupport getTestViewSupportInstance(String id) {
+	private Optional<ITestViewSupport> findTestViewSupport(String id) {
 		return getAllTestViewSupportExtensions().stream().filter(ext -> ext.getId().equals(id)).findFirst().map(t -> {
 			try {
 				return t.instantiateTestViewSupport();
@@ -112,7 +115,24 @@ public class TestViewSupportRegistry {
 				UnitTestPlugin.log(e);
 				return null;
 			}
-		}).orElse(null);
+		});
+	}
+
+	/**
+	 * Returns {@link ITestViewSupport} instance from the given launch configuration
+	 *
+	 * @param launchConfiguration a launch configuration
+	 * @return a test runner view support instance if exists or <code>null</code>.
+	 */
+	public static ITestViewSupport newTestRunnerViewSupport(ILaunchConfiguration launchConfiguration) {
+		try {
+			return getDefault()
+					.findTestViewSupport(launchConfiguration.getAttribute(
+							UnitTestLaunchConfigurationConstants.ATTR_UNIT_TEST_VIEW_SUPPORT, (String) null))
+					.orElse(null);
+		} catch (CoreException e) {
+			return null;
+		}
 	}
 
 	private List<IConfigurationElement> getConfigurationElements() {

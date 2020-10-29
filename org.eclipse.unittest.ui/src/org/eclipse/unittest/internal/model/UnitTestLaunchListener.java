@@ -18,6 +18,7 @@ import java.util.HashSet;
 import org.eclipse.unittest.internal.UnitTestPlugin;
 import org.eclipse.unittest.internal.launcher.TestListenerRegistry;
 import org.eclipse.unittest.internal.launcher.TestRunListener;
+import org.eclipse.unittest.internal.launcher.TestViewSupportRegistry;
 import org.eclipse.unittest.internal.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.ui.ITestViewSupport;
 
@@ -55,7 +56,7 @@ public class UnitTestLaunchListener implements ILaunchListener {
 			return;
 		}
 
-		ITestViewSupport testRunnerViewSupport = UnitTestModel.newTestRunnerViewSupport(config);
+		ITestViewSupport testRunnerViewSupport = TestViewSupportRegistry.newTestRunnerViewSupport(config);
 		if (testRunnerViewSupport == null)
 			return;
 
