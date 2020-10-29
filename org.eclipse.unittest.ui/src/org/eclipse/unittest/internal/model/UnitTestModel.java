@@ -29,10 +29,7 @@ import org.xml.sax.SAXException;
 import org.eclipse.unittest.internal.UnitTestPlugin;
 import org.eclipse.unittest.internal.UnitTestPreferencesConstants;
 import org.eclipse.unittest.internal.junitXmlReport.TestRunHandler;
-import org.eclipse.unittest.internal.launcher.TestViewSupportRegistry;
-import org.eclipse.unittest.internal.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.model.ITestRunSession;
-import org.eclipse.unittest.ui.ITestViewSupport;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -41,8 +38,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
-
-import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
  * Central registry for Unit Test test runs.
@@ -289,19 +284,4 @@ public final class UnitTestModel {
 		}
 	}
 
-	/**
-	 * Returns {@link ITestViewSupport} instance from the given launch configuration
-	 *
-	 * @param launchConfiguration a launch configuration
-	 * @return a test runner view support instance if exists or <code>null</code>.
-	 */
-	public static ITestViewSupport newTestRunnerViewSupport(ILaunchConfiguration launchConfiguration) {
-		try {
-			return TestViewSupportRegistry.getDefault().getTestViewSupportInstance(launchConfiguration
-					.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_UNIT_TEST_VIEW_SUPPORT, (String) null));
-		} catch (CoreException e) {
-			// Ignore
-		}
-		return null;
-	}
 }

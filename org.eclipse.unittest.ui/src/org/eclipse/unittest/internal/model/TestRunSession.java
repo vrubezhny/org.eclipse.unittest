@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.unittest.internal.UnitTestPlugin;
+import org.eclipse.unittest.internal.launcher.TestViewSupportRegistry;
 import org.eclipse.unittest.launcher.ITestRunnerClient;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
@@ -96,7 +97,7 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 		// TODO: check assumptions about non-null fields
 
 		fLaunch = new NoopLaunch(launchConfiguration, ILaunchManager.RUN_MODE, null);
-		fTestRunnerSupport = UnitTestModel.newTestRunnerViewSupport(launchConfiguration);
+		fTestRunnerSupport = TestViewSupportRegistry.newTestRunnerViewSupport(launchConfiguration);
 
 		Assert.isNotNull(testRunName);
 		fTestRunName = testRunName;
@@ -123,7 +124,7 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 		ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
 		if (launchConfiguration != null) {
 			fTestRunName = launchConfiguration.getName();
-			fTestRunnerSupport = UnitTestModel.newTestRunnerViewSupport(launchConfiguration);
+			fTestRunnerSupport = TestViewSupportRegistry.newTestRunnerViewSupport(launchConfiguration);
 		} else {
 			fTestRunName = "<TestRunSession>"; //$NON-NLS-1$
 			fTestRunnerSupport = null;

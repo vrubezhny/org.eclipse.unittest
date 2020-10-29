@@ -48,7 +48,6 @@ public class TestCaseElement extends TestElement implements ITestCaseElement {
 		return isIgnored() ? Result.IGNORED : super.getTestResult(includeChildren);
 	}
 
-	@Override
 	public void setIgnored(boolean ignored) {
 		fIgnored = ignored;
 	}
