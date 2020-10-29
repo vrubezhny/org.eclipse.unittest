@@ -30,7 +30,7 @@ import org.eclipse.unittest.internal.UnitTestPlugin;
 import org.eclipse.unittest.internal.UnitTestPreferencesConstants;
 import org.eclipse.unittest.internal.junitXmlReport.TestRunHandler;
 import org.eclipse.unittest.internal.launcher.TestViewSupportRegistry;
-import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
+import org.eclipse.unittest.internal.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.ui.ITestViewSupport;
 

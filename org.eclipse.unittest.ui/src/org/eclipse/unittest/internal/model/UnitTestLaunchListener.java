@@ -18,7 +18,7 @@ import java.util.HashSet;
 import org.eclipse.unittest.internal.UnitTestPlugin;
 import org.eclipse.unittest.internal.launcher.TestListenerRegistry;
 import org.eclipse.unittest.internal.launcher.TestRunListener;
-import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
+import org.eclipse.unittest.internal.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.ui.ITestViewSupport;
 
 import org.eclipse.core.runtime.CoreException;
@@ -48,18 +48,16 @@ public class UnitTestLaunchListener implements ILaunchListener {
 			return;
 
 		try {
-			if (!config.hasAttribute(UnitTestLaunchConfigurationConstants.ATTR_UNIT_TEST_VIEW_SUPPORT)) {
+			if (!config.hasAttribute(UnitTestLaunchConfigurationConstants.ATTR_UNIT_TEST_VIEW_SUPPORT))
 				return;
-			}
 		} catch (CoreException e1) {
 			UnitTestPlugin.log(e1);
 			return;
 		}
 
 		ITestViewSupport testRunnerViewSupport = UnitTestModel.newTestRunnerViewSupport(config);
-		if (testRunnerViewSupport == null) {
+		if (testRunnerViewSupport == null)
 			return;
-		}
 
 		fTrackedLaunches.add(launch);
 	}

@@ -16,6 +16,7 @@ package org.eclipse.unittest.ui;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.unittest.internal.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.launcher.ITestRunnerClient;
 import org.eclipse.unittest.model.ITestCaseElement;
 import org.eclipse.unittest.model.ITestElement;
@@ -29,6 +30,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IViewPart;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
 
 /**
@@ -36,7 +38,6 @@ import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
  * org.org.eclipse.unittest.unittestViewSupport extension.
  */
 public interface ITestViewSupport {
-
 	/**
 	 * Activates UnitTestBundle. Eclipse uses lazy bundle loading by default, which
 	 * means a bundle will not be loaded in many cases until some of its class is
@@ -52,6 +53,20 @@ public interface ITestViewSupport {
 	 */
 	static void activateBundle() {
 		// Nothing more to do
+	}
+
+	/**
+	 * Configures a Launch configuration Working Copy with an identifier of Test
+	 * View Support extension
+	 *
+	 * @param configuration              a launch configuration working copy
+	 * @param testViewSupportExtensionId a Test View Support extension identifier
+	 */
+	static void configure(ILaunchConfigurationWorkingCopy configuration, String testViewSupportExtensionId) {
+		if (configuration != null && testViewSupportExtensionId != null) {
+			configuration.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_UNIT_TEST_VIEW_SUPPORT,
+					testViewSupportExtensionId);
+		}
 	}
 
 	/**
