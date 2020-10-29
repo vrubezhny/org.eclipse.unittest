@@ -27,7 +27,6 @@ import org.eclipse.cdt.testsrunner.internal.ui.view.TestPathUtils;
 import org.eclipse.cdt.testsrunner.launcher.ITestsRunnerProvider;
 import org.eclipse.cdt.testsrunner.model.TestingException;
 import org.eclipse.unittest.cdt.internal.launcher.LauncherMessages;
-import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
 import org.eclipse.unittest.ui.ITestViewSupport;
 
 import org.eclipse.core.runtime.CoreException;
@@ -146,7 +145,7 @@ public abstract class BaseTestsLaunchDelegate extends LaunchConfigurationDelegat
 	private void updatedLaunchConfiguration(ILaunchConfiguration config) throws CoreException {
 		changesToLaunchConfiguration.clear();
 		ILaunchConfigurationWorkingCopy configWC = config.getWorkingCopy();
-		configWC.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_UNIT_TEST_VIEW_SUPPORT, getUnitTestViewSupportID());
+		ITestViewSupport.configure(configWC, getUnitTestViewSupportID());
 		setProgramArguments(configWC);
 		configWC.doSave();
 	}

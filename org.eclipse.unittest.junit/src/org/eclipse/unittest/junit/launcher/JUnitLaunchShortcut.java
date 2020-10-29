@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 import org.eclipse.unittest.junit.JUnitTestPlugin;
 import org.eclipse.unittest.junit.launcher.util.ExceptionHandler;
 import org.eclipse.unittest.junit.launcher.util.JUnitStubUtility;
-import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
+import org.eclipse.unittest.ui.ITestViewSupport;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -399,10 +399,9 @@ public class JUnitLaunchShortcut implements ILaunchShortcut2 {
 
 		wc.setAttribute(JUnitLaunchConfigurationConstants.ATTR_KEEPRUNNING, false);
 		wc.setAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_CONTAINER, containerHandleId);
-		wc.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_UNIT_TEST_VIEW_SUPPORT,
-				JUnitTestPlugin.UNIT_TEST_VIEW_SUPPORT_ID);
 		wc.setAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_RUNNER_KIND,
 				JUnitTestPlugin.getJUnitVersion(element).getJUnitTestKind().getId());
+		ITestViewSupport.configure(wc, JUnitTestPlugin.UNIT_TEST_VIEW_SUPPORT_ID);
 		JUnitMigrationDelegate.mapResources(wc);
 		AssertionVMArg.setArgDefault(wc);
 		if (testName != null) {
@@ -469,8 +468,7 @@ public class JUnitLaunchShortcut implements ILaunchShortcut2 {
 		return new String[] { IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, //
 				JUnitLaunchConfigurationConstants.ATTR_TEST_CONTAINER, //
 				IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, //
-				JUnitLaunchConfigurationConstants.ATTR_TEST_NAME, //
-				UnitTestLaunchConfigurationConstants.ATTR_UNIT_TEST_VIEW_SUPPORT };
+				JUnitLaunchConfigurationConstants.ATTR_TEST_NAME };
 	}
 
 	private static boolean hasSameAttributes(ILaunchConfiguration config1, ILaunchConfiguration config2,

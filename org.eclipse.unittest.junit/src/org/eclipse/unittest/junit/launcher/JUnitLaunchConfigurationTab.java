@@ -29,7 +29,7 @@ import org.eclipse.unittest.junit.launcher.util.JUnitStubUtility;
 import org.eclipse.unittest.junit.launcher.util.LayoutUtil;
 import org.eclipse.unittest.junit.ui.BasicElementLabels;
 import org.eclipse.unittest.junit.ui.JUnitMessages;
-import org.eclipse.unittest.launcher.UnitTestLaunchConfigurationConstants;
+import org.eclipse.unittest.ui.ITestViewSupport;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -559,8 +559,7 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 			config.setAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_CONTAINER, ""); //$NON-NLS-1$
 			config.setAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_NAME, fTestMethodText.getText());
 		}
-		config.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_UNIT_TEST_VIEW_SUPPORT,
-				JUnitTestPlugin.UNIT_TEST_VIEW_SUPPORT_ID);
+		ITestViewSupport.configure(config, JUnitTestPlugin.UNIT_TEST_VIEW_SUPPORT_ID);
 		config.setAttribute(JUnitLaunchConfigurationConstants.ATTR_KEEPRUNNING, fKeepRunning.getSelection());
 		try {
 			mapResources(config);
@@ -1141,8 +1140,7 @@ public class JUnitLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 		} catch (InterruptedException | InvocationTargetException ie) {
 		}
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, name);
-		if (testKindId != null)
-			config.setAttribute(UnitTestLaunchConfigurationConstants.ATTR_UNIT_TEST_VIEW_SUPPORT, testKindId);
+		ITestViewSupport.configure(config, testKindId);
 		initializeName(config, name);
 		boolean isRunWithJUnitPlatform = JUnitTestPlugin.isRunWithJUnitPlatform(javaElement);
 		if (isRunWithJUnitPlatform) {
