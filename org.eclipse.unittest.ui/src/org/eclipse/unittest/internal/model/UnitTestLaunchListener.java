@@ -56,7 +56,7 @@ public class UnitTestLaunchListener implements ILaunchListener {
 			return;
 		}
 
-		ITestViewSupport testRunnerViewSupport = TestViewSupportRegistry.newTestRunnerViewSupport(config);
+		ITestViewSupport testRunnerViewSupport = TestViewSupportRegistry.newTestRunnerViewSupport(config).orElse(null);
 		if (testRunnerViewSupport == null)
 			return;
 

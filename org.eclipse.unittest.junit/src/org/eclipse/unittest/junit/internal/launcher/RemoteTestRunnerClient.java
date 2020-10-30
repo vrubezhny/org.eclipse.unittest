@@ -106,7 +106,7 @@ public abstract class RemoteTestRunnerClient implements ITestRunnerClient {
 	}
 
 	@Override
-	public void start() {
+	public void startMonitoring() {
 		ServerConnection connection = new ServerConnection(fPort);
 		connection.start();
 	}
@@ -185,7 +185,7 @@ public abstract class RemoteTestRunnerClient implements ITestRunnerClient {
 	protected Socket fSocket;
 
 	@Override
-	public synchronized void disconnect() {
+	public synchronized void stopMonitoring() {
 		if (fServerSocket != null && !fServerSocket.isClosed() && fSocket == null) {
 			shutDown(); // will throw a SocketException in Threads that wait in ServerSocket#accept()
 		}

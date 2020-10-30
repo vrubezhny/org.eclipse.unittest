@@ -97,7 +97,7 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 		// TODO: check assumptions about non-null fields
 
 		fLaunch = new NoopLaunch(launchConfiguration, ILaunchManager.RUN_MODE, null);
-		fTestRunnerSupport = TestViewSupportRegistry.newTestRunnerViewSupport(launchConfiguration);
+		fTestRunnerSupport = TestViewSupportRegistry.newTestRunnerViewSupport(launchConfiguration).orElse(null);
 
 		Assert.isNotNull(testRunName);
 		fTestRunName = testRunName;
@@ -124,7 +124,7 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 		ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
 		if (launchConfiguration != null) {
 			fTestRunName = launchConfiguration.getName();
-			fTestRunnerSupport = TestViewSupportRegistry.newTestRunnerViewSupport(launchConfiguration);
+			fTestRunnerSupport = TestViewSupportRegistry.newTestRunnerViewSupport(launchConfiguration).orElse(null);
 		} else {
 			fTestRunName = "<TestRunSession>"; //$NON-NLS-1$
 			fTestRunnerSupport = null;
@@ -165,7 +165,7 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 		fSessionListeners = new ListenerList<>();
 		setStatus(Status.RUNNING);
 		addTestSessionListener(new TestRunListenerAdapter(this));
-		fTestRunnerClient.start();
+		fTestRunnerClient.startMonitoring();
 	}
 
 	/**
@@ -298,7 +298,7 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 		fIsAborted = true;
 		if (fTestRunnerClient != null) {
 			fTestRunnerClient.stopTest();
-			fTestRunnerClient.disconnect();
+			fTestRunnerClient.stopMonitoring();
 		}
 	}
 
@@ -635,7 +635,7 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 		if (reportDuration != null) {
 			setDuration(reportDuration);
 		}
-		fTestRunnerClient.disconnect();
+		fTestRunnerClient.stopMonitoring();
 		this.completedOrAborted = true;
 		SafeRunner.run(new ListenerSafeRunnable() {
 			@Override
@@ -653,7 +653,7 @@ public class TestRunSession extends TestSuiteElement implements ITestRunSession,
 		if (reportDuration != null) {
 			setDuration(reportDuration);
 		}
-		fTestRunnerClient.disconnect();
+		fTestRunnerClient.stopMonitoring();
 		this.completedOrAborted = true;
 		SafeRunner.run(new ListenerSafeRunnable() {
 			@Override
