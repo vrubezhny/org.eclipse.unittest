@@ -27,13 +27,13 @@ import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.unittest.ui.ITestViewSupport;
 
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.text.StringMatcher;
 
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.jface.action.IAction;
-
-import org.eclipse.ui.IViewPart;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -52,17 +52,17 @@ public class CDTTestViewSupport implements ITestViewSupport {
 	}
 
 	@Override
-	public IAction getOpenTestAction(IViewPart testRunnerPart, ITestCaseElement testCase) {
-		return new OpenTestAction(testRunnerPart, testCase.getParent(), testCase);
+	public IAction getOpenTestAction(Shell shell, ITestCaseElement testCase) {
+		return new OpenTestAction(shell, testCase.getParent(), testCase);
 	}
 
 	@Override
-	public IAction getOpenTestAction(IViewPart testRunnerPart, ITestSuiteElement testSuite) {
-		return new OpenTestAction(testRunnerPart, testSuite);
+	public IAction getOpenTestAction(Shell shell, ITestSuiteElement testSuite) {
+		return new OpenTestAction(shell, testSuite);
 	}
 
 	@Override
-	public IAction createOpenEditorAction(IViewPart testRunnerPart, ITestElement failure, String traceLine) {
+	public IAction createOpenEditorAction(Shell shell, ITestElement failure, String traceLine) {
 		try {
 			String testName= traceLine;
 			int indexOfFramePrefix= testName.indexOf(FRAME_PREFIX);
@@ -75,7 +75,7 @@ public class CDTTestViewSupport implements ITestViewSupport {
 			String lineNumber= traceLine;
 			lineNumber= lineNumber.substring(lineNumber.indexOf(':') + 1);
 			int line= Integer.parseInt(lineNumber);
-			return new OpenEditorAtLineAction(testRunnerPart, testName, failure.getTestRunSession(), line);
+			return new OpenEditorAtLineAction(shell, testName, failure.getTestRunSession(), line);
 		} catch(NumberFormatException | IndexOutOfBoundsException e) {
 			CDTUnitTestPlugin.log(e);
 		}

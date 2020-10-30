@@ -142,8 +142,8 @@ public class FailureTraceUIBlock implements IMenuListener {
 	}
 
 	private IAction createOpenEditorAction(String traceLine) {
-		return fFailure.getTestRunSession().getTestViewSupport().createOpenEditorAction(fTestRunner, fFailure,
-				traceLine);
+		return fFailure.getTestRunSession().getTestViewSupport()
+				.createOpenEditorAction(fTestRunner.getSite().getShell(), fFailure, traceLine);
 	}
 
 	/**

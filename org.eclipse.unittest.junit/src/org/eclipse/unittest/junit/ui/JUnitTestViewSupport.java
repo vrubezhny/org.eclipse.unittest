@@ -28,6 +28,7 @@ import org.eclipse.unittest.model.ITestSuiteElement;
 import org.eclipse.unittest.ui.ITestViewSupport;
 
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.text.StringMatcher;
 
@@ -36,8 +37,6 @@ import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
-
-import org.eclipse.ui.IViewPart;
 
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -70,34 +69,34 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 	}
 
 	@Override
-	public IAction getOpenTestAction(IViewPart testRunnerPart, ITestCaseElement testCase) {
-		return new OpenTestAction(testRunnerPart, testCase, getParameterTypes(testCase));
+	public IAction getOpenTestAction(Shell shell, ITestCaseElement testCase) {
+		return new OpenTestAction(shell, testCase, getParameterTypes(testCase));
 	}
 
 	@Override
-	public IAction getOpenTestAction(IViewPart testRunnerPart, ITestSuiteElement testSuite) {
+	public IAction getOpenTestAction(Shell shell, ITestSuiteElement testSuite) {
 		String testName = testSuite.getTestName();
 		List<? extends ITestElement> children = testSuite.getChildren();
 		if (testName.startsWith("[") && testName.endsWith("]") && !children.isEmpty() //$NON-NLS-1$ //$NON-NLS-2$
 				&& children.get(0) instanceof ITestCaseElement) {
 			// a group of parameterized tests
-			return new OpenTestAction(testRunnerPart, (ITestCaseElement) children.get(0), null);
+			return new OpenTestAction(shell, (ITestCaseElement) children.get(0), null);
 		}
 
 		int index = testName.indexOf('(');
 		// test factory method
 		if (index > 0) {
-			return new OpenTestAction(testRunnerPart, testSuite.getTestName(), testName.substring(0, index),
+			return new OpenTestAction(shell, testSuite.getTestName(), testName.substring(0, index),
 					getParameterTypes(testSuite), true, testSuite.getTestRunSession());
 		}
 
 		// regular test class
-		return new OpenTestAction(testRunnerPart, testName, testSuite.getTestRunSession());
+		return new OpenTestAction(shell, testName, testSuite.getTestRunSession());
 
 	}
 
 	@Override
-	public IAction createOpenEditorAction(IViewPart testRunnerPart, ITestElement failure, String traceLine) {
+	public IAction createOpenEditorAction(Shell shell, ITestElement failure, String traceLine) {
 		try {
 			String testName = traceLine;
 			int indexOfFramePrefix = testName.indexOf(FRAME_LINE_PREFIX);
@@ -118,7 +117,7 @@ public class JUnitTestViewSupport implements ITestViewSupport {
 			String lineNumber = traceLine;
 			lineNumber = lineNumber.substring(lineNumber.indexOf(':') + 1, lineNumber.lastIndexOf(')'));
 			int line = Integer.parseInt(lineNumber);
-			return new OpenEditorAtLineAction(testRunnerPart, testName, line, failure.getTestRunSession());
+			return new OpenEditorAtLineAction(shell, testName, line, failure.getTestRunSession());
 		} catch (NumberFormatException | IndexOutOfBoundsException e) {
 			JUnitTestPlugin.log(e);
 		}
