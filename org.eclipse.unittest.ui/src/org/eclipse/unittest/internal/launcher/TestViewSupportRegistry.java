@@ -100,12 +100,12 @@ public class TestViewSupportRegistry {
 	}
 
 	/*
-	 * Returns an {@link ITestViewSupport} object instance by its identifier
+	 * Returns an {@link Optional <ITestViewSupport>} object instance by its
+	 * identifier
 	 *
 	 * @param id an identifier, can be <code>null</code>
 	 *
-	 * @return an {@link ITestViewSupport} object instance, or <code>null</code> if
-	 * not available
+	 * @return an {@link Optional <ITestViewSupport>} object instance
 	 */
 	private Optional<ITestViewSupport> findTestViewSupport(String id) {
 		return getAllTestViewSupportExtensions().stream().filter(ext -> ext.getId().equals(id)).findFirst().map(t -> {
@@ -122,16 +122,15 @@ public class TestViewSupportRegistry {
 	 * Returns {@link ITestViewSupport} instance from the given launch configuration
 	 *
 	 * @param launchConfiguration a launch configuration
-	 * @return a test runner view support instance if exists or <code>null</code>.
+	 * @return an {@link Optional <ITestViewSupport>} object instance
 	 */
-	public static ITestViewSupport newTestRunnerViewSupport(ILaunchConfiguration launchConfiguration) {
+	public static Optional<ITestViewSupport> newTestRunnerViewSupport(ILaunchConfiguration launchConfiguration) {
 		try {
-			return getDefault()
-					.findTestViewSupport(launchConfiguration.getAttribute(
-							UnitTestLaunchConfigurationConstants.ATTR_UNIT_TEST_VIEW_SUPPORT, (String) null))
-					.orElse(null);
+			return getDefault().findTestViewSupport(launchConfiguration
+					.getAttribute(UnitTestLaunchConfigurationConstants.ATTR_UNIT_TEST_VIEW_SUPPORT, (String) null));
 		} catch (CoreException e) {
-			return null;
+			UnitTestPlugin.log(e);
+			return Optional.empty();
 		}
 	}
 

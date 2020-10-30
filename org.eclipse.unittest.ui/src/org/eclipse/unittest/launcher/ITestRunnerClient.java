@@ -29,22 +29,24 @@ import org.eclipse.debug.core.ILaunch;
 public interface ITestRunnerClient {
 
 	/**
-	 * Start monitoring test execution
+	 * Starts monitoring test execution.
+	 *
+	 * @see #stopMonitoring()
 	 */
-	void start();
+	void startMonitoring();
 
 	/**
 	 * Requests to stop the tests execution. Usually requested by user; so it should
-	 * stop the test runner client (usually calling {@link #disconnect()} and also
-	 * related test specific closable objects like an underlying {@link ILaunch}
-	 * (unless launch is configured to be kept alive).
+	 * stop the test runner client (usually calling {@link #stopMonitoring()} and
+	 * also related test specific closable objects like an underlying
+	 * {@link ILaunch} (unless launch is configured to be kept alive).
 	 */
 	void stopTest();
 
 	/**
-	 * Disconnects this test runner client; this is typically happening when a test
-	 * run session is marked as terminated.
+	 * Stops monitoring and disconnects this test runner client; this is typically
+	 * happening when a test run session is marked as terminated.
 	 */
-	void disconnect();
+	void stopMonitoring();
 
 }

@@ -256,7 +256,7 @@ public class CDTTestRunnerClient implements ITestRunnerClient {
 	}
 
 	@Override
-	public void start() {
+	public void startMonitoring() {
 		ILaunch launch = this.fTestRunSession.getLaunch();
 		fFindProcessListener= new ILaunchListener() {
 			@Override
@@ -364,7 +364,7 @@ public class CDTTestRunnerClient implements ITestRunnerClient {
 
 	@Override
 	public void stopTest() {
-		disconnect();
+		stopMonitoring();
 	}
 
 	ITestItem convertFromTestElement(final ITestElement element) {
@@ -392,7 +392,7 @@ public class CDTTestRunnerClient implements ITestRunnerClient {
 	}
 
 	@Override
-	public void disconnect() {
+	public void stopMonitoring() {
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(fFindProcessListener);
 	}
 
