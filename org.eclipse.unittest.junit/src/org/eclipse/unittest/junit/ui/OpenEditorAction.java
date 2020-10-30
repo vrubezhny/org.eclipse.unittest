@@ -31,7 +31,6 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -55,20 +54,20 @@ import org.eclipse.jdt.ui.JavaUI;
  * Abstract Action for opening a Java editor.
  */
 public abstract class OpenEditorAction extends Action {
-	protected final IViewPart fTestRunner;
+	protected final Shell shell;
 	protected final ITestRunSession testSession;
 	protected String fClassName;
 	private final boolean fActivate;
 
-	protected OpenEditorAction(IViewPart testRunner, String testClassName, ITestRunSession session) {
-		this(testRunner, testClassName, true, session);
+	protected OpenEditorAction(Shell shell, String testClassName, ITestRunSession session) {
+		this(shell, testClassName, true, session);
 	}
 
-	public OpenEditorAction(IViewPart testRunner, String className, boolean activate, ITestRunSession session) {
+	public OpenEditorAction(Shell shell, String className, boolean activate, ITestRunSession session) {
 		super(JUnitMessages.OpenEditorAction_action_label);
-		fClassName = className;
-		fTestRunner = testRunner;
-		fActivate = activate;
+		this.fClassName = className;
+		this.shell = shell;
+		this.fActivate = activate;
 		this.testSession = session;
 	}
 
@@ -99,7 +98,7 @@ public abstract class OpenEditorAction extends Action {
 	}
 
 	protected Shell getShell() {
-		return fTestRunner.getSite().getShell();
+		return shell;
 	}
 
 	protected String getClassName() {

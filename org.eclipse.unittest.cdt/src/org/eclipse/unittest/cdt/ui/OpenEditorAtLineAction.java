@@ -20,6 +20,8 @@ import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.unittest.cdt.CDTUnitTestPlugin;
 import org.eclipse.unittest.model.ITestRunSession;
 
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.filesystem.URIUtil;
 
 import org.eclipse.core.runtime.CoreException;
@@ -37,7 +39,6 @@ import org.eclipse.jface.text.IRegion;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -63,14 +64,14 @@ import org.eclipse.debug.ui.sourcelookup.ISourceLookupResult;
  * Opens the editor in place where the currently selected message is pointed to.
  */
 public class OpenEditorAtLineAction extends Action {
-	private IViewPart testRunner;
+	private Shell shell;
 	private String fileName;
 	private int line;
 	private ITestRunSession fTestRunSession;
 
-	public OpenEditorAtLineAction(IViewPart testRunner, String fileName, ITestRunSession testRunSession, int line) {
+	public OpenEditorAtLineAction(Shell shell, String fileName, ITestRunSession testRunSession, int line) {
 		super(ActionsMessages.OpenInEditorAction_text);
-		this.testRunner = testRunner;
+		this.shell = shell;
 		this.fileName = fileName;
 		this.fTestRunSession= testRunSession;
 		this.line = line;

@@ -308,7 +308,7 @@ class TestViewer {
 			if (testElement instanceof TestSuiteElement) {
 				TestSuiteElement testSuiteElement = (TestSuiteElement) testElement;
 				IAction openTestAction = testSuiteElement.getTestRunSession().getTestViewSupport()
-						.getOpenTestAction(fTestRunnerPart, testSuiteElement);
+						.getOpenTestAction(fTestRunnerPart.getSite().getShell(), testSuiteElement);
 				if (openTestAction != null) {
 					manager.add(openTestAction);
 				}
@@ -319,7 +319,7 @@ class TestViewer {
 			} else {
 				TestCaseElement testCaseElement = (TestCaseElement) testElement;
 				IAction openTestAction = testElement.getTestRunSession().getTestViewSupport()
-						.getOpenTestAction(fTestRunnerPart, testCaseElement);
+						.getOpenTestAction(fTestRunnerPart.getSite().getShell(), testCaseElement);
 				if (openTestAction != null) {
 					manager.add(openTestAction);
 				}
@@ -392,11 +392,11 @@ class TestViewer {
 		TestElement testElement = (TestElement) selection.getFirstElement();
 		IAction action;
 		if (testElement instanceof ITestSuiteElement) {
-			action = testElement.getTestRunSession().getTestViewSupport().getOpenTestAction(fTestRunnerPart,
-					(ITestSuiteElement) testElement);
+			action = testElement.getTestRunSession().getTestViewSupport()
+					.getOpenTestAction(fTestRunnerPart.getSite().getShell(), (ITestSuiteElement) testElement);
 		} else if (testElement instanceof ITestCaseElement) {
-			action = testElement.getTestRunSession().getTestViewSupport().getOpenTestAction(fTestRunnerPart,
-					(ITestCaseElement) testElement);
+			action = testElement.getTestRunSession().getTestViewSupport()
+					.getOpenTestAction(fTestRunnerPart.getSite().getShell(), (ITestCaseElement) testElement);
 		} else {
 			throw new IllegalStateException(String.valueOf(testElement));
 		}

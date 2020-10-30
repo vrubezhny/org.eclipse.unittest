@@ -22,11 +22,11 @@ import org.eclipse.unittest.model.ITestElement;
 import org.eclipse.unittest.model.ITestRunSession;
 import org.eclipse.unittest.model.ITestSuiteElement;
 
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.text.StringMatcher;
 
 import org.eclipse.jface.action.IAction;
-
-import org.eclipse.ui.IViewPart;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
 
@@ -56,31 +56,31 @@ public interface ITestViewSupport {
 	/**
 	 * Returns an action to open a specified test elements
 	 *
-	 * @param testRunnerPart a test runner view part instance
-	 * @param testCase       a test case element
+	 * @param shell    a parent {@link Shell} instance
+	 * @param testCase a test case element
 	 * @return an action to open a specified test case element, or <code>null</code>
 	 */
-	IAction getOpenTestAction(IViewPart testRunnerPart, ITestCaseElement testCase);
+	IAction getOpenTestAction(Shell shell, ITestCaseElement testCase);
 
 	/**
 	 * Returns an action to open a specified test suite element
 	 *
-	 * @param testRunnerPart a test runner view part instance
-	 * @param testSuite      a test suite element
+	 * @param shell     a parent {@link Shell} instance
+	 * @param testSuite a test suite element
 	 * @return an action to open a specified test suite element, or
 	 *         <code>null</code>
 	 */
-	IAction getOpenTestAction(IViewPart testRunnerPart, ITestSuiteElement testSuite);
+	IAction getOpenTestAction(Shell shell, ITestSuiteElement testSuite);
 
 	/**
 	 * Returns an action to open a failure trace element
 	 *
-	 * @param testRunnerPart a test runner view part instance
-	 * @param failure        a test element that is failed
-	 * @param traceLine      a stack trace or an error message text
+	 * @param shell     a parent {@link Shell} instance
+	 * @param failure   a test element that is failed
+	 * @param traceLine a stack trace or an error message text
 	 * @return an action to open a failure trace element, or <code>null</null>
 	 */
-	IAction createOpenEditorAction(IViewPart testRunnerPart, ITestElement failure, String traceLine);
+	IAction createOpenEditorAction(Shell shell, ITestElement failure, String traceLine);
 
 	/**
 	 * Returns an action to copy an existing stack trace/error message into a
