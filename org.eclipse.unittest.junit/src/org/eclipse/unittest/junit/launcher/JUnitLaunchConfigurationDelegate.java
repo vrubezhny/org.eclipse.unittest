@@ -39,7 +39,6 @@ import org.osgi.framework.Constants;
 import org.eclipse.unittest.junit.JUnitMessages;
 import org.eclipse.unittest.junit.JUnitTestPlugin;
 import org.eclipse.unittest.junit.JUnitTestPlugin.JUnitVersion;
-import org.eclipse.unittest.ui.ITestViewSupport;
 
 import org.eclipse.core.variables.VariablesPlugin;
 
@@ -109,7 +108,7 @@ public class JUnitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 
 	@Override
 	public ILaunch getLaunch(ILaunchConfiguration configuration, String mode) throws CoreException {
-		ITestViewSupport.activateBundle();
+		JUnitTestPlugin.activateUnitTestCoreBundle();
 		return super.getLaunch(configuration, mode);
 	}
 

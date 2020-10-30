@@ -25,6 +25,7 @@ import org.osgi.service.packageadmin.PackageAdmin;
 
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -273,6 +274,23 @@ public class JUnitTestPlugin extends AbstractUIPlugin {
 		if (activeWorkbenchWindow == null)
 			return null;
 		return activeWorkbenchWindow.getActivePage();
+	}
+
+	/**
+	 * Activates UnitTestBundle. Eclipse uses lazy bundle loading by default, which
+	 * means a bundle will not be loaded in many cases until some of its class is
+	 * used. This method allows the clients to instantiate the Unit Test bundle in
+	 * order to make it setup its launch listeners that are used to create and
+	 * activate Unit Test View. The Unit Test client bundles must call this method
+	 * before a Unit Test launch is created (preferably right before creation of the
+	 * launch in order to not make Eclipse to load the Unit Test bundle when it is
+	 * not really required), To load the Unit Test bundle the clients, for example,
+	 * might call this method inside their
+	 * 'ILaunchConfigurationDelegate2.getLaunch(ILaunchConfiguration, String)'
+	 * method of their launch configuration implementation.
+	 */
+	public static void activateUnitTestCoreBundle() {
+		Assert.isNotNull(Platform.getBundle("org.eclipse.unittest.ui")); //$NON-NLS-1$
 	}
 
 }

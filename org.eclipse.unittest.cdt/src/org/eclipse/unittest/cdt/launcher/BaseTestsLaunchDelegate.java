@@ -26,8 +26,9 @@ import org.eclipse.cdt.testsrunner.internal.launcher.TestsRunnerProviderInfo;
 import org.eclipse.cdt.testsrunner.internal.ui.view.TestPathUtils;
 import org.eclipse.cdt.testsrunner.launcher.ITestsRunnerProvider;
 import org.eclipse.cdt.testsrunner.model.TestingException;
+import org.eclipse.unittest.cdt.CDTUnitTestPlugin;
 import org.eclipse.unittest.cdt.internal.launcher.LauncherMessages;
-import org.eclipse.unittest.ui.ITestViewSupport;
+import org.eclipse.unittest.ui.ConfigureViewerSupport;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -57,7 +58,7 @@ public abstract class BaseTestsLaunchDelegate extends LaunchConfigurationDelegat
 
 	@Override
 	public ILaunch getLaunch(ILaunchConfiguration config, String mode) throws CoreException {
-		ITestViewSupport.activateBundle();
+		CDTUnitTestPlugin.activateUnitTestCoreBundle();
 		return getPreferredDelegate(config, mode).getLaunch(config, mode);
 	}
 
@@ -145,7 +146,7 @@ public abstract class BaseTestsLaunchDelegate extends LaunchConfigurationDelegat
 	private void updatedLaunchConfiguration(ILaunchConfiguration config) throws CoreException {
 		changesToLaunchConfiguration.clear();
 		ILaunchConfigurationWorkingCopy configWC = config.getWorkingCopy();
-		ITestViewSupport.configure(configWC, getUnitTestViewSupportID());
+		new ConfigureViewerSupport(getUnitTestViewSupportID()).apply(configWC);
 		setProgramArguments(configWC);
 		configWC.doSave();
 	}
