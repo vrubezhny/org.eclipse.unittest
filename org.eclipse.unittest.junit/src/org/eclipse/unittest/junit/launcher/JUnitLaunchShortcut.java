@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 import org.eclipse.unittest.junit.JUnitTestPlugin;
 import org.eclipse.unittest.junit.launcher.util.ExceptionHandler;
 import org.eclipse.unittest.junit.launcher.util.JUnitStubUtility;
-import org.eclipse.unittest.ui.ITestViewSupport;
+import org.eclipse.unittest.ui.ConfigureViewerSupport;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -401,7 +401,7 @@ public class JUnitLaunchShortcut implements ILaunchShortcut2 {
 		wc.setAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_CONTAINER, containerHandleId);
 		wc.setAttribute(JUnitLaunchConfigurationConstants.ATTR_TEST_RUNNER_KIND,
 				JUnitTestPlugin.getJUnitVersion(element).getJUnitTestKind().getId());
-		ITestViewSupport.configure(wc, JUnitTestPlugin.UNIT_TEST_VIEW_SUPPORT_ID);
+		new ConfigureViewerSupport(JUnitTestPlugin.UNIT_TEST_VIEW_SUPPORT_ID).apply(wc);
 		JUnitMigrationDelegate.mapResources(wc);
 		AssertionVMArg.setArgDefault(wc);
 		if (testName != null) {
